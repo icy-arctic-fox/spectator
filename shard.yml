@@ -1,0 +1,9 @@
+name: spectator
+version: 0.1.0
+
+authors:
+  - Michael Miller <icy.arctic.fox@gmail.com>
+
+crystal: 0.26.0
+
+license: MIT
