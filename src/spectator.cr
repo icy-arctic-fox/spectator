@@ -1,9 +1,5 @@
 require "./spectator/*"
 
-def expect(actual : T) forall T
-  pp actual
-end
-
 # TODO: Write documentation for `Spectator`
 module Spectator
   VERSION = "0.1.0"
