@@ -5,6 +5,8 @@ module Spectator
 
     def run
       @block.call
+    rescue ex : ExpectationFailedError
+      puts ex
     end
   end
 end
