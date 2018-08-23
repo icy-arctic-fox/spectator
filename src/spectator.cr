@@ -4,19 +4,18 @@ require "./spectator/*"
 module Spectator
   VERSION = "0.1.0"
 
-  @@top_level_groups = [] of ExampleGroup
+  FOO = [] of MacroId
 
-  def self.describe(type : T.class) : Nil forall T
-    group = DSL.new(type.to_s)
-    with group yield
-    @@top_level_groups << group._spec_build
+  macro describe(what, source_file = __FILE__, source_line = __LINE__, &block)
+    module Spectator
+      module Examples
+        {{block.body}}
+      end
+    end
+    {% debug %}
   end
 
   at_exit do
-    @@top_level_groups.each do |group|
-      group.examples.each do |example|
-        example.run
-      end
-    end
+    # TODO
   end
 end

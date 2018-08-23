@@ -5,23 +5,32 @@ private macro _spec_add_example(example)
 end
 
 module Spectator
-  class DSL
-    @examples = [] of Spectator::Example
-
-    protected def initialize(@type : String)
+  module DSL
+    private macro nest(type, what, &block)
+      {% safe_name = what.id.stringify.gsub(/\W+/, "_") %}
+      {% module_name = (type.id + safe_name.camelcase).id %}
+      module {{module_name.id}}
+        include ::Spectator::DSL
+        {{block.body}}
+      end
     end
 
-    def describe
-      raise NotImplementedError.new("Spectator::DSL#describe")
+    macro describe(what, &block)
+      nest("Describe", {{what}}) {{block}}
     end
 
-    def context
-      raise NotImplementedError.new("Spectator::DSL#context")
+    macro context(what, &block)
+      nest("Context", {{what}}) {{block}}
     end
 
-    def it(description : String, &block) : Nil
-      example = Spectator::Example.new(description, block)
-      _spec_add_example(example)
+    macro it(description, &block)
+      {% safe_name = description.id.stringify.gsub(/\W+/, "_") %}
+      {% class_name = (safe_name.camelcase + "Example").id %}
+      class {{class_name.id}} < ::Spectator::Example
+        def run
+          {{block.body}}
+        end
+      end
     end
 
     def it_behaves_like
