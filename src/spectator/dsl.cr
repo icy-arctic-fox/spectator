@@ -6,7 +6,11 @@ end
 
 module Spectator
   module DSL
-    private macro nest(type, what, &block)
+    macro describe(what, type = "Describe", &block)
+      context({{what}}, {{type}}) {{block}}
+    end
+
+    macro context(what, type = "Context", &block)
       {% safe_name = what.id.stringify.gsub(/\W+/, "_") %}
       {% module_name = (type.id + safe_name.camelcase).id %}
       module {{module_name.id}}
@@ -17,14 +21,6 @@ module Spectator
 
         {{block.body}}
       end
-    end
-
-    macro describe(what, &block)
-      nest("Describe", {{what}}) {{block}}
-    end
-
-    macro context(what, &block)
-      nest("Context", {{what}}) {{block}}
     end
 
     macro it(description, &block)
