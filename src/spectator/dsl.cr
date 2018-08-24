@@ -11,6 +11,10 @@ module Spectator
       {% module_name = (type.id + safe_name.camelcase).id %}
       module {{module_name.id}}
         include ::Spectator::DSL
+
+        module Context
+        end
+
         {{block.body}}
       end
     end
@@ -27,30 +31,37 @@ module Spectator
       {% safe_name = description.id.stringify.gsub(/\W+/, "_") %}
       {% class_name = (safe_name.camelcase + "Example").id %}
       class {{class_name.id}} < ::Spectator::Example
+        include Context
+
         def run
           {{block.body}}
         end
       end
+      ::Spectator._spec_add_example({{class_name.id}}.new)
     end
 
     def it_behaves_like
       raise NotImplementedError.new("Spectator::DSL#it_behaves_like")
     end
 
-    def subject
-      raise NotImplementedError.new("Spectator::DSL#subject")
+    macro subject(&block)
+      let(:subject) {{block}}
     end
 
-    def subject!
-      raise NotImplementedError.new("Spectator::DSL#subject!")
-    end
-
-    def let
-      raise NotImplementedError.new("Spectator::DSL#let")
+    macro let(name, &block)
+      module Context
+        def {{name.id}}
+          {{block.body}}
+        end
+      end
     end
 
     def let!
       raise NotImplementedError.new("Spectator::DSL#let!")
+    end
+
+    macro is_expected
+      expect(subject)
     end
 
     def before_all

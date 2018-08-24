@@ -1,12 +1,5 @@
 module Spectator
-  class Example
-    def initialize(@description : String, @block : ->)
-    end
-
-    def run
-      @block.call
-    rescue ex : ExpectationFailedError
-      puts ex
-    end
+  abstract class Example
+    abstract def run
   end
 end
