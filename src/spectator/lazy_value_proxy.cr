@@ -1,8 +1,10 @@
+require "./value_proxy"
+
 module Spectator
   # Lazy initialization of a value.
   # Constructs a value only once by calling a `Proc`.
   # The value is then stored and reused - the `Proc` is only called once.
-  struct Lazy(T)
+  class LazyValueProxy(T) < ValueProxy
     @value_or_block : Proc(T) | T
 
     # Creates a lazy instance.
@@ -17,7 +19,7 @@ module Spectator
     # Retrieves the lazy initialized value.
     # The first call to this method will create the value.
     # Subsequent calls will return the same value.
-    def value : T
+    def value
       if value = @value_or_block.as?(T)
         return value
       else
