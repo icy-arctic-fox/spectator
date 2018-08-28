@@ -70,10 +70,6 @@ module Spectator
       end
     end
 
-    macro is_expected
-      expect(subject)
-    end
-
     def before_all
       raise NotImplementedError.new("Spectator::DSL#before_all")
     end
