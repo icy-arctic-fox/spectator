@@ -46,7 +46,19 @@ module Spectator
 
     macro let(name, &block)
       module Context
+        @_%proxy : ValueProxy?
+
         def {{name.id}}
+          if (proxy = @_%proxy)
+            proxy.as(TypedValueProxy(typeof({{name.id}}!))).value
+          else
+            {{name.id}}!.tap do |value|
+              @_%proxy = TypedValueProxy(typeof({{name.id}}!)).new(value)
+            end
+          end
+        end
+
+        def {{name.id}}!
           {{block.body}}
         end
       end
