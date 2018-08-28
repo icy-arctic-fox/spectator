@@ -45,6 +45,8 @@ module Spectator
     end
 
     macro let(name, &block)
+      let!({{name}}!) {{block}}
+
       module Context
         @_%proxy : ValueProxy?
 
@@ -57,15 +59,15 @@ module Spectator
             end
           end
         end
-
-        def {{name.id}}!
-          {{block.body}}
-        end
       end
     end
 
-    def let!
-      raise NotImplementedError.new("Spectator::DSL#let!")
+    macro let!(name, &block)
+      module Context
+        def {{name.id}}
+          {{block.body}}
+        end
+      end
     end
 
     macro is_expected
