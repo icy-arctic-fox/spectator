@@ -9,7 +9,7 @@ module Spectator
   macro describe(what, source_file = __FILE__, source_line = __LINE__, &block)
     module Spectator
       module Examples
-        {{block.body}}
+        DSL.describe({{what}}) {{block}}
       end
     end
     {% debug %}
