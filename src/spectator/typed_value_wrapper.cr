@@ -1,7 +1,7 @@
-require "./value_proxy"
+require "./value_wrapper"
 
 module Spectator
-  class TypedValueProxy(T) < ValueProxy
+  class TypedValueWrapper(T) < ValueWrapper
     getter value : T
 
     def initialize(@value : T)

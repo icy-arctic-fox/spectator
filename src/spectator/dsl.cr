@@ -52,14 +52,14 @@ module Spectator
       let!({{name}}!) {{block}}
 
       module Context
-        @_%proxy : ValueProxy?
+        @_%wrapper : ValueWrapper?
 
         def {{name.id}}
-          if (proxy = @_%proxy)
-            proxy.as(TypedValueProxy(typeof({{name.id}}!))).value
+          if (wrapper = @_%wrapper)
+            wrapper.as(TypedValueWrapper(typeof({{name.id}}!))).value
           else
             {{name.id}}!.tap do |value|
-              @_%proxy = TypedValueProxy(typeof({{name.id}}!)).new(value)
+              @_%wrapper = TypedValueWrapper(typeof({{name.id}}!)).new(value)
             end
           end
         end
