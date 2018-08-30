@@ -84,28 +84,33 @@ This shard is under heavy development and is not ready to be used for production
 
 ### Feature Progress
 
-[X] `describe` and `context` blocks
-[ ] Contextual values with `let`, `let!`, `subject`, `described_class`
-[ ] Test multiple and generated values - `given`
-[ ] Before and after hooks - `before_each`, `before_all`, `after_each`, `after_all`, `around_each`
-[ ] One-liner syntax
-[ ] Equality matchers - `eq`, `be`, `be_a`, `match`
-[ ] Truthy matchers - `be_true`, `be_false`, `be_truthy`, `be_falsey`
-[ ] Comparison matchers - `<`, `<=`, `>`, `>=`, `be_within`
-[ ] Question matchers - `be_nil`, `be_xxx`
-[ ] Exception matchers - `raise_error`
-[ ] Collection matchers - `start_with`, `end_with`, `contain`, `contain_exactly`
-[ ] Change matchers - `change`, `from`, `to`, `by`, `by_at_least`, `by_at_most`
-[ ] Satisfy matcher - `satisfy`
-[ ] Yield matchers - `yield_control`, `times`, `yield_values`
-[ ] Expectation combining with `&` and `|`
-[ ] Pending tests - `pending`
-[ ] Shared examples - `behaves_like`, `include_examples`
-[ ] Fail fast
-[ ] Test filtering
-[ ] Fail on no tests
-[ ] Randomize test order
-[ ] Should syntax
+In no particular order, features that have been implemented and are planned:
+
+- [ ] DSL
+    - [X] `describe` and `context` blocks
+    - [ ] Contextual values with `let`, `let!`, `subject`, `described_class`
+    - [ ] Test multiple and generated values - `given`
+    - [ ] Before and after hooks - `before_each`, `before_all`, `after_each`, `after_all`, `around_each`
+    - [ ] One-liner syntax
+    - [ ] Should syntax
+- [ ] Matchers
+    - [ ] Equality matchers - `eq`, `be`, `be_a`, `match`
+    - [ ] Truthy matchers - `be_true`, `be_false`, `be_truthy`, `be_falsey`
+    - [ ] Comparison matchers - `<`, `<=`, `>`, `>=`, `be_within`
+    - [ ] Question matchers - `be_nil`, `be_xxx`
+    - [ ] Exception matchers - `raise_error`
+    - [ ] Collection matchers - `start_with`, `end_with`, `contain`, `contain_exactly`
+    - [ ] Change matchers - `change`, `from`, `to`, `by`, `by_at_least`, `by_at_most`
+    - [ ] Satisfy matcher - `satisfy`
+    - [ ] Yield matchers - `yield_control`, `times`, `yield_values`
+- [ ] Runner
+    - [ ] Fail fast
+    - [ ] Test filtering
+    - [ ] Fail on no tests
+    - [ ] Randomize test order
+- [ ] Expectation combining with `&` and `|`
+- [ ] Pending tests - `pending`
+- [ ] Shared examples - `behaves_like`, `include_examples`
 
 ### How it Works
 
