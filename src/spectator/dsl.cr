@@ -1,9 +1,5 @@
 require "./example_group"
 
-private macro _spec_add_example(example)
-  @examples << example
-end
-
 module Spectator
   module DSL
     macro describe(what, type = "Describe", &block)
@@ -37,7 +33,6 @@ module Spectator
           {{block.body}}
         end
       end
-      ::Spectator._spec_add_example({{class_name.id}}.new)
     end
 
     def it_behaves_like
@@ -96,11 +91,6 @@ module Spectator
 
     def include_examples
       raise NotImplementedError.new("Spectator::DSL#include_examples")
-    end
-
-    # :nodoc:
-    protected def _spec_build
-      ExampleGroup.new(@examples)
     end
   end
 end
