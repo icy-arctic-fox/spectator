@@ -16,5 +16,16 @@ module Spectator
         raise ExpectationFailedError.new
       end
     end
+
+    def to_not(matcher : Matchers::Matcher)
+      if matcher.match?(self)
+        raise ExpectationFailedError.new
+      end
+    end
+
+    @[AlwaysInline]
+    def not_to(matcher : Matchers::Matcher)
+      to_not(matcher)
+    end
   end
 end
