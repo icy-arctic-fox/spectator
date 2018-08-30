@@ -1,7 +1,10 @@
 Spectator
 =========
 
-TODO: Write a description here
+Fully-featured spec-based test framework for Crystal.
+Provides more functionality from [RSpec](http://rspec.info/)
+than the built-in Crystal [Spec](https://crystal-lang.org/api/latest/Spec.html) utility.
+Spectator also provides additional features to make testing easier and more fluent.
 
 Installation
 ------------
@@ -17,16 +20,100 @@ dependencies:
 Usage
 -----
 
+If it doesn't exist already, create a `spec/spec_helper.cr` file.
+In it, place the following:
+
 ```crystal
 require "spectator"
+require "../src/*"
 ```
 
-TODO: Write usage instructions here
+This will include Spectator and the source code for your shard.
+Now you can start writing your specs.
+The syntax is the same as what you would expect from modern RSpec.
+The "expect" syntax is recommended and the default, however the "should" syntax is also available.
+Your specs must be wrapped in a `Spectator.describe` block.
+All other blocks inside the top-level block may use `describe` and `context`.
+
+Here's a minimal spec to demonstrate:
+
+```crystal
+require "./spec_helper"
+
+Spectator.describe String do
+  subject { "foo" }
+
+  describe "#==" do
+    context "with the same value" do
+      let(value) { subject.dup }
+
+      it "is true" do
+        is_expected.to eq(value)
+      end
+    end
+
+    context "with a different value" do
+      let(value) { "bar" }
+
+      it "is false" do
+        is_expected.to_not eq(value)
+      end
+    end
+  end
+end
+```
+
+If you find yourself trying to shoehorn in functionality
+or unsure how to write a test, please create an issue for it.
+We want to make it as easy as possible to write specs and keep it elegant.
+We may come up with a better solution or even introduce a feature to support your needs.
+
+NOTE: Due to the way this shard uses macros,
+you may find that some code you would expect to work creates syntax errors.
+If you run into this, please create an issue so that we may help you find a solution.
+
+Features
+--------
+
+TODO: Document the features and give brief usage examples.
 
 Development
 -----------
 
-TODO: Write development instructions here
+This shard is under heavy development and is not ready to be used for production.
+
+### Feature Progress
+
+[X] `describe` and `context` blocks
+[ ] Contextual values with `let`, `let!`, `subject`, `described_class`
+[ ] Test multiple and generated values - `given`
+[ ] Before and after hooks - `before_each`, `before_all`, `after_each`, `after_all`, `around_each`
+[ ] One-liner syntax
+[ ] Equality matchers - `eq`, `be`, `be_a`, `match`
+[ ] Truthy matchers - `be_true`, `be_false`, `be_truthy`, `be_falsey`
+[ ] Comparison matchers - `<`, `<=`, `>`, `>=`, `be_within`
+[ ] Question matchers - `be_nil`, `be_xxx`
+[ ] Exception matchers - `raise_error`
+[ ] Collection matchers - `start_with`, `end_with`, `contain`, `contain_exactly`
+[ ] Change matchers - `change`, `from`, `to`, `by`, `by_at_least`, `by_at_most`
+[ ] Satisfy matcher - `satisfy`
+[ ] Yield matchers - `yield_control`, `times`, `yield_values`
+[ ] Expectation combining with `&` and `|`
+[ ] Pending tests - `pending`
+[ ] Shared examples - `behaves_like`, `include_examples`
+[ ] Fail fast
+[ ] Test filtering
+[ ] Fail on no tests
+[ ] Randomize test order
+[ ] Should syntax
+
+### How it Works
+
+This shard makes extensive use of the Crystal macro system to build classes and modules.
+Each `describe` and `context` block creates a new module nested in its parent.
+The `it` block creates a class derived from an `Example` class.
+An instance of the example class is created to run the test.
+Each example class includes a context module, which contains all test values and hooks.
 
 Contributing
 ------------
