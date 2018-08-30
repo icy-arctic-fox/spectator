@@ -13,10 +13,14 @@ module Spectator
     macro context(what, type = "Context", &block)
       {% safe_name = what.id.stringify.gsub(/\W+/, "_") %}
       {% module_name = (type.id + safe_name.camelcase).id %}
+      {% parent_context_name = PARENT_CONTEXT_NAME %}
       module {{module_name.id}}
         include ::Spectator::DSL
 
+        PARENT_CONTEXT_NAME = {{parent_context_name.id}}::{{module_name.id}}
+
         module Context
+          include {{parent_context_name.id}}::Context
         end
 
         {{block.body}}
