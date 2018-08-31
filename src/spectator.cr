@@ -4,6 +4,8 @@ require "./spectator/*"
 module Spectator
   VERSION = "0.1.0"
 
+  ALL_EXAMPLES = [] of Example
+
   macro describe(what, source_file = __FILE__, source_line = __LINE__, &block)
     module Spectator
       module Examples
@@ -14,6 +16,6 @@ module Spectator
   end
 
   at_exit do
-    # TODO
+    Runner.new(ALL_EXAMPLES).run
   end
 end

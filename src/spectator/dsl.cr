@@ -33,6 +33,8 @@ module Spectator
           {{block.body}}
         end
       end
+
+      ::Spectator::ALL_EXAMPLES << {{class_name.id}}.new
     end
 
     def it_behaves_like
