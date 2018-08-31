@@ -12,10 +12,9 @@ module Spectator
         DSL.describe({{what}}) {{block}}
       end
     end
-    {% debug %}
   end
 
   at_exit do
-    Runner.new(ALL_EXAMPLES, DefinedRunOrder.new).run
+    Runner.new(ALL_EXAMPLES).run
   end
 end
