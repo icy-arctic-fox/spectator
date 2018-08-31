@@ -16,6 +16,6 @@ module Spectator
   end
 
   at_exit do
-    Runner.new(ALL_EXAMPLES).run
+    Runner.new(ALL_EXAMPLES, DefinedRunOrder.new).run
   end
 end

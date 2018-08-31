@@ -5,15 +5,19 @@ module Spectator
   class Runner
     getter results : Enumerable(ExampleResult)
 
-    def initialize(@examples : Enumerable(Example))
+    def initialize(@examples : Enumerable(Example), @run_order : RunOrder)
       @results = Array(ExampleResult).new(@examples.size)
     end
 
     def run : Nil
-      @examples.each do |example|
+      sorted_examples.each do |example|
         result = run_example(example)
         pp result
       end
+    end
+
+    private def sorted_examples
+      @examples.to_a.sort { |a, b| @run_order.sort(a, b) }
     end
 
     private def run_example(example)
