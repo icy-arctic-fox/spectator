@@ -3,10 +3,7 @@ require "./successful_example_result"
 
 module Spectator
   class Runner
-    getter results : Enumerable(ExampleResult)
-
     def initialize(@examples : Enumerable(Example), @run_order : RunOrder)
-      @results = Array(ExampleResult).new(@examples.size)
     end
 
     def run : Nil
