@@ -23,12 +23,24 @@ module Spectator
     end
 
     private def run_example(example)
-      example.run
-      SuccessfulExampleResult.new(example)
-    rescue failure : ExpectationFailedError
-      FailedExampleResult.new(example, failure)
-    rescue ex
-      ErroredExampleResult.new(example, ex)
+      error = nil
+      elapsed = Time.measure do
+        begin
+          example.run
+        rescue failure : ExpectationFailedError
+          error = failure
+        rescue ex
+          error = ex
+        end
+      end
+      case error
+      when Nil
+        SuccessfulExampleResult.new(example, elapsed)
+      when ExpectationFailedError
+        FailedExampleResult.new(example, elapsed, error)
+      else
+        ErroredExampleResult.new(example, elapsed, error)
+      end
     end
   end
 end

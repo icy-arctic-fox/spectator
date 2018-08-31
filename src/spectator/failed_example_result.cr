@@ -8,7 +8,8 @@ module Spectator
       false
     end
 
-    def initialize(@example, @error)
+    def initialize(example, elapsed, @error)
+      super(example, elapsed)
     end
   end
 end

@@ -7,8 +7,5 @@ module Spectator
     def errored? : Bool
       true
     end
-
-    def initialize(@example, @error)
-    end
   end
 end
