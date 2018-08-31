@@ -27,8 +27,6 @@ module Spectator
       elapsed = Time.measure do
         begin
           example.run
-        rescue failure : ExpectationFailedError
-          error = failure
         rescue ex
           error = ex
         end
