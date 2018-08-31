@@ -19,8 +19,8 @@ module Spectator
     private def run_example(example)
       example.run
       SuccessfulExampleResult.new(example)
-    rescue
-      FailedExampleResult.new(example)
+    rescue ex : Exception
+      FailedExampleResult.new(example, ex)
     end
   end
 end
