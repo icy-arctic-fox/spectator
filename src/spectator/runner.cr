@@ -9,13 +9,18 @@ module Spectator
     end
 
     def run : Nil
-      @reporter.start_suite
-      sorted_examples.each do |example|
-        @reporter.start_example(example)
-        result = run_example(example)
-        @reporter.end_example(result)
+      results = [] of ExampleResult
+      elapsed = Time.measure do
+        @reporter.start_suite
+        results = sorted_examples.map do |example|
+          @reporter.start_example(example)
+          run_example(example).tap do |result|
+            @reporter.end_example(result)
+          end
+        end
       end
-      @reporter.end_suite
+      report = Report.new(results, elapsed)
+      @reporter.end_suite(report)
     end
 
     private def sorted_examples
