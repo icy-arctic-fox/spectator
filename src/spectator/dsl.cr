@@ -2,11 +2,11 @@ require "./example_group"
 
 module Spectator
   module DSL
-    macro describe(what, type = "Describe", &block)
-      context({{what}}, {{type}}) {{block}}
+    macro describe(what, source_file = __FILE__, source_line = __LINE__, type = "Describe", &block)
+      context({{what}}, {{source_file}}, {{source_line}}, {{type}}) {{block}}
     end
 
-    macro context(what, type = "Context", &block)
+    macro context(what, source_file = __FILE__, source_line = __LINE__, type = "Context", &block)
       {% safe_name = what.id.stringify.gsub(/\W+/, "_") %}
       {% module_name = (type.id + safe_name.camelcase).id %}
       {% parent_context_name = PARENT_CONTEXT_NAME %}
@@ -23,11 +23,15 @@ module Spectator
       end
     end
 
-    macro it(description, &block)
+    macro it(description, source_file = __FILE__, source_line = __LINE__, &block)
       {% safe_name = description.id.stringify.gsub(/\W+/, "_") %}
       {% class_name = (safe_name.camelcase + "Example").id %}
       class {{class_name.id}} < ::Spectator::Example
         include Context
+
+        def source
+          Source.new({{source_file}}, {{source_line}})
+        end
 
         def run
           {{block.body}}
