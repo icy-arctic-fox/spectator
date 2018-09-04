@@ -88,7 +88,7 @@ In no particular order, features that have been implemented and are planned:
 
 - [ ] DSL
     - [X] `describe` and `context` blocks
-    - [ ] Contextual values with `let`, `let!`, `subject`, `described_class`
+    - [X] Contextual values with `let`, `let!`, `subject`, `described_class`
     - [ ] Test multiple and generated values - `given`
     - [ ] Before and after hooks - `before_each`, `before_all`, `after_each`, `after_all`, `around_each`
     - [ ] One-liner syntax

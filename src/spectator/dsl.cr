@@ -17,6 +17,12 @@ module Spectator
 
         module Locals
           include {{parent_locals_module.id}}::Locals
+
+          {% if what.is_a?(Path) %}
+            def described_class
+              {{what}}
+            end
+          {% end %}
         end
 
         {{block.body}}
