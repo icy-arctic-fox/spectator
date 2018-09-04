@@ -9,14 +9,14 @@ module Spectator
     macro context(what, source_file = __FILE__, source_line = __LINE__, type = "Context", &block)
       {% safe_name = what.id.stringify.gsub(/\W+/, "_") %}
       {% module_name = (type.id + safe_name.camelcase).id %}
-      {% parent_context_name = PARENT_CONTEXT_NAME %}
+      {% parent_locals_module = PARENT_LOCALS_MODULE %}
       module {{module_name.id}}
         include ::Spectator::DSL
 
-        PARENT_CONTEXT_NAME = {{parent_context_name.id}}::{{module_name.id}}
+        PARENT_LOCALS_MODULE = {{parent_locals_module.id}}::{{module_name.id}}
 
-        module Context
-          include {{parent_context_name.id}}::Context
+        module Locals
+          include {{parent_locals_module.id}}::Locals
         end
 
         {{block.body}}
@@ -27,7 +27,7 @@ module Spectator
       {% safe_name = description.id.stringify.gsub(/\W+/, "_") %}
       {% class_name = (safe_name.camelcase + "Example").id %}
       class {{class_name.id}} < ::Spectator::Example
-        include Context
+        include Locals
 
         def source
           Source.new({{source_file}}, {{source_line}})
@@ -52,7 +52,7 @@ module Spectator
     macro let(name, &block)
       let!({{name}}!) {{block}}
 
-      module Context
+      module Locals
         @_%wrapper : ValueWrapper?
 
         def {{name.id}}
@@ -68,7 +68,7 @@ module Spectator
     end
 
     macro let!(name, &block)
-      module Context
+      module Locals
         def {{name.id}}
           {{block.body}}
         end

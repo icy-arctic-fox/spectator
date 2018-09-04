@@ -4,9 +4,9 @@ module Spectator
   module Examples
     include ::Spectator::DSL
 
-    PARENT_CONTEXT_NAME = ::Spectator::Examples
+    PARENT_LOCALS_MODULE = ::Spectator::Examples
 
-    module Context
+    module Locals
     end
   end
 end
