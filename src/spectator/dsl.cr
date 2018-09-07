@@ -110,6 +110,9 @@ module Spectator
     macro given(collection, source_file = __FILE__, source_line = __LINE__, &block)
       context({{collection}}, {{source_file}}, {{source_line}}, "Given") do
         {% var_name = block.args.empty? ? "value" : block.args.first %}
+        {% if GIVEN_VARIABLES.find { |v| v[0].id == var_name.id } %}
+          {% raise "Duplicate given variable name \"#{var_name.id}\"" %}
+        {% end %}
 
         module Locals
           @%wrapper : ValueWrapper?
