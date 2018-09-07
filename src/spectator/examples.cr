@@ -5,6 +5,7 @@ module Spectator
     include ::Spectator::DSL
 
     CONTEXT_MODULE = ::Spectator::Examples
+    GIVEN_VARIABLES = [] of Object
 
     module Locals
     end
