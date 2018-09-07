@@ -9,14 +9,14 @@ module Spectator
     macro context(what, source_file = __FILE__, source_line = __LINE__, type = "Context", &block)
       {% safe_name = what.id.stringify.gsub(/\W+/, "_") %}
       {% module_name = (type.id + safe_name.camelcase).id %}
-      {% parent_locals_module = PARENT_LOCALS_MODULE %}
+      {% context_module = CONTEXT_MODULE %}
       module {{module_name.id}}
         include ::Spectator::DSL
 
-        PARENT_LOCALS_MODULE = {{parent_locals_module.id}}::{{module_name.id}}
+        CONTEXT_MODULE = {{context_module.id}}::{{module_name.id}}
 
         module Locals
-          include {{parent_locals_module.id}}::Locals
+          include {{context_module.id}}::Locals
 
           {% if what.is_a?(Path) %}
             def described_class

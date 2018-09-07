@@ -4,7 +4,7 @@ module Spectator
   module Examples
     include ::Spectator::DSL
 
-    PARENT_LOCALS_MODULE = ::Spectator::Examples
+    CONTEXT_MODULE = ::Spectator::Examples
 
     module Locals
     end
