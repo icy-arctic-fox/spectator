@@ -4,7 +4,6 @@ require "./successful_example_result"
 module Spectator
   class Runner
     def initialize(@examples : Enumerable(Example),
-      @run_order : RunOrder = DefinedRunOrder.new,
       @reporter : Reporters::Reporter = Reporters::StandardReporter.new)
     end
 
@@ -12,7 +11,7 @@ module Spectator
       results = [] of ExampleResult
       elapsed = Time.measure do
         @reporter.start_suite
-        results = sorted_examples.map do |example|
+        results = @examples.map do |example|
           @reporter.start_example(example)
           run_example(example).tap do |result|
             @reporter.end_example(result)
@@ -21,10 +20,6 @@ module Spectator
       end
       report = Report.new(results, elapsed)
       @reporter.end_suite(report)
-    end
-
-    private def sorted_examples
-      @examples.to_a.sort { |a, b| @run_order.sort(a, b) }
     end
 
     private def run_example(example)
