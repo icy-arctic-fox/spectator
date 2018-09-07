@@ -85,14 +85,14 @@ module Spectator
       let!({{name}}!) {{block}}
 
       module Locals
-        @_%wrapper : ValueWrapper?
+        @%wrapper : ValueWrapper?
 
         def {{name.id}}
-          if (wrapper = @_%wrapper)
+          if (wrapper = @%wrapper)
             wrapper.as(TypedValueWrapper(typeof({{name.id}}!))).value
           else
             {{name.id}}!.tap do |value|
-              @_%wrapper = TypedValueWrapper(typeof({{name.id}}!)).new(value)
+              @%wrapper = TypedValueWrapper(typeof({{name.id}}!)).new(value)
             end
           end
         end
