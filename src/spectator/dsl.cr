@@ -42,16 +42,15 @@ module Spectator
         include Locals
 
         {% unless given_vars.empty? %}
-          def initialize({{ var_names.map { |v| "@#{v}" }.join(", ").id }})
+          def initialize({{ var_names.join(", ").id }})
+            {% for var_name in var_names %}
+              self.{{var_name}} = {{var_name}}
+            {% end %}
           end
         {% end %}
 
         def source
           Source.new({{source_file}}, {{source_line}})
-        end
-
-        def num
-          0
         end
 
         def run
@@ -113,7 +112,23 @@ module Spectator
         {% var_name = block.args.empty? ? "value" : block.args.first %}
 
         module Locals
-          getter {{var_name.id}}
+          @%wrapper : ValueWrapper?
+
+          private def %collection
+            {{collection}}
+          end
+
+          private def %collection_first
+            %collection.first
+          end
+
+          def {{var_name.id}}
+            @%wrapper.as(TypedValueWrapper(typeof(%collection_first))).value
+          end
+
+          private def {{var_name.id}}=(value)
+            @%wrapper = TypedValueWrapper(typeof(%collection_first)).new(value)
+          end
         end
 
         {% GIVEN_VARIABLES << {var_name, collection} %}
