@@ -6,8 +6,6 @@ module Spectator
       expect(subject)
     end
 
-    abstract def source : Source
-
     abstract def run
   end
 end

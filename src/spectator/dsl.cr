@@ -2,11 +2,11 @@ require "./example_group"
 
 module Spectator
   module DSL
-    macro describe(what, type = "Describe", source_file = __FILE__, source_line = __LINE__, &block)
+    macro describe(what, type = "Describe", &block)
       context({{what}}, {{type}}) {{block}}
     end
 
-    macro context(what, type = "Context", source_file = __FILE__, source_line = __LINE__, &block)
+    macro context(what, type = "Context", &block)
       {% safe_name = what.id.stringify.gsub(/\W+/, "_") %}
       {% module_name = (type.id + safe_name.camelcase).id %}
       {% context_module = CONTEXT_MODULE %}
@@ -33,7 +33,7 @@ module Spectator
       end
     end
 
-    macro it(description, source_file = __FILE__, source_line = __LINE__, &block)
+    macro it(description, &block)
       {% safe_name = description.id.stringify.gsub(/\W+/, "_") %}
       {% class_name = (safe_name.camelcase + "Example").id %}
       {% given_vars = GIVEN_VARIABLES %}
@@ -48,10 +48,6 @@ module Spectator
             {% end %}
           end
         {% end %}
-
-        def source
-          Source.new({{source_file}}, {{source_line}})
-        end
 
         def run
           {{block.body}}
@@ -107,7 +103,7 @@ module Spectator
       end
     end
 
-    macro given(collection, source_file = __FILE__, source_line = __LINE__, &block)
+    macro given(collection, &block)
       context({{collection}}, "Given") do
         {% var_name = block.args.empty? ? "value" : block.args.first %}
         {% if GIVEN_VARIABLES.find { |v| v[0].id == var_name.id } %}
