@@ -2,11 +2,11 @@ require "./example_group"
 
 module Spectator
   module DSL
-    macro describe(what, source_file = __FILE__, source_line = __LINE__, type = "Describe", &block)
-      context({{what}}, {{source_file}}, {{source_line}}, {{type}}) {{block}}
+    macro describe(what, type = "Describe", source_file = __FILE__, source_line = __LINE__, &block)
+      context({{what}}, {{type}}) {{block}}
     end
 
-    macro context(what, source_file = __FILE__, source_line = __LINE__, type = "Context", &block)
+    macro context(what, type = "Context", source_file = __FILE__, source_line = __LINE__, &block)
       {% safe_name = what.id.stringify.gsub(/\W+/, "_") %}
       {% module_name = (type.id + safe_name.camelcase).id %}
       {% context_module = CONTEXT_MODULE %}
@@ -108,7 +108,7 @@ module Spectator
     end
 
     macro given(collection, source_file = __FILE__, source_line = __LINE__, &block)
-      context({{collection}}, {{source_file}}, {{source_line}}, "Given") do
+      context({{collection}}, "Given") do
         {% var_name = block.args.empty? ? "value" : block.args.first %}
         {% if GIVEN_VARIABLES.find { |v| v[0].id == var_name.id } %}
           {% raise "Duplicate given variable name \"#{var_name.id}\"" %}
