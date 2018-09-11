@@ -74,7 +74,7 @@ module Spectator
       {% safe_name = description.id.stringify.chars.map { |c| SPECIAL_CHAR_MAPPING[c] || c }.join("").gsub(/\W+/, "_") %}
       {% class_name = (safe_name.camelcase + "Example").id %}
       {% given_vars = GIVEN_VARIABLES %}
-      {% var_names = given_vars.map { |v| v[0] } %}
+      {% var_names = given_vars.map { |v| v[:name] } %}
       class {{class_name.id}} < ::Spectator::Example
         include Locals
 
@@ -85,8 +85,8 @@ module Spectator
         {% else %}
           def initialize(context, {{ var_names.join(", ").id }})
             super(context)
-            {% for var_name in var_names %}
-              self.{{var_name}} = {{var_name}}
+            {% for given_var in given_vars %}
+              {{given_var[:setter]}}({{given_var[:name]}})
             {% end %}
           end
         {% end %}
@@ -108,8 +108,8 @@ module Spectator
         CURRENT_CONTEXT.examples << {{class_name.id}}.new(CURRENT_CONTEXT)
       {% else %}
         {% for given_var in given_vars %}
-          {% var_name = given_var[0] %}
-          {% collection = given_var[1] %}
+          {% var_name = given_var[:name] %}
+          {% collection = given_var[:collection] %}
           {{collection}}.each do |{{var_name}}|
         {% end %}
         CURRENT_CONTEXT.examples << {{class_name.id}}.new(CURRENT_CONTEXT, {{var_names.join(", ").id}})
@@ -156,7 +156,7 @@ module Spectator
     macro given(collection, &block)
       context({{collection}}, "Given") do
         {% var_name = block.args.empty? ? "value".id : block.args.first %}
-        {% if GIVEN_VARIABLES.find { |v| v[0].id == var_name.id } %}
+        {% if GIVEN_VARIABLES.find { |v| v[:name] == var_name.id } %}
           {% raise "Duplicate given variable name \"#{var_name.id}\"" %}
         {% end %}
 
@@ -175,12 +175,13 @@ module Spectator
             @%wrapper.as(TypedValueWrapper(typeof(%collection_first))).value
           end
 
-          private def {{var_name.id}}=(value)
+          {% setter = "_set_#{var_name.id}".id %}
+          private def {{setter}}(value)
             @%wrapper = TypedValueWrapper(typeof(%collection_first)).new(value)
           end
         end
 
-        {% GIVEN_VARIABLES << {var_name, collection} %}
+        {% GIVEN_VARIABLES << {name: var_name, collection: collection, setter: setter} %}
 
         {{block.body}}
       end
