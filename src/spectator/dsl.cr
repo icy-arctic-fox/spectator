@@ -139,24 +139,24 @@ module Spectator
       end
     end
 
-    def before_all
-      raise NotImplementedError.new("Spectator::DSL#before_all")
+    macro before_all(&block)
+      CURRENT_CONTEXT.before_all_hooks << -> {{block}}
     end
 
-    def before_each
-      raise NotImplementedError.new("Spectator::DSL#before_each")
+    macro before_each(&block)
+      CURRENT_CONTEXT.before_each_hooks << -> {{block}}
     end
 
-    def after_all
-      raise NotImplementedError.new("Spectator::DSL#after_all")
+    macro after_all(&block)
+      CURRENT_CONTEXT.after_all_hooks << -> {{block}}
     end
 
-    def after_each
-      raise NotImplementedError.new("Spectator::DSL#after_each")
+    macro after_each(&block)
+      CURRENT_CONTEXT.after_each_hooks << -> {{block}}
     end
 
-    def around_each
-      raise NotImplementedError.new("Spectator::DSL#around_each")
+    macro around_each(&block)
+      CURRENT_CONTEXT.around_each_hooks << -> {{block}}
     end
 
     def include_examples
