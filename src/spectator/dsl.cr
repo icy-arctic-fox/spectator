@@ -94,6 +94,10 @@ module Spectator
         def run
           {{block.body}}
         end
+
+        def description
+          {{description.stringify}}
+        end
       end
 
       {% if given_vars.empty? %}

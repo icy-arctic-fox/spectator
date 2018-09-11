@@ -11,6 +11,7 @@ module Spectator
       expect(subject)
     end
 
-    abstract def run
+    abstract def run : Nil
+    abstract def description : String
   end
 end
