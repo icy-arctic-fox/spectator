@@ -105,7 +105,7 @@ module Spectator
 
     macro given(collection, &block)
       context({{collection}}, "Given") do
-        {% var_name = block.args.empty? ? "value" : block.args.first %}
+        {% var_name = block.args.empty? ? "value".id : block.args.first %}
         {% if GIVEN_VARIABLES.find { |v| v[0].id == var_name.id } %}
           {% raise "Duplicate given variable name \"#{var_name.id}\"" %}
         {% end %}
