@@ -24,6 +24,8 @@ module Spectator
 
     private def run_example(example)
       error = nil
+      example.context.run_before_all_hooks
+      example.context.run_before_each_hooks
       elapsed = Time.measure do
         begin
           example.run
@@ -31,6 +33,8 @@ module Spectator
           error = ex
         end
       end
+      example.context.run_after_each_hooks
+      example.context.run_after_all_hooks
       case error
       when Nil
         SuccessfulExampleResult.new(example, elapsed)
