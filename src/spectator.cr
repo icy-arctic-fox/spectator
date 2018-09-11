@@ -4,7 +4,7 @@ require "./spectator/*"
 module Spectator
   VERSION = "0.1.0"
 
-  ROOT_CONTEXT = Context.new
+  ROOT_CONTEXT = Context.new("ROOT")
 
   macro describe(what, source_file = __FILE__, source_line = __LINE__, &block)
     module Spectator

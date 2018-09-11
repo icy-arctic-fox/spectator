@@ -49,7 +49,7 @@ module Spectator
         include ::Spectator::DSL
 
         PARENT_CONTEXT = {{context_module.id}}::CURRENT_CONTEXT
-        CURRENT_CONTEXT = ::Spectator::Context.new(PARENT_CONTEXT)
+        CURRENT_CONTEXT = ::Spectator::Context.new({{what.stringify}}, PARENT_CONTEXT)
 
         CONTEXT_MODULE = {{context_module.id}}::{{module_name.id}}
         GIVEN_VARIABLES = [

@@ -2,6 +2,7 @@ require "./example"
 
 module Spectator
   class Context
+    getter what : String
     getter parent : Context?
     getter examples = [] of Example
     getter contexts = [] of Context
@@ -14,7 +15,7 @@ module Spectator
     @before_all_hooks_run = false
     @after_all_hooks_run = false
 
-    def initialize(@parent = nil)
+    def initialize(@what, @parent = nil)
       if (parent = @parent)
         parent.contexts << self
       end
