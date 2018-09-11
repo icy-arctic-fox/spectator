@@ -49,7 +49,7 @@ module Spectator
         include ::Spectator::DSL
 
         PARENT_CONTEXT = {{context_module.id}}::CURRENT_CONTEXT
-        CURRENT_CONTEXT = ::Spectator::Context.new({{what.stringify}}, PARENT_CONTEXT)
+        CURRENT_CONTEXT = ::Spectator::Context.new({{what.is_a?(StringLiteral) ? what : what.stringify}}, PARENT_CONTEXT)
 
         CONTEXT_MODULE = {{context_module.id}}::{{module_name.id}}
         GIVEN_VARIABLES = [
@@ -96,7 +96,11 @@ module Spectator
         end
 
         def description
-          {{description.stringify}}
+          {% if description.is_a?(StringLiteral) %}
+            {{description}}
+          {% else %}
+            {{description.stringify}}
+          {% end %}
         end
       end
 
