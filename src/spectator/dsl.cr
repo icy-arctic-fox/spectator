@@ -86,17 +86,17 @@ module Spectator
     end
 
     macro let(name, &block)
-      let!({{name}}!) {{block}}
+      let!(%value) {{block}}
 
       module Locals
         @%wrapper : ValueWrapper?
 
         def {{name.id}}
           if (wrapper = @%wrapper)
-            wrapper.as(TypedValueWrapper(typeof({{name.id}}!))).value
+            wrapper.as(TypedValueWrapper(typeof(%value))).value
           else
-            {{name.id}}!.tap do |value|
-              @%wrapper = TypedValueWrapper(typeof({{name.id}}!)).new(value)
+            %value.tap do |value|
+              @%wrapper = TypedValueWrapper(typeof(%value)).new(value)
             end
           end
         end
