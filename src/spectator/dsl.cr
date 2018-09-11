@@ -14,8 +14,8 @@ module Spectator
       module {{module_name.id}}
         include ::Spectator::DSL
 
-        CURRENT_CONTEXT = ::Spectator::Context.new
-        {{context_module.id}}::CURRENT_CONTEXT.contexts << CURRENT_CONTEXT
+        PARENT_CONTEXT = {{context_module.id}}::CURRENT_CONTEXT
+        CURRENT_CONTEXT = ::Spectator::Context.new(PARENT_CONTEXT)
 
         CONTEXT_MODULE = {{context_module.id}}::{{module_name.id}}
         GIVEN_VARIABLES = [
@@ -44,8 +44,13 @@ module Spectator
       class {{class_name.id}} < ::Spectator::Example
         include Locals
 
-        {% unless given_vars.empty? %}
-          def initialize({{ var_names.join(", ").id }})
+        {% if given_vars.empty? %}
+          def initialize(context)
+            super(context)
+          end
+        {% else %}
+          def initialize(context, {{ var_names.join(", ").id }})
+            super(context)
             {% for var_name in var_names %}
               self.{{var_name}} = {{var_name}}
             {% end %}
@@ -58,14 +63,14 @@ module Spectator
       end
 
       {% if given_vars.empty? %}
-        CURRENT_CONTEXT.examples << {{class_name.id}}.new
+        CURRENT_CONTEXT.examples << {{class_name.id}}.new(CURRENT_CONTEXT)
       {% else %}
         {% for given_var in given_vars %}
           {% var_name = given_var[0] %}
           {% collection = given_var[1] %}
           {{collection}}.each do |{{var_name}}|
         {% end %}
-        CURRENT_CONTEXT.examples << {{class_name.id}}.new({{var_names.join(", ").id}})
+        CURRENT_CONTEXT.examples << {{class_name.id}}.new(CURRENT_CONTEXT, {{var_names.join(", ").id}})
         {% for given_var in given_vars %}
           end
         {% end %}
