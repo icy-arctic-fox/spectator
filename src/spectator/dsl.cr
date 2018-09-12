@@ -151,10 +151,10 @@ module Spectator
             super(context)
           end
         {% else %}
-          def initialize(context, {{ var_names.join(", ").id }})
+          def initialize(context{% for v, i in var_names %}, %var{i}{% end %})
             super(context)
-            {% for given_var in given_vars %}
-              {{given_var[:setter]}}({{given_var[:name]}})
+            {% for given_var, i in given_vars %}
+              {{given_var[:setter]}}(%var{i})
             {% end %}
           end
         {% end %}
@@ -176,12 +176,12 @@ module Spectator
       {% if given_vars.empty? %}
         %current_context.examples << {{class_name.id}}.new(%current_context)
       {% else %}
-        {% for given_var in given_vars %}
+        {% for given_var, i in given_vars %}
           {% var_name = given_var[:name] %}
           {% collection = given_var[:collection] %}
-          {{collection}}.each do |{{var_name}}|
+          {{collection}}.each do |%var{i}|
         {% end %}
-        %current_context.examples << {{class_name.id}}.new(%current_context, {{var_names.join(", ").id}})
+        %current_context.examples << {{class_name.id}}.new(%current_context {% for v, i in var_names %}, %var{i}{% end %})
         {% for given_var in given_vars %}
           end
         {% end %}
