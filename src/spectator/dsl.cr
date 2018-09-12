@@ -193,23 +193,23 @@ module Spectator
     end
 
     macro before_all(&block)
-      ::Spectator::ContextDefinitions::MAPPING[{{parent_module.stringify}}].before_all_hooks << -> {{block}}
+      ::Spectator::ContextDefinitions::MAPPING[{{@type.stringify}}].before_all_hooks << -> {{block}}
     end
 
     macro before_each(&block)
-      ::Spectator::ContextDefinitions::MAPPING[{{parent_module.stringify}}].before_each_hooks << -> {{block}}
+      ::Spectator::ContextDefinitions::MAPPING[{{@type.stringify}}].before_each_hooks << -> {{block}}
     end
 
     macro after_all(&block)
-      ::Spectator::ContextDefinitions::MAPPING[{{parent_module.stringify}}].after_all_hooks << -> {{block}}
+      ::Spectator::ContextDefinitions::MAPPING[{{@type.stringify}}].after_all_hooks << -> {{block}}
     end
 
     macro after_each(&block)
-      ::Spectator::ContextDefinitions::MAPPING[{{parent_module.stringify}}].after_each_hooks << -> {{block}}
+      ::Spectator::ContextDefinitions::MAPPING[{{@type.stringify}}].after_each_hooks << -> {{block}}
     end
 
     macro around_each(&block)
-      ::Spectator::ContextDefinitions::MAPPING[{{parent_module.stringify}}].around_each_hooks << -> {{block}}
+      ::Spectator::ContextDefinitions::MAPPING[{{@type.stringify}}].around_each_hooks << -> {{block}}
     end
 
     def include_examples
