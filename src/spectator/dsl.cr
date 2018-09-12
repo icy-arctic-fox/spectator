@@ -71,6 +71,96 @@ module Spectator
       end
     end
 
+    macro given(collection, &block)
+      {% parent_module = @type %}
+      context({{collection}}, "Given") do
+        {% var_name = block.args.empty? ? "value".id : block.args.first %}
+        {% given_vars = ::Spectator::ContextDefinitions::ALL[parent_module.id][:given] %}
+        {% if given_vars.find { |v| v[:name] == var_name.id } %}
+          {% raise "Duplicate given variable name \"#{var_name.id}\"" %}
+        {% end %}
+
+        module Locals
+          @%wrapper : ValueWrapper?
+
+          private def %collection
+            {{collection}}
+          end
+
+          private def %collection_first
+            %collection.first
+          end
+
+          def {{var_name.id}}
+            @%wrapper.as(TypedValueWrapper(typeof(%collection_first))).value
+          end
+
+          {% setter = "_set_#{var_name.id}".id %}
+          private def {{setter}}(value)
+            @%wrapper = TypedValueWrapper(typeof(%collection_first)).new(value)
+          end
+        end
+
+        \{% ::Spectator::ContextDefinitions::ALL[@type.id][:given] << {name: "{{var_name}}".id, collection: "{{collection}}".id, setter: "{{setter}}".id} %}
+
+        {{block.body}}
+      end
+    end
+
+    macro subject(&block)
+      let(:subject) {{block}}
+    end
+
+    macro let(name, &block)
+      let!(%value) {{block}}
+
+      module Locals
+        @%wrapper : ValueWrapper?
+
+        def {{name.id}}
+          if (wrapper = @%wrapper)
+            wrapper.as(TypedValueWrapper(typeof(%value))).value
+          else
+            %value.tap do |value|
+              @%wrapper = TypedValueWrapper(typeof(%value)).new(value)
+            end
+          end
+        end
+      end
+    end
+
+    macro let!(name, &block)
+      module Locals
+        def {{name.id}}
+          {{block.body}}
+        end
+      end
+    end
+
+    macro before_all(&block)
+      ::Spectator::ContextDefinitions::MAPPING[{{@type.stringify}}].before_all_hooks << -> {{block}}
+    end
+
+    macro before_each(&block)
+      ::Spectator::ContextDefinitions::MAPPING[{{@type.stringify}}].before_each_hooks << -> {{block}}
+    end
+
+    macro after_all(&block)
+      ::Spectator::ContextDefinitions::MAPPING[{{@type.stringify}}].after_all_hooks << -> {{block}}
+    end
+
+    macro after_each(&block)
+      ::Spectator::ContextDefinitions::MAPPING[{{@type.stringify}}].after_each_hooks << -> {{block}}
+    end
+
+    macro around_each(&block)
+      ::Spectator::ContextDefinitions::MAPPING[{{@type.stringify}}].around_each_hooks << -> {{block}}
+    end
+
+    def include_examples
+      raise NotImplementedError.new("Spectator::DSL#include_examples")
+    end
+
     macro it(description, &block)
       {% parent_module = @type %}
       {% safe_name = description.id.stringify.chars.map { |c| SPECIAL_CHAR_MAPPING[c] || c }.join("").gsub(/\W+/, "_") %}
@@ -124,96 +214,6 @@ module Spectator
 
     def it_behaves_like
       raise NotImplementedError.new("Spectator::DSL#it_behaves_like")
-    end
-
-    macro subject(&block)
-      let(:subject) {{block}}
-    end
-
-    macro let(name, &block)
-      let!(%value) {{block}}
-
-      module Locals
-        @%wrapper : ValueWrapper?
-
-        def {{name.id}}
-          if (wrapper = @%wrapper)
-            wrapper.as(TypedValueWrapper(typeof(%value))).value
-          else
-            %value.tap do |value|
-              @%wrapper = TypedValueWrapper(typeof(%value)).new(value)
-            end
-          end
-        end
-      end
-    end
-
-    macro let!(name, &block)
-      module Locals
-        def {{name.id}}
-          {{block.body}}
-        end
-      end
-    end
-
-    macro given(collection, &block)
-      {% parent_module = @type %}
-      context({{collection}}, "Given") do
-        {% var_name = block.args.empty? ? "value".id : block.args.first %}
-        {% given_vars = ::Spectator::ContextDefinitions::ALL[parent_module.id][:given] %}
-        {% if given_vars.find { |v| v[:name] == var_name.id } %}
-          {% raise "Duplicate given variable name \"#{var_name.id}\"" %}
-        {% end %}
-
-        module Locals
-          @%wrapper : ValueWrapper?
-
-          private def %collection
-            {{collection}}
-          end
-
-          private def %collection_first
-            %collection.first
-          end
-
-          def {{var_name.id}}
-            @%wrapper.as(TypedValueWrapper(typeof(%collection_first))).value
-          end
-
-          {% setter = "_set_#{var_name.id}".id %}
-          private def {{setter}}(value)
-            @%wrapper = TypedValueWrapper(typeof(%collection_first)).new(value)
-          end
-        end
-
-        \{% ::Spectator::ContextDefinitions::ALL[@type.id][:given] << {name: "{{var_name}}".id, collection: "{{collection}}".id, setter: "{{setter}}".id} %}
-
-        {{block.body}}
-      end
-    end
-
-    macro before_all(&block)
-      ::Spectator::ContextDefinitions::MAPPING[{{@type.stringify}}].before_all_hooks << -> {{block}}
-    end
-
-    macro before_each(&block)
-      ::Spectator::ContextDefinitions::MAPPING[{{@type.stringify}}].before_each_hooks << -> {{block}}
-    end
-
-    macro after_all(&block)
-      ::Spectator::ContextDefinitions::MAPPING[{{@type.stringify}}].after_all_hooks << -> {{block}}
-    end
-
-    macro after_each(&block)
-      ::Spectator::ContextDefinitions::MAPPING[{{@type.stringify}}].after_each_hooks << -> {{block}}
-    end
-
-    macro around_each(&block)
-      ::Spectator::ContextDefinitions::MAPPING[{{@type.stringify}}].around_each_hooks << -> {{block}}
-    end
-
-    def include_examples
-      raise NotImplementedError.new("Spectator::DSL#include_examples")
     end
   end
 end
