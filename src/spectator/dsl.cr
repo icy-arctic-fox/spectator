@@ -3,46 +3,13 @@ require "./example_group"
 module Spectator
   module DSL
 
-    SPECIAL_CHAR_MAPPING = {
-      '~' => "Tilde",
-      '`' => "Tick",
-      '!' => "Bang",
-      '@' => "At",
-      '#' => "Hash",
-      '$' => "Dollar",
-      '%' => "Percent",
-      '^' => "Carret",
-      '&' => "And",
-      '*' => "Star",
-      '(' => "LParen",
-      ')' => "RParen",
-      '+' => "Plus",
-      '=' => "Eq",
-      '{' => "LBrace",
-      '}' => "RBrace",
-      '[' => "LBracket",
-      ']' => "RBracket",
-      ':' => "Colon",
-      ';' => "SColon",
-      '<' => "Lt",
-      '>' => "Gt",
-      ',' => "Comma",
-      '.' => "Dot",
-      '?' => "Question",
-      '/' => "Slash",
-      '"' => "DQuote",
-      '|' => "Or",
-      '\\' => "BSlash",
-      '\'' => "SQuote"
-    }
-
     macro describe(what, type = "Describe", &block)
       context({{what}}, {{type}}) {{block}}
     end
 
     macro context(what, type = "Context", &block)
       {% parent_module = @type %}
-      {% safe_name = what.id.stringify.chars.map { |c| SPECIAL_CHAR_MAPPING[c] || c }.join("").gsub(/\W+/, "_") %}
+      {% safe_name = what.id.stringify.chars.map { |c| ::Spectator::ContextDefinitions::SPECIAL_CHARS[c] || c }.join("").gsub(/\W+/, "_") %}
       {% module_name = (type.id + safe_name.camelcase).id %}
       {% absolute_module_name = [parent_module, module_name].join("::").id %}
       {% what_arg = what.is_a?(StringLiteral) ? what : what.stringify %}
@@ -163,7 +130,7 @@ module Spectator
 
     macro it(description, &block)
       {% parent_module = @type %}
-      {% safe_name = description.id.stringify.chars.map { |c| SPECIAL_CHAR_MAPPING[c] || c }.join("").gsub(/\W+/, "_") %}
+      {% safe_name = description.id.stringify.chars.map { |c| ::Spectator::ContextDefinitions::SPECIAL_CHARS[c] || c }.join("").gsub(/\W+/, "_") %}
       {% class_name = (safe_name.camelcase + "Example").id %}
       {% given_vars = ::Spectator::ContextDefinitions::ALL[parent_module.id][:given] %}
       {% var_names = given_vars.map { |v| v[:name] } %}
@@ -178,7 +145,7 @@ module Spectator
 
       class {{class_name.id}} < ::Spectator::Example
         include Locals
-        
+
         {% if given_vars.empty? %}
           def initialize(context)
             super(context)
