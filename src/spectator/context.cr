@@ -2,6 +2,8 @@ require "./example"
 
 module Spectator
   class Context
+    ROOT = Context.new("ROOT")
+
     getter what : String
     getter parent : Context?
     getter examples = [] of Example

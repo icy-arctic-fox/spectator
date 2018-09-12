@@ -4,8 +4,6 @@ require "./spectator/*"
 module Spectator
   VERSION = "0.1.0"
 
-  ROOT_CONTEXT = Context.new("ROOT")
-
   macro describe(what, source_file = __FILE__, source_line = __LINE__, &block)
     module Spectator
       module Examples
@@ -15,6 +13,6 @@ module Spectator
   end
 
   at_exit do
-    Runner.new(ROOT_CONTEXT).run
+    Runner.new(Context::ROOT).run
   end
 end
