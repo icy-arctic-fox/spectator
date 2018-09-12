@@ -4,9 +4,12 @@ module Spectator
   module Examples
     include ::Spectator::DSL
 
-    CURRENT_CONTEXT = ::Spectator::Context::ROOT
-    CONTEXT_MODULE = ::Spectator::Examples
-    GIVEN_VARIABLES = [] of Object
+    {% ::Spectator::ContextDefinitions::ALL[@type.id] = {
+      name: "ROOT",
+      parent: nil,
+      given: [] of Object
+    } %}
+    ::Spectator::ContextDefinitions::MAPPING[{{@type.stringify}}] = ::Spectator::Context::ROOT
 
     module Locals
     end
