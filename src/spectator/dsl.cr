@@ -168,6 +168,7 @@ module Spectator
       {% given_vars = ::Spectator::ContextDefinitions::ALL[parent_module.id][:given] %}
       {% var_names = given_vars.map { |v| v[:name] } %}
       class {{class_name.id}} < ::Spectator::Example
+        include ExampleDSL
         include Locals
 
         {% if given_vars.empty? %}
