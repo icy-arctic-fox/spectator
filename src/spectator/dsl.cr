@@ -167,10 +167,18 @@ module Spectator
       {% class_name = (safe_name.camelcase + "Example").id %}
       {% given_vars = ::Spectator::ContextDefinitions::ALL[parent_module.id][:given] %}
       {% var_names = given_vars.map { |v| v[:name] } %}
-      class {{class_name.id}} < ::Spectator::Example
+      class Example%example
         include ExampleDSL
         include Locals
 
+        def %run({{ var_names.join(", ").id }})
+          {{block.body}}
+        end
+      end
+
+      class {{class_name.id}} < ::Spectator::Example
+        include Locals
+        
         {% if given_vars.empty? %}
           def initialize(context)
             super(context)
@@ -185,7 +193,7 @@ module Spectator
         {% end %}
 
         def run
-          {{block.body}}
+          Example%example.new.%run({{ var_names.join(", ").id }})
         end
 
         def description
