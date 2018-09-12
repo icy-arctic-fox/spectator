@@ -186,7 +186,7 @@ module Spectator
           end
         end
 
-        {% given_vars << {name: var_name, collection: collection, setter: setter} %}
+        \{% ::Spectator::ContextDefinitions::ALL[@type.id][:given] << {name: "{{var_name}}".id, collection: "{{collection}}".id, setter: "{{setter}}".id} %}
 
         {{block.body}}
       end
