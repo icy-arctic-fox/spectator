@@ -57,26 +57,15 @@ module Spectator
           end
         %}
 
-        @%wrapper : ValueWrapper?
-
-        private def %collection
+        def self.%collection
           {{collection}}
         end
 
-        private def %collection_first
+        def self.{{var_name}}
           %collection.first
         end
 
-        def {{var_name.id}}
-          @%wrapper.as(TypedValueWrapper(typeof(%collection_first))).value
-        end
-
-        {% setter = "_set_#{var_name.id}".id %}
-        private def {{setter}}(value)
-          @%wrapper = TypedValueWrapper(typeof(%collection_first)).new(value)
-        end
-
-        \{% ::Spectator::ContextDefinitions::ALL[@type.id][:given] << {name: "{{var_name}}".id, collection: "{{collection}}".id, setter: "{{setter}}".id} %}
+        \{% ::Spectator::ContextDefinitions::ALL[@type.id][:given] << {name: "{{var_name}}".id, collection: "{{collection}}".id, type_def: (@type.id + ".{{var_name}}").id} %}
 
         {{block.body}}
       end
@@ -151,23 +140,23 @@ module Spectator
       end
 
       class {{class_name.id}} < ::Spectator::Example
-        include {{parent_module}}
+        {% for given_var, i in given_vars %}
+          @%var{i} : ValueWrapper
 
-        {% if given_vars.empty? %}
-          def initialize(context)
-            super(context)
-          end
-        {% else %}
-          def initialize(context{% for v, i in var_names %}, %var{i}{% end %})
-            super(context)
-            {% for given_var, i in given_vars %}
-              {{given_var[:setter]}}(%var{i})
-            {% end %}
+          private def %var{i}
+            @%var{i}.unsafe_as(TypedValueWrapper(typeof({{given_var[:type_def]}}))).value
           end
         {% end %}
 
+        def initialize(context{% for v, i in var_names %}, %var{i}{% end %})
+          super(context)
+          {% for given_var, i in given_vars %}
+            @%var{i} = TypedValueWrapper(typeof({{given_var[:type_def]}})).new(%var{i})
+          {% end %}
+        end
+
         def run
-          Example%example.new.%run({{ var_names.join(", ").id }})
+          Example%example.new.%run({% for v, i in var_names %}%var{i}{% if i < var_names.size - 1 %}, {% end %}{% end %})
         end
 
         def description
@@ -180,20 +169,16 @@ module Spectator
       end
 
       %current_context = ::Spectator::ContextDefinitions::MAPPING[{{parent_module.stringify}}]
-      {% if given_vars.empty? %}
-        %current_context.examples << {{class_name.id}}.new(%current_context)
-      {% else %}
-        {% for given_var, i in given_vars %}
-          {%
-            var_name = given_var[:name]
-            collection = given_var[:collection]
-          %}
-          {{collection}}.each do |%var{i}|
-        {% end %}
-        %current_context.examples << {{class_name.id}}.new(%current_context {% for v, i in var_names %}, %var{i}{% end %})
-        {% for given_var in given_vars %}
-          end
-        {% end %}
+      {% for given_var, i in given_vars %}
+        {%
+          var_name = given_var[:name]
+          collection = given_var[:collection]
+        %}
+        {{collection}}.each do |%var{i}|
+      {% end %}
+      %current_context.examples << {{class_name.id}}.new(%current_context {% for v, i in var_names %}, %var{i}{% end %})
+      {% for given_var in given_vars %}
+        end
       {% end %}
     end
 
