@@ -8,22 +8,25 @@ module Spectator
     end
 
     macro context(what, type = "Context", &block)
-      {% parent_module = @type %}
-      {% safe_name = what.id.stringify.chars.map { |c| ::Spectator::ContextDefinitions::SPECIAL_CHARS[c] || c }.join("").gsub(/\W+/, "_") %}
-      {% module_name = (type.id + safe_name.camelcase).id %}
-      {% absolute_module_name = [parent_module, module_name].join("::").id %}
-      {% what_arg = what.is_a?(StringLiteral) ? what : what.stringify %}
-      {% parent_given = ::Spectator::ContextDefinitions::ALL[parent_module.id][:given] %}
-      module {{module_name.id}}
-        include ::Spectator::DSL
+      {%
+        parent_module = @type
+        safe_name = what.id.stringify.chars.map { |c| ::Spectator::ContextDefinitions::SPECIAL_CHARS[c] || c }.join("").gsub(/\W+/, "_")
+        module_name = (type.id + safe_name.camelcase).id
+        absolute_module_name = [parent_module, module_name].join("::").id
+        what_arg = what.is_a?(StringLiteral) ? what : what.stringify
+        parent_given = ::Spectator::ContextDefinitions::ALL[parent_module.id][:given]
 
-        {% ::Spectator::ContextDefinitions::ALL[absolute_module_name] = {
+        ::Spectator::ContextDefinitions::ALL[absolute_module_name] = {
           name: module_name,
           parent: parent_module,
           given: parent_given.map { |e| e } # Duplicate elements without dup method.
-        } %}
-        ::Spectator::ContextDefinitions::MAPPING[{{absolute_module_name.stringify}}] = Context.new({{what_arg}}, ::Spectator::ContextDefinitions::MAPPING[{{parent_module.stringify}}])
+        }
+      %}
 
+      ::Spectator::ContextDefinitions::MAPPING[{{absolute_module_name.stringify}}] =
+        Context.new({{what_arg}}, ::Spectator::ContextDefinitions::MAPPING[{{parent_module.stringify}}])
+
+      module {{module_name.id}}
         include {{parent_module}}
 
         {% if what.is_a?(Path) || what.is_a?(Generic) %}
@@ -46,11 +49,13 @@ module Spectator
     macro given(collection, &block)
       {% parent_module = @type %}
       context({{collection}}, "Given") do
-        {% var_name = block.args.empty? ? "value".id : block.args.first %}
-        {% given_vars = ::Spectator::ContextDefinitions::ALL[parent_module.id][:given] %}
-        {% if given_vars.find { |v| v[:name] == var_name.id } %}
-          {% raise "Duplicate given variable name \"#{var_name.id}\"" %}
-        {% end %}
+        {%
+          var_name = block.args.empty? ? "value".id : block.args.first
+          given_vars = ::Spectator::ContextDefinitions::ALL[parent_module.id][:given]
+          if given_vars.find { |v| v[:name] == var_name.id }
+            raise "Duplicate given variable name \"#{var_name.id}\""
+          end
+        %}
 
         @%wrapper : ValueWrapper?
 
@@ -128,11 +133,14 @@ module Spectator
     end
 
     macro it(description, &block)
-      {% parent_module = @type %}
-      {% safe_name = description.id.stringify.chars.map { |c| ::Spectator::ContextDefinitions::SPECIAL_CHARS[c] || c }.join("").gsub(/\W+/, "_") %}
-      {% class_name = (safe_name.camelcase + "Example").id %}
-      {% given_vars = ::Spectator::ContextDefinitions::ALL[parent_module.id][:given] %}
-      {% var_names = given_vars.map { |v| v[:name] } %}
+      {%
+        parent_module = @type
+        safe_name = description.id.stringify.chars.map { |c| ::Spectator::ContextDefinitions::SPECIAL_CHARS[c] || c }.join("").gsub(/\W+/, "_")
+        class_name = (safe_name.camelcase + "Example").id
+        given_vars = ::Spectator::ContextDefinitions::ALL[parent_module.id][:given]
+        var_names = given_vars.map { |v| v[:name] }
+      %}
+
       class Example%example
         include ExampleDSL
         include {{parent_module}}
@@ -176,8 +184,10 @@ module Spectator
         %current_context.examples << {{class_name.id}}.new(%current_context)
       {% else %}
         {% for given_var, i in given_vars %}
-          {% var_name = given_var[:name] %}
-          {% collection = given_var[:collection] %}
+          {%
+            var_name = given_var[:name]
+            collection = given_var[:collection]
+          %}
           {{collection}}.each do |%var{i}|
         {% end %}
         %current_context.examples << {{class_name.id}}.new(%current_context {% for v, i in var_names %}, %var{i}{% end %})
