@@ -50,10 +50,12 @@ module Spectator
 
     def run_after_all_hooks
       unless @after_all_hooks_run
-        @after_all_hooks.each do |hook|
-          hook.call
+        if all_examples.all?(&.finished?)
+          @after_all_hooks.each do |hook|
+            hook.call
+          end
+          @after_all_hooks_run = true
         end
-        @after_all_hooks_run = true
       end
       if (parent = @parent)
         parent.run_after_all_hooks
