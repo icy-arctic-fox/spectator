@@ -156,7 +156,14 @@ module Spectator
         end
 
         def run
-          Example%example.new.%run({% for v, i in var_names %}%var{i}{% if i < var_names.size - 1 %}, {% end %}{% end %})
+          context.run_before_all_hooks
+          context.run_before_each_hooks
+          begin
+            Example%example.new.%run({% for v, i in var_names %}%var{i}{% if i < var_names.size - 1 %}, {% end %}{% end %})
+          ensure
+            context.run_after_each_hooks
+            context.run_after_all_hooks
+          end
         end
 
         def description
