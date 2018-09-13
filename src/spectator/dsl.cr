@@ -27,9 +27,12 @@ module Spectator
         module Locals
           include {{parent_module}}::Locals
 
-          {% if what.is_a?(Path) %}
+          {% if what.is_a?(Path) || what.is_a?(Generic) %}
             def described_class
-              {{what}}
+              {{what}}.tap do |thing|
+                raise "#{thing} must be a type name to use #described_class or #subject,\
+                 but it is a #{typeof(thing)}" unless thing.is_a?(Class)
+              end
             end
 
             def subject
