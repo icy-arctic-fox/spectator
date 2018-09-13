@@ -10,8 +10,5 @@ module Spectator
       given: [] of Object
     } %}
     ::Spectator::ContextDefinitions::MAPPING[{{@type.stringify}}] = ::Spectator::Context::ROOT
-
-    module Locals
-    end
   end
 end

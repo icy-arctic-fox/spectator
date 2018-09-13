@@ -24,22 +24,20 @@ module Spectator
         } %}
         ::Spectator::ContextDefinitions::MAPPING[{{absolute_module_name.stringify}}] = Context.new({{what_arg}}, ::Spectator::ContextDefinitions::MAPPING[{{parent_module.stringify}}])
 
-        module Locals
-          include {{parent_module}}::Locals
+        include {{parent_module}}
 
-          {% if what.is_a?(Path) || what.is_a?(Generic) %}
-            def described_class
-              {{what}}.tap do |thing|
-                raise "#{thing} must be a type name to use #described_class or #subject,\
-                 but it is a #{typeof(thing)}" unless thing.is_a?(Class)
-              end
+        {% if what.is_a?(Path) || what.is_a?(Generic) %}
+          def described_class
+            {{what}}.tap do |thing|
+              raise "#{thing} must be a type name to use #described_class or #subject,\
+               but it is a #{typeof(thing)}" unless thing.is_a?(Class)
             end
+          end
 
-            def subject
-              described_class.new
-            end
-          {% end %}
-        end
+          def subject
+            described_class.new
+          end
+        {% end %}
 
         {{block.body}}
       end
@@ -54,25 +52,23 @@ module Spectator
           {% raise "Duplicate given variable name \"#{var_name.id}\"" %}
         {% end %}
 
-        module Locals
-          @%wrapper : ValueWrapper?
+        @%wrapper : ValueWrapper?
 
-          private def %collection
-            {{collection}}
-          end
+        private def %collection
+          {{collection}}
+        end
 
-          private def %collection_first
-            %collection.first
-          end
+        private def %collection_first
+          %collection.first
+        end
 
-          def {{var_name.id}}
-            @%wrapper.as(TypedValueWrapper(typeof(%collection_first))).value
-          end
+        def {{var_name.id}}
+          @%wrapper.as(TypedValueWrapper(typeof(%collection_first))).value
+        end
 
-          {% setter = "_set_#{var_name.id}".id %}
-          private def {{setter}}(value)
-            @%wrapper = TypedValueWrapper(typeof(%collection_first)).new(value)
-          end
+        {% setter = "_set_#{var_name.id}".id %}
+        private def {{setter}}(value)
+          @%wrapper = TypedValueWrapper(typeof(%collection_first)).new(value)
         end
 
         \{% ::Spectator::ContextDefinitions::ALL[@type.id][:given] << {name: "{{var_name}}".id, collection: "{{collection}}".id, setter: "{{setter}}".id} %}
@@ -88,26 +84,22 @@ module Spectator
     macro let(name, &block)
       let!(%value) {{block}}
 
-      module Locals
-        @%wrapper : ValueWrapper?
+      @%wrapper : ValueWrapper?
 
-        def {{name.id}}
-          if (wrapper = @%wrapper)
-            wrapper.as(TypedValueWrapper(typeof(%value))).value
-          else
-            %value.tap do |value|
-              @%wrapper = TypedValueWrapper(typeof(%value)).new(value)
-            end
+      def {{name.id}}
+        if (wrapper = @%wrapper)
+          wrapper.as(TypedValueWrapper(typeof(%value))).value
+        else
+          %value.tap do |value|
+            @%wrapper = TypedValueWrapper(typeof(%value)).new(value)
           end
         end
       end
     end
 
     macro let!(name, &block)
-      module Locals
-        def {{name.id}}
-          {{block.body}}
-        end
+      def {{name.id}}
+        {{block.body}}
       end
     end
 
@@ -143,7 +135,7 @@ module Spectator
       {% var_names = given_vars.map { |v| v[:name] } %}
       class Example%example
         include ExampleDSL
-        include Locals
+        include {{parent_module}}
 
         def %run({{ var_names.join(", ").id }})
           {{block.body}}
@@ -151,7 +143,7 @@ module Spectator
       end
 
       class {{class_name.id}} < ::Spectator::Example
-        include Locals
+        include {{parent_module}}
 
         {% if given_vars.empty? %}
           def initialize(context)

@@ -93,7 +93,7 @@ In no particular order, features that have been implemented and are planned:
     - [ ] Before and after hooks - `before_each`, `before_all`, `after_each`, `after_all`, `around_each`
     - [ ] One-liner syntax
     - [ ] Should syntax
-    - [ ] Helper methods and modules
+    - [X] Helper methods and modules
     - [ ] Aliasing - custom example group types with preset attributes
     - [ ] Pending tests - `pending`
     - [ ] Shared examples - `behaves_like`, `include_examples`
