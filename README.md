@@ -93,6 +93,10 @@ In no particular order, features that have been implemented and are planned:
     - [ ] Before and after hooks - `before_each`, `before_all`, `after_each`, `after_all`, `around_each`
     - [ ] One-liner syntax
     - [ ] Should syntax
+    - [ ] Helper methods and modules
+    - [ ] Aliasing - custom example group types with preset attributes
+    - [ ] Pending tests - `pending`
+    - [ ] Shared examples - `behaves_like`, `include_examples`
 - [ ] Matchers
     - [ ] Equality matchers - `eq`, `be`, `be_a`, `match`
     - [ ] Truthy matchers - `be_true`, `be_false`, `be_truthy`, `be_falsey`
@@ -103,14 +107,19 @@ In no particular order, features that have been implemented and are planned:
     - [ ] Change matchers - `change`, `from`, `to`, `by`, `by_at_least`, `by_at_most`
     - [ ] Satisfy matcher - `satisfy`
     - [ ] Yield matchers - `yield_control`, `times`, `yield_values`
+    - [ ] Expectation combining with `&` and `|`
 - [ ] Runner
     - [ ] Fail fast
-    - [ ] Test filtering
+    - [ ] Test filtering - by name, context, and tags
     - [ ] Fail on no tests
     - [ ] Randomize test order
-- [ ] Expectation combining with `&` and `|`
-- [ ] Pending tests - `pending`
-- [ ] Shared examples - `behaves_like`, `include_examples`
+    - [ ] Dry run - for validation and checking formatted output
+    - [ ] Config block in `spec_helper.cr`
+    - [ ] Config file - `.rspec`
+- [ ] Reporter and formatting
+    - [ ] RSpec/Crystal Spec default
+    - [ ] JSON
+    - [ ] JUnit
 
 ### How it Works
 
