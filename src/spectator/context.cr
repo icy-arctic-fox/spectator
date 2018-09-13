@@ -12,7 +12,7 @@ module Spectator
     getter before_each_hooks = [] of ->
     getter after_all_hooks = [] of ->
     getter after_each_hooks = [] of ->
-    getter around_each_hooks = [] of Example ->
+    getter around_each_hooks = [] of Proc(Nil) ->
 
     @before_all_hooks_run = false
     @after_all_hooks_run = false
@@ -69,6 +69,21 @@ module Spectator
       if (parent = @parent)
         parent.run_after_each_hooks
       end
+    end
+
+    def wrap_around_each_hooks(&block : ->)
+      wrapper = block
+      @around_each_hooks.reverse_each do |hook|
+        wrapper = wrap_proc(hook, wrapper)
+      end
+      if (parent = @parent)
+        wrapper = parent.wrap_around_each_hooks(&wrapper)
+      end
+      wrapper
+    end
+
+    private def wrap_proc(inner : Proc(Nil) ->, wrapper : ->)
+      -> { inner.call(wrapper) }
     end
 
     protected def add_examples(array = [] of Example)

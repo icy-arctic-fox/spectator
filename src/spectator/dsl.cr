@@ -114,7 +114,7 @@ module Spectator
     end
 
     macro around_each(&block)
-      ::Spectator::ContextDefinitions::MAPPING[{{@type.stringify}}].around_each_hooks << -> {{block}}
+      ::Spectator::ContextDefinitions::MAPPING[{{@type.stringify}}].around_each_hooks << Proc(Proc(Nil), Nil).new {{block}}
     end
 
     def include_examples
@@ -159,7 +159,10 @@ module Spectator
           context.run_before_all_hooks
           context.run_before_each_hooks
           begin
-            Example%example.new.%run({% for v, i in var_names %}%var{i}{% if i < var_names.size - 1 %}, {% end %}{% end %})
+            wrapper = context.wrap_around_each_hooks do
+              Example%example.new.%run({% for v, i in var_names %}%var{i}{% if i < var_names.size - 1 %}, {% end %}{% end %})
+            end
+            wrapper.call
           ensure
             @finished = true
             context.run_after_each_hooks
