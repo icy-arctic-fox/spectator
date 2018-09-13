@@ -31,6 +31,10 @@ module Spectator
             def described_class
               {{what}}
             end
+
+            def subject
+              described_class.new
+            end
           {% end %}
         end
 
