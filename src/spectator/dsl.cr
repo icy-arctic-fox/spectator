@@ -82,7 +82,7 @@ module Spectator
 
       def {{name.id}}
         if (wrapper = @%wrapper)
-          wrapper.as(TypedValueWrapper(typeof(%value))).value
+          wrapper.unsafe_as(TypedValueWrapper(typeof(%value))).value
         else
           %value.tap do |value|
             @%wrapper = TypedValueWrapper(typeof(%value)).new(value)
