@@ -1,5 +1,3 @@
-require "./source"
-
 module Spectator
   abstract class Example
     getter group : ExampleGroup
