@@ -13,6 +13,6 @@ module Spectator
   end
 
   at_exit do
-    Runner.new(Context::ROOT).run
+    Runner.new(ExampleGroup::ROOT).run
   end
 end

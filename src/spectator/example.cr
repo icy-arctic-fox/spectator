@@ -2,10 +2,10 @@ require "./source"
 
 module Spectator
   abstract class Example
-    getter context : Context
+    getter group : ExampleGroup
     getter? finished = false
 
-    def initialize(@context)
+    def initialize(@group)
     end
 
     abstract def run : ExampleResult

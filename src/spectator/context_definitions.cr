@@ -1,7 +1,7 @@
 module Spectator
   module ContextDefinitions
     ALL = {} of Path => Object
-    MAPPING = {} of String => Context
+    MAPPING = {} of String => ExampleGroup
 
     SPECIAL_CHARS = {
       '~' => "Tilde",

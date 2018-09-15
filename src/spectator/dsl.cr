@@ -24,7 +24,7 @@ module Spectator
       %}
 
       ::Spectator::ContextDefinitions::MAPPING[{{absolute_module_name.stringify}}] =
-        Context.new({{what_arg}}, ::Spectator::ContextDefinitions::MAPPING[{{parent_module.stringify}}])
+        ExampleGroup.new({{what_arg}}, ::Spectator::ContextDefinitions::MAPPING[{{parent_module.stringify}}])
 
       module {{module_name.id}}
         include {{parent_module}}

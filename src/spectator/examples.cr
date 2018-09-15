@@ -9,6 +9,6 @@ module Spectator
       parent: nil,
       given: [] of Object
     } %}
-    ::Spectator::ContextDefinitions::MAPPING[{{@type.stringify}}] = ::Spectator::Context::ROOT
+    ::Spectator::ContextDefinitions::MAPPING[{{@type.stringify}}] = ::Spectator::ExampleGroup::ROOT
   end
 end

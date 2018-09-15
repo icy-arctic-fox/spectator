@@ -3,7 +3,7 @@ require "./successful_example_result"
 
 module Spectator
   class Runner
-    def initialize(@context : Context,
+    def initialize(@group : ExampleGroup,
       @reporter : Reporters::Reporter = Reporters::StandardReporter.new)
     end
 
@@ -11,7 +11,7 @@ module Spectator
       results = [] of ExampleResult
       elapsed = Time.measure do
         @reporter.start_suite
-        results = @context.all_examples.map do |example|
+        results = @group.all_examples.map do |example|
           @reporter.start_example(example)
           example.run.tap do |result|
             @reporter.end_example(result)

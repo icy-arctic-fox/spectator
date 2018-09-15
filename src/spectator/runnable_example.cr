@@ -5,20 +5,20 @@ module Spectator
 
     def run
       result = ResultCapture.new
-      context.run_before_all_hooks
-      context.run_before_each_hooks
+      group.run_before_all_hooks
+      group.run_before_each_hooks
       begin
         wrapped_capture_result(result).call
       ensure
         @finished = true
-        context.run_after_each_hooks
-        context.run_after_all_hooks
+        group.run_after_each_hooks
+        group.run_after_all_hooks
       end
       translate_result(result)
     end
 
     private def wrapped_capture_result(result)
-      context.wrap_around_each_hooks do
+      group.wrap_around_each_hooks do
         capture_result(result)
       end
     end
