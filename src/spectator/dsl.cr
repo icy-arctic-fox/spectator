@@ -139,7 +139,7 @@ module Spectator
         end
       end
 
-      class {{class_name.id}} < ::Spectator::Example
+      class {{class_name.id}} < ::Spectator::RunnableExample
         {% for given_var, i in given_vars %}
           @%var{i} : ValueWrapper
 
@@ -155,19 +155,8 @@ module Spectator
           {% end %}
         end
 
-        def run
-          context.run_before_all_hooks
-          context.run_before_each_hooks
-          begin
-            wrapper = context.wrap_around_each_hooks do
-              Example%example.new.%run({% for v, i in var_names %}%var{i}{% if i < var_names.size - 1 %}, {% end %}{% end %})
-            end
-            wrapper.call
-          ensure
-            @finished = true
-            context.run_after_each_hooks
-            context.run_after_all_hooks
-          end
+        protected def run_instance
+          Example%example.new.%run({% for v, i in var_names %}%var{i}{% if i < var_names.size - 1 %}, {% end %}{% end %})
         end
 
         def description

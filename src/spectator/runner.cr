@@ -13,32 +13,13 @@ module Spectator
         @reporter.start_suite
         results = @context.all_examples.map do |example|
           @reporter.start_example(example)
-          run_example(example).tap do |result|
+          example.run.tap do |result|
             @reporter.end_example(result)
           end
         end
       end
       report = Report.new(results, elapsed)
       @reporter.end_suite(report)
-    end
-
-    private def run_example(example)
-      error = nil
-      elapsed = Time.measure do
-        begin
-          example.run
-        rescue ex
-          error = ex
-        end
-      end
-      case error
-      when Nil
-        SuccessfulExampleResult.new(example, elapsed)
-      when ExpectationFailedError
-        FailedExampleResult.new(example, elapsed, error)
-      else
-        ErroredExampleResult.new(example, elapsed, error)
-      end
     end
   end
 end

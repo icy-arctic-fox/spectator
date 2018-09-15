@@ -8,7 +8,7 @@ module Spectator
     def initialize(@context)
     end
 
-    abstract def run : Nil
+    abstract def run : ExampleResult
     abstract def description : String
   end
 end
