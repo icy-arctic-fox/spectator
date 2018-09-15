@@ -12,7 +12,7 @@ module Spectator
       SUCCESS_CHAR = '.'.colorize(SUCCESS_COLOR)
       FAILURE_CHAR = 'F'.colorize(FAILURE_COLOR)
       ERROR_CHAR   = 'E'.colorize(ERROR_COLOR)
-      PENDING_CHAR = 'P'.colorize(PENDING_COLOR)
+      PENDING_CHAR = '*'.colorize(PENDING_COLOR)
 
       def start_suite
       end
