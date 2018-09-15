@@ -18,6 +18,8 @@ module Spectator
         print case result
         when SuccessfulExampleResult
           ".".colorize.green
+        when PendingExampleResult
+          "P".colorize.yellow
         when ErroredExampleResult
           "E".colorize.magenta
         when FailedExampleResult

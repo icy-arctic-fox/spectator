@@ -182,6 +182,63 @@ module Spectator
       {% end %}
     end
 
+    macro pending(description, &block)
+      {%
+        parent_module = @type
+        safe_name = description.id.stringify.chars.map { |c| ::Spectator::ContextDefinitions::SPECIAL_CHARS[c] || c }.join("").gsub(/\W+/, "_")
+        class_name = (safe_name.camelcase + "Example").id
+        given_vars = ::Spectator::ContextDefinitions::ALL[parent_module.id][:given]
+        var_names = given_vars.map { |v| v[:name] }
+      %}
+
+      class Example%example
+        include ExampleDSL
+        include {{parent_module}}
+
+        def %run({{ var_names.join(", ").id }})
+          {{block.body}}
+        end
+      end
+
+      class {{class_name.id}} < ::Spectator::PendingExample
+        {% for given_var, i in given_vars %}
+          @%var{i} : ValueWrapper
+
+          private def %var{i}
+            @%var{i}.unsafe_as(TypedValueWrapper(typeof({{given_var[:type_def]}}))).value
+          end
+        {% end %}
+
+        def initialize(context{% for v, i in var_names %}, %var{i}{% end %})
+          super(context)
+          {% for given_var, i in given_vars %}
+            @%var{i} = TypedValueWrapper(typeof({{given_var[:type_def]}})).new(%var{i})
+          {% end %}
+        end
+
+        def description
+          {% if description.is_a?(StringLiteral) %}
+            {{description}}
+          {% else %}
+            {{description.stringify}}
+          {% end %}
+        end
+      end
+
+      %current_context = ::Spectator::ContextDefinitions::MAPPING[{{parent_module.stringify}}]
+      {% for given_var, i in given_vars %}
+        {%
+          var_name = given_var[:name]
+          collection = given_var[:collection]
+        %}
+        {{collection}}.each do |%var{i}|
+      {% end %}
+      %current_context.examples << {{class_name.id}}.new(%current_context {% for v, i in var_names %}, %var{i}{% end %})
+      {% for given_var in given_vars %}
+        end
+      {% end %}
+    end
+
     def it_behaves_like
       raise NotImplementedError.new("Spectator::DSL#it_behaves_like")
     end

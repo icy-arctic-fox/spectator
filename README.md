@@ -95,7 +95,7 @@ In no particular order, features that have been implemented and are planned:
     - [ ] Should syntax
     - [X] Helper methods and modules
     - [ ] Aliasing - custom example group types with preset attributes
-    - [ ] Pending tests - `pending`
+    - [X] Pending tests - `pending`
     - [ ] Shared examples - `behaves_like`, `include_examples`
 - [ ] Matchers
     - [ ] Equality matchers - `eq`, `be`, `be_a`, `match`
