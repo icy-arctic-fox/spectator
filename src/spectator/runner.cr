@@ -15,8 +15,7 @@ module Spectator
           end
         end
       end
-      report = Report.new(results, elapsed)
-      @formatter.end_suite(report)
+      @formatter.end_suite(TestResults.new(results, elapsed))
     end
   end
 end

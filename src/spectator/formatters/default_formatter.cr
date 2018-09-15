@@ -7,7 +7,7 @@ module Spectator
       def start_suite
       end
 
-      def end_suite(report : Report)
+      def end_suite(results : TestResults)
         puts
       end
 

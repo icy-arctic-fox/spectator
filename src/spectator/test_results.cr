@@ -1,5 +1,5 @@
 module Spectator
-  class Report
+  class TestResults
     getter runtime : Time::Span
 
     @results : Array(Result)
