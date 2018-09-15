@@ -4,6 +4,10 @@ module Spectator
       macro is_expected
         expect(subject)
       end
+
+      def expect(actual : T) forall T
+        ::Spectator::Expectation.new(actual)
+      end
     end
   end
 end

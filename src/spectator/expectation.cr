@@ -1,9 +1,5 @@
 require "./matchers/matcher"
 
-def expect(actual : T) forall T
-  Spectator::Expectation.new(actual)
-end
-
 module Spectator
   class Expectation(T)
     getter actual : T
