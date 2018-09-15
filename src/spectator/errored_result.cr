@@ -4,7 +4,7 @@ module Spectator
   class ErroredResult < FailedResult
     getter error : Exception
 
-    def errored? : Bool
+    def errored?
       true
     end
   end

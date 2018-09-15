@@ -4,7 +4,19 @@ module Spectator
   class FailedResult < Result
     getter error : Exception
 
-    def passed? : Bool
+    def passed?
+      false
+    end
+
+    def failed?
+      true
+    end
+
+    def errored?
+      false
+    end
+
+    def pending?
       false
     end
 
