@@ -8,7 +8,8 @@ module Spectator
     {% ::Spectator::Definitions::ALL[@type.id] = {
       name: "ROOT",
       parent: nil,
-      given: [] of Object
+      given: [] of Object,
+      children: [] of Object
     } %}
     ::Spectator::Definitions::MAPPING[{{@type.stringify}}] = ::Spectator::ExampleGroup::ROOT
   end

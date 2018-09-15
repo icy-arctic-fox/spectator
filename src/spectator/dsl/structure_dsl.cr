@@ -15,12 +15,14 @@ module Spectator
           module_name = (type.id + safe_name.camelcase).id
           absolute_module_name = [parent_module, module_name].join("::").id
           what_arg = what.is_a?(StringLiteral) ? what : what.stringify
-          parent_given = ::Spectator::Definitions::ALL[parent_module.id][:given]
+          parent_def = ::Spectator::Definitions::ALL[parent_module.id]
+          parent_def[:children] << absolute_module_name
 
           ::Spectator::Definitions::ALL[absolute_module_name] = {
             name: module_name,
             parent: parent_module,
-            given: parent_given.map { |e| e } # Duplicate elements without dup method.
+            given: parent_def[:given].map { |e| e }, # Duplicate elements without dup method.
+            children: [] of Object
           }
         %}
 
@@ -127,8 +129,11 @@ module Spectator
           parent_module = @type
           safe_name = description.id.stringify.chars.map { |c| ::Spectator::Definitions::SPECIAL_CHARS[c] || c }.join("").gsub(/\W+/, "_")
           class_name = (safe_name.camelcase + "Example").id
-          given_vars = ::Spectator::Definitions::ALL[parent_module.id][:given]
+          absolute_class_name = [parent_module.id, class_name].join("::").id
+          parent_def = ::Spectator::Definitions::ALL[parent_module.id]
+          given_vars = parent_def[:given]
           var_names = given_vars.map { |v| v[:name] }
+          parent_def[:children] << absolute_class_name
         %}
 
         class Example%example
@@ -188,8 +193,11 @@ module Spectator
           parent_module = @type
           safe_name = description.id.stringify.chars.map { |c| ::Spectator::Definitions::SPECIAL_CHARS[c] || c }.join("").gsub(/\W+/, "_")
           class_name = (safe_name.camelcase + "Example").id
-          given_vars = ::Spectator::Definitions::ALL[parent_module.id][:given]
+          absolute_class_name = [parent_module.id, class_name].join("::").id
+          parent_def = ::Spectator::Definitions::ALL[parent_module.id]
+          given_vars = parent_def[:given]
           var_names = given_vars.map { |v| v[:name] }
+          parent_def[:children] << absolute_class_name
         %}
 
         class Example%example
