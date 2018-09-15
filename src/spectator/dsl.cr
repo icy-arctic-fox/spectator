@@ -148,8 +148,8 @@ module Spectator
           end
         {% end %}
 
-        def initialize(context{% for v, i in var_names %}, %var{i}{% end %})
-          super(context)
+        def initialize(group{% for v, i in var_names %}, %var{i}{% end %})
+          super(group)
           {% for given_var, i in given_vars %}
             @%var{i} = TypedValueWrapper(typeof({{given_var[:type_def]}})).new(%var{i})
           {% end %}
@@ -168,7 +168,7 @@ module Spectator
         end
       end
 
-      %current_context = ::Spectator::GroupDefinitions::MAPPING[{{parent_module.stringify}}]
+      %current_group = ::Spectator::GroupDefinitions::MAPPING[{{parent_module.stringify}}]
       {% for given_var, i in given_vars %}
         {%
           var_name = given_var[:name]
@@ -176,7 +176,7 @@ module Spectator
         %}
         {{collection}}.each do |%var{i}|
       {% end %}
-      %current_context.examples << {{class_name.id}}.new(%current_context {% for v, i in var_names %}, %var{i}{% end %})
+      %current_group.examples << {{class_name.id}}.new(%current_group {% for v, i in var_names %}, %var{i}{% end %})
       {% for given_var in given_vars %}
         end
       {% end %}
@@ -209,8 +209,8 @@ module Spectator
           end
         {% end %}
 
-        def initialize(context{% for v, i in var_names %}, %var{i}{% end %})
-          super(context)
+        def initialize(group{% for v, i in var_names %}, %var{i}{% end %})
+          super(group)
           {% for given_var, i in given_vars %}
             @%var{i} = TypedValueWrapper(typeof({{given_var[:type_def]}})).new(%var{i})
           {% end %}
@@ -225,7 +225,7 @@ module Spectator
         end
       end
 
-      %current_context = ::Spectator::GroupDefinitions::MAPPING[{{parent_module.stringify}}]
+      %current_group = ::Spectator::GroupDefinitions::MAPPING[{{parent_module.stringify}}]
       {% for given_var, i in given_vars %}
         {%
           var_name = given_var[:name]
@@ -233,7 +233,7 @@ module Spectator
         %}
         {{collection}}.each do |%var{i}|
       {% end %}
-      %current_context.examples << {{class_name.id}}.new(%current_context {% for v, i in var_names %}, %var{i}{% end %})
+      %current_group.examples << {{class_name.id}}.new(%current_group {% for v, i in var_names %}, %var{i}{% end %})
       {% for given_var in given_vars %}
         end
       {% end %}
