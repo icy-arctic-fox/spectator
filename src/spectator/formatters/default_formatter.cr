@@ -3,7 +3,7 @@ require "colorize"
 
 module Spectator
   module Formatters
-    class StandardFormatter < Formatter
+    class DefaultFormatter < Formatter
       def start_suite
       end
 
