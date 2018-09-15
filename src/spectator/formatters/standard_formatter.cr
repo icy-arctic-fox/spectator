@@ -1,9 +1,9 @@
-require "./reporter"
+require "./formatter"
 require "colorize"
 
 module Spectator
-  module Reporters
-    class StandardReporter < Reporter
+  module Formatters
+    class StandardFormatter < Formatter
       def start_suite
       end
 

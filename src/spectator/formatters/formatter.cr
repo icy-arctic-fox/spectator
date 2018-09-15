@@ -1,6 +1,6 @@
 module Spectator
-  module Reporters
-    abstract class Reporter
+  module Formatters
+    abstract class Formatter
       abstract def start_suite
       abstract def end_suite(report : Report)
       abstract def start_example(example : Example)

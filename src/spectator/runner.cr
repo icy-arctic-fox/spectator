@@ -4,22 +4,22 @@ require "./successful_example_result"
 module Spectator
   class Runner
     def initialize(@group : ExampleGroup,
-      @reporter : Reporters::Reporter = Reporters::StandardReporter.new)
+      @formatter : Formatters::Formatter = Formatters::StandardFormatter.new)
     end
 
     def run : Nil
       results = [] of ExampleResult
       elapsed = Time.measure do
-        @reporter.start_suite
+        @formatter.start_suite
         results = @group.all_examples.map do |example|
-          @reporter.start_example(example)
+          @formatter.start_example(example)
           example.run.tap do |result|
-            @reporter.end_example(result)
+            @formatter.end_example(result)
           end
         end
       end
       report = Report.new(results, elapsed)
-      @reporter.end_suite(report)
+      @formatter.end_suite(report)
     end
   end
 end
