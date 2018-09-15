@@ -90,7 +90,7 @@ In no particular order, features that have been implemented and are planned:
     - [X] `describe` and `context` blocks
     - [X] Contextual values with `let`, `let!`, `subject`, `described_class`
     - [X] Test multiple and generated values - `given`
-    - [ ] Before and after hooks - `before_each`, `before_all`, `after_each`, `after_all`, `around_each`
+    - [X] Before and after hooks - `before_each`, `before_all`, `after_each`, `after_all`, `around_each`
     - [ ] One-liner syntax
     - [ ] Should syntax
     - [X] Helper methods and modules
