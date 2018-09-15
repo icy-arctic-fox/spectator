@@ -4,6 +4,16 @@ require "colorize"
 module Spectator
   module Formatters
     class DefaultFormatter < Formatter
+      SUCCESS_COLOR = :green
+      FAILURE_COLOR = :red
+      ERROR_COLOR   = :magenta
+      PENDING_COLOR = :yellow
+
+      SUCCESS_CHAR = '.'.colorize(SUCCESS_COLOR)
+      FAILURE_CHAR = 'F'.colorize(FAILURE_COLOR)
+      ERROR_CHAR   = 'E'.colorize(ERROR_COLOR)
+      PENDING_CHAR = 'P'.colorize(PENDING_COLOR)
+
       def start_suite
       end
 
@@ -18,15 +28,19 @@ module Spectator
       end
 
       def end_example(result : Result)
-        print case result
+        print result_char(result)
+      end
+
+      private def result_char(result : Result)
+        case result
         when SuccessfulResult
-          ".".colorize.green
+          SUCCESS_CHAR
         when PendingResult
-          "P".colorize.yellow
+          PENDING_CHAR
         when ErroredResult
-          "E".colorize.magenta
+          ERROR_CHAR
         when FailedResult
-          "F".colorize.red
+          FAILURE_CHAR
         end
       end
 
@@ -41,11 +55,11 @@ module Spectator
         pending = results.pending_examples
         string = "#{examples} examples, #{failures} failures, #{errors} errors, #{pending} pending"
         if failures > 0 || errors > 0
-          string.colorize.red
+          string.colorize(FAILURE_COLOR)
         elsif pending != examples
-          string.colorize.yellow
+          string.colorize(PENDING_COLOR)
         else
-          string.colorize.green
+          string.colorize(SUCCESS_COLOR)
         end
       end
 
