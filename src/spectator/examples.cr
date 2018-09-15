@@ -1,15 +1,15 @@
 require "./dsl"
-require "./group_definitions"
+require "./definitions"
 
 module Spectator
   module Examples
     include ::Spectator::DSL::StructureDSL
 
-    {% ::Spectator::GroupDefinitions::ALL[@type.id] = {
+    {% ::Spectator::Definitions::ALL[@type.id] = {
       name: "ROOT",
       parent: nil,
       given: [] of Object
     } %}
-    ::Spectator::GroupDefinitions::MAPPING[{{@type.stringify}}] = ::Spectator::ExampleGroup::ROOT
+    ::Spectator::Definitions::MAPPING[{{@type.stringify}}] = ::Spectator::ExampleGroup::ROOT
   end
 end

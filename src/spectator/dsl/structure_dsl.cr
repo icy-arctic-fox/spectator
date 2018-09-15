@@ -11,21 +11,21 @@ module Spectator
       macro context(what, type = "Context", &block)
         {%
           parent_module = @type
-          safe_name = what.id.stringify.chars.map { |c| ::Spectator::GroupDefinitions::SPECIAL_CHARS[c] || c }.join("").gsub(/\W+/, "_")
+          safe_name = what.id.stringify.chars.map { |c| ::Spectator::Definitions::SPECIAL_CHARS[c] || c }.join("").gsub(/\W+/, "_")
           module_name = (type.id + safe_name.camelcase).id
           absolute_module_name = [parent_module, module_name].join("::").id
           what_arg = what.is_a?(StringLiteral) ? what : what.stringify
-          parent_given = ::Spectator::GroupDefinitions::ALL[parent_module.id][:given]
+          parent_given = ::Spectator::Definitions::ALL[parent_module.id][:given]
 
-          ::Spectator::GroupDefinitions::ALL[absolute_module_name] = {
+          ::Spectator::Definitions::ALL[absolute_module_name] = {
             name: module_name,
             parent: parent_module,
             given: parent_given.map { |e| e } # Duplicate elements without dup method.
           }
         %}
 
-        ::Spectator::GroupDefinitions::MAPPING[{{absolute_module_name.stringify}}] =
-          ExampleGroup.new({{what_arg}}, ::Spectator::GroupDefinitions::MAPPING[{{parent_module.stringify}}])
+        ::Spectator::Definitions::MAPPING[{{absolute_module_name.stringify}}] =
+          ExampleGroup.new({{what_arg}}, ::Spectator::Definitions::MAPPING[{{parent_module.stringify}}])
 
         module {{module_name.id}}
           include {{parent_module}}
@@ -52,7 +52,7 @@ module Spectator
         context({{collection}}, "Given") do
           {%
             var_name = block.args.empty? ? "value".id : block.args.first
-            given_vars = ::Spectator::GroupDefinitions::ALL[parent_module.id][:given]
+            given_vars = ::Spectator::Definitions::ALL[parent_module.id][:given]
             if given_vars.find { |v| v[:name] == var_name.id }
               raise "Duplicate given variable name \"#{var_name.id}\""
             end
@@ -66,7 +66,7 @@ module Spectator
             %collection.first
           end
 
-          \{% ::Spectator::GroupDefinitions::ALL[@type.id][:given] << {name: "{{var_name}}".id, collection: "{{collection}}".id, type_def: (@type.id + ".{{var_name}}").id} %}
+          \{% ::Spectator::Definitions::ALL[@type.id][:given] << {name: "{{var_name}}".id, collection: "{{collection}}".id, type_def: (@type.id + ".{{var_name}}").id} %}
 
           {{block.body}}
         end
@@ -99,23 +99,23 @@ module Spectator
       end
 
       macro before_all(&block)
-        ::Spectator::GroupDefinitions::MAPPING[{{@type.stringify}}].before_all_hooks << -> {{block}}
+        ::Spectator::Definitions::MAPPING[{{@type.stringify}}].before_all_hooks << -> {{block}}
       end
 
       macro before_each(&block)
-        ::Spectator::GroupDefinitions::MAPPING[{{@type.stringify}}].before_each_hooks << -> {{block}}
+        ::Spectator::Definitions::MAPPING[{{@type.stringify}}].before_each_hooks << -> {{block}}
       end
 
       macro after_all(&block)
-        ::Spectator::GroupDefinitions::MAPPING[{{@type.stringify}}].after_all_hooks << -> {{block}}
+        ::Spectator::Definitions::MAPPING[{{@type.stringify}}].after_all_hooks << -> {{block}}
       end
 
       macro after_each(&block)
-        ::Spectator::GroupDefinitions::MAPPING[{{@type.stringify}}].after_each_hooks << -> {{block}}
+        ::Spectator::Definitions::MAPPING[{{@type.stringify}}].after_each_hooks << -> {{block}}
       end
 
       macro around_each(&block)
-        ::Spectator::GroupDefinitions::MAPPING[{{@type.stringify}}].around_each_hooks << Proc(Proc(Nil), Nil).new {{block}}
+        ::Spectator::Definitions::MAPPING[{{@type.stringify}}].around_each_hooks << Proc(Proc(Nil), Nil).new {{block}}
       end
 
       def include_examples
@@ -125,9 +125,9 @@ module Spectator
       macro it(description, &block)
         {%
           parent_module = @type
-          safe_name = description.id.stringify.chars.map { |c| ::Spectator::GroupDefinitions::SPECIAL_CHARS[c] || c }.join("").gsub(/\W+/, "_")
+          safe_name = description.id.stringify.chars.map { |c| ::Spectator::Definitions::SPECIAL_CHARS[c] || c }.join("").gsub(/\W+/, "_")
           class_name = (safe_name.camelcase + "Example").id
-          given_vars = ::Spectator::GroupDefinitions::ALL[parent_module.id][:given]
+          given_vars = ::Spectator::Definitions::ALL[parent_module.id][:given]
           var_names = given_vars.map { |v| v[:name] }
         %}
 
@@ -169,7 +169,7 @@ module Spectator
           end
         end
 
-        %current_group = ::Spectator::GroupDefinitions::MAPPING[{{parent_module.stringify}}]
+        %current_group = ::Spectator::Definitions::MAPPING[{{parent_module.stringify}}]
         {% for given_var, i in given_vars %}
           {%
             var_name = given_var[:name]
@@ -186,9 +186,9 @@ module Spectator
       macro pending(description, &block)
         {%
           parent_module = @type
-          safe_name = description.id.stringify.chars.map { |c| ::Spectator::GroupDefinitions::SPECIAL_CHARS[c] || c }.join("").gsub(/\W+/, "_")
+          safe_name = description.id.stringify.chars.map { |c| ::Spectator::Definitions::SPECIAL_CHARS[c] || c }.join("").gsub(/\W+/, "_")
           class_name = (safe_name.camelcase + "Example").id
-          given_vars = ::Spectator::GroupDefinitions::ALL[parent_module.id][:given]
+          given_vars = ::Spectator::Definitions::ALL[parent_module.id][:given]
           var_names = given_vars.map { |v| v[:name] }
         %}
 
@@ -226,7 +226,7 @@ module Spectator
           end
         end
 
-        %current_group = ::Spectator::GroupDefinitions::MAPPING[{{parent_module.stringify}}]
+        %current_group = ::Spectator::Definitions::MAPPING[{{parent_module.stringify}}]
         {% for given_var, i in given_vars %}
           {%
             var_name = given_var[:name]
