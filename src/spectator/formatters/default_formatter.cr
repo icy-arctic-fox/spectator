@@ -9,6 +9,9 @@ module Spectator
 
       def end_suite(results : TestResults)
         puts
+        puts
+        puts finish_time_string(results)
+        puts result_string(results)
       end
 
       def start_example(example : Example)
@@ -25,6 +28,22 @@ module Spectator
         when FailedResult
           "F".colorize.red
         end
+      end
+
+      private def finish_time_string(results)
+        "Finished in #{human_time(results.runtime)}"
+      end
+
+      private def result_string(results)
+        examples = results.examples
+        failures = results.failed_examples
+        errors = results.errored_examples
+        pending = results.pending_examples
+        "#{examples} examples, #{failures} failures, #{errors} errors, #{pending} pending"
+      end
+
+      private def human_time(span : Time::Span)
+        span.to_s
       end
     end
   end

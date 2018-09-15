@@ -8,12 +8,24 @@ module Spectator
       @results = results.to_a
     end
 
+    def examples
+      @results.size
+    end
+
     def successful_examples
-      @results.select { |result| result.successful? }
+      @results.count(&.successful?)
     end
 
     def failed_examples
-      @results.select { |result| result.failed? }
+      @results.count(&.failed?)
+    end
+
+    def errored_examples
+      @results.count(&.errored?)
+    end
+
+    def pending_examples
+      @results.count(&.pending?)
     end
 
     def example_runtime
