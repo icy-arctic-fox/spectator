@@ -19,7 +19,7 @@ module Spectator
     end
 
     def initialize(@example)
-      super(@example, Time::Span.new(nanoseconds: 0))
+      super(@example, Time::Span.zero)
     end
   end
 end

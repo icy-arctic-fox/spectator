@@ -47,7 +47,7 @@ module Spectator
     protected abstract def run_instance
 
     private class ResultCapture
-      property elapsed = Time::Span.new(nanoseconds: 0)
+      property elapsed = Time::Span.zero
       property error : Exception?
     end
   end
