@@ -1,5 +1,5 @@
 module Spectator
-  module ContextDefinitions
+  module GroupDefinitions
     ALL = {} of Path => Object
     MAPPING = {} of String => ExampleGroup
 
