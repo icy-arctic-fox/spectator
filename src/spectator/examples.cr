@@ -3,7 +3,7 @@ require "./group_definitions"
 
 module Spectator
   module Examples
-    include ::Spectator::DSL
+    include ::Spectator::DSL::StructureDSL
 
     {% ::Spectator::GroupDefinitions::ALL[@type.id] = {
       name: "ROOT",

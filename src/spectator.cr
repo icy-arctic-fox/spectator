@@ -7,7 +7,7 @@ module Spectator
   macro describe(what, source_file = __FILE__, source_line = __LINE__, &block)
     module Spectator
       module Examples
-        DSL.describe({{what}}) {{block}}
+        DSL::StructureDSL.describe({{what}}) {{block}}
       end
     end
   end
