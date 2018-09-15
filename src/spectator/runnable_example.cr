@@ -37,7 +37,7 @@ module Spectator
       case (error = result.error)
       when Nil
         SuccessfulExampleResult.new(self, result.elapsed)
-      when ExpectationFailedError
+      when ExpectationFailed
         FailedExampleResult.new(self, result.elapsed, error)
       else
         ErroredExampleResult.new(self, result.elapsed, error)

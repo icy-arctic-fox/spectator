@@ -13,13 +13,13 @@ module Spectator
 
     def to(matcher : Matchers::Matcher)
       unless matcher.match?(self)
-        raise ExpectationFailedError.new
+        raise ExpectationFailed.new
       end
     end
 
     def to_not(matcher : Matchers::Matcher)
       if matcher.match?(self)
-        raise ExpectationFailedError.new
+        raise ExpectationFailed.new
       end
     end
 
