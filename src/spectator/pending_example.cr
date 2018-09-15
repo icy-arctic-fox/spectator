@@ -3,7 +3,7 @@ require "./example"
 module Spectator
   abstract class PendingExample < Example
     def run
-      PendingExampleResult.new(self)
+      PendingResult.new(self)
     end
   end
 end

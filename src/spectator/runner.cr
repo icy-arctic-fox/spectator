@@ -1,6 +1,3 @@
-require "./failed_example_result"
-require "./successful_example_result"
-
 module Spectator
   class Runner
     def initialize(@group : ExampleGroup,
@@ -8,7 +5,7 @@ module Spectator
     end
 
     def run : Nil
-      results = [] of ExampleResult
+      results = [] of Result
       elapsed = Time.measure do
         @formatter.start_suite
         results = @group.all_examples.map do |example|

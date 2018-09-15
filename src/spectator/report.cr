@@ -2,9 +2,9 @@ module Spectator
   class Report
     getter runtime : Time::Span
 
-    @results : Array(ExampleResult)
+    @results : Array(Result)
 
-    def initialize(results : Enumerable(ExampleResult), @runtime)
+    def initialize(results : Enumerable(Result), @runtime)
       @results = results.to_a
     end
 

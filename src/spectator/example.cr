@@ -6,7 +6,7 @@ module Spectator
     def initialize(@group)
     end
 
-    abstract def run : ExampleResult
+    abstract def run : Result
     abstract def description : String
   end
 end

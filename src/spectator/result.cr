@@ -1,5 +1,5 @@
 module Spectator
-  abstract class ExampleResult
+  abstract class Result
     getter example : Example
     getter elapsed : Time::Span
 

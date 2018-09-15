@@ -1,7 +1,7 @@
-require "./failed_example_result"
+require "./failed_result"
 
 module Spectator
-  class ErroredExampleResult < FailedExampleResult
+  class ErroredResult < FailedResult
     getter error : Exception
 
     def errored? : Bool

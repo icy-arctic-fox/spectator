@@ -14,15 +14,15 @@ module Spectator
       def start_example(example : Example)
       end
 
-      def end_example(result : ExampleResult)
+      def end_example(result : Result)
         print case result
-        when SuccessfulExampleResult
+        when SuccessfulResult
           ".".colorize.green
-        when PendingExampleResult
+        when PendingResult
           "P".colorize.yellow
-        when ErroredExampleResult
+        when ErroredResult
           "E".colorize.magenta
-        when FailedExampleResult
+        when FailedResult
           "F".colorize.red
         end
       end

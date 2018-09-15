@@ -36,11 +36,11 @@ module Spectator
     private def translate_result(result)
       case (error = result.error)
       when Nil
-        SuccessfulExampleResult.new(self, result.elapsed)
+        SuccessfulResult.new(self, result.elapsed)
       when ExpectationFailed
-        FailedExampleResult.new(self, result.elapsed, error)
+        FailedResult.new(self, result.elapsed, error)
       else
-        ErroredExampleResult.new(self, result.elapsed, error)
+        ErroredResult.new(self, result.elapsed, error)
       end
     end
 

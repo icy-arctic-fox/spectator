@@ -1,7 +1,7 @@
-require "./example_result"
+require "./result"
 
 module Spectator
-  class FailedExampleResult < ExampleResult
+  class FailedResult < Result
     getter error : Exception
 
     def passed? : Bool

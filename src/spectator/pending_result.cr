@@ -1,7 +1,7 @@
-require "./example_result"
+require "./result"
 
 module Spectator
-  class PendingExampleResult < ExampleResult
+  class PendingResult < Result
     def passed?
       false
     end
