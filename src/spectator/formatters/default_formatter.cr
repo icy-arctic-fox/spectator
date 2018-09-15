@@ -39,7 +39,14 @@ module Spectator
         failures = results.failed_examples
         errors = results.errored_examples
         pending = results.pending_examples
-        "#{examples} examples, #{failures} failures, #{errors} errors, #{pending} pending"
+        string = "#{examples} examples, #{failures} failures, #{errors} errors, #{pending} pending"
+        if failures > 0 || errors > 0
+          string.colorize.red
+        elsif pending != examples
+          string.colorize.yellow
+        else
+          string.colorize.green
+        end
       end
 
       private def human_time(span : Time::Span)
