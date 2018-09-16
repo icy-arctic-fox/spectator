@@ -64,11 +64,15 @@ module Spectator
             {{collection}}
           end
 
-          def self.{{var_name}}
+          def self.%first
             %collection.first
           end
 
-          \{% ::Spectator::Definitions::ALL[@type.id][:given] << {name: "{{var_name}}".id, collection: "{{collection}}".id, type_def: (@type.id + ".{{var_name}}").id} %}
+          \{% ::Spectator::Definitions::ALL[@type.id][:given] << {
+            name: "{{var_name}}".id,
+            collection: "{{collection}}".id,
+            type_def: (@type.id + '.' + :%first.stringify[1..-1]).id
+          } %}
 
           {{block.body}}
         end
