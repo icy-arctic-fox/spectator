@@ -28,19 +28,35 @@ module Spectator
 
       macro given(collection, &block)
         context({{collection}}, "Given") do
-          def %collection
-            {{collection}}
-          end
-
-          def %first
-            %collection.first
-          end
-
           def {{block.args.empty? ? "value".id : block.args.first}}
             nil # TODO
           end
 
           {{block.body}}
+
+          _given_enumerator Collection%collection, %each do
+            {{collection}}
+          end
+
+          Collection%collection.new.%each do |%item|
+            # TODO
+          end
+        end
+      end
+
+      macro _given_enumerator(class_name, each_method_name, &block)
+        class {{class_name.id}}
+          include {{@type.id}}
+
+          def %collection
+            {{block.body}}
+          end
+
+          def {{each_method_name.id}}
+            %collection.each do |%item|
+              yield %item
+            end
+          end
         end
       end
 
