@@ -11,6 +11,6 @@ module Spectator
       given: [] of Object,
       children: [] of Object
     } %}
-    ::Spectator::Definitions::MAPPING[{{@type.stringify}}] = ::Spectator::ExampleGroup::ROOT
+    ::Spectator::Definitions::GROUPS[{{@type.stringify}}] = ::Spectator::ExampleGroup::ROOT
   end
 end

@@ -12,10 +12,10 @@ module Spectator
         module {{type.id}}%context
           include {{@type.id}}
 
-          ::Spectator::Definitions::MAPPING[\{{@type.stringify}}] =
+          ::Spectator::Definitions::GROUPS[\{{@type.stringify}}] =
             ExampleGroup.new(
               {{what.is_a?(StringLiteral) ? what : what.stringify}},
-              ::Spectator::Definitions::MAPPING[{{@type.stringify}}]
+              ::Spectator::Definitions::GROUPS[{{@type.stringify}}]
             )
 
           _described_class {{what}}
@@ -69,23 +69,23 @@ module Spectator
       end
 
       macro before_all(&block)
-        ::Spectator::Definitions::MAPPING[{{@type.stringify}}].before_all_hooks << -> {{block}}
+        ::Spectator::Definitions::GROUPS[{{@type.stringify}}].before_all_hooks << -> {{block}}
       end
 
       macro before_each(&block)
-        ::Spectator::Definitions::MAPPING[{{@type.stringify}}].before_each_hooks << -> {{block}}
+        ::Spectator::Definitions::GROUPS[{{@type.stringify}}].before_each_hooks << -> {{block}}
       end
 
       macro after_all(&block)
-        ::Spectator::Definitions::MAPPING[{{@type.stringify}}].after_all_hooks << -> {{block}}
+        ::Spectator::Definitions::GROUPS[{{@type.stringify}}].after_all_hooks << -> {{block}}
       end
 
       macro after_each(&block)
-        ::Spectator::Definitions::MAPPING[{{@type.stringify}}].after_each_hooks << -> {{block}}
+        ::Spectator::Definitions::GROUPS[{{@type.stringify}}].after_each_hooks << -> {{block}}
       end
 
       macro around_each(&block)
-        ::Spectator::Definitions::MAPPING[{{@type.stringify}}].around_each_hooks << Proc(Proc(Nil), Nil).new {{block}}
+        ::Spectator::Definitions::GROUPS[{{@type.stringify}}].around_each_hooks << Proc(Proc(Nil), Nil).new {{block}}
       end
 
       def include_examples

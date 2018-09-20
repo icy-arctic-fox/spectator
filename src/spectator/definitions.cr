@@ -1,7 +1,7 @@
 module Spectator
   module Definitions
     ALL = {} of Path => Object
-    MAPPING = {} of String => ExampleGroup
+    GROUPS = {} of String => ExampleGroup
 
     SPECIAL_CHARS = {
       '~' => "Tilde",
