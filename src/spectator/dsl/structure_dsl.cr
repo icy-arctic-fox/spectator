@@ -18,7 +18,9 @@ module Spectator
               ::Spectator::Definitions::GROUPS[{{@type.stringify}}]
             )
 
-          _described_class {{what}}
+          {% if what.is_a?(Path) || what.is_a?(Generic) %}
+            _described_class {{what}}
+          {% end %}
 
           {{block.body}}
         end
@@ -121,16 +123,14 @@ module Spectator
       end
 
       macro _described_class(what)
-        {% if what.is_a?(Path) || what.is_a?(Generic) %}
-          def described_class
-            {{what}}.tap do |thing|
-              raise "#{thing} must be a type name to use #described_class or #subject,\
-               but it is a #{typeof(thing)}" unless thing.is_a?(Class)
-            end
+        def described_class
+          {{what}}.tap do |thing|
+            raise "#{thing} must be a type name to use #described_class or #subject,\
+             but it is a #{typeof(thing)}" unless thing.is_a?(Class)
           end
+        end
 
-          _implicit_subject
-        {% end %}
+        _implicit_subject
       end
 
       macro _implicit_subject
