@@ -140,10 +140,13 @@ module Spectator
           def description
             {{description.is_a?(StringLiteral) ? description : description.stringify}}
           end
+
+          def group
+            ::Spectator::Definitions::GROUPS[{{@type.symbolize}}]
+          end
         end
 
-        %group = ::Spectator::Definitions::GROUPS[\{{@type.symbolize}}]
-        %group.children << Example%example.new(%group)
+        ::Spectator::Definitions::GROUPS[\{{@type.symbolize}}].children << Example%example.new
       end
 
       macro pending(description, &block)
