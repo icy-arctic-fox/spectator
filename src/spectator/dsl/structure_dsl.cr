@@ -27,24 +27,30 @@ module Spectator
       end
 
       macro given(collection, &block)
-        context({{collection}}, "Given") do
+        module Given%given
+          include {{@type.id}}
+
           def {{block.args.empty? ? "value".id : block.args.first}}
             nil # TODO
           end
 
-          {{block.body}}
-
-          _given_enumerator Collection%collection, %each do
+          _given_collection Collection%collection, %to_a do
             {{collection}}
           end
+          %collection = Collection%collection.new.%to_a
 
-          Collection%collection.new.%each do |%item|
-            # TODO
-          end
+          ::Spectator::Definitions::GROUPS[\{{@type.stringify}}] =
+            GivenExampleGroup(typeof(%collection.first)).new(
+              {{collection.stringify}},
+              %collection,
+              ::Spectator::Definitions::GROUPS[{{@type.stringify}}]
+            )
+
+          {{block.body}}
         end
       end
 
-      macro _given_enumerator(class_name, each_method_name, &block)
+      macro _given_collection(class_name, to_a_method_name, &block)
         class {{class_name.id}}
           include {{@type.id}}
 
@@ -52,9 +58,15 @@ module Spectator
             {{block.body}}
           end
 
-          def {{each_method_name.id}}
-            %collection.each do |%item|
-              yield %item
+          def %first
+            %collection.first
+          end
+
+          def {{to_a_method_name.id}}
+            Array(typeof(%first)).new.tap do |%array|
+              %collection.each do |%item|
+                %array << %item
+              end
             end
           end
         end
