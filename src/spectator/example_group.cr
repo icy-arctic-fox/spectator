@@ -6,25 +6,34 @@ module Spectator
 
     getter what : String
     getter parent : ExampleGroup?
-    getter examples = [] of Example
-    getter groups = [] of ExampleGroup
     getter before_all_hooks = [] of ->
     getter before_each_hooks = [] of ->
     getter after_all_hooks = [] of ->
     getter after_each_hooks = [] of ->
     getter around_each_hooks = [] of Proc(Nil) ->
+    getter children = [] of Example | ExampleGroup
 
     @before_all_hooks_run = false
     @after_all_hooks_run = false
 
     def initialize(@what, @parent = nil)
       if (parent = @parent)
-        parent.groups << self
+        parent.children << self
       end
     end
 
+    def examples : Enumerable(Example)
+      @children.select { |child| child.is_a?(Example) }.map { |child| child.unsafe_as(Example) }
+    end
+
+    def groups : Enumerable(ExampleGroup)
+      @children.select { |child| child.is_a?(ExampleGroup) }.map { |child| child.unsafe_as(ExampleGroup) }
+    end
+
     def all_examples
-      add_examples
+      Array(Example).new.tap do |array|
+        add_examples(array)
+      end
     end
 
     def run_before_all_hooks
@@ -86,12 +95,14 @@ module Spectator
       -> { inner.call(wrapper) }
     end
 
-    protected def add_examples(array = [] of Example)
-      array.concat(@examples)
-      groups.each do |group|
-        group.add_examples(array)
+    protected def add_examples(array : Array(Example))
+      @children.each do |child|
+        if child.is_a?(Example)
+          array << child
+        else
+          child.add_examples(array)
+        end
       end
-      array
     end
   end
 end
