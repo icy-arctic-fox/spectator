@@ -8,9 +8,13 @@ module Spectator
       super(what, parent)
     end
 
-    protected def add_examples(array : Array(Example))
-      @collection.each do |value|
-        examples = super.all_examples
+    def example_count
+      super.example_count * @collection.size
+    end
+
+    def all_examples
+      Array(Example).new(example_count).tap do |array|
+        examples = super
         examples.each do |example|
           @mapping[example] = value
         end

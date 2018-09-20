@@ -30,9 +30,21 @@ module Spectator
       @children.select { |child| child.is_a?(ExampleGroup) }.map { |child| child.unsafe_as(ExampleGroup) }
     end
 
+    def example_count
+      @children.sum do |child|
+        child.is_a?(ExampleFactory) ? 1 : child.example_count
+      end
+    end
+
     def all_examples
-      Array(Example).new.tap do |array|
-        add_examples(array)
+      Array(Example).new(example_count).tap do |array|
+        @children.each do |child|
+          if child.is_a?(ExampleFactory)
+            array << child.build
+          else
+            array.concat(child.all_examples)
+          end
+        end
       end
     end
 
@@ -93,16 +105,6 @@ module Spectator
 
     private def wrap_proc(inner : Proc(Nil) ->, wrapper : ->)
       -> { inner.call(wrapper) }
-    end
-
-    def add_examples(array : Array(Example))
-      @children.each do |child|
-        if child.is_a?(ExampleFactory)
-          array << child.build
-        else
-          array.concat(child.all_examples)
-        end
-      end
     end
   end
 end
