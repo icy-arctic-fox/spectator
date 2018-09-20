@@ -146,7 +146,13 @@ module Spectator
           end
         end
 
-        ::Spectator::Definitions::GROUPS[\{{@type.symbolize}}].children << Example%example.new
+        class Factory%example < ::Spectator::ExampleFactory
+          def build
+            Example%example.new
+          end
+        end
+
+        ::Spectator::Definitions::GROUPS[\{{@type.symbolize}}].children << Factory%example.new
       end
 
       macro pending(description, &block)

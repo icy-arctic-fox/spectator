@@ -11,7 +11,7 @@ module Spectator
     getter after_all_hooks = [] of ->
     getter after_each_hooks = [] of ->
     getter around_each_hooks = [] of Proc(Nil) ->
-    getter children = [] of Example | ExampleGroup
+    getter children = [] of ExampleFactory | ExampleGroup
 
     @before_all_hooks_run = false
     @after_all_hooks_run = false
@@ -22,8 +22,8 @@ module Spectator
       end
     end
 
-    def examples : Enumerable(Example)
-      @children.select { |child| child.is_a?(Example) }.map { |child| child.unsafe_as(Example) }
+    def examples : Enumerable(ExampleFactory)
+      @children.select { |child| child.is_a?(ExampleFactory) }.map { |child| child.unsafe_as(ExampleFactory) }
     end
 
     def groups : Enumerable(ExampleGroup)
@@ -97,8 +97,8 @@ module Spectator
 
     protected def add_examples(array : Array(Example))
       @children.each do |child|
-        if child.is_a?(Example)
-          array << child
+        if child.is_a?(ExampleFactory)
+          array << child.build
         else
           child.add_examples(array)
         end
