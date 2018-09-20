@@ -95,12 +95,12 @@ module Spectator
       -> { inner.call(wrapper) }
     end
 
-    protected def add_examples(array : Array(Example))
+    def add_examples(array : Array(Example))
       @children.each do |child|
         if child.is_a?(ExampleFactory)
           array << child.build
         else
-          child.add_examples(array)
+          array.concat(child.all_examples)
         end
       end
     end
