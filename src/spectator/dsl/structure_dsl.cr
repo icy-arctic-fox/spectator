@@ -12,10 +12,10 @@ module Spectator
         module {{type.id}}%context
           include {{@type.id}}
 
-          ::Spectator::Definitions::GROUPS[\{{@type.stringify}}] =
+          ::Spectator::Definitions::GROUPS[\{{@type.symbolize}}] =
             ExampleGroup.new(
               {{what.is_a?(StringLiteral) ? what : what.stringify}},
-              ::Spectator::Definitions::GROUPS[{{@type.stringify}}]
+              ::Spectator::Definitions::GROUPS[{{@type.symbolize}}]
             )
 
           {% if what.is_a?(Path) || what.is_a?(Generic) %}
@@ -39,11 +39,11 @@ module Spectator
           end
           %collection = Collection%collection.new.%to_a
 
-          ::Spectator::Definitions::GROUPS[\{{@type.stringify}}] =
+          ::Spectator::Definitions::GROUPS[\{{@type.symbolize}}] =
             GivenExampleGroup(typeof(%collection.first)).new(
               {{collection.stringify}},
               %collection,
-              ::Spectator::Definitions::GROUPS[{{@type.stringify}}]
+              ::Spectator::Definitions::GROUPS[{{@type.symbolize}}]
             )
 
           {{block.body}}
@@ -99,23 +99,23 @@ module Spectator
       end
 
       macro before_all(&block)
-        ::Spectator::Definitions::GROUPS[{{@type.stringify}}].before_all_hooks << -> {{block}}
+        ::Spectator::Definitions::GROUPS[{{@type.symbolize}}].before_all_hooks << -> {{block}}
       end
 
       macro before_each(&block)
-        ::Spectator::Definitions::GROUPS[{{@type.stringify}}].before_each_hooks << -> {{block}}
+        ::Spectator::Definitions::GROUPS[{{@type.symbolize}}].before_each_hooks << -> {{block}}
       end
 
       macro after_all(&block)
-        ::Spectator::Definitions::GROUPS[{{@type.stringify}}].after_all_hooks << -> {{block}}
+        ::Spectator::Definitions::GROUPS[{{@type.symbolize}}].after_all_hooks << -> {{block}}
       end
 
       macro after_each(&block)
-        ::Spectator::Definitions::GROUPS[{{@type.stringify}}].after_each_hooks << -> {{block}}
+        ::Spectator::Definitions::GROUPS[{{@type.symbolize}}].after_each_hooks << -> {{block}}
       end
 
       macro around_each(&block)
-        ::Spectator::Definitions::GROUPS[{{@type.stringify}}].around_each_hooks << Proc(Proc(Nil), Nil).new {{block}}
+        ::Spectator::Definitions::GROUPS[{{@type.symbolize}}].around_each_hooks << Proc(Proc(Nil), Nil).new {{block}}
       end
 
       def include_examples
@@ -142,7 +142,7 @@ module Spectator
           end
         end
 
-        %group = ::Spectator::Definitions::GROUPS[{{@type.stringify}}]
+        %group = ::Spectator::Definitions::GROUPS[\{{@type.symbolize}}]
         %group.children << Example%example.new(%group)
       end
 
