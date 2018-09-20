@@ -95,7 +95,7 @@ module Spectator
       end
 
       macro it(description, &block)
-        class Example%example
+        class Wrapper%example
           include ::Spectator::DSL::ExampleDSL
           include {{@type.id}}
 
@@ -104,15 +104,18 @@ module Spectator
           end
         end
 
-        class Wrapper%wrapper < ::Spectator::RunnableExample
+        class Example%example < ::Spectator::RunnableExample
           protected def run_instance
-            Example%example.new.%run
+            Wrapper%example.new.%run
           end
 
           def description
             {{description.is_a?(StringLiteral) ? description : description.stringify}}
           end
         end
+
+        %group = ::Spectator::Definitions::GROUPS[{{@type.stringify}}]
+        %group.children << Example%example.new(%group)
       end
 
       macro pending(description, &block)
