@@ -9,16 +9,18 @@ module Spectator
     end
 
     def example_count
-      super.example_count * @collection.size
+      super * @collection.size
     end
 
     def all_examples
       Array(Example).new(example_count).tap do |array|
         examples = super
-        examples.each do |example|
-          @mapping[example] = value
+        @collection.each do |value|
+          examples.each do |example|
+            @mapping[example] = value
+          end
+          array.concat(examples)
         end
-        array.concat(examples)
       end
     end
 
