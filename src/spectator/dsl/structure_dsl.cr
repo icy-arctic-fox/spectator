@@ -44,7 +44,7 @@ module Spectator
           end
 
           def %value
-            %group.value_for(self)
+            nil # TODO: %group.value_for(self)
           end
 
           def %dup
