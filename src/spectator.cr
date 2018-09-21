@@ -13,6 +13,14 @@ module Spectator
   end
 
   at_exit do
-    Runner.new(ExampleGroup::ROOT).run
+    begin
+      Runner.new(ExampleGroup::ROOT).run
+    rescue ex
+      puts
+      puts "Encountered an unexpected error in framework"
+      puts ex.message
+      puts ex.backtrace.join("\n")
+      exit(1)
+    end
   end
 end
