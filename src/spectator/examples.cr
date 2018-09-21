@@ -12,5 +12,8 @@ module Spectator
       children: [] of Object
     } %}
     ::Spectator::Definitions::GROUPS[{{@type.symbolize}}] = ::Spectator::ExampleGroup::ROOT
+
+    def initialize(locals = {} of Symbol => ValueWrapper)
+    end
   end
 end

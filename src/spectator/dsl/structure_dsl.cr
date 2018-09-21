@@ -38,44 +38,27 @@ module Spectator
             %collection.first
           end
 
-          def %group
-            ::Spectator::Definitions::GROUPS[\{{@type.symbolize}}].as(
-              GivenExampleGroup(typeof(%first)))
-          end
-
-          def %value
-            nil # TODO: %group.value_for(self)
-          end
-
-          def %dup
-            if (value = %value).responds_to?(:clone)
-              value.clone
-            else
-              value.dup
-            end
-          end
-
-          @%wrapper : ValueWrapper?
+          @%wrapper : ValueWrapper
 
           def {{block.args.empty? ? "value".id : block.args.first}}
-            if (wrapper = @%wrapper)
-              wrapper.unsafe_as(TypedValueWrapper(typeof(%value))).value
-            else
-              %dup.tap do |value|
-                @%wrapper = TypedValueWrapper(typeof(%value)).new(value)
-              end
-            end
+            @%wrapper.as(TypedValueWrapper(typeof(%first))).value
+          end
+
+          def initialize(locals : Hash(Symbol, ValueWrapper))
+            super
+            @%wrapper = locals[:%given]
           end
 
           _given_collection Collection%collection, %to_a do
             {{collection}}
           end
-          %collection = Collection%collection.new.%to_a
+          %to_a = Collection%collection.new.%to_a
 
           ::Spectator::Definitions::GROUPS[\{{@type.symbolize}}] =
-            GivenExampleGroup(typeof(%collection.first)).new(
+            GivenExampleGroup(typeof(%to_a.first)).new(
               {{collection.stringify}},
-              %collection,
+              %to_a,
+              :%given,
               ::Spectator::Definitions::GROUPS[{{@type.symbolize}}]
             )
 
@@ -160,6 +143,10 @@ module Spectator
           include ::Spectator::DSL::ExampleDSL
           include {{@type.id}}
 
+          def initialize(locals : Hash(Symbol, ValueWrapper))
+            super
+          end
+
           def %run
             {{block.body}}
           end
@@ -167,7 +154,7 @@ module Spectator
 
         class Example%example < ::Spectator::RunnableExample
           protected def run_instance
-            Wrapper%example.new.%run
+            Wrapper%example.new(locals).%run
           end
 
           def description
@@ -180,8 +167,8 @@ module Spectator
         end
 
         class Factory%example < ::Spectator::ExampleFactory
-          def build
-            Example%example.new
+          def build(locals = {} of Symbol => ValueWrapper)
+            Example%example.new(locals)
           end
         end
 

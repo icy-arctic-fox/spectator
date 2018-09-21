@@ -36,11 +36,11 @@ module Spectator
       end
     end
 
-    def all_examples
+    def all_examples(locals = {} of Symbol => ValueWrapper)
       Array(Example).new(example_count).tap do |array|
         @children.each do |child|
           if child.is_a?(ExampleFactory)
-            array << child.build
+            array << child.build(locals)
           else
             array.concat(child.all_examples)
           end
