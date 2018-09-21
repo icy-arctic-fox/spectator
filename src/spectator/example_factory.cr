@@ -1,5 +1,5 @@
 module Spectator
   abstract class ExampleFactory
-    abstract def build : Example
+    abstract def build(locals : Hash(Symbol, ValueWrapper)) : Example
   end
 end

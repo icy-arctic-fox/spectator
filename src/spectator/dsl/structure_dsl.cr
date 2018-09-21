@@ -167,7 +167,7 @@ module Spectator
         end
 
         class Factory%example < ::Spectator::ExampleFactory
-          def build(locals = {} of Symbol => ValueWrapper)
+          def build(locals : Hash(Symbol, ValueWrapper))
             Example%example.new(locals)
           end
         end

@@ -42,7 +42,7 @@ module Spectator
           if child.is_a?(ExampleFactory)
             array << child.build(locals)
           else
-            array.concat(child.all_examples)
+            array.concat(child.all_examples(locals))
           end
         end
       end
