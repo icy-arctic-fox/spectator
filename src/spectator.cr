@@ -5,10 +5,8 @@ module Spectator
   VERSION = "0.1.0"
 
   macro describe(what, source_file = __FILE__, source_line = __LINE__, &block)
-    module Spectator
-      module Examples
-        DSL::StructureDSL.describe({{what}}) {{block}}
-      end
+    module SpectatorExamples
+      ::Spectator::DSL::StructureDSL.describe({{what}}) {{block}}
     end
   end
 

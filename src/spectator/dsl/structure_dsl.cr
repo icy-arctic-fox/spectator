@@ -12,17 +12,17 @@ module Spectator
         module Group%group
           include {{@type.id}}
 
-          ::Spectator::Definitions::GROUPS[\{{@type.symbolize}}] =
-            ExampleGroup.new(
-              {{what.is_a?(StringLiteral) ? what : what.stringify}},
-              ::Spectator::Definitions::GROUPS[{{@type.symbolize}}]
-            )
-
           {% if what.is_a?(Path) || what.is_a?(Generic) %}
             _described_class {{what}}
           {% end %}
 
+          ::Spectator::DSL::Builder.start_group(
+            {{what.is_a?(StringLiteral) ? what : what.stringify}}
+          )
+
           {{block.body}}
+
+          ::Spectator::DSL::Builder.end_group
         end
       end
 
@@ -54,15 +54,14 @@ module Spectator
           end
           %to_a = Collection%collection.new.%to_a
 
-          ::Spectator::Definitions::GROUPS[\{{@type.symbolize}}] =
-            GivenExampleGroup(typeof(%to_a.first)).new(
-              {{collection.stringify}},
-              %to_a,
-              :%group,
-              ::Spectator::Definitions::GROUPS[{{@type.symbolize}}]
-            )
+          ::Spectator::DSL::Builder.start_given_group(
+            {{collection.stringify}},
+            %to_a
+          )
 
           {{block.body}}
+
+          ::Spectator::DSL::Builder.end_group
         end
       end
 
@@ -115,23 +114,23 @@ module Spectator
       end
 
       macro before_all(&block)
-        ::Spectator::Definitions::GROUPS[{{@type.symbolize}}].before_all_hooks << -> {{block}}
+        ::Spectator::DSL::Builder.add_before_all_hook {{block}}
       end
 
       macro before_each(&block)
-        ::Spectator::Definitions::GROUPS[{{@type.symbolize}}].before_each_hooks << -> {{block}}
+        ::Spectator::DSL::Builder.add_before_each_hook {{block}}
       end
 
       macro after_all(&block)
-        ::Spectator::Definitions::GROUPS[{{@type.symbolize}}].after_all_hooks << -> {{block}}
+        ::Spectator::DSL::Builder.add_after_all_hook {{block}}
       end
 
       macro after_each(&block)
-        ::Spectator::Definitions::GROUPS[{{@type.symbolize}}].after_each_hooks << -> {{block}}
+        ::Spectator::DSL::Builder.add_after_each_hook {{block}}
       end
 
       macro around_each(&block)
-        ::Spectator::Definitions::GROUPS[{{@type.symbolize}}].around_each_hooks << Proc(Proc(Nil), Nil).new {{block}}
+        ::Spectator::DSL::Builder.add_around_each_hook {{block}}
       end
 
       def include_examples
