@@ -4,12 +4,12 @@ module Spectator
   module DSL
     module StructureDSL
 
-      macro describe(what, type = "Describe", &block)
-        context({{what}}, {{type}}) {{block}}
+      macro describe(what, &block)
+        context({{what}}) {{block}}
       end
 
-      macro context(what, type = "Context", &block)
-        module {{type.id}}%context
+      macro context(what, &block)
+        module Group%group
           include {{@type.id}}
 
           ::Spectator::Definitions::GROUPS[\{{@type.symbolize}}] =
@@ -27,7 +27,7 @@ module Spectator
       end
 
       macro given(collection, &block)
-        module Given%given
+        module Group%group
           include {{@type.id}}
 
           def %collection
@@ -46,7 +46,7 @@ module Spectator
 
           def initialize(locals : Hash(Symbol, ValueWrapper))
             super
-            @%wrapper = locals[:%given]
+            @%wrapper = locals[:%group]
           end
 
           _given_collection Collection%collection, %to_a do
@@ -58,7 +58,7 @@ module Spectator
             GivenExampleGroup(typeof(%to_a.first)).new(
               {{collection.stringify}},
               %to_a,
-              :%given,
+              :%group,
               ::Spectator::Definitions::GROUPS[{{@type.symbolize}}]
             )
 
