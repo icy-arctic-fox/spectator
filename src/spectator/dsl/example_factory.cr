@@ -1,10 +1,11 @@
-require "./abstract_example_factory"
-
 module Spectator
   module DSL
-    class ExampleFactory(T) < AbstractExampleFactory
+    class ExampleFactory
+      def initialize(@example_type : Example.class)
+      end
+
       def build(locals : Hash(Symbol, ValueWrapper)) : Example
-        T.new(locals)
+        @example_type.new(locals)
       end
     end
   end
