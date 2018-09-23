@@ -4,10 +4,8 @@ require "./spectator/*"
 module Spectator
   VERSION = "0.1.0"
 
-  macro describe(what, source_file = __FILE__, source_line = __LINE__, &block)
-    module SpectatorExamples
-      ::Spectator::DSL::StructureDSL.describe({{what}}) {{block}}
-    end
+  macro describe(what, &block)
+    DSL.root({{what}}) {{block}}
   end
 
   at_exit do

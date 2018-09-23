@@ -26,7 +26,7 @@ module Spectator
         @group_stack.pop
       end
 
-      def add_example(factory : ExampleFactory) : Nil
+      def add_example(factory : AbstractExampleFactory) : Nil
         current_group.add_child(factory)
       end
 
