@@ -174,6 +174,31 @@ module Spectator
       end
 
       macro pending(description, &block)
+        class Wrapper%example
+          include ::Spectator::DSL::ExampleDSL
+          include {{@type.id}}
+
+          def initialize(locals : Hash(Symbol, ::Spectator::ValueWrapper))
+            super
+          end
+
+          def %run
+            {{block.body}}
+          end
+        end
+
+        class Example%example < ::Spectator::PendingExample
+          def initialize(group : ::Spectator::ExampleGroup, locals : Hash(Symbol, ::Spectator::ValueWrapper))
+            super
+            @instance = Wrapper%example.new(locals)
+          end
+
+          def description
+            {{description.is_a?(StringLiteral) ? description : description.stringify}}
+          end
+        end
+
+        ::Spectator::DSL::Builder.add_example(Example%example)
       end
 
       def it_behaves_like
