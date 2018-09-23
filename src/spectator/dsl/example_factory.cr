@@ -4,7 +4,7 @@ module Spectator
       def initialize(@example_type : Example.class)
       end
 
-      def build(group : ExampleGroup, locals : Hash(Symbol, ValueWrapper)) : Example
+      def build(group : ExampleGroup, locals : Hash(Symbol, Internals::ValueWrapper)) : Example
         @example_type.new(group, locals)
       end
     end

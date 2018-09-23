@@ -4,11 +4,11 @@ module Spectator
   module DSL
     class GivenExampleGroupBuilder < ExampleGroupBuilder
 
-      def initialize(what : String, @collection : Array(ValueWrapper), @symbol : Symbol)
+      def initialize(what : String, @collection : Array(Internals::ValueWrapper), @symbol : Symbol)
         super(what)
       end
 
-      def build(parent : ExampleGroup?, locals : Hash(Symbol, ValueWrapper)) : ExampleGroup
+      def build(parent : ExampleGroup?, locals : Hash(Symbol, Internals::ValueWrapper)) : ExampleGroup
         ExampleGroup.new(@what, parent, build_hooks).tap do |group|
           children = [] of ExampleGroup::Child
           @collection.each do |value|

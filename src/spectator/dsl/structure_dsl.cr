@@ -4,7 +4,7 @@ module Spectator
   module DSL
     module StructureDSL
 
-      def initialize(locals : Hash(Symbol, ::Spectator::ValueWrapper))
+      def initialize(locals : Hash(Symbol, ::Spectator::Internals::ValueWrapper))
       end
 
       macro describe(what, &block)
@@ -37,13 +37,13 @@ module Spectator
             {{collection}}
           end
 
-          @%wrapper : ::Spectator::ValueWrapper
+          @%wrapper : ::Spectator::Internals::ValueWrapper
 
           def {{block.args.empty? ? "value".id : block.args.first}}
-            @%wrapper.as(::Spectator::TypedValueWrapper(typeof(%collection.first))).value
+            @%wrapper.as(::Spectator::Internals::TypedValueWrapper(typeof(%collection.first))).value
           end
 
-          def initialize(locals : Hash(Symbol, ::Spectator::ValueWrapper))
+          def initialize(locals : Hash(Symbol, ::Spectator::Internals::ValueWrapper))
             super
             @%wrapper = locals[:%group]
           end
@@ -70,14 +70,14 @@ module Spectator
       macro let(name, &block)
         let!(%value) {{block}}
 
-        @%wrapper : ::Spectator::ValueWrapper?
+        @%wrapper : ::Spectator::Internals::ValueWrapper?
 
         def {{name.id}}
           if (wrapper = @%wrapper)
-            wrapper.unsafe_as(::Spectator::TypedValueWrapper(typeof(%value))).value
+            wrapper.unsafe_as(::Spectator::Internals::TypedValueWrapper(typeof(%value))).value
           else
             %value.tap do |value|
-              @%wrapper = ::Spectator::TypedValueWrapper(typeof(%value)).new(value)
+              @%wrapper = ::Spectator::Internals::TypedValueWrapper(typeof(%value)).new(value)
             end
           end
         end
@@ -159,9 +159,9 @@ module Spectator
           include {{@type.id}}
 
           def {{to_a_method_name.id}}
-            Array(::Spectator::ValueWrapper).new.tap do |array|
+            Array(::Spectator::Internals::ValueWrapper).new.tap do |array|
               {{collection_method_name.id}}.each do |item|
-                array << ::Spectator::TypedValueWrapper(typeof(item)).new(item)
+                array << ::Spectator::Internals::TypedValueWrapper(typeof(item)).new(item)
               end
             end
           end
@@ -173,7 +173,7 @@ module Spectator
           include ::Spectator::DSL::ExampleDSL
           include {{@type.id}}
 
-          def initialize(locals : Hash(Symbol, ::Spectator::ValueWrapper))
+          def initialize(locals : Hash(Symbol, ::Spectator::Internals::ValueWrapper))
             super
           end
 
@@ -185,7 +185,7 @@ module Spectator
 
       private macro _spectator_example(example_class_name, wrapper_class_name, base_class, description, &block)
         class {{example_class_name.id}} < {{base_class.id}}
-          def initialize(group : ::Spectator::ExampleGroup, locals : Hash(Symbol, ::Spectator::ValueWrapper))
+          def initialize(group : ::Spectator::ExampleGroup, locals : Hash(Symbol, ::Spectator::Internals::ValueWrapper))
             super
             @instance = {{wrapper_class_name.id}}.new(locals)
           end

@@ -6,7 +6,7 @@ module Spectator
     abstract def run : Result
     abstract def description : String
 
-    def initialize(@group, @locals = {} of Symbol => ValueWrapper)
+    def initialize(@group, @locals = {} of Symbol => Internals::ValueWrapper)
     end
 
     private getter locals

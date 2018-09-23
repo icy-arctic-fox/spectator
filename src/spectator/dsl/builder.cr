@@ -58,7 +58,7 @@ module Spectator
       end
 
       protected def build : ExampleGroup
-        root_group.build(nil, {} of Symbol => ValueWrapper)
+        root_group.build(nil, {} of Symbol => Internals::ValueWrapper)
       end
     end
   end
