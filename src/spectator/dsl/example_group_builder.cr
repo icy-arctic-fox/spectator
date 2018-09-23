@@ -38,12 +38,22 @@ module Spectator
       end
 
       def build(parent : ExampleGroup?, locals : Hash(Symbol, ValueWrapper)) : ExampleGroup
-        ExampleGroup.new(@what, parent).tap do |group|
+        ExampleGroup.new(@what, parent, build_hooks).tap do |group|
           children = @children.map do |child|
             child.build(group, locals).as(ExampleGroup::Child)
           end
           group.children = children
         end
+      end
+
+      private def build_hooks
+        ExampleHooks.new(
+          @before_all_hooks,
+          @before_each_hooks,
+          @after_all_hooks,
+          @after_each_hooks,
+          @around_each_hooks
+        )
       end
     end
   end

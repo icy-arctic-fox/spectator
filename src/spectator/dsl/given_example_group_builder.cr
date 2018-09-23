@@ -9,7 +9,7 @@ module Spectator
       end
 
       def build(parent : ExampleGroup?, locals : Hash(Symbol, ValueWrapper)) : ExampleGroup
-        ExampleGroup.new(@what, parent).tap do |group|
+        ExampleGroup.new(@what, parent, build_hooks).tap do |group|
           children = [] of ExampleGroup::Child
           @collection.each do |value|
             iter_locals = locals.merge({@symbol => value})

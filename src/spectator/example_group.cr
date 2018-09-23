@@ -11,16 +11,9 @@ module Spectator
     private getter! children : Array(Child)
     setter children
 
-    getter before_all_hooks = [] of ->
-    getter before_each_hooks = [] of ->
-    getter after_all_hooks = [] of ->
-    getter after_each_hooks = [] of ->
-    getter around_each_hooks = [] of Proc(Nil) ->
+    private getter hooks : ExampleHooks
 
-    @before_all_hooks_run = false
-    @after_all_hooks_run = false
-
-    def initialize(@what, @parent)
+    def initialize(@what, @parent, @hooks)
     end
 
     def examples : Enumerable(Example)
@@ -54,9 +47,7 @@ module Spectator
         parent.run_before_all_hooks
       end
       unless @before_all_hooks_run
-        @before_all_hooks.each do |hook|
-          hook.call
-        end
+        hooks.run_before_all
         @before_all_hooks_run = true
       end
     end
@@ -65,17 +56,13 @@ module Spectator
       if (parent = @parent)
         parent.run_before_each_hooks
       end
-      @before_each_hooks.each do |hook|
-        hook.call
-      end
+      hooks.run_before_each
     end
 
     def run_after_all_hooks
       unless @after_all_hooks_run
         if all_examples.all?(&.finished?)
-          @after_all_hooks.each do |hook|
-            hook.call
-          end
+          hooks.run_after_all
           @after_all_hooks_run = true
         end
       end
@@ -85,27 +72,18 @@ module Spectator
     end
 
     def run_after_each_hooks
-      @after_each_hooks.each do |hook|
-        hook.call
-      end
+      hooks.run_after_each
       if (parent = @parent)
         parent.run_after_each_hooks
       end
     end
 
     def wrap_around_each_hooks(&block : ->)
-      wrapper = block
-      @around_each_hooks.reverse_each do |hook|
-        wrapper = wrap_proc(hook, wrapper)
-      end
+      wrapper = hooks.wrap_around_each(&block)
       if (parent = @parent)
         wrapper = parent.wrap_around_each_hooks(&wrapper)
       end
       wrapper
-    end
-
-    private def wrap_proc(inner : Proc(Nil) ->, wrapper : ->)
-      -> { inner.call(wrapper) }
     end
   end
 end
