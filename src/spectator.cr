@@ -14,7 +14,8 @@ module Spectator
 
   at_exit do
     begin
-      Runner.new(ExampleGroup::ROOT).run
+      group = ::Spectator::DSL::Builder.build
+      Runner.new(group).run
     rescue ex
       puts
       puts "Encountered an unexpected error in framework"
