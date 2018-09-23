@@ -3,7 +3,7 @@ module Spectator
     module Builder
       extend self
 
-      @group_stack = [::Spectator::DSL::ExampleGroupBuilder.new]
+      @group_stack = [::Spectator::DSL::ExampleGroupBuilder.new("ROOT")]
 
       private def current_group
         @group_stack.last

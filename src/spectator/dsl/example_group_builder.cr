@@ -8,6 +8,9 @@ module Spectator
       @after_each_hooks = [] of ->
       @around_each_hooks = [] of Proc(Nil) ->
 
+      def initialize(@what : String)
+      end
+
       def add_child(child : ExampleFactory | ExampleGroupBuilder) : Nil
         @children << child
       end
