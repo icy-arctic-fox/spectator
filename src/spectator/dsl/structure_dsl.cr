@@ -155,8 +155,13 @@ module Spectator
         end
 
         class Example%example < ::Spectator::RunnableExample
+          def initialize(group : ::Spectator::ExampleGroup, locals : Hash(Symbol, ::Spectator::ValueWrapper))
+            super
+            @instance = Wrapper%example.new(locals)
+          end
+
           protected def run_instance
-            Wrapper%example.new(locals).%run
+            @instance.%run
           end
 
           def description
