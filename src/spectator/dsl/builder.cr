@@ -5,6 +5,10 @@ module Spectator
 
       @@group_stack = [::Spectator::DSL::ExampleGroupBuilder.new("ROOT")]
 
+      private def root_group
+        @@group_stack.first
+      end
+
       private def current_group
         @@group_stack.last
       end
@@ -53,9 +57,8 @@ module Spectator
         current_group.add_around_each_hook(block)
       end
 
-      protected def build : Array(Example)
-        # TODO
-        [] of Example
+      protected def build : ExampleGroup
+        root_group.build({} of Symbol => ValueWrapper)
       end
     end
   end

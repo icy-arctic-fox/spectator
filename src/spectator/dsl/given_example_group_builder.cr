@@ -8,9 +8,8 @@ module Spectator
         super(what)
       end
 
-      def build : Array(Example)
-        # TODO
-        Array(Example).new
+      def build(locals : Hash(Symbol, ValueWrapper)) : ExampleGroup
+        raise NotImplementedError
       end
     end
   end

@@ -35,9 +35,8 @@ module Spectator
         @around_each_hooks << block
       end
 
-      def build : Array(Example)
-        # TODO
-        Array(Example).new
+      def build(locals : Hash(Symbol, ValueWrapper)) : ExampleGroup
+        raise NotImplementedError
       end
     end
   end
