@@ -159,11 +159,7 @@ module Spectator
           include {{@type.id}}
 
           def {{to_a_method_name.id}}
-            Array(::Spectator::Internals::ValueWrapper).new.tap do |array|
-              {{collection_method_name.id}}.each do |item|
-                array << ::Spectator::Internals::TypedValueWrapper(typeof(item)).new(item)
-              end
-            end
+            {{collection_method_name.id}}.to_a
           end
         end
       end

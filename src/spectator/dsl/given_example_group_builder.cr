@@ -2,9 +2,9 @@ require "./example_group_builder"
 
 module Spectator
   module DSL
-    class GivenExampleGroupBuilder < ExampleGroupBuilder
+    class GivenExampleGroupBuilder(T) < ExampleGroupBuilder
 
-      def initialize(what : String, @collection : Array(Internals::ValueWrapper), @symbol : Symbol)
+      def initialize(what : String, @collection : Array(T), @symbol : Symbol)
         super(what)
       end
 
