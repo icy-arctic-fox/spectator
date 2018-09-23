@@ -38,13 +38,13 @@ module Spectator
             %collection.first
           end
 
-          @%wrapper : ValueWrapper
+          @%wrapper : ::Spectator::ValueWrapper
 
           def {{block.args.empty? ? "value".id : block.args.first}}
-            @%wrapper.as(TypedValueWrapper(typeof(%first))).value
+            @%wrapper.as(::Spectator::TypedValueWrapper(typeof(%first))).value
           end
 
-          def initialize(locals : Hash(Symbol, ValueWrapper))
+          def initialize(locals : Hash(Symbol, ::Spectator::ValueWrapper))
             super
             @%wrapper = locals[:%group]
           end
@@ -94,14 +94,14 @@ module Spectator
       macro let(name, &block)
         let!(%value) {{block}}
 
-        @%wrapper : ValueWrapper?
+        @%wrapper : ::Spectator::ValueWrapper?
 
         def {{name.id}}
           if (wrapper = @%wrapper)
-            wrapper.unsafe_as(TypedValueWrapper(typeof(%value))).value
+            wrapper.unsafe_as(::Spectator::TypedValueWrapper(typeof(%value))).value
           else
             %value.tap do |value|
-              @%wrapper = TypedValueWrapper(typeof(%value)).new(value)
+              @%wrapper = ::Spectator::TypedValueWrapper(typeof(%value)).new(value)
             end
           end
         end
@@ -142,7 +142,7 @@ module Spectator
           include ::Spectator::DSL::ExampleDSL
           include {{@type.id}}
 
-          def initialize(locals : Hash(Symbol, ValueWrapper))
+          def initialize(locals : Hash(Symbol, ::Spectator::ValueWrapper))
             super
           end
 
@@ -161,13 +161,11 @@ module Spectator
           end
 
           def group
-            ::Spectator::Definitions::GROUPS[{{@type.symbolize}}]
+            nil # TODO
           end
         end
 
-        ::Spectator::DSL::Builder.add_example_factory(
-          ::Spectator::DSL::ExampleFactory(Example%example).new
-        )
+        ::Spectator::DSL::Builder.add_example(Example%example)
       end
 
       macro pending(description, &block)

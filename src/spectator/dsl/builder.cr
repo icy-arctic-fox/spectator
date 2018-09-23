@@ -3,7 +3,7 @@ module Spectator
     module Builder
       extend self
 
-      @group_stack = [ExampleGroupBuilder.new]
+      @group_stack = [::Spectator::DSL::ExampleGroupBuilder.new]
 
       private def current_group
         @group_stack.last
@@ -15,18 +15,21 @@ module Spectator
       end
 
       def start_group(what : String) : Nil
-        push_group(ExampleGroupBuilder.new(what))
+        group = ::Spectator::DSL::ExampleGroupBuilder.new(what)
+        push_group(group)
       end
 
       def start_given_group(what : String, values : Array(ValueWrapper)) : Nil
-        push_group(GivenExampleGroupBuilder.new(what, values))
+        group = ::Spectator::DSL::GivenExampleGroupBuilder.new(what, values)
+        push_group(group)
       end
 
       def end_group : Nil
         @group_stack.pop
       end
 
-      def add_example(factory : AbstractExampleFactory) : Nil
+      def add_example(example_type : Example.class) : Nil
+        factory = ::Spectator::DSL::ExampleGroupBuilder.new(example_type)
         current_group.add_child(factory)
       end
 
@@ -52,7 +55,7 @@ module Spectator
 
       protected def build : Array(Example)
         # TODO
-        ExampleGroup.new
+        [] of Example
       end
     end
   end
