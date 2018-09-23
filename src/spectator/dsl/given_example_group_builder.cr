@@ -4,7 +4,7 @@ module Spectator
   module DSL
     class GivenExampleGroupBuilder < ExampleGroupBuilder
 
-      def initialize(what : String, @collection : Array(ValueWrapper))
+      def initialize(what : String, @collection : Array(ValueWrapper), @symbol : Symbol)
         super(what)
       end
 
@@ -12,7 +12,7 @@ module Spectator
         ExampleGroup.new(@what, parent).tap do |group|
           children = [] of ExampleGroup::Child
           @collection.each do |value|
-            iter_locals = locals.merge({:TODO => value})
+            iter_locals = locals.merge({@symbol => value})
             iter_children = @children.map do |child|
               child.build(group, iter_locals)
             end

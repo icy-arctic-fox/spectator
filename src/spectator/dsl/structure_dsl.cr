@@ -59,7 +59,8 @@ module Spectator
 
           ::Spectator::DSL::Builder.start_given_group(
             {{collection.stringify}},
-            %to_a
+            %to_a,
+            :%group
           )
 
           {{block.body}}
