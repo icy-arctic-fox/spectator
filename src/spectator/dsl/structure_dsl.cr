@@ -4,6 +4,9 @@ module Spectator
   module DSL
     module StructureDSL
 
+      def initialize(locals : Hash(Symbol, ::Spectator::ValueWrapper))
+      end
+
       macro describe(what, &block)
         context({{what}}) {{block}}
       end
