@@ -8,13 +8,13 @@ module Spectator
         super(what)
       end
 
-      def build(parent : ExampleGroup?, locals : Hash(Symbol, Internals::ValueWrapper)) : ExampleGroup
+      def build(parent : ExampleGroup?, sample_values : Internals::SampleValues) : ExampleGroup
         ExampleGroup.new(@what, parent, build_hooks).tap do |group|
           children = [] of ExampleGroup::Child
           @collection.each do |value|
-            iter_locals = locals.merge({@symbol => value})
+            iter_values = sample_values.add(@symbol, @symbol.to_s, value)
             iter_children = @children.map do |child|
-              child.build(group, iter_locals)
+              child.build(group, iter_values)
             end
             children.concat(iter_children)
           end

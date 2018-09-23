@@ -37,10 +37,10 @@ module Spectator
         @around_each_hooks << block
       end
 
-      def build(parent : ExampleGroup?, locals : Hash(Symbol, Internals::ValueWrapper)) : ExampleGroup
+      def build(parent : ExampleGroup?, sample_values : Internals::SampleValues) : ExampleGroup
         ExampleGroup.new(@what, parent, build_hooks).tap do |group|
           children = @children.map do |child|
-            child.build(group, locals).as(ExampleGroup::Child)
+            child.build(group, sample_values).as(ExampleGroup::Child)
           end
           group.children = children
         end

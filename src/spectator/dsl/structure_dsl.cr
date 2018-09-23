@@ -4,7 +4,7 @@ module Spectator
   module DSL
     module StructureDSL
 
-      def initialize(locals : Hash(Symbol, ::Spectator::Internals::ValueWrapper))
+      def initialize(sample_values : Internals::SampleValues)
       end
 
       macro describe(what, &block)
@@ -43,9 +43,9 @@ module Spectator
             @%wrapper.as(::Spectator::Internals::TypedValueWrapper(typeof(%collection.first))).value
           end
 
-          def initialize(locals : Hash(Symbol, ::Spectator::Internals::ValueWrapper))
+          def initialize(sample_values : ::Spectator::Internals::SampleValues)
             super
-            @%wrapper = locals[:%group]
+            @%wrapper = sample_values.get_wrapper(:%group)
           end
 
           _spectator_given_collection Collection%collection, %to_a, %collection
@@ -173,7 +173,7 @@ module Spectator
           include ::Spectator::DSL::ExampleDSL
           include {{@type.id}}
 
-          def initialize(locals : Hash(Symbol, ::Spectator::Internals::ValueWrapper))
+          def initialize(sample_values : ::Spectator::Internals::SampleValues)
             super
           end
 
@@ -185,9 +185,9 @@ module Spectator
 
       private macro _spectator_example(example_class_name, wrapper_class_name, base_class, description, &block)
         class {{example_class_name.id}} < {{base_class.id}}
-          def initialize(group : ::Spectator::ExampleGroup, locals : Hash(Symbol, ::Spectator::Internals::ValueWrapper))
+          def initialize(group : ::Spectator::ExampleGroup, sample_values : ::Spectator::Internals::SampleValues)
             super
-            @instance = {{wrapper_class_name.id}}.new(locals)
+            @instance = {{wrapper_class_name.id}}.new(sample_values)
           end
 
           {% if block.is_a?(Block) %}
