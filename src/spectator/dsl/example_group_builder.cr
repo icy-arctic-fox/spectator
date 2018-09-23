@@ -17,23 +17,23 @@ module Spectator
         @children << child
       end
 
-      def add_before_all_hook(&block : ->) : Nil
+      def add_before_all_hook(block : ->) : Nil
         @before_all_hooks << block
       end
 
-      def add_before_each_hook(&block : ->) : Nil
+      def add_before_each_hook(block : ->) : Nil
         @before_each_hooks << block
       end
 
-      def add_after_all_hook(&block : ->) : Nil
+      def add_after_all_hook(block : ->) : Nil
         @after_all_hooks << block
       end
 
-      def add_after_each_hook(&block : ->) : Nil
+      def add_after_each_hook(block : ->) : Nil
         @after_each_hooks << block
       end
 
-      def add_around_each_hook(&block : Proc(Nil) ->) : Nil
+      def add_around_each_hook(block : Proc(Nil) ->) : Nil
         @around_each_hooks << block
       end
 
