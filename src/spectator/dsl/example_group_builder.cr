@@ -1,7 +1,9 @@
 module Spectator
   module DSL
     class ExampleGroupBuilder
-      @children = [] of ExampleFactory | ExampleGroupBuilder
+      alias Child = ExampleFactory | ExampleGroupBuilder
+
+      @children = [] of Child
       @before_all_hooks = [] of ->
       @before_each_hooks = [] of ->
       @after_all_hooks = [] of ->
@@ -11,7 +13,7 @@ module Spectator
       def initialize(@what : String)
       end
 
-      def add_child(child : ExampleFactory | ExampleGroupBuilder) : Nil
+      def add_child(child : Child) : Nil
         @children << child
       end
 
@@ -35,8 +37,13 @@ module Spectator
         @around_each_hooks << block
       end
 
-      def build(locals : Hash(Symbol, ValueWrapper)) : ExampleGroup
-        raise NotImplementedError
+      def build(parent : ExampleGroup?, locals : Hash(Symbol, ValueWrapper)) : ExampleGroup
+        ExampleGroup.new(@what, parent).tap do |group|
+          children = @children.map do |child|
+            child.build(group, locals).as(ExampleGroup::Child)
+          end
+          group.children = children
+        end
       end
     end
   end

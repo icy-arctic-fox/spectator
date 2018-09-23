@@ -2,47 +2,48 @@ require "./example"
 
 module Spectator
   class ExampleGroup
-    ROOT = ExampleGroup.new("ROOT")
+    alias Child = Example | ExampleGroup
 
     getter what : String
-    getter parent : ExampleGroup?
+
+    getter! parent : ExampleGroup
+
+    private getter! children : Array(Child)
+    setter children
+
     getter before_all_hooks = [] of ->
     getter before_each_hooks = [] of ->
     getter after_all_hooks = [] of ->
     getter after_each_hooks = [] of ->
     getter around_each_hooks = [] of Proc(Nil) ->
-    getter children = [] of ExampleFactory | ExampleGroup
 
     @before_all_hooks_run = false
     @after_all_hooks_run = false
 
-    def initialize(@what, @parent = nil)
-      if (parent = @parent)
-        parent.children << self
-      end
+    def initialize(@what, @parent)
     end
 
-    def examples : Enumerable(ExampleFactory)
-      @children.select { |child| child.is_a?(ExampleFactory) }.map { |child| child.unsafe_as(ExampleFactory) }
+    def examples : Enumerable(Example)
+      children.select { |child| child.is_a?(Example) }.map { |child| child.unsafe_as(Example) }
     end
 
     def groups : Enumerable(ExampleGroup)
-      @children.select { |child| child.is_a?(ExampleGroup) }.map { |child| child.unsafe_as(ExampleGroup) }
+      children.select { |child| child.is_a?(ExampleGroup) }.map { |child| child.unsafe_as(ExampleGroup) }
     end
 
     def example_count
-      @children.sum do |child|
-        child.is_a?(ExampleFactory) ? 1 : child.example_count
+      children.sum do |child|
+        child.is_a?(Example) ? 1 : child.example_count
       end
     end
 
-    def all_examples(locals = {} of Symbol => ValueWrapper)
+    def all_examples
       Array(Example).new(example_count).tap do |array|
-        @children.each do |child|
-          if child.is_a?(ExampleFactory)
-            array << child.build(locals)
+        children.each do |child|
+          if child.is_a?(Example)
+            array << child
           else
-            array.concat(child.all_examples(locals))
+            array.concat(child.all_examples)
           end
         end
       end
