@@ -137,7 +137,7 @@ module Spectator
         raise NotImplementedError.new("Spectator::DSL#it_behaves_like")
       end
 
-      macro _spectator_described_class(what)
+      private macro _spectator_described_class(what)
         def described_class
           {{what}}.tap do |thing|
             raise "#{thing} must be a type name to use #described_class or #subject,\
@@ -148,13 +148,13 @@ module Spectator
         _spectator_implicit_subject
       end
 
-      macro _spectator_implicit_subject
+      private macro _spectator_implicit_subject
         def subject
           described_class.new
         end
       end
 
-      macro _spectator_given_collection(class_name, to_a_method_name, collection_method_name)
+      private macro _spectator_given_collection(class_name, to_a_method_name, collection_method_name)
         class {{class_name.id}}
           include {{@type.id}}
 
@@ -168,7 +168,7 @@ module Spectator
         end
       end
 
-      macro _spectator_example_wrapper(class_name, run_method_name, &block)
+      private macro _spectator_example_wrapper(class_name, run_method_name, &block)
         class {{class_name.id}}
           include ::Spectator::DSL::ExampleDSL
           include {{@type.id}}
@@ -183,7 +183,7 @@ module Spectator
         end
       end
 
-      macro _spectator_example(example_class_name, wrapper_class_name, base_class, description, &block)
+      private macro _spectator_example(example_class_name, wrapper_class_name, base_class, description, &block)
         class {{example_class_name.id}} < {{base_class.id}}
           def initialize(group : ::Spectator::ExampleGroup, locals : Hash(Symbol, ::Spectator::ValueWrapper))
             super
