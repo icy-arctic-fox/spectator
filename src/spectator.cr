@@ -5,7 +5,11 @@ module Spectator
   VERSION = "0.1.0"
 
   macro describe(what, &block)
-    DSL.root({{what}}) {{block}}
+    module SpectatorExamples
+      include ::Spectator::DSL::StructureDSL
+
+      describe({{what}}) {{block}}
+    end
   end
 
   at_exit do
