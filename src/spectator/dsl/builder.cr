@@ -29,7 +29,7 @@ module Spectator
       end
 
       def add_example(example_type : Example.class) : Nil
-        factory = ::Spectator::DSL::ExampleGroupBuilder.new(example_type)
+        factory = ::Spectator::DSL::ExampleFactory.new(example_type)
         current_group.add_child(factory)
       end
 
