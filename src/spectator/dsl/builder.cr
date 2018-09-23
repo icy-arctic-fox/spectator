@@ -18,13 +18,13 @@ module Spectator
         @@group_stack.push(group)
       end
 
-      def start_group(what : String) : Nil
-        group = ::Spectator::DSL::ExampleGroupBuilder.new(what)
+      def start_group(*args) : Nil
+        group = ::Spectator::DSL::ExampleGroupBuilder.new(*args)
         push_group(group)
       end
 
-      def start_given_group(what : String, values : Array(ValueWrapper)) : Nil
-        group = ::Spectator::DSL::GivenExampleGroupBuilder.new(what, values)
+      def start_given_group(*args) : Nil
+        group = ::Spectator::DSL::GivenExampleGroupBuilder.new(*args)
         push_group(group)
       end
 
