@@ -1,12 +1,12 @@
 module Spectator
   abstract class Example
     getter? finished = false
+    getter group : ExampleGroup
 
     abstract def run : Result
     abstract def description : String
-    abstract def group : ExampleGroup
 
-    def initialize(@locals = {} of Symbol => ValueWrapper)
+    def initialize(@group, @locals = {} of Symbol => ValueWrapper)
     end
 
     private getter locals

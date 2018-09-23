@@ -159,10 +159,6 @@ module Spectator
           def description
             {{description.is_a?(StringLiteral) ? description : description.stringify}}
           end
-
-          def group
-            nil # TODO
-          end
         end
 
         ::Spectator::DSL::Builder.add_example(Example%example)
