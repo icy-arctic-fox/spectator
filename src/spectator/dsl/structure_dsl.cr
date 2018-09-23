@@ -81,9 +81,9 @@ module Spectator
           end
 
           def {{to_a_method_name.id}}
-            Array(typeof(%first)).new.tap do |%array|
+            Array(::Spectator::ValueWrapper).new.tap do |%array|
               %collection.each do |%item|
-                %array << %item
+                %array << ::Spectator::TypedValueWrapper(typeof(%item)).new(%item)
               end
             end
           end
