@@ -133,8 +133,8 @@ module Spectator
         ::Spectator::DSL::Builder.add_example(Example%example)
       end
 
-      def it_behaves_like
-        raise NotImplementedError.new("Spectator::DSL#it_behaves_like")
+      macro it_behaves_like
+        {% raise NotImplementedError.new("it_behaves_like functionality is not implemented") %}
       end
 
       private macro _spectator_described_class(what)
