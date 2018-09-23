@@ -3,15 +3,15 @@ module Spectator
     module Builder
       extend self
 
-      @group_stack = [::Spectator::DSL::ExampleGroupBuilder.new("ROOT")]
+      @@group_stack = [::Spectator::DSL::ExampleGroupBuilder.new("ROOT")]
 
       private def current_group
-        @group_stack.last
+        @@group_stack.last
       end
 
       private def push_group(group : ExampleGroupBuilder)
         current_group.add_child(group)
-        @group_stack.push(group)
+        @@group_stack.push(group)
       end
 
       def start_group(what : String) : Nil
@@ -25,7 +25,7 @@ module Spectator
       end
 
       def end_group : Nil
-        @group_stack.pop
+        @@group_stack.pop
       end
 
       def add_example(example_type : Example.class) : Nil
