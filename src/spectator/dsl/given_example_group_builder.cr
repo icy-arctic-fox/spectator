@@ -10,15 +10,18 @@ module Spectator
 
       def build(parent : ExampleGroup?, sample_values : Internals::SampleValues) : ExampleGroup
         ExampleGroup.new(@what, parent, build_hooks).tap do |group|
-          children = [] of ExampleGroup::Child
-          @collection.each do |value|
-            iter_values = sample_values.add(@symbol, @symbol.to_s, value)
-            iter_children = @children.map do |child|
-              child.build(group, iter_values)
-            end
-            children.concat(iter_children)
+          group.children = @collection.map do |value|
+            build_sub_group(group, sample_values, value).as(ExampleGroup::Child)
           end
-          group.children = children
+        end
+      end
+
+      private def build_sub_group(parent : ExampleGroup, sample_values : Internals::SampleValues, value : T) : ExampleGroup
+        sub_values = sample_values.add(@symbol, @symbol.to_s, value)
+        ExampleGroup.new(value.to_s, parent, ExampleHooks.empty).tap do |group|
+          group.children = @children.map do |child|
+            child.build(group, sub_values).as(ExampleGroup::Child)
+          end
         end
       end
     end

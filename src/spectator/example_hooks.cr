@@ -1,5 +1,15 @@
 module Spectator
   class ExampleHooks
+    def self.empty
+      new(
+        [] of ->,
+        [] of ->,
+        [] of ->,
+        [] of ->,
+        [] of Proc(Nil) ->
+      )
+    end
+
     def initialize(
       @before_all : Array(->),
       @before_each : Array(->),
