@@ -20,6 +20,37 @@ module Spectator
       def end_suite(results : TestResults)
         puts
         puts
+        display_failures(results)
+        display_errors(results)
+        display_summary(results)
+      end
+
+      private def display_failures(results)
+        failures = results.failures
+        if failures.any?
+          puts "Failures:"
+          puts
+          failures.each_with_index do |failure, index|
+            display_failure(failure, index + 1)
+          end
+        end
+      end
+
+      private def display_failure(failure, number)
+        expected = "TODO"
+        actual   = "TODO"
+        puts "  #{number}) #{failure.example}"
+        puts "     Failure: <INSERT EXPECTATION HERE>"
+        puts
+        puts "       Expected: #{expected}"
+        puts "            got: #{actual}"
+        puts
+      end
+
+      private def display_errors(results)
+      end
+
+      private def display_summary(results)
         puts finish_time_string(results)
         puts result_string(results)
       end

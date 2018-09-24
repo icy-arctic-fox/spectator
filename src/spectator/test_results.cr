@@ -20,8 +20,16 @@ module Spectator
       @results.count(&.failed?)
     end
 
+    def failures
+      @results.select(&.failed?)
+    end
+
     def errored_examples
       @results.count(&.errored?)
+    end
+
+    def errors
+      @results.select(&.errored?)
     end
 
     def pending_examples
