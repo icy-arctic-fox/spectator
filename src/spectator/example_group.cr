@@ -85,5 +85,13 @@ module Spectator
       end
       wrapper
     end
+
+    def to_s(io)
+      if (parent = @parent)
+        parent.to_s(io)
+        io << ' '
+      end
+      io << what
+    end
   end
 end

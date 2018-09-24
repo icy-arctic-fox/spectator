@@ -10,5 +10,11 @@ module Spectator
     end
 
     private getter locals
+
+    def to_s(io)
+      @group.to_s(io)
+      io << ' '
+      io << description
+    end
   end
 end
