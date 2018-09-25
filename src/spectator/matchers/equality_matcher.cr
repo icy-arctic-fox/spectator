@@ -12,11 +12,11 @@ module Spectator
       end
 
       def message(expectation : Expectation) : String
-        "Expected #{expectation.actual} to equal #{@expected} (using ==)"
+        "Expected #{expectation.label} to equal #{label} (using ==)"
       end
 
       def negated_message(expectation : Expectation) : String
-        "Expected #{expectation.actual} to not equal #{@expected} (using ==)"
+        "Expected #{expectation.label} to not equal #{label} (using ==)"
       end
     end
   end

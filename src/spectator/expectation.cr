@@ -2,7 +2,7 @@ require "./matchers/matcher"
 
 module Spectator
   class Expectation(T)
-    private getter label : String
+    protected getter label : String
     getter actual : T
 
     protected def initialize(@label : String, @actual : T)
