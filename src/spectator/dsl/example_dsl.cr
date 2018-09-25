@@ -9,8 +9,8 @@ module Spectator
         expect(subject)
       end
 
-      def expect(actual : T) forall T
-        ::Spectator::Expectation.new(actual)
+      macro expect(actual)
+        ::Spectator::Expectation.new({{actual.stringify}}, {{actual}})
       end
     end
   end

@@ -3,8 +3,8 @@ require "../matchers"
 module Spectator
   module DSL
     module MatcherDSL
-      def eq(expected : T) forall T
-        ::Spectator::Matchers::EqualityMatcher(T).new(expected)
+      macro eq(expected)
+        ::Spectator::Matchers::EqualityMatcher.new({{expected.stringify}}, {{expected}})
       end
     end
   end
