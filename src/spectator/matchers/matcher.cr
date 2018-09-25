@@ -7,6 +7,8 @@ module Spectator
       end
 
       abstract def match?(expectation : Expectation)
+      abstract def message(expectation : Expectation) : String
+      abstract def negated_message(expectation : Expectation) : String
     end
   end
 end

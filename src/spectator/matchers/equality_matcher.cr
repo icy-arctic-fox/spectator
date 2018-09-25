@@ -10,6 +10,14 @@ module Spectator
       def match?(expectation : Expectation)
         expectation.actual == @expected
       end
+
+      def message(expectation : Expectation) : String
+        "Expected #{expectation.actual} to equal #{@expected} (using ==)"
+      end
+
+      def negated_message(expectation : Expectation) : String
+        "Expected #{expectation.actual} to not equal #{@expected} (using ==)"
+      end
     end
   end
 end
