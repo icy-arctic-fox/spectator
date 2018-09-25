@@ -31,7 +31,7 @@ module Spectator
           puts "Failures:"
           puts
           failures.each_with_index do |failure, index|
-            display_failure(failure, index + 1)
+            display_failure(failure.as(FailedResult), index + 1)
           end
         end
       end
@@ -40,7 +40,7 @@ module Spectator
         expected = "TODO"
         actual   = "TODO"
         puts "  #{number}) #{failure.example}"
-        puts "     Failure: <INSERT EXPECTATION HERE>"
+        puts "     Failure: #{failure.error.message}"
         puts
         puts "       Expected: #{expected}"
         puts "            got: #{actual}"
