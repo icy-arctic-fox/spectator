@@ -93,7 +93,7 @@ In no particular order, features that have been implemented and are planned:
     - [X] Before and after hooks - `before_each`, `before_all`, `after_each`, `after_all`, `around_each`
     - [ ] Other hooks - `on_success`, `on_failure`, `on_error`
     - [ ] One-liner syntax
-    - [ ] Should syntax
+    - [X] Should syntax - `should`, `should_not`
     - [X] Helper methods and modules
     - [ ] Aliasing - custom example group types with preset attributes
     - [X] Pending tests - `pending`
