@@ -1,7 +1,7 @@
 # This file includes all source files *except* `should.cr`.
-# The `should.cr` file contains the optional feature for using `#should` on all objects.
+# The `should.cr` file contains the optional feature for using should-syntax.
 # Since this is disabled by default, we don't include all files.
-# Including all files with a wildcard would accidentally enable `#should` by including it's file.
+# Including all files with a wildcard would accidentally enable should-syntax.
 # Unfortunately, that leads to the existence of this file to include everything but that file.
 
 # First the sub-modules.
