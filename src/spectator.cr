@@ -1,4 +1,4 @@
-require "./spectator/*"
+require "./spectator/includes"
 
 # Module that contains all functionality related to Spectator.
 module Spectator
