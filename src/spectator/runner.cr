@@ -1,7 +1,7 @@
 module Spectator
   class Runner
     def initialize(@group : ExampleGroup,
-      @formatter : Formatters::Formatter = Formatters::DefaultFormatter.new)
+                   @formatter : Formatters::Formatter = Formatters::DefaultFormatter.new)
     end
 
     def run : Nil

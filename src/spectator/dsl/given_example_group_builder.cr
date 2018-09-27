@@ -2,7 +2,6 @@ require "./example_group_builder"
 
 module Spectator::DSL
   class GivenExampleGroupBuilder(T) < ExampleGroupBuilder
-
     def initialize(what : String, @collection : Array(T), @symbol : Symbol)
       super(what)
     end

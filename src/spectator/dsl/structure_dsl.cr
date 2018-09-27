@@ -2,7 +2,6 @@ require "../example_group"
 
 module Spectator::DSL
   module StructureDSL
-
     def initialize(sample_values : Internals::SampleValues)
     end
 

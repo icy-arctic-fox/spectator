@@ -15,7 +15,8 @@ module Spectator
       @before_each : Array(->),
       @after_all : Array(->),
       @after_each : Array(->),
-      @around_each : Array(Proc(Nil) ->))
+      @around_each : Array(Proc(Nil) ->)
+    )
     end
 
     def run_before_all
@@ -43,7 +44,7 @@ module Spectator
     end
 
     private def wrap_proc(inner : Proc(Nil) ->, wrapper : ->)
-      -> { inner.call(wrapper) }
+      ->{ inner.call(wrapper) }
     end
   end
 end

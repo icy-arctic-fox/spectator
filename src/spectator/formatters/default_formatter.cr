@@ -37,7 +37,7 @@ module Spectator::Formatters
 
     private def display_failure(failure, number)
       expected = "TODO"
-      actual   = "TODO"
+      actual = "TODO"
       puts "  #{number}) #{failure.example}"
       puts "     Failure: #{failure.error.message}"
       puts

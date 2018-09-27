@@ -14,8 +14,8 @@ module Spectator::Internals
     def add(id : Symbol, name : String, value : T) : SampleValues forall T
       wrapper = TypedValueWrapper(T).new(value)
       SampleValues.new(@values.merge({
-        id => Entry.new(name, wrapper)
-        }))
+        id => Entry.new(name, wrapper),
+      }))
     end
 
     def get_wrapper(id : Symbol)

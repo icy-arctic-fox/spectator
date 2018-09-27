@@ -2,7 +2,6 @@ require "./example"
 
 module Spectator
   abstract class RunnableExample < Example
-
     def run
       result = ResultCapture.new
       group.run_before_all_hooks
