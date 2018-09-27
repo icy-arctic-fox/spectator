@@ -2,8 +2,11 @@ require "./matchers/matcher"
 
 module Spectator
   class Expectation(T)
-    protected getter label : String
     getter actual : T
+
+    protected def label : String
+      @label.empty? ? @actual.to_s : @label
+    end
 
     protected def initialize(@label : String, @actual : T)
     end
