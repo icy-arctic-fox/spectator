@@ -12,7 +12,7 @@ Installation
 Add this to your application's `shard.yml`:
 
 ```yaml
-dependencies:
+development_dependencies:
   spectator:
     gitlab: arctic-fox/spectator
 ```
@@ -33,7 +33,7 @@ Now you can start writing your specs.
 The syntax is the same as what you would expect from modern RSpec.
 The "expect" syntax is recommended and the default, however the "should" syntax is also available.
 Your specs must be wrapped in a `Spectator.describe` block.
-All other blocks inside the top-level block may use `describe` and `context`.
+All other blocks inside the top-level block may use `describe` and `context` without the `Spectator.` prefix.
 
 Here's a minimal spec to demonstrate:
 
@@ -64,12 +64,12 @@ end
 ```
 
 If you find yourself trying to shoehorn in functionality
-or unsure how to write a test, please create an issue for it.
+or unsure how to write a test, please create an [issue](https://gitlab.com/arctic-fox/spectator/issues/new) for it.
 We want to make it as easy as possible to write specs and keep it elegant.
 We may come up with a better solution or even introduce a feature to support your needs.
 
 NOTE: Due to the way this shard uses macros,
-you may find that some code you would expect to work creates syntax errors.
+you may find that some code you would expect to work, or works in other spec libraries, creates syntax errors.
 If you run into this, please create an issue so that we may help you find a solution.
 
 Features
