@@ -17,11 +17,11 @@ module Spectator
     end
 
     def examples : Enumerable(Example)
-      children.select { |child| child.is_a?(Example) }.map { |child| child.unsafe_as(Example) }
+      children.compact_map { |child| child.as?(Example) }
     end
 
     def groups : Enumerable(ExampleGroup)
-      children.select { |child| child.is_a?(ExampleGroup) }.map { |child| child.unsafe_as(ExampleGroup) }
+      children.compact_map { |child| child.as?(ExampleGroup) }
     end
 
     def example_count
