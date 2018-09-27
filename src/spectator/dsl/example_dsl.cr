@@ -1,17 +1,15 @@
 require "./matcher_dsl"
 
-module Spectator
-  module DSL
-    module ExampleDSL
-      include MatcherDSL
+module Spectator::DSL
+  module ExampleDSL
+    include MatcherDSL
 
-      macro is_expected
-        expect(subject)
-      end
+    macro is_expected
+      expect(subject)
+    end
 
-      macro expect(actual)
-        ::Spectator::Expectation.new({{actual.stringify}}, {{actual}})
-      end
+    macro expect(actual)
+      ::Spectator::Expectation.new({{actual.stringify}}, {{actual}})
     end
   end
 end
