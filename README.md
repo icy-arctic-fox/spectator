@@ -1,10 +1,10 @@
 Spectator
 =========
 
-Fully-featured spec-based test framework for Crystal.
-Provides more functionality from [RSpec](http://rspec.info/)
+Spectator is a fully-featured spec-based test framework for Crystal.
+It provides more functionality from [RSpec](http://rspec.info/)
 than the built-in Crystal [Spec](https://crystal-lang.org/api/latest/Spec.html) utility.
-Spectator also provides additional features to make testing easier and more fluent.
+Additionally, Spectator provides extra features to make testing easier and more fluent.
 
 Installation
 ------------
