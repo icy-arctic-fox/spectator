@@ -9,7 +9,7 @@ module Spectator::DSL
     end
 
     macro expect(actual)
-      ::Spectator::Expectation.new({{actual.stringify}}, {{actual}})
+      ::Spectator::Expectations::ValueExpectationPartial.new({{actual.stringify}}, {{actual}})
     end
   end
 end

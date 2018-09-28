@@ -7,6 +7,7 @@
 # First the sub-modules.
 require "./internals"
 require "./dsl"
+require "./expectations"
 require "./matchers"
 require "./formatters"
 
@@ -18,7 +19,6 @@ require "./pending_example"
 require "./example_hooks"
 require "./example_group"
 
-require "./expectation"
 require "./expectation_failed"
 require "./test_results"
 require "./runner"
