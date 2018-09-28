@@ -47,11 +47,10 @@ module Spectator::DSL
         end
 
         _spectator_given_collection Collection%collection, %to_a, %collection
-        %to_a = Collection%collection.new.%to_a
 
         ::Spectator::DSL::Builder.start_given_group(
           {{collection.stringify}},
-          %to_a,
+          Collection%collection.new.%to_a,
           :%group
         )
 

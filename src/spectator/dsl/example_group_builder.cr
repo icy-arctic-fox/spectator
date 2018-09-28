@@ -38,10 +38,9 @@ module Spectator::DSL
 
     def build(parent : ExampleGroup?, sample_values : Internals::SampleValues) : ExampleGroup
       ExampleGroup.new(@what, parent, build_hooks).tap do |group|
-        children = @children.map do |child|
+        group.children = @children.map do |child|
           child.build(group, sample_values).as(ExampleGroup::Child)
         end
-        group.children = children
       end
     end
 
