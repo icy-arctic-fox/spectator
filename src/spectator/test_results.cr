@@ -37,7 +37,7 @@ module Spectator
     end
 
     def example_runtime
-      @results.map { |result| result.elapsed }.sum
+      @results.map(&.elapsed).sum
     end
 
     def overhead_time

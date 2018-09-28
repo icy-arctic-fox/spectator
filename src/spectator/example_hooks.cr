@@ -20,19 +20,19 @@ module Spectator
     end
 
     def run_before_all
-      @before_all.each(&.call)
+      @before_all.each &.call
     end
 
     def run_before_each
-      @before_each.each(&.call)
+      @before_each.each &.call
     end
 
     def run_after_all
-      @after_all.each(&.call)
+      @after_all.each &.call
     end
 
     def run_after_each
-      @after_each.each(&.call)
+      @after_each.each &.call
     end
 
     def wrap_around_each(&block : ->)
