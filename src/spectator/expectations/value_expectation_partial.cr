@@ -9,11 +9,15 @@ module Spectator::Expectations
     end
 
     def to(matcher : Matchers::ValueMatcher(ExpectedType)) : Nil forall ExpectedType
-      raise NotImplementedError.new("ValueExpectationPartial#to")
+      expectation = ValueExpectation.new(self, matcher)
+      result = expectation.eval
+      ExpectationRegistry.current.report(result)
     end
 
     def to_not(matcher : Matchers::ValueMatcher(ExpectedType)) : Nil forall ExpectedType
-      raise NotImplementedError.new("ValueExpectationPartial#to_not")
+      expectation = ValueExpectation.new(self, matcher)
+      result = expectation.eval(true)
+      ExpectationRegistry.current.report(result)
     end
 
     # ditto

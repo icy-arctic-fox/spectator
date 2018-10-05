@@ -3,6 +3,7 @@ require "./example"
 module Spectator
   abstract class RunnableExample < Example
     def run
+      Expectations::ExpectationRegistry.start(self)
       result = ResultCapture.new
       group.run_before_all_hooks
       group.run_before_each_hooks
@@ -13,7 +14,8 @@ module Spectator
         group.run_after_each_hooks
         group.run_after_all_hooks
       end
-      translate_result(result)
+      expectations = Expectations::ExpectationRegistry.finish
+      translate_result(result, expectations)
     end
 
     private def wrapped_capture_result(result)
@@ -32,14 +34,14 @@ module Spectator
       end
     end
 
-    private def translate_result(result)
+    private def translate_result(result, expectations)
       case (error = result.error)
       when Nil
-        SuccessfulResult.new(self, result.elapsed)
+        SuccessfulResult.new(self, result.elapsed, expectations)
       when ExpectationFailed
-        FailedResult.new(self, result.elapsed, error)
+        FailedResult.new(self, result.elapsed, expectations, error)
       else
-        ErroredResult.new(self, result.elapsed, error)
+        ErroredResult.new(self, result.elapsed, expectations, error)
       end
     end
 

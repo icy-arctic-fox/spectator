@@ -7,7 +7,7 @@ module Spectator::Expectations
     private def initialize(@raise_on_failure = true)
     end
 
-    def report(expectation : Expectation) : Nil
+    def report(result : Expectation::Result) : Nil
       raise NotImplementedError.new("ExpectationRegistry#report")
     end
 
@@ -15,11 +15,11 @@ module Spectator::Expectations
       raise NotImplementedError.new("ExpectationRegistry.current")
     end
 
-    def self.start(example : Example) : ExpectationRegistry
+    def self.start(example : Example) : Nil
       raise NotImplementedError.new("ExpectationRegistry.start")
     end
 
-    def self.finish : Nil # TODO: Define return type.
+    def self.finish : ExpectationResults
       raise NotImplementedError.new("ExpectationRegistry.finish")
     end
   end
