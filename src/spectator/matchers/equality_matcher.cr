@@ -1,7 +1,7 @@
 require "./value_matcher"
 
 module Spectator::Matchers
-  class EqualityMatcher(ExpectedType) < ValueMatcher(ExpectedType)
+  struct EqualityMatcher(ExpectedType) < ValueMatcher(ExpectedType)
     def match?(partial : Expectations::ValueExpectationPartial(ActualType)) : Bool forall ActualType
       partial.actual == expected
     end

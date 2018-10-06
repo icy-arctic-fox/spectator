@@ -1,7 +1,7 @@
 require "./matcher"
 
 module Spectator::Matchers
-  abstract class ValueMatcher(ExpectedType) < Matcher
+  abstract struct ValueMatcher(ExpectedType) < Matcher
     private getter expected
 
     def initialize(label : String, @expected : ExpectedType)

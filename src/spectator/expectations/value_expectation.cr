@@ -1,7 +1,7 @@
 require "./expectation"
 
 module Spectator::Expectations
-  class ValueExpectation(ActualType, ExpectedType)
+  struct ValueExpectation(ActualType, ExpectedType)
     include Expectation
 
     def initialize(@partial : ValueExpectationPartial(ActualType),

@@ -4,7 +4,7 @@ module Spectator::Expectations
   # The part of the expectation this class covers is the actual value.
   # This can also cover a block's behavior.
   # Sub-types of this class are returned by the `DSL::ExampleDSL.expect` call.
-  abstract class ExpectationPartial
+  abstract struct ExpectationPartial
     # User-friendly string displayed for the actual expression being tested.
     # For instance, in the expectation:
     # ```

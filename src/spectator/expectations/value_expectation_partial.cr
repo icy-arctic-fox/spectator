@@ -1,7 +1,7 @@
 require "./expectation_partial"
 
 module Spectator::Expectations
-  class ValueExpectationPartial(ActualType) < ExpectationPartial
+  struct ValueExpectationPartial(ActualType) < ExpectationPartial
     getter actual
 
     protected def initialize(label : String, @actual : ActualType)

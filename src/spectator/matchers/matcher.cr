@@ -1,5 +1,5 @@
 module Spectator::Matchers
-  abstract class Matcher
+  abstract struct Matcher
     private getter label : String
 
     private def initialize(@label)
