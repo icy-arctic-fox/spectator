@@ -12,7 +12,7 @@ module Spectator
           @formatter.start_example(example)
           example.run.tap do |result|
             @formatter.end_example(result)
-          end
+          end.as(Result)
         end
       end
       @formatter.end_suite(TestResults.new(results, elapsed))
