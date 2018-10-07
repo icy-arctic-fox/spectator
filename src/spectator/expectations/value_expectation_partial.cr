@@ -12,6 +12,12 @@ module Spectator::Expectations
       super(label)
     end
 
+    # Returns the actual value as a string
+    # if there's no label available.
+    def label
+      super.empty? ? actual.to_s : super
+    end
+
     # Asserts that the `#actual` value matches some criteria.
     # The criteria is defined by the matcher passed to this method.
     def to(matcher : Matchers::ValueMatcher(ExpectedType)) : Nil forall ExpectedType
