@@ -26,18 +26,23 @@ module Spectator::Expectations
       # Indicates whether the expectation was satisifed or not.
       getter? successful : Bool
 
+      # Indicates whether the expectation failed.
+      def failure? : Bool
+        !@successful
+      end
+
       # Creates the result.
       # The expectation is stored so that information from it may be lazy-loaded.
       protected def initialize(@successful, @negated : Bool, @expectation : Expectation)
       end
 
       # Description of the condition that satisfies, or meets, the expectation.
-      def satisfy_message
+      def expected_message
         message(@negated)
       end
 
       # Description of what actually happened when the expectation was evaluated.
-      def result_message
+      def actual_message
         message(@successful)
       end
 
