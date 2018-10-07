@@ -2,6 +2,8 @@ module Spectator::Expectations
   # Min-in for all expectation types.
   # Classes that include this must implement
   # the `#satisfied?`, `#message`, and `#negated_message` methods.
+  # Typically, expectation classes/structs store an `ExpectationPartial`
+  # and a `Matchers::Matcher` and then proxy calls to those instances.
   module Expectation
     # Checks whether the expectation is met.
     abstract def satisfied? : Bool
