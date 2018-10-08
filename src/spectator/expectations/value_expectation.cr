@@ -1,9 +1,15 @@
 require "./expectation"
 
 module Spectator::Expectations
-  class ValueExpectation(ActualType, ExpectedType)
+  # Expectation that operates on values.
+  # There are two values - the actual and expected.
+  # The actual value is what the SUT returned.
+  # The expected value is what the test wants to see.
+  struct ValueExpectation(ActualType, ExpectedType)
     include Expectation
 
+    # Creates the expectation.
+    # This simply takes in the expectation partial and the matcher.
     def initialize(@partial : ValueExpectationPartial(ActualType),
                    @matcher : Matchers::ValueMatcher(ExpectedType))
     end
