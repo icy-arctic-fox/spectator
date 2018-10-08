@@ -24,5 +24,11 @@ module Spectator::Expectations
       @results << result
       raise ExpectationFailed.new(result) if result.failure? && @raise_on_failure
     end
+
+    # Returns the reported expectation results from the example.
+    # This should be run after the example has finished.
+    def results : ExpectationResults
+      ExpectationResults.new(@results.dup)
+    end
   end
 end
