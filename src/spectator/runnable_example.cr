@@ -13,7 +13,7 @@ module Spectator
         group.run_after_each_hooks
         group.run_after_all_hooks
       end
-      expectations = Internals::Harness.current.reporter.results
+      expectations = Internals::Harness.current.expectation_results
       translate_result(result, expectations)
     end
 

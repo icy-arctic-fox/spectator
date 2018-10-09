@@ -34,12 +34,22 @@ module Spectator::Internals
     # Retrieves the current running example.
     getter example : Example
 
-    # Provides access to the expectation reporter.
-    getter reporter = Expectations::ExpectationReporter.new
+    # Reports the outcome of an expectation.
+    # An exception will be raised when a failing result is given.
+    def report_expectation(result : Expectations::Expectation::Result) : Nil
+      @reporter.report(result)
+    end
+
+    # Generates the reported expectation results from the example.
+    # This should be run after the example has finished.
+    def expectation_results : Expectations::ExpectationResults
+      @reporter.results
+    end
 
     # Creates a new harness.
     # The example the harness is for should be passed in.
     private def initialize(@example)
+      @reporter = Expectations::ExpectationReporter.new
     end
   end
 end

@@ -23,7 +23,7 @@ module Spectator::Expectations
     def to(matcher : Matchers::ValueMatcher(ExpectedType)) : Nil forall ExpectedType
       expectation = ValueExpectation.new(self, matcher)
       result = expectation.eval
-      Internals::Harness.current.reporter.report(result)
+      Internals::Harness.current.report_expectation(result)
     end
 
     # Asserts that the `#actual` value *does not* match some criteria.
@@ -31,7 +31,7 @@ module Spectator::Expectations
     def to_not(matcher : Matchers::ValueMatcher(ExpectedType)) : Nil forall ExpectedType
       expectation = ValueExpectation.new(self, matcher)
       result = expectation.eval(true)
-      Internals::Harness.current.reporter.report(result)
+      Internals::Harness.current.report_expectation(result)
     end
 
     # ditto
