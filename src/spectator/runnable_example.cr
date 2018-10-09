@@ -3,7 +3,6 @@ require "./example"
 module Spectator
   abstract class RunnableExample < Example
     def run
-      Expectations::ExpectationRegistry.start(self)
       result = ResultCapture.new
       group.run_before_all_hooks
       group.run_before_each_hooks
@@ -14,7 +13,7 @@ module Spectator
         group.run_after_each_hooks
         group.run_after_all_hooks
       end
-      expectations = Expectations::ExpectationRegistry.finish
+      expectations = Internals::Harness.current.reporter.results
       translate_result(result, expectations)
     end
 

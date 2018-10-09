@@ -10,7 +10,7 @@ module Spectator
         @formatter.start_suite
         results = @group.all_examples.map do |example|
           @formatter.start_example(example)
-          example.run.tap do |result|
+          Internals::Harness.run(example).tap do |result|
             @formatter.end_example(result)
           end.as(Result)
         end
