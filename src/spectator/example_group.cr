@@ -14,6 +14,8 @@ module Spectator
     private getter hooks : ExampleHooks
 
     def initialize(@what, @parent, @hooks)
+      @before_all_hooks_run = false
+      @after_all_hooks_run = false
     end
 
     def examples : Enumerable(Example)
