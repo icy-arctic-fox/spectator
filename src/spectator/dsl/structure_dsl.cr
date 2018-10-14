@@ -110,10 +110,10 @@ module Spectator::DSL
       raise NotImplementedError.new("Spectator::DSL#include_examples")
     end
 
-    macro it(description, &block)
+    macro it(what, &block)
       _spectator_example_wrapper(Wrapper%example, %run) {{block}}
 
-      _spectator_example(Example%example, Wrapper%example, ::Spectator::RunnableExample, {{description}}) do
+      _spectator_example(Example%example, Wrapper%example, ::Spectator::RunnableExample, {{what}}) do
         protected def run_instance
           @instance.%run
         end
@@ -122,10 +122,10 @@ module Spectator::DSL
       ::Spectator::DSL::Builder.add_example(Example%example)
     end
 
-    macro pending(description, &block)
+    macro pending(what, &block)
       _spectator_example_wrapper(Wrapper%example, %run) {{block}}
 
-      _spectator_example(Example%example, Wrapper%example, ::Spectator::PendingExample, {{description}})
+      _spectator_example(Example%example, Wrapper%example, ::Spectator::PendingExample, {{what}})
 
       ::Spectator::DSL::Builder.add_example(Example%example)
     end
@@ -176,7 +176,7 @@ module Spectator::DSL
       end
     end
 
-    private macro _spectator_example(example_class_name, wrapper_class_name, base_class, description, &block)
+    private macro _spectator_example(example_class_name, wrapper_class_name, base_class, what, &block)
       class {{example_class_name.id}} < {{base_class.id}}
         def initialize(group : ::Spectator::ExampleGroup, sample_values : ::Spectator::Internals::SampleValues)
           super
@@ -187,8 +187,8 @@ module Spectator::DSL
           {{block.body}}
         {% end %}
 
-        def description
-          {{description.is_a?(StringLiteral) ? description : description.stringify}}
+        def what
+          {{what.is_a?(StringLiteral) ? what : what.stringify}}
         end
       end
     end

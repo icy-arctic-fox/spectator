@@ -1,6 +1,6 @@
 module Spectator
   # Base class for all types of examples.
-  # Concrete types must implement the `#run_inner` and `#description` methods.
+  # Concrete types must implement the `#run_inner` and `#what` methods.
   abstract class Example
     # Indicates whether the example has already been run.
     getter? finished = false
@@ -22,7 +22,7 @@ module Spectator
     private abstract def run_inner : Result
 
     # Message that describes what the example tests.
-    abstract def description : String
+    abstract def what : String
 
     # Creates the base of the example.
     # The group should be the example group the example belongs to.
@@ -36,7 +36,7 @@ module Spectator
     def to_s(io)
       @group.to_s(io)
       io << ' '
-      io << description
+      io << what
     end
   end
 end
