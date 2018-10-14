@@ -2,11 +2,9 @@ module Spectator::DSL
   module Builder
     extend self
 
-    @@group_stack = [::Spectator::DSL::ExampleGroupBuilder.new("ROOT")]
+    @@group_stack = Array(ExampleGroupBuilder).new(1, root_group)
 
-    private def root_group
-      @@group_stack.first
-    end
+    private class_getter root_group = RootExampleGroupBuilder.new()
 
     private def current_group
       @@group_stack.last
@@ -57,7 +55,7 @@ module Spectator::DSL
     end
 
     protected def build : ExampleGroup
-      root_group.build(nil, Internals::SampleValues.empty)
+      root_group.build(Internals::SampleValues.empty)
     end
   end
 end

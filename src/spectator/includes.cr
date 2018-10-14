@@ -18,6 +18,7 @@ require "./pending_example"
 
 require "./example_hooks"
 require "./example_group"
+require "./root_example_group"
 
 require "./expectation_failed"
 require "./test_results"
