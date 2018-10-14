@@ -2,7 +2,7 @@ module Spectator::DSL
   module Builder
     extend self
 
-    @@group_stack = Array(NestedExampleGroupBuilder).new(1, root_group)
+    @@group_stack = Array(ExampleGroupBuilder).new(1, root_group)
 
     private class_getter root_group = RootExampleGroupBuilder.new()
 
