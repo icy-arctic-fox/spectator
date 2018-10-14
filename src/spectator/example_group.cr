@@ -1,89 +1,82 @@
-require "./example"
+require "./example_component"
 
 module Spectator
-  class ExampleGroup
-    alias Child = Example | ExampleGroup
+  abstract class ExampleGroup < ExampleComponent
+    include Enumerable(ExampleComponent)
+    include Iterable(ExampleComponent)
 
-    getter what : String
-
-    getter! parent : ExampleGroup
-
-    private getter! children : Array(Child)
-    setter children
-
-    def initialize(@what, @parent, @hooks : ExampleHooks)
+    def initialize(@hooks : ExampleHooks)
       @before_all_hooks_run = false
       @after_all_hooks_run = false
     end
 
-    def example_count
-      children.sum do |child|
-        child.is_a?(Example) ? 1 : child.example_count
+    private getter! children : Array(ExampleComponent)
+
+    def children=(children : Array(ExampleComponent))
+      raise "Attempted to reset example group children" if @children
+      @children = children
+    end
+
+    def each
+      children.each do |child|
+        yield child
       end
     end
 
+    def each : Iterator(ExampleComponent)
+      raise NotImplementedError.new("ExampleGroup#each")
+    end
+
+    # TODO: Remove this method.
+    def example_count
+      children.sum do |child|
+        child.is_a?(Example) ? 1 : child.as(ExampleGroup).example_count
+      end
+    end
+
+    # TODO: Remove this method.
     def all_examples
       Array(Example).new(example_count).tap do |array|
         children.each do |child|
           if child.is_a?(Example)
             array << child
           else
-            array.concat(child.all_examples)
+            array.concat(child.as(ExampleGroup).all_examples)
           end
         end
       end
     end
 
-    def run_before_all_hooks
-      if (parent = @parent)
-        parent.run_before_all_hooks
-      end
+    def finished? : Bool
+      children.all?(&.finished?)
+    end
+
+    def run_before_all_hooks : Nil
       unless @before_all_hooks_run
         @hooks.run_before_all
         @before_all_hooks_run = true
       end
     end
 
-    def run_before_each_hooks
-      if (parent = @parent)
-        parent.run_before_each_hooks
-      end
+    def run_before_each_hooks : Nil
       @hooks.run_before_each
     end
 
-    def run_after_all_hooks
+    def run_after_all_hooks : Nil
       unless @after_all_hooks_run
-        if all_examples.all?(&.finished?)
+        if finished?
           @hooks.run_after_all
           @after_all_hooks_run = true
         end
       end
-      if (parent = @parent)
-        parent.run_after_all_hooks
-      end
     end
 
-    def run_after_each_hooks
+    def run_after_each_hooks : Nil
       @hooks.run_after_each
-      if (parent = @parent)
-        parent.run_after_each_hooks
-      end
     end
 
-    def wrap_around_each_hooks(&block : ->)
-      wrapper = @hooks.wrap_around_each(&block)
-      if (parent = @parent)
-        wrapper = parent.wrap_around_each_hooks(&wrapper)
-      end
-      wrapper
-    end
-
-    def to_s(io)
-      if (parent = @parent)
-        parent.to_s(io)
-        io << ' '
-      end
-      io << what
+    def wrap_around_each_hooks(&block : ->) : ->
+      @hooks.wrap_around_each(&block)
     end
   end
 end

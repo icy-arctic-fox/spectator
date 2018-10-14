@@ -1,6 +1,6 @@
 module Spectator::DSL
-  class ExampleGroupBuilder
-    alias Child = ExampleFactory | ExampleGroupBuilder
+  class NestedExampleGroupBuilder
+    alias Child = ExampleFactory | NestedExampleGroupBuilder
 
     @children = [] of Child
     @before_all_hooks = [] of ->
@@ -36,10 +36,10 @@ module Spectator::DSL
       @around_each_hooks << block
     end
 
-    def build(parent : ExampleGroup?, sample_values : Internals::SampleValues) : ExampleGroup
-      ExampleGroup.new(@what, parent, build_hooks).tap do |group|
+    def build(parent : ExampleGroup, sample_values : Internals::SampleValues) : ExampleGroup
+      NestedExampleGroup.new(@what, parent, build_hooks).tap do |group|
         group.children = @children.map do |child|
-          child.build(group, sample_values).as(ExampleGroup::Child)
+          child.build(group, sample_values).as(ExampleComponent)
         end
       end
     end

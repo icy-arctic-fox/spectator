@@ -1,7 +1,9 @@
+require "./example_component"
+
 module Spectator
   # Base class for all types of examples.
   # Concrete types must implement the `#run_inner` and `#what` methods.
-  abstract class Example
+  abstract class Example < ExampleComponent
     # Indicates whether the example has already been run.
     getter? finished = false
 
@@ -20,9 +22,6 @@ module Spectator
 
     # Implementation-specific for running the example code.
     private abstract def run_inner : Result
-
-    # Message that describes what the example tests.
-    abstract def what : String
 
     # Creates the base of the example.
     # The group should be the example group the example belongs to.

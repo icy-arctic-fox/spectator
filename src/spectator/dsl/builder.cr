@@ -2,7 +2,7 @@ module Spectator::DSL
   module Builder
     extend self
 
-    @@group_stack = Array(ExampleGroupBuilder).new(1, root_group)
+    @@group_stack = Array(NestedExampleGroupBuilder).new(1, root_group)
 
     private class_getter root_group = RootExampleGroupBuilder.new()
 
@@ -10,13 +10,13 @@ module Spectator::DSL
       @@group_stack.last
     end
 
-    private def push_group(group : ExampleGroupBuilder)
+    private def push_group(group : NestedExampleGroupBuilder)
       current_group.add_child(group)
       @@group_stack.push(group)
     end
 
     def start_group(*args) : Nil
-      group = ::Spectator::DSL::ExampleGroupBuilder.new(*args)
+      group = ::Spectator::DSL::NestedExampleGroupBuilder.new(*args)
       push_group(group)
     end
 

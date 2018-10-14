@@ -12,12 +12,14 @@ require "./matchers"
 require "./formatters"
 
 # Then all of the top-level types.
+require "./example_component"
 require "./example"
 require "./runnable_example"
 require "./pending_example"
 
 require "./example_hooks"
 require "./example_group"
+require "./nested_example_group"
 require "./root_example_group"
 
 require "./expectation_failed"
