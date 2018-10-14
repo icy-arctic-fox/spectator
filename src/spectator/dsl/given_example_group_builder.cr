@@ -7,7 +7,7 @@ module Spectator::DSL
     end
 
     def build(parent : ExampleGroup, sample_values : Internals::SampleValues) : NestedExampleGroup
-      NestedExampleGroup.new(@what, parent, build_hooks).tap do |group|
+      NestedExampleGroup.new(@what, parent, hooks).tap do |group|
         group.children = @collection.map do |value|
           build_sub_group(group, sample_values, value).as(ExampleComponent)
         end

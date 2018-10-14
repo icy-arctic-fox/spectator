@@ -33,7 +33,7 @@ module Spectator::DSL
       @around_each_hooks << block
     end
 
-    private def build_hooks
+    private def hooks
       ExampleHooks.new(
         @before_all_hooks,
         @before_each_hooks,

@@ -4,7 +4,7 @@ module Spectator::DSL
 
     @@group_stack = Array(ExampleGroupBuilder).new(1, root_group)
 
-    private class_getter root_group = RootExampleGroupBuilder.new()
+    private class_getter root_group = RootExampleGroupBuilder.new
 
     private def current_group
       @@group_stack.last
@@ -16,12 +16,12 @@ module Spectator::DSL
     end
 
     def start_group(*args) : Nil
-      group = ::Spectator::DSL::NestedExampleGroupBuilder.new(*args)
+      group = NestedExampleGroupBuilder.new(*args)
       push_group(group)
     end
 
     def start_given_group(*args) : Nil
-      group = ::Spectator::DSL::GivenExampleGroupBuilder.new(*args)
+      group = GivenExampleGroupBuilder.new(*args)
       push_group(group)
     end
 
@@ -30,7 +30,7 @@ module Spectator::DSL
     end
 
     def add_example(example_type : Example.class) : Nil
-      factory = ::Spectator::DSL::ExampleFactory.new(example_type)
+      factory = ExampleFactory.new(example_type)
       current_group.add_child(factory)
     end
 
