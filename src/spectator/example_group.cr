@@ -11,19 +11,9 @@ module Spectator
     private getter! children : Array(Child)
     setter children
 
-    private getter hooks : ExampleHooks
-
-    def initialize(@what, @parent, @hooks)
+    def initialize(@what, @parent, @hooks : ExampleHooks)
       @before_all_hooks_run = false
       @after_all_hooks_run = false
-    end
-
-    def examples : Enumerable(Example)
-      children.compact_map &.as?(Example)
-    end
-
-    def groups : Enumerable(ExampleGroup)
-      children.compact_map &.as?(ExampleGroup)
     end
 
     def example_count
@@ -49,7 +39,7 @@ module Spectator
         parent.run_before_all_hooks
       end
       unless @before_all_hooks_run
-        hooks.run_before_all
+        @hooks.run_before_all
         @before_all_hooks_run = true
       end
     end
@@ -58,13 +48,13 @@ module Spectator
       if (parent = @parent)
         parent.run_before_each_hooks
       end
-      hooks.run_before_each
+      @hooks.run_before_each
     end
 
     def run_after_all_hooks
       unless @after_all_hooks_run
         if all_examples.all?(&.finished?)
-          hooks.run_after_all
+          @hooks.run_after_all
           @after_all_hooks_run = true
         end
       end
@@ -74,14 +64,14 @@ module Spectator
     end
 
     def run_after_each_hooks
-      hooks.run_after_each
+      @hooks.run_after_each
       if (parent = @parent)
         parent.run_after_each_hooks
       end
     end
 
     def wrap_around_each_hooks(&block : ->)
-      wrapper = hooks.wrap_around_each(&block)
+      wrapper = @hooks.wrap_around_each(&block)
       if (parent = @parent)
         wrapper = parent.wrap_around_each_hooks(&wrapper)
       end
