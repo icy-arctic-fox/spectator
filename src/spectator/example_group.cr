@@ -15,6 +15,7 @@ module Spectator
     def children=(children : Array(ExampleComponent))
       raise "Attempted to reset example group children" if @children
       @children = children
+      @example_count = children.sum(&.example_count)
     end
 
     def each
@@ -27,9 +28,7 @@ module Spectator
       children.each
     end
 
-    def example_count : Int
-      children.sum(&.example_count)
-    end
+    getter example_count = 0
 
     def [](index : Int) : Example
       raise IndexError.new if index < 0
