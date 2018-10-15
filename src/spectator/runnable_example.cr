@@ -4,7 +4,7 @@ module Spectator
   # Common base for all examples that can be run.
   # This class includes all the logic for running example hooks,
   # the example code, and capturing a result.
-  # Sub-classes need to implement the `#run_instance` method.
+  # Sub-classes need to implement the `#what` and `#run_instance` methods.
   abstract class RunnableExample < Example
     # Runs the example, hooks, and captures the result
     # and translates to a usable result.
