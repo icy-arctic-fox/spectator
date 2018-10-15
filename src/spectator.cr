@@ -45,7 +45,14 @@ module Spectator
     end
   end
 
+  # Flag indicating whether Spectator should automatically run tests.
+  # This should be left alone (set to true) in typical usage.
+  # There are times when Spectator shouldn't run tests.
+  # One of those is testing Spectator.
+  class_property? autorun = true
+
   # All tests are ran just before the executable exits.
+  # Tests will be skipped, however, if `#autorun?` is set to false.
   # There are a couple of reasons for this.
   #
   # First is that we want a clean interface for the end-user.
@@ -62,21 +69,24 @@ module Spectator
   # Crystal doesn't display much information about what happened.
   # That issue is handled by putting a begin/rescue block to show a custom error message.
   at_exit do
-    begin
-      # Build the root-level example group and run it.
-      group = ::Spectator::DSL::Builder.build
-      Runner.new(group).run
-    rescue ex
-      # Catch all unhandled exceptions here.
-      # Examples are already wrapped, so any exceptions they throw are caught.
-      # But if an exception occurs outside an example,
-      # it's likely the fault of the test framework (Spectator).
-      # So we display a helpful error that could be reported and return non-zero.
-      puts
-      puts "Encountered an unexpected error in framework"
-      puts ex.message
-      puts ex.backtrace.join("\n")
-      exit(1)
-    end
+    run if autorun?
+  end
+
+  # Builds the tests and runs the framework.
+  private def self.run
+    # Build the root-level example group and run it.
+    group = ::Spectator::DSL::Builder.build
+    Runner.new(group).run
+  rescue ex
+    # Catch all unhandled exceptions here.
+    # Examples are already wrapped, so any exceptions they throw are caught.
+    # But if an exception occurs outside an example,
+    # it's likely the fault of the test framework (Spectator).
+    # So we display a helpful error that could be reported and return non-zero.
+    puts
+    puts "Encountered an unexpected error in framework"
+    puts ex.message
+    puts ex.backtrace.join("\n")
+    exit(1)
   end
 end
