@@ -24,7 +24,7 @@ module Spectator
     end
 
     def each : Iterator(ExampleComponent)
-      raise NotImplementedError.new("ExampleGroup#each")
+      children.each
     end
 
     # TODO: Remove this method.
