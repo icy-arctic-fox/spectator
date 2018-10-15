@@ -29,6 +29,11 @@ module Spectator
     def initialize(@group, sample_values : Internals::SampleValues)
     end
 
+    # Indicates there is only one example to run.
+    def example_count
+      1
+    end
+
     # String representation of the example.
     # This consists of the groups the example is in and the description.
     # The string can be given to end-users to identify the example.

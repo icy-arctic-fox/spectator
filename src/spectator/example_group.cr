@@ -27,11 +27,8 @@ module Spectator
       children.each
     end
 
-    # TODO: Remove this method.
-    def example_count
-      children.sum do |child|
-        child.is_a?(Example) ? 1 : child.as(ExampleGroup).example_count
-      end
+    def example_count : Int
+      children.sum(&.example_count)
     end
 
     # TODO: Remove this method.

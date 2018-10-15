@@ -7,5 +7,8 @@ module Spectator
 
     # Indicates whether the example (or group) has been completely run.
     abstract def finished? : Bool
+
+    # The number of examples in this instance.
+    abstract def example_count : Int
   end
 end
