@@ -31,8 +31,9 @@ module Spectator
     getter example_count = 0
 
     def [](index : Int) : Example
-      raise IndexError.new if index < 0
       offset = index
+      offset += example_count if offset < 0
+      raise IndexError.new if offset < 0 || offset >= example_count
       found = children.find do |child|
         count = child.example_count
         if offset < count
