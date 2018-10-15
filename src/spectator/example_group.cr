@@ -31,6 +31,25 @@ module Spectator
       children.sum(&.example_count)
     end
 
+    def [](index : Int) : Example
+      raise IndexError.new if index < 0
+      offset = index
+      found = children.find do |child|
+        count = child.example_count
+        if offset < count
+          true
+        else
+          offset -= count
+          false
+        end
+      end
+      if found
+        found[offset]
+      else
+        raise IndexError.new
+      end
+    end
+
     # TODO: Remove this method.
     def all_examples
       Array(Example).new(example_count).tap do |array|

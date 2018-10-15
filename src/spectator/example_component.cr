@@ -10,5 +10,8 @@ module Spectator
 
     # The number of examples in this instance.
     abstract def example_count : Int
+
+    # Lookup the example with the specified index.
+    abstract def [](index : Int) : Example
   end
 end

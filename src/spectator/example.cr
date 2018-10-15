@@ -34,6 +34,11 @@ module Spectator
       1
     end
 
+    # Retrieve the current example.
+    def [](index : Int)
+      self
+    end
+
     # String representation of the example.
     # This consists of the groups the example is in and the description.
     # The string can be given to end-users to identify the example.
