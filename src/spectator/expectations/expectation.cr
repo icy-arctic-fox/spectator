@@ -43,7 +43,7 @@ module Spectator::Expectations
 
       # Description of what actually happened when the expectation was evaluated.
       def actual_message
-        message(@successful)
+        message(!@successful)
       end
 
       # Retrieves the message or negated message from an expectation.
