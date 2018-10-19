@@ -41,3 +41,14 @@ def new_failure_result
     result.successful?.should be_false # Sanity check.
   end
 end
+
+def report_results(success_count = 1, failure_count = 0)
+  successful = Array.new(success_count) { new_successful_result }
+  failures = Array.new(failure_count) { new_failure_result }
+  results = (successful + failures).shuffle
+  reporter = Spectator::Expectations::ExpectationReporter.new(false)
+  results.each do |result|
+    reporter.report(result)
+  end
+  {successful: successful, failures: failures, results: results, reporter: reporter}
+end

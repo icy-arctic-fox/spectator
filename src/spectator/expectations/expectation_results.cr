@@ -27,7 +27,7 @@ module Spectator::Expectations
     end
 
     # Returns a collection of only the failed expectation results.
-    def failures : Enumerables(Expectation::Result)
+    def failures : Enumerable(Expectation::Result)
       @results.select(&.failure?)
     end
 
