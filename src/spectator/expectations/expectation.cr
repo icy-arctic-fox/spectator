@@ -22,7 +22,7 @@ module Spectator::Expectations
     end
 
     # Information regarding the outcome of an expectation.
-    struct Result
+    class Result
       # Indicates whether the expectation was satisifed or not.
       getter? successful : Bool
 
