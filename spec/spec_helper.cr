@@ -1,5 +1,6 @@
 require "spec"
 require "../src/spectator"
+require "./expectations_helper"
 
 # Prevent Spectator from trying to run tests.
 Spectator.autorun = false

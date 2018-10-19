@@ -5,12 +5,7 @@ describe Spectator::Expectations::ExpectationReporter do
     context "with raise flag set" do
       context "given a successful result" do
         it "stores the result" do
-          value = 42
-          partial = Spectator::Expectations::ValueExpectationPartial.new(value.to_s, value)
-          matcher = Spectator::Matchers::EqualityMatcher.new(value.to_s, value)
-          expectation = Spectator::Expectations::ValueExpectation.new(partial, matcher)
-          result = expectation.eval
-          result.successful?.should be_true # Sanity check.
+          result = new_successful_result
           reporter = Spectator::Expectations::ExpectationReporter.new(true)
           reporter.report(result)
           reporter.results.should contain(result)
@@ -19,25 +14,13 @@ describe Spectator::Expectations::ExpectationReporter do
 
       context "given a failed result" do
         it "raises and error" do
-          value1 = 42
-          value2 = 777
-          partial = Spectator::Expectations::ValueExpectationPartial.new(value1)
-          matcher = Spectator::Matchers::EqualityMatcher.new(value2)
-          expectation = Spectator::Expectations::ValueExpectation.new(partial, matcher)
-          result = expectation.eval
-          result.successful?.should be_false # Sanity check.
+          result = new_failure_result
           reporter = Spectator::Expectations::ExpectationReporter.new(true)
           expect_raises(Spectator::ExpectationFailed) { reporter.report(result) }
         end
 
         it "stores the result" do
-          value1 = 42
-          value2 = 777
-          partial = Spectator::Expectations::ValueExpectationPartial.new(value1)
-          matcher = Spectator::Matchers::EqualityMatcher.new(value2)
-          expectation = Spectator::Expectations::ValueExpectation.new(partial, matcher)
-          result = expectation.eval
-          result.successful?.should be_false # Sanity check.
+          result = new_failure_result
           reporter = Spectator::Expectations::ExpectationReporter.new(true)
           begin
             reporter.report(result)
@@ -52,12 +35,7 @@ describe Spectator::Expectations::ExpectationReporter do
     context "with raise flag not set" do
       context "given a successful result" do
         it "stores the result" do
-          value = 42
-          partial = Spectator::Expectations::ValueExpectationPartial.new(value)
-          matcher = Spectator::Matchers::EqualityMatcher.new(value)
-          expectation = Spectator::Expectations::ValueExpectation.new(partial, matcher)
-          result = expectation.eval
-          result.successful?.should be_true # Sanity check.
+          result = new_successful_result
           reporter = Spectator::Expectations::ExpectationReporter.new(false)
           reporter.report(result)
           reporter.results.should contain(result)
@@ -66,13 +44,7 @@ describe Spectator::Expectations::ExpectationReporter do
 
       context "given a failed result" do
         it "stores the result" do
-          value1 = 42
-          value2 = 777
-          partial = Spectator::Expectations::ValueExpectationPartial.new(value1)
-          matcher = Spectator::Matchers::EqualityMatcher.new(value2)
-          expectation = Spectator::Expectations::ValueExpectation.new(partial, matcher)
-          result = expectation.eval
-          result.successful?.should be_false # Sanity check.
+          result = new_failure_result
           reporter = Spectator::Expectations::ExpectationReporter.new(false)
           reporter.report(result)
           reporter.results.should contain(result)
@@ -91,17 +63,8 @@ describe Spectator::Expectations::ExpectationReporter do
 
     context "with multiple expectations" do
       it "contains all expectations" do
-        value1 = 42
-        value2 = 777
-        partial = Spectator::Expectations::ValueExpectationPartial.new(value1)
-        matcher = Spectator::Matchers::EqualityMatcher.new(value1)
-        expectation = Spectator::Expectations::ValueExpectation.new(partial, matcher)
-        result1 = expectation.eval
-        partial = Spectator::Expectations::ValueExpectationPartial.new(value1)
-        matcher = Spectator::Matchers::EqualityMatcher.new(value2)
-        expectation = Spectator::Expectations::ValueExpectation.new(partial, matcher)
-        result2 = expectation.eval
-
+        result1 = new_successful_result
+        result2 = new_failure_result
         reporter = Spectator::Expectations::ExpectationReporter.new(false)
         begin
           reporter.report(result1)
