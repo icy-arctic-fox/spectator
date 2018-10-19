@@ -39,7 +39,6 @@ describe Spectator::Expectations::ValueExpectationPartial do
   end
 
   describe "#to" do
-
   end
 
   {% for method in [:to_not, :not_to] %}

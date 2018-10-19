@@ -78,14 +78,14 @@ module Spectator
     # Creates a result instance from captured result information.
     private def translate_result(result, expectations)
       case (error = result.error)
-      # If no errors occurred, then the example ran successfully.
       when Nil
+        # If no errors occurred, then the example ran successfully.
         SuccessfulResult.new(self, result.elapsed, expectations)
-      # If a required expectation fails, then a `ExpectationRailed` exception will be raised.
       when ExpectationFailed
+        # If a required expectation fails, then a `ExpectationRailed` exception will be raised.
         FailedResult.new(self, result.elapsed, expectations, error)
-      # Any other exception that is raised is unexpected and is an errored result.
       else
+        # Any other exception that is raised is unexpected and is an errored result.
         ErroredResult.new(self, result.elapsed, expectations, error)
       end
     end
