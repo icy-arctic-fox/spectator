@@ -10,7 +10,7 @@ describe Spectator::Expectations::ValueExpectationPartial do
   end
 
   describe "#label" do
-    context "with a non-empty string" do
+    context "when provided" do
       it "contains the value passed to the constructor" do
         actual = 777
         label = "lucky"
@@ -19,10 +19,10 @@ describe Spectator::Expectations::ValueExpectationPartial do
       end
     end
 
-    context "with an empty string" do
+    context "when omitted" do
       it "contains a stringified version of #actual" do
         actual = 777
-        partial = Spectator::Expectations::ValueExpectationPartial.new("", actual)
+        partial = Spectator::Expectations::ValueExpectationPartial.new(actual)
         partial.label.should eq(actual.to_s)
       end
     end

@@ -20,7 +20,7 @@ class Object
     # First argument of the `Expectation` initializer is the expression label.
     # However, since this isn't a macro and we can't "look behind" this method call
     # to see what it was invoked on, the argument is an empty string.
-    expectation = ::Spectator::Expectation.new("", self)
+    expectation = ::Spectator::Expectation.new(self)
     unless matcher.match?(expectation)
       raise ::Spectator::ExpectationFailed.new(matcher.message(expectation))
     end
@@ -29,7 +29,7 @@ class Object
   # Works the same as `#should` except the condition is inverted.
   # When `#should` succeeds, this method will fail, and vice-versa.
   def should_not(matcher : ::Spectator::Matchers::Matcher)
-    expectation = ::Spectator::Expectation.new("", self)
+    expectation = ::Spectator::Expectation.new(self)
     if matcher.match?(expectation)
       raise ::Spectator::ExpectationFailed.new(matcher.message(expectation))
     end

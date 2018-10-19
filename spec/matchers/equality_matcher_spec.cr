@@ -85,6 +85,16 @@ describe Spectator::Matchers::EqualityMatcher do
       matcher = Spectator::Matchers::EqualityMatcher.new(label, value)
       matcher.message(partial).should contain(label)
     end
+
+    context "when expected label is omitted" do
+      it "contains stringified form of expected value" do
+        value1 = 42
+        value2 = 777
+        partial = Spectator::Expectations::ValueExpectationPartial.new(value1.to_s, value1)
+        matcher = Spectator::Matchers::EqualityMatcher.new(value2)
+        matcher.message(partial).should contain(value2.to_s)
+      end
+    end
   end
 
   describe "#negated_message" do
@@ -100,7 +110,7 @@ describe Spectator::Matchers::EqualityMatcher do
       label = "everything"
       partial = Spectator::Expectations::ValueExpectationPartial.new(label, value)
       matcher = Spectator::Matchers::EqualityMatcher.new(value.to_s, value)
-      matcher.message(partial).should contain(label)
+      matcher.negated_message(partial).should contain(label)
     end
 
     it "contains the expected label" do
@@ -108,7 +118,17 @@ describe Spectator::Matchers::EqualityMatcher do
       label = "everything"
       partial = Spectator::Expectations::ValueExpectationPartial.new(value.to_s, value)
       matcher = Spectator::Matchers::EqualityMatcher.new(label, value)
-      matcher.message(partial).should contain(label)
+      matcher.negated_message(partial).should contain(label)
+    end
+
+    context "when expected label is omitted" do
+      it "contains stringified form of expected value" do
+        value1 = 42
+        value2 = 777
+        partial = Spectator::Expectations::ValueExpectationPartial.new(value1.to_s, value1)
+        matcher = Spectator::Matchers::EqualityMatcher.new(value2)
+        matcher.negated_message(partial).should contain(value2.to_s)
+      end
     end
   end
 end
