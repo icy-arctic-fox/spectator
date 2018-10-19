@@ -2,10 +2,20 @@ require "../spec_helper"
 
 describe Spectator::Expectations::ValueExpectationPartial do
   describe "#actual" do
-    it "contains the value passed to the constructor" do
-      actual = 777
-      partial = Spectator::Expectations::ValueExpectationPartial.new(actual.to_s, actual)
-      partial.actual.should eq(actual)
+    context "with a label" do
+      it "contains the value passed to the constructor" do
+        actual = 777
+        partial = Spectator::Expectations::ValueExpectationPartial.new(actual.to_s, actual)
+        partial.actual.should eq(actual)
+      end
+    end
+
+    context "without a label" do
+      it "contains the value passed to the constructor" do
+        actual = 777
+        partial = Spectator::Expectations::ValueExpectationPartial.new(actual)
+        partial.actual.should eq(actual)
+      end
     end
   end
 

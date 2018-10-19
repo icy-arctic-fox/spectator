@@ -5,8 +5,8 @@ describe Spectator::Expectations::ValueExpectation do
     context "with a successful match" do
       it "returns a successful result" do
         value = 42
-        partial = Spectator::Expectations::ValueExpectationPartial.new(value.to_s, value)
-        matcher = Spectator::Matchers::EqualityMatcher.new(value.to_s, value)
+        partial = Spectator::Expectations::ValueExpectationPartial.new(value)
+        matcher = Spectator::Matchers::EqualityMatcher.new(value)
         expectation = Spectator::Expectations::ValueExpectation.new(partial, matcher)
         matcher.match?(partial).should be_true # Sanity check.
         expectation.eval.successful?.should be_true
@@ -14,8 +14,8 @@ describe Spectator::Expectations::ValueExpectation do
 
       it "reports a successful actual message" do
         value = 42
-        partial = Spectator::Expectations::ValueExpectationPartial.new(value.to_s, value)
-        matcher = Spectator::Matchers::EqualityMatcher.new(value.to_s, value)
+        partial = Spectator::Expectations::ValueExpectationPartial.new(value)
+        matcher = Spectator::Matchers::EqualityMatcher.new(value)
         expectation = Spectator::Expectations::ValueExpectation.new(partial, matcher)
         matcher.match?(partial).should be_true # Sanity check.
         expectation.eval.actual_message.should eq(expectation.message)
@@ -26,8 +26,8 @@ describe Spectator::Expectations::ValueExpectation do
       it "returns an unsuccessful result" do
         value1 = 42
         value2 = 777
-        partial = Spectator::Expectations::ValueExpectationPartial.new(value1.to_s, value1)
-        matcher = Spectator::Matchers::EqualityMatcher.new(value2.to_s, value2)
+        partial = Spectator::Expectations::ValueExpectationPartial.new(value1)
+        matcher = Spectator::Matchers::EqualityMatcher.new(value2)
         expectation = Spectator::Expectations::ValueExpectation.new(partial, matcher)
         matcher.match?(partial).should be_false # Sanity check.
         expectation.eval.successful?.should be_false
@@ -36,8 +36,8 @@ describe Spectator::Expectations::ValueExpectation do
       it "reports an unsuccessful actual message" do
         value1 = 42
         value2 = 777
-        partial = Spectator::Expectations::ValueExpectationPartial.new(value1.to_s, value1)
-        matcher = Spectator::Matchers::EqualityMatcher.new(value2.to_s, value2)
+        partial = Spectator::Expectations::ValueExpectationPartial.new(value1)
+        matcher = Spectator::Matchers::EqualityMatcher.new(value2)
         expectation = Spectator::Expectations::ValueExpectation.new(partial, matcher)
         matcher.match?(partial).should be_false # Sanity check.
         expectation.eval.actual_message.should eq(expectation.negated_message)
@@ -46,8 +46,8 @@ describe Spectator::Expectations::ValueExpectation do
 
     it "reports a non-negated expected message" do
       value = 42
-      partial = Spectator::Expectations::ValueExpectationPartial.new(value.to_s, value)
-      matcher = Spectator::Matchers::EqualityMatcher.new(value.to_s, value)
+      partial = Spectator::Expectations::ValueExpectationPartial.new(value)
+      matcher = Spectator::Matchers::EqualityMatcher.new(value)
       expectation = Spectator::Expectations::ValueExpectation.new(partial, matcher)
       expectation.eval.expected_message.should eq(expectation.message)
     end
@@ -56,8 +56,8 @@ describe Spectator::Expectations::ValueExpectation do
       context "with a successful match" do
         it "returns an unsuccessful result" do
           value = 42
-          partial = Spectator::Expectations::ValueExpectationPartial.new(value.to_s, value)
-          matcher = Spectator::Matchers::EqualityMatcher.new(value.to_s, value)
+          partial = Spectator::Expectations::ValueExpectationPartial.new(value)
+          matcher = Spectator::Matchers::EqualityMatcher.new(value)
           expectation = Spectator::Expectations::ValueExpectation.new(partial, matcher)
           matcher.match?(partial).should be_true # Sanity check.
           expectation.eval(true).successful?.should be_false
@@ -65,8 +65,8 @@ describe Spectator::Expectations::ValueExpectation do
 
         it "reports an unsuccessful actual message" do
           value = 42
-          partial = Spectator::Expectations::ValueExpectationPartial.new(value.to_s, value)
-          matcher = Spectator::Matchers::EqualityMatcher.new(value.to_s, value)
+          partial = Spectator::Expectations::ValueExpectationPartial.new(value)
+          matcher = Spectator::Matchers::EqualityMatcher.new(value)
           expectation = Spectator::Expectations::ValueExpectation.new(partial, matcher)
           matcher.match?(partial).should be_true # Sanity check.
           expectation.eval(true).actual_message.should eq(expectation.negated_message)
@@ -77,8 +77,8 @@ describe Spectator::Expectations::ValueExpectation do
         it "returns a successful result" do
           value1 = 42
           value2 = 777
-          partial = Spectator::Expectations::ValueExpectationPartial.new(value1.to_s, value1)
-          matcher = Spectator::Matchers::EqualityMatcher.new(value2.to_s, value2)
+          partial = Spectator::Expectations::ValueExpectationPartial.new(value1)
+          matcher = Spectator::Matchers::EqualityMatcher.new(value2)
           expectation = Spectator::Expectations::ValueExpectation.new(partial, matcher)
           matcher.match?(partial).should be_false # Sanity check.
           expectation.eval(true).successful?.should be_true
@@ -87,8 +87,8 @@ describe Spectator::Expectations::ValueExpectation do
         it "reports a successful actual message" do
           value1 = 42
           value2 = 777
-          partial = Spectator::Expectations::ValueExpectationPartial.new(value1.to_s, value1)
-          matcher = Spectator::Matchers::EqualityMatcher.new(value2.to_s, value2)
+          partial = Spectator::Expectations::ValueExpectationPartial.new(value1)
+          matcher = Spectator::Matchers::EqualityMatcher.new(value2)
           expectation = Spectator::Expectations::ValueExpectation.new(partial, matcher)
           matcher.match?(partial).should be_false # Sanity check.
           expectation.eval(true).actual_message.should eq(expectation.message)
@@ -97,8 +97,8 @@ describe Spectator::Expectations::ValueExpectation do
 
       it "reports a negated expected message" do
         value = 42
-        partial = Spectator::Expectations::ValueExpectationPartial.new(value.to_s, value)
-        matcher = Spectator::Matchers::EqualityMatcher.new(value.to_s, value)
+        partial = Spectator::Expectations::ValueExpectationPartial.new(value)
+        matcher = Spectator::Matchers::EqualityMatcher.new(value)
         expectation = Spectator::Expectations::ValueExpectation.new(partial, matcher)
         expectation.eval(true).expected_message.should eq(expectation.negated_message)
       end
