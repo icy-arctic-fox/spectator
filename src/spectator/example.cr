@@ -17,11 +17,11 @@ module Spectator
     def run : Result
       raise "Attempted to run example more than once (#{self})" if finished?
       @finished = true
-      run_inner
+      run_impl
     end
 
     # Implementation-specific for running the example code.
-    private abstract def run_inner : Result
+    private abstract def run_impl : Result
 
     # Creates the base of the example.
     # The group should be the example group the example belongs to.

@@ -8,7 +8,7 @@ module Spectator
   abstract class RunnableExample < Example
     # Runs the example, hooks, and captures the result
     # and translates to a usable result.
-    def run_inner : Result
+    def run_impl : Result
       result = capture_result
       expectations = Internals::Harness.current.expectation_results
       translate_result(result, expectations)
@@ -41,7 +41,7 @@ module Spectator
     private def capture_result : ResultCapture
       ResultCapture.new.tap do |result|
         # Get the proc that will call around-each hooks and the example.
-        wrapper = wrapped_run_example(result)
+        wrapper = wrap_run_example(result)
         begin
           run_before_hooks
           wrapper.call
@@ -53,7 +53,7 @@ module Spectator
 
     # Creates a proc that runs the test code
     # and captures the result.
-    private def wrapped_run_example(result) : ->
+    private def wrap_run_example(result) : ->
       # Wrap the method that runs and captures
       # the test code with the around-each hooks.
       group.wrap_around_each_hooks do
@@ -67,7 +67,7 @@ module Spectator
       # Capture how long it takes to run the test code.
       result.elapsed = Time.measure do
         begin
-          # Actually go run the example code.
+          # Actually run the example code.
           run_instance
         rescue ex # Catch all errors and handle them later.
           result.error = ex
