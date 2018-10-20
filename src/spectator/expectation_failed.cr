@@ -1,6 +1,8 @@
+require "./example_failed"
+
 module Spectator
   # Exception that indicates a required expectation was not met in an example.
-  class ExpectationFailed < Exception
+  class ExpectationFailed < ExampleFailed
     # Outcome of the expectation.
     # Additional information can be retrieved through this.
     getter result : Expectations::Expectation::Result

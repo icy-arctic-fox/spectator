@@ -23,6 +23,7 @@ require "./example_group"
 require "./nested_example_group"
 require "./root_example_group"
 
+require "./example_failed"
 require "./expectation_failed"
 require "./test_results"
 require "./runner"
