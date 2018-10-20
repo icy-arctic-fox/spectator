@@ -23,11 +23,15 @@ def new_expectation(expected : ExpectedType = 123, actual : ActualType = 123) fo
 end
 
 def new_met_expectation(value : T = 123) forall T
-  new_expectation(value, value)
+  new_expectation(value, value).tap do |expectation|
+    expectation.satisfied?.should be_true # Sanity check.
+  end
 end
 
 def new_unmet_expectation(expected : ExpectedType = 123, actual : ActualType = 456) forall ExpectedType, ActualType
-  new_expectation(expected, actual)
+  new_expectation(expected, actual).tap do |expectation|
+    expectation.satisfied?.should be_false # Sanity check.
+  end
 end
 
 def new_successful_result
