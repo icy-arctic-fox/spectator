@@ -26,9 +26,9 @@ module Spectator::Internals
     # The result returned from `Example#run` will be returned.
     def self.run(example : Example) : Result
       @@current = new(example)
-      result = example.run
+      example.run
+    ensure
       @@current = nil
-      result
     end
 
     # Retrieves the current running example.
