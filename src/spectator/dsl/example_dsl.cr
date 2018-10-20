@@ -11,5 +11,14 @@ module Spectator::DSL
     macro expect(actual)
       ::Spectator::Expectations::ValueExpectationPartial.new({{actual.stringify}}, {{actual}})
     end
+
+    def fail(reason : String)
+      raise ExampleFailed.new(reason)
+    end
+
+    @[AlwaysInline]
+    def fail
+      fail("Example failed")
+    end
   end
 end
