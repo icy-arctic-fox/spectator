@@ -35,13 +35,14 @@ class SpyExample < Spectator::RunnableExample
     end
   end
 
-  # Creates the spy example.
+  # Creates a spy example.
   # The block passed to this method will be executed when the example runs.
   def self.create(&block)
     hooks = Spectator::ExampleHooks.empty
     group = Spectator::RootExampleGroup.new(hooks)
     values = Spectator::Internals::SampleValues.empty
     new(group, values).tap do |example|
+      group.children = [example.as(Spectator::ExampleComponent)]
       example.block = block
     end
   end
