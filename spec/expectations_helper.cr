@@ -46,7 +46,7 @@ def new_failure_result
   end
 end
 
-def report_results(success_count = 1, failure_count = 0)
+def generate_results(success_count = 1, failure_count = 0)
   successful = Array.new(success_count) { new_successful_result }
   failures = Array.new(failure_count) { new_failure_result }
   results = (successful + failures).shuffle

@@ -3,7 +3,7 @@ require "../spec_helper"
 describe Spectator::Expectations::ExpectationResults do
   describe "#each" do
     it "yields all results" do
-      tuple = report_results(5, 5)
+      tuple = generate_results(5, 5)
       results = [] of Spectator::Expectations::Expectation::Result
       tuple[:reporter].results.each { |result| results << result }
       # Results might not be in the same order.
@@ -15,13 +15,13 @@ describe Spectator::Expectations::ExpectationResults do
 
   describe "#successes" do
     it "returns only successful results" do
-      tuple = report_results(5, 5)
+      tuple = generate_results(5, 5)
       results = tuple[:reporter].results
       results.successes.all?(&.successful?).should be_true
     end
 
     it "returns the correct results" do
-      tuple = report_results(5, 5)
+      tuple = generate_results(5, 5)
       results = tuple[:reporter].results
       successful = results.successes.to_a
       successful.size.should eq(5)
@@ -30,7 +30,7 @@ describe Spectator::Expectations::ExpectationResults do
 
     context "with all successful results" do
       it "returns all results" do
-        tuple = report_results(5, 0)
+        tuple = generate_results(5, 0)
         results = tuple[:reporter].results
         results.successes.size.should eq(tuple[:successful].size)
       end
@@ -38,7 +38,7 @@ describe Spectator::Expectations::ExpectationResults do
 
     context "with all failure results" do
       it "returns an empty collection" do
-        tuple = report_results(0, 5)
+        tuple = generate_results(0, 5)
         results = tuple[:reporter].results
         results.successes.size.should eq(0)
       end
@@ -47,7 +47,7 @@ describe Spectator::Expectations::ExpectationResults do
 
   describe "#each_success" do
     it "yields only successful results" do
-      tuple = report_results(5, 5)
+      tuple = generate_results(5, 5)
       results = [] of Spectator::Expectations::Expectation::Result
       tuple[:reporter].results.each_success { |result| results << result }
       # Results might not be in the same order.
@@ -58,7 +58,7 @@ describe Spectator::Expectations::ExpectationResults do
 
     context "with all successful results" do
       it "yields all results" do
-        tuple = report_results(0, 5)
+        tuple = generate_results(0, 5)
         results = [] of Spectator::Expectations::Expectation::Result
         tuple[:reporter].results.each_success { |result| results << result }
         results.size.should eq(tuple[:successful].size)
@@ -67,7 +67,7 @@ describe Spectator::Expectations::ExpectationResults do
 
     context "with all failure results" do
       it "yields nothing" do
-        tuple = report_results(0, 5)
+        tuple = generate_results(0, 5)
         results = [] of Spectator::Expectations::Expectation::Result
         tuple[:reporter].results.each_success { |result| results << result }
         results.empty?.should be_true
@@ -77,13 +77,13 @@ describe Spectator::Expectations::ExpectationResults do
 
   describe "#failures" do
     it "returns only failed results" do
-      tuple = report_results(5, 5)
+      tuple = generate_results(5, 5)
       results = tuple[:reporter].results
       results.failures.all?(&.failure?).should be_true
     end
 
     it "returns the correct results" do
-      tuple = report_results(5, 5)
+      tuple = generate_results(5, 5)
       results = tuple[:reporter].results
       failures = results.failures.to_a
       failures.size.should eq(5)
@@ -92,7 +92,7 @@ describe Spectator::Expectations::ExpectationResults do
 
     context "with all successful results" do
       it "returns an empty collection" do
-        tuple = report_results(5, 0)
+        tuple = generate_results(5, 0)
         results = tuple[:reporter].results
         results.failures.size.should eq(0)
       end
@@ -100,7 +100,7 @@ describe Spectator::Expectations::ExpectationResults do
 
     context "with all failure results" do
       it "returns all results" do
-        tuple = report_results(0, 5)
+        tuple = generate_results(0, 5)
         results = tuple[:reporter].results
         results.failures.size.should eq(tuple[:failures].size)
       end
@@ -109,7 +109,7 @@ describe Spectator::Expectations::ExpectationResults do
 
   describe "#each_failure" do
     it "yields only failed results" do
-      tuple = report_results(5, 5)
+      tuple = generate_results(5, 5)
       results = [] of Spectator::Expectations::Expectation::Result
       tuple[:reporter].results.each_failure { |result| results << result }
       # Results might not be in the same order.
@@ -120,7 +120,7 @@ describe Spectator::Expectations::ExpectationResults do
 
     context "with all successful results" do
       it "yields nothing" do
-        tuple = report_results(5, 0)
+        tuple = generate_results(5, 0)
         results = [] of Spectator::Expectations::Expectation::Result
         tuple[:reporter].results.each_failure { |result| results << result }
         results.empty?.should be_true
@@ -129,7 +129,7 @@ describe Spectator::Expectations::ExpectationResults do
 
     context "with all failure results" do
       it "yields all results" do
-        tuple = report_results(0, 5)
+        tuple = generate_results(0, 5)
         results = [] of Spectator::Expectations::Expectation::Result
         tuple[:reporter].results.each_failure { |result| results << result }
         results.size.should eq(tuple[:failures].size)
@@ -140,7 +140,7 @@ describe Spectator::Expectations::ExpectationResults do
   describe "#successful?" do
     context "with all successful results" do
       it "is true" do
-        tuple = report_results(5, 0)
+        tuple = generate_results(5, 0)
         results = tuple[:reporter].results
         results.successful?.should be_true
       end
@@ -148,7 +148,7 @@ describe Spectator::Expectations::ExpectationResults do
 
     context "with one failure result" do
       it "is false" do
-        tuple = report_results(5, 1)
+        tuple = generate_results(5, 1)
         results = tuple[:reporter].results
         results.successful?.should be_false
       end
@@ -156,7 +156,7 @@ describe Spectator::Expectations::ExpectationResults do
 
     context "with one successful result" do
       it "is false" do
-        tuple = report_results(1, 5)
+        tuple = generate_results(1, 5)
         results = tuple[:reporter].results
         results.successful?.should be_false
       end
@@ -164,7 +164,7 @@ describe Spectator::Expectations::ExpectationResults do
 
     context "with all failure results" do
       it "is false" do
-        tuple = report_results(0, 5)
+        tuple = generate_results(0, 5)
         results = tuple[:reporter].results
         results.successful?.should be_false
       end
@@ -174,7 +174,7 @@ describe Spectator::Expectations::ExpectationResults do
   describe "#failed?" do
     context "with all successful results" do
       it "is false" do
-        tuple = report_results(5, 0)
+        tuple = generate_results(5, 0)
         results = tuple[:reporter].results
         results.failed?.should be_false
       end
@@ -182,7 +182,7 @@ describe Spectator::Expectations::ExpectationResults do
 
     context "with one failure result" do
       it "is true" do
-        tuple = report_results(5, 1)
+        tuple = generate_results(5, 1)
         results = tuple[:reporter].results
         results.failed?.should be_true
       end
@@ -190,7 +190,7 @@ describe Spectator::Expectations::ExpectationResults do
 
     context "with one successful result" do
       it "is true" do
-        tuple = report_results(1, 5)
+        tuple = generate_results(1, 5)
         results = tuple[:reporter].results
         results.failed?.should be_true
       end
@@ -198,7 +198,7 @@ describe Spectator::Expectations::ExpectationResults do
 
     context "with all failure results" do
       it "is true" do
-        tuple = report_results(0, 5)
+        tuple = generate_results(0, 5)
         results = tuple[:reporter].results
         results.failed?.should be_true
       end
