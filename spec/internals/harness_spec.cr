@@ -12,14 +12,18 @@ describe Spectator::Internals::Harness do
     end
 
     context "with a passing exmaple" do
-      it "returns a successful result" do
-
+      it "returns a passing result" do
+        example = PassingExample.create
+        result = Spectator::Internals::Harness.run(example)
+        result.passed?.should be_true
       end
     end
 
     context "with a failing example" do
-      it "returns a failed result" do
-
+      it "returns a failing result" do
+        example = FailingExample.create
+        result = Spectator::Internals::Harness.run(example)
+        result.passed?.should be_false
       end
     end
   end
@@ -55,7 +59,17 @@ describe Spectator::Internals::Harness do
 
     context "with a failed result" do
       it "raises an error" do
-
+        error = nil.as(Exception?)
+        spy = SpyExample.create do
+          harness = Spectator::Internals::Harness.current
+          begin
+            harness.report_expectation(new_failure_result)
+          rescue ex
+            error = ex
+          end
+        end
+        Spectator::Internals::Harness.run(spy)
+        error.should be_a(Spectator::ExampleFailed)
       end
     end
   end

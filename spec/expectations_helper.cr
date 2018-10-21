@@ -56,3 +56,9 @@ def generate_results(success_count = 1, failure_count = 0)
   end
   {successful: successful, failures: failures, results: results, reporter: reporter}
 end
+
+def report_results(success_count = 1, failure_count = 0)
+  harness = Spectator::Internals::Harness.current
+  success_count.times { harness.report_expectation(new_successful_result) }
+  failure_count.times { harness.report_expectation(new_failure_result) }
+end

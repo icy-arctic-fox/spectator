@@ -18,6 +18,53 @@ class SpySUT
   end
 end
 
+# Example that always succeeds.
+class PassingExample < Spectator::RunnableExample
+  # Dummy description.
+  def what
+    "PASS"
+  end
+
+  # Run the example that always passes.
+  # If this doesn't something broke.
+  private def run_instance
+    report_results(1, 0)
+  end
+
+  # Creates a passing example.
+  def self.create
+    hooks = Spectator::ExampleHooks.empty
+    group = Spectator::RootExampleGroup.new(hooks)
+    values = Spectator::Internals::SampleValues.empty
+    new(group, values).tap do |example|
+      group.children = [example.as(Spectator::ExampleComponent)]
+    end
+  end
+end
+
+# Example that always fails.
+class FailingExample < Spectator::RunnableExample
+  # Dummy description.
+  def what
+    "FAIL"
+  end
+
+  # Run the example that always fails.
+  private def run_instance
+    report_results(0, 1)
+  end
+
+  # Creates a passing example.
+  def self.create
+    hooks = Spectator::ExampleHooks.empty
+    group = Spectator::RootExampleGroup.new(hooks)
+    values = Spectator::Internals::SampleValues.empty
+    new(group, values).tap do |example|
+      group.children = [example.as(Spectator::ExampleComponent)]
+    end
+  end
+end
+
 # Example that invokes a closure when it is run.
 # This is useful for capturing what's going on when an event is running.
 class SpyExample < Spectator::RunnableExample
