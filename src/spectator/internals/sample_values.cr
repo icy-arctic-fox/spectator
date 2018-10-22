@@ -21,5 +21,9 @@ module Spectator::Internals
     def get_wrapper(id : Symbol)
       @values[id].wrapper
     end
+
+    def get_value(id : Symbol, value_type : T.class) : T forall T
+      get_wrapper(id).as(TypedValueWrapper(T)).value
+    end
   end
 end
