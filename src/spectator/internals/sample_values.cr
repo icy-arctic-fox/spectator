@@ -2,8 +2,6 @@ require "./value_wrapper"
 
 module Spectator::Internals
   struct SampleValues
-    private record Entry, name : String, wrapper : ValueWrapper
-
     def self.empty
       new({} of Symbol => Entry)
     end
@@ -24,6 +22,14 @@ module Spectator::Internals
 
     def get_value(id : Symbol, value_type : T.class) : T forall T
       get_wrapper(id).as(TypedValueWrapper(T)).value
+    end
+
+    private struct Entry
+      getter name : String
+      getter wrapper : ValueWrapper
+
+      def initialize(@name, @wrapper)
+      end
     end
   end
 end
