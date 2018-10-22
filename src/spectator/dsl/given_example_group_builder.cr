@@ -15,7 +15,7 @@ module Spectator::DSL
     end
 
     private def build_sub_group(parent : ExampleGroup, sample_values : Internals::SampleValues, value : T) : NestedExampleGroup
-      sub_values = sample_values.add(@symbol, @symbol.to_s, value)
+      sub_values = sample_values.add(@symbol, @symbol.to_s, value) # TODO: Use real name instead of symbol as string.
       NestedExampleGroup.new(value.to_s, parent, ExampleHooks.empty).tap do |group|
         group.children = @children.map do |child|
           child.build(group, sub_values).as(ExampleComponent)
