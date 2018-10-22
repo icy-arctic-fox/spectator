@@ -53,7 +53,15 @@ describe Spectator::Internals::Harness do
   describe "#report_expectation" do
     context "with a successful result" do
       it "stores the result" do
-
+        error = nil.as(Exception?)
+        success = new_successful_result
+        spy = SpyExample.create do
+          harness = Spectator::Internals::Harness.current
+          harness.report_expectation(success)
+        end
+        result = Spectator::Internals::Harness.run(spy)
+        result.should be_a(Spectator::SuccessfulResult)
+        result.as(Spectator::SuccessfulResult).expectations.should contain(success)
       end
     end
 
@@ -71,12 +79,33 @@ describe Spectator::Internals::Harness do
         Spectator::Internals::Harness.run(spy)
         error.should be_a(Spectator::ExampleFailed)
       end
+
+      it "stores the result" do
+        error = nil.as(Exception?)
+        failure = new_failure_result
+        spy = SpyExample.create do
+          harness = Spectator::Internals::Harness.current
+          harness.report_expectation(failure)
+        end
+        result = Spectator::Internals::Harness.run(spy)
+        result.should be_a(Spectator::FailedResult)
+        result.as(Spectator::FailedResult).expectations.should contain(failure)
+      end
     end
   end
 
   describe "#expectation_results" do
     it "contains the reported results" do
-
+      results = [new_successful_result, new_failure_result]
+      spy = SpyExample.create do
+        harness = Spectator::Internals::Harness.current
+        results.each do |result|
+          harness.report_expectation(result)
+        end
+      end
+      result = Spectator::Internals::Harness.run(spy)
+      reported_results = result.as(Spectator::FailedResult).expectations.to_a
+      (results - reported_results).size.should eq(0)
     end
   end
 end
