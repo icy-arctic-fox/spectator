@@ -1,7 +1,7 @@
 require "../spec_helper"
 
 private def add_sample_value(values : Spectator::Internals::SampleValues,
-  symbol : Symbol, name : String, value : T) forall T
+                             symbol : Symbol, name : String, value : T) forall T
   values.add(symbol, name, value)
 end
 
