@@ -16,7 +16,7 @@ module Spectator
 
     # Dummy run that does nothing.
     def run_instance
-      # ...
+      raise "You shouldn't be running this."
     end
   end
 end
