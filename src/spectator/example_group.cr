@@ -10,7 +10,7 @@ module Spectator
       @after_all_hooks_run = false
     end
 
-    private getter! children : Array(ExampleComponent)
+    getter! children : Array(ExampleComponent)
 
     def children=(children : Array(ExampleComponent))
       raise "Attempted to reset example group children" if @children
