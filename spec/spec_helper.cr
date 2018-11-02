@@ -73,6 +73,14 @@ class SpyExample < Spectator::RunnableExample
     "SPY"
   end
 
+  # Captures the sample values when the example is created.
+  def initialize(group, @sample_values)
+    super(group, @sample_values)
+  end
+
+  # Sample values given to the example.
+  getter sample_values : Spectator::Internals::SampleValues
+
   setter block : Proc(Nil)? = nil
 
   # Method called by the framework to run the example code.
