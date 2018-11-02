@@ -188,7 +188,7 @@ describe Spectator::DSL::RootExampleGroupBuilder do
       end
       group = builder.build(Spectator::Internals::SampleValues.empty)
       group.children.all? do |child|
-        case(child)
+        case (child)
         when Spectator::Example
           child.group == group
         when Spectator::NestedExampleGroup
