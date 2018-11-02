@@ -6,6 +6,16 @@ It provides more functionality from [RSpec](http://rspec.info/)
 than the built-in Crystal [Spec](https://crystal-lang.org/api/latest/Spec.html) utility.
 Additionally, Spectator provides extra features to make testing easier and more fluent.
 
+**Goal:**
+
+Spectator is designed to:
+
+- Reduce complexity of test code.
+- Remove boilerplate from tests.
+- Lower the difficulty of writing non-trivial tests.
+- Provide an elegant syntax that is easy to read and understand.
+- Provide common utilities that the end-user would otherwise need to write.
+
 Installation
 ------------
 
@@ -65,12 +75,12 @@ end
 
 If you find yourself trying to shoehorn in functionality
 or unsure how to write a test, please create an [issue](https://gitlab.com/arctic-fox/spectator/issues/new) for it.
-We want to make it as easy as possible to write specs and keep it elegant.
-We may come up with a better solution or even introduce a feature to support your needs.
+We want to make it as easy as possible to write specs and keep your code clean.
+We may come up with a solution or even introduce a feature to support your needs.
 
 NOTE: Due to the way this shard uses macros,
 you may find that some code you would expect to work, or works in other spec libraries, creates syntax errors.
-If you run into this, please create an issue so that we may help you find a solution.
+If you run into this, please create an issue so that we may help you resolve it.
 
 Features
 --------
