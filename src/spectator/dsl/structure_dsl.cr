@@ -90,10 +90,9 @@ module Spectator::DSL
   #
   # # describe "#foo"
   # module Group123
-  #
-  #  # Start a new group.
-  #  # More on this in a bit.
-  #  Builder.start_group("#foo")
+  #   # Start a new group.
+  #   # More on this in a bit.
+  #   Builder.start_group("#foo")
   #
   #   def subject
   #     described_class.foo(value)
@@ -127,12 +126,10 @@ module Spectator::DSL
   #
   #     # End "when given :bar" group.
   #     Builder.end_group
-  #
   #   end
   #
   #   # End "#foo" group.
   #   Builder.end_group
-  #
   # end
   # ```
   #
