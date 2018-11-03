@@ -182,13 +182,20 @@ describe Spectator::DSL::NestedExampleGroupBuilder do
   end
 
   describe "#build" do
+    it "passes along the what value" do
+      what = "TEST"
+      builder = Spectator::DSL::NestedExampleGroupBuilder.new(what)
+      root = Spectator::DSL::RootExampleGroupBuilder.new.build(Spectator::Internals::SampleValues.empty)
+      group = builder.build(root, Spectator::Internals::SampleValues.empty)
+      group.what.should eq(what)
+    end
+
     it "passes along the parent" do
       factory = Spectator::DSL::ExampleFactory.new(SpyExample)
       builder = Spectator::DSL::NestedExampleGroupBuilder.new("foo")
       builder.add_child(factory)
-      values = Spectator::Internals::SampleValues.empty.add(:foo, "foo", 12345)
       root = Spectator::DSL::RootExampleGroupBuilder.new.build(Spectator::Internals::SampleValues.empty)
-      group = builder.build(root, values)
+      group = builder.build(root, Spectator::Internals::SampleValues.empty)
       group.parent.should be(root)
     end
 
