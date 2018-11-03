@@ -10,20 +10,22 @@ module Spectator::DSL
     # Creates a new group builder.
     # The value for `what` should be the text the user specified for the collection.
     # The `collection` is the actual array of items to create examples for.
+    # The `name` is the variable name that the user accesses the current collection item with.
     #
     # In this code:
     # ```
-    # given random_integers do
+    # given random_integers do |integer|
     #   # ...
     # end
     # ```
     # The `what` value would be "random_integers"
     # and the collection would contain the items returned by calling `random_integers`.
+    # The `name` would be "integer".
     #
     # The `symbol` is passed along to the sample values
     # so that the example code can retrieve the current item from the collection.
     # The symbol should be unique.
-    def initialize(what : String, @collection : Array(T), @symbol : Symbol)
+    def initialize(what : String, @collection : Array(T), @name : String, @symbol : Symbol)
       super(what)
     end
 
@@ -52,8 +54,7 @@ module Spectator::DSL
     # so it shouldn't be added prior to calling this method.
     private def build_sub_group(parent : ExampleGroup, sample_values : Internals::SampleValues, value : T) : NestedExampleGroup
       # Add the value to sample values for this sub-group.
-      # TODO: Use real name instead of symbol as string.
-      sub_values = sample_values.add(@symbol, @symbol.to_s, value)
+      sub_values = sample_values.add(@symbol, @name, value)
       NestedExampleGroup.new(value.to_s, parent, ExampleHooks.empty).tap do |group|
         # Set the sub-group's children to built versions of the children from this instance.
         group.children = @children.map do |child|

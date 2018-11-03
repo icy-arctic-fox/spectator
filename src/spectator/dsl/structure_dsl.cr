@@ -28,6 +28,8 @@ module Spectator::DSL
     end
 
     macro given(collection, &block)
+      {% name = block.args.empty? ? "value".id : block.args.first %}
+
       module Group%group
         include {{@type.id}}
 
@@ -37,7 +39,7 @@ module Spectator::DSL
 
         @%wrapper : ::Spectator::Internals::ValueWrapper
 
-        def {{block.args.empty? ? "value".id : block.args.first}}
+        def {{name}}
           @%wrapper.as(::Spectator::Internals::TypedValueWrapper(typeof(%collection.first))).value
         end
 
@@ -51,6 +53,7 @@ module Spectator::DSL
         ::Spectator::DSL::Builder.start_given_group(
           {{collection.stringify}},
           Collection%collection.new.%to_a,
+          {{name.stringify}},
           :%group
         )
 
