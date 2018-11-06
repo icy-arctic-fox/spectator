@@ -142,28 +142,133 @@ module Spectator::DSL
   # This way, examples, hooks, nested groups, and other items can be added to it.
   # Groups and examples are nested in a parent group.
   # The only group that isn't nested is the root group - `RootExampleGroup`.
+  #
+  # Some example groups make use of sample values.
+  # Sample values are a collection of test values that can be used in examples.
+  # For more information, see `Internals::SampleValues`.
   module StructureDSL
+    # Placeholder initializer.
+    # This is needed because examples and groups call `super` in their initializer.
+    # Those initializers pass the sample values upward through their hierarchy.
     def initialize(sample_values : Internals::SampleValues)
     end
 
+    # Creates a new example group to describe a component.
+    # The `what` argument describes "what" is being tested.
+    # Additional example groups and DSL may be nested in the block.
+    #
+    # Typically when testing a method,
+    # the spec is written like so:
+    # ```
+    # describe "#foo" do
+    #   it "does something" do
+    #     # ...
+    #   end
+    # end
+    # ```
+    #
+    # When describing a class (or any other type),
+    # the `what` parameter doesn't need to be quoted.
+    # ```
+    # describe String do
+    #   it "does something" do
+    #     # ...
+    #   end
+    # end
+    # ```
+    #
+    # And when combining the two together:
+    # ```
+    # describe String do
+    #   describe "#size" do
+    #     it "returns the length" do
+    #       # ...
+    #     end
+    #   end
+    # end
+    # ```
+    #
+    # The `#describe` and `#context` are identical in terms of functionality.
+    # However, `#describe` is typically used on classes and methods,
+    # while `#context` is used for use cases and scenarios.
     macro describe(what, &block)
       context({{what}}) {{block}}
     end
 
+    # Creates a new example group to describe a situation.
+    # The `what` argument describes the scenario or case being tested.
+    # Additional example groups and DSL may be nested in the block.
+    #
+    # The `#describe` and `#context` are identical in terms of functionality.
+    # However, `#describe` is typically used on classes and methods,
+    # while `#context` is used for use cases and scenarios.
+    #
+    # Using context blocks in conjunction with hooks, `#let`, and other methods
+    # provide an easy way to define the scenario in code.
+    # This also gives each example in the context an identical situation to run in.
+    #
+    # For instance:
+    # ```
+    # describe String do
+    #   context "when empty" do
+    #     subject { "" }
+    #
+    #     it "has a size of zero" do
+    #       expect(subject.size).to eq(0)
+    #     end
+    #
+    #     it "is blank" do
+    #       expect(subject.blank?).to be_true
+    #     end
+    #   end
+    #
+    #   context "when not empty" do
+    #     subject { "foobar" }
+    #
+    #     it "has a non-zero size" do
+    #       expect(subject.size).to_not eq(0)
+    #     end
+    #
+    #     it "is not blank" do
+    #       expect(subject.blank?).to be_false
+    #     end
+    #   end
+    # end
+    # ```
+    #
+    # While this is a somewhat contrived example,
+    # it demonstrates how contexts can reuse code.
+    # Contexts also make it clearer how a scenario is setup.
     macro context(what, &block)
+      # Module for the context.
+      # The module uses a generated unique name.
       module Group%group
+        # Include the parent module.
+        # Since `@type` resolves immediately,
+        # this will reference the parent type.
         include {{@type.id}}
 
+        # Check if `what` looks like a type.
+        # If it is, add the `#described_class` method.
+        # At the time of writing this code,
+        # this is the way (at least that I know of)
+        # to check if an AST node is a type name.
+        #
+        # NOTE: In Crystal 0.27, it looks like `#resolve` can be used.
+        # Need to investigate, but would also increase minimum version.
         {% if what.is_a?(Path) || what.is_a?(Generic) %}
           _spectator_described_class {{what}}
         {% end %}
 
+        # Start a new group.
         ::Spectator::DSL::Builder.start_group(
           {{what.is_a?(StringLiteral) ? what : what.stringify}}
         )
 
+        # Nest the block's content in the module.
         {{block.body}}
 
+        # End the current group.
         ::Spectator::DSL::Builder.end_group
       end
     end
