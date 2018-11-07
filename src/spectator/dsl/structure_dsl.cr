@@ -444,10 +444,6 @@ module Spectator::DSL
       ::Spectator::DSL::Builder.add_around_each_hook {{block}}
     end
 
-    def include_examples
-      raise NotImplementedError.new("Spectator::DSL#include_examples")
-    end
-
     macro it(what, &block)
       _spectator_example_wrapper(Wrapper%example, %run) {{block}}
 
