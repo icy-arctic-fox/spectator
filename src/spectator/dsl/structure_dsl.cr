@@ -455,10 +455,6 @@ module Spectator::DSL
       ::Spectator::DSL::Builder.add_example(Example%example)
     end
 
-    macro it_behaves_like
-      {% raise NotImplementedError.new("it_behaves_like functionality is not implemented") %}
-    end
-
     private macro _spectator_described_class(what)
       def described_class
         {{what}}.tap do |thing|
