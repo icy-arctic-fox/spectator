@@ -249,7 +249,7 @@ module Spectator::DSL
         include {{@type.id}}
 
         # Check if `what` looks like a type.
-        # If it is, add the `#described_class` method.
+        # If it is, add the `#described_class` and `subject` methods.
         # At the time of writing this code,
         # this is the way (at least that I know of)
         # to check if an AST node is a type name.
@@ -257,7 +257,20 @@ module Spectator::DSL
         # NOTE: In Crystal 0.27, it looks like `#resolve` can be used.
         # Need to investigate, but would also increase minimum version.
         {% if what.is_a?(Path) || what.is_a?(Generic) %}
-          _spectator_described_class {{what}}
+          # Returns the type currently being described.
+          def described_class
+            {{what}}.tap do |thing|
+              # Runtime check to ensure that `what` is a type.
+              raise "#{thing} must be a type name to use #described_class or #subject,\
+               but it is a #{typeof(thing)}" unless thing.is_a?(Class)
+            end
+          end
+
+          # Implicit subject definition.
+          # Simply creates a new instance of the described type.
+          def subject
+            described_class.new
+          end
         {% end %}
 
         # Start a new group.
@@ -453,23 +466,6 @@ module Spectator::DSL
       _spectator_example(Example%example, Wrapper%example, ::Spectator::PendingExample, {{what}})
 
       ::Spectator::DSL::Builder.add_example(Example%example)
-    end
-
-    private macro _spectator_described_class(what)
-      def described_class
-        {{what}}.tap do |thing|
-          raise "#{thing} must be a type name to use #described_class or #subject,\
-           but it is a #{typeof(thing)}" unless thing.is_a?(Class)
-        end
-      end
-
-      _spectator_implicit_subject
-    end
-
-    private macro _spectator_implicit_subject
-      def subject
-        described_class.new
-      end
     end
 
     private macro _spectator_example_wrapper(class_name, run_method_name, &block)
