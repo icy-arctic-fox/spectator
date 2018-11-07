@@ -273,38 +273,94 @@ module Spectator::DSL
       end
     end
 
+    # Creates a new example group to given multiple values to.
+    # This method takes a collection of values
+    # and repeats the contents of the block with each value.
+    # The `collection` argument should be a literal collection,
+    # such as an array, or a function that returns an enumerable.
+    # The block should accept an argument.
+    # If it does, then the argument's name is used to reference
+    # the current item in the collection.
+    # If an argument isn't provided, then `#value` can be used instead.
+    #
+    # Example with a block argument:
+    # ```
+    # given some_integers do |integer|
+    #   it "sets the value" do
+    #     subject.value = integer
+    #     expect(subject.value).to eq(integer)
+    #   end
+    # end
+    # ```
+    #
+    # Same spec, but without a block argument:
+    # ```
+    # given some_integers do
+    #   it "sets the value" do
+    #     subject.value = value
+    #     expect(subject.value).to eq(value)
+    #   end
+    # end
+    # ```
+    #
+    # In the examples above, the test case (`#it` block)
+    # is repeated for each element in `some_integers`.
+    # `some_integers` is ficticous collection.
+    # The collection will be iterated once.
     macro given(collection, &block)
+      # Figure out the name to use for the current collection element.
+      # If a block argument is provided, use it, otherwise use "value".
       {% name = block.args.empty? ? "value".id : block.args.first %}
 
+      # Module for the context.
+      # The module uses a generated unique name.
       module Group%group
+        # Include the parent module.
+        # Since `@type` resolves immediately,
+        # this will reference the parent type.
         include {{@type.id}}
 
+        # Method for retrieving the entire collection.
+        # This simplifies getting the element type.
+        # The name is uniquely generated to prevent namespace collision.
         def %collection
           {{collection}}
         end
 
+        # Value wrapper for the current element.
         @%wrapper : ::Spectator::Internals::ValueWrapper
 
+        # Retrieves the current element from the collection.
         def {{name}}
+          # Unwrap the value and return it.
+          # The `#first` method has a return type that matches the element type.
+          # So it is used on the collection method proxy to resolve the type at compile-time.
           @%wrapper.as(::Spectator::Internals::TypedValueWrapper(typeof(%collection.first))).value
         end
 
+        # Initializer to extract current element of the collection from sample values.
         def initialize(sample_values : ::Spectator::Internals::SampleValues)
           super
           @%wrapper = sample_values.get_wrapper(:%group)
         end
 
+        # Additional logic for setting up the collection.
+        # See the `#_spectator_given_collection` for nitty-gritty details.
         _spectator_given_collection Collection%collection, %to_a, %collection
 
+        # Start a new example group.
+        # Given groups require additional configuration.
         ::Spectator::DSL::Builder.start_given_group(
-          {{collection.stringify}},
-          Collection%collection.new.%to_a,
-          {{name.stringify}},
-          :%group
+          {{collection.stringify}}, # String representation of the collection.
+          Collection%collection.new.%to_a, # All elements in the collection.
+          {{name.stringify}}, # Name for the current element.
+          :%group # Unique identifier for retrieving elements for the associated collection.
         )
 
+        # Nest the block's content in the module.
         {{block.body}}
 
+        # End the current group.
         ::Spectator::DSL::Builder.end_group
       end
     end
@@ -400,10 +456,25 @@ module Spectator::DSL
       end
     end
 
+    # :nodoc:
+    # Don't use this outside of Spectator DSL.
+    # This macro creates a class that is used to return the given collection as an array.
+    # This macro is *required* and cannot be embedded in the `#given` macro.
+    # There are a couple of reasons for this:
+    # 1. `@type` is resolved immediately.
+    #    The resolution of `@type` in this macro occurs after the `#given` block.
+    # 2. The collection could reference a helper method or method local to the context.
+    #    The class that the collection is defined in must have access to the context.
+    # Since the names are generated, and macros can't return information,
+    # the names must be created outside of the macro and passed in.
     private macro _spectator_given_collection(class_name, to_a_method_name, collection_method_name)
+      # Class for generating an array with the collection's contents.
       class {{class_name.id}}
+        # Include the parent module.
+        # This should be the module created for the `#given` block.
         include {{@type.id}}
 
+        # Method that returns an array from the collection.
         def {{to_a_method_name.id}}
           {{collection_method_name.id}}.to_a
         end
