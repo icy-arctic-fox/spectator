@@ -315,13 +315,33 @@ module Spectator::DSL
       # Method for retrieving the entire collection.
       # This simplifies getting the element type.
       # The name is uniquely generated to prevent namespace collision.
+      # This method should be called only once.
       def %collection
         {{collection}}
       end
 
-      # Additional logic for setting up the collection.
-      # See the `#_spectator_given_collection` for nitty-gritty details.
-      _spectator_given_collection Collection%collection, %to_a, %collection
+      # Method for getting the element type.
+      def %type
+      end
+
+      # Class for generating an array with the collection's contents.
+      # This has to be a class that includes the parent module.
+      # The collection could reference a helper method
+      # or anything else in the parent scope.
+      class Collection%group
+        # Include the parent module.
+        include {{@type.id}}
+
+        # Method that returns an array containing the collection.
+        # This method should be called only once.
+        # The framework stores the collection as an array for a couple of reasons.
+        # 1. The collection may not support multiple iterations.
+        # 2. The collection might contain random values.
+        #    Iterating multiple times would generate inconsistent values at runtime.
+        def %to_a
+          %collection.to_a
+        end
+      end
 
       # Module for the context.
       # The module uses a generated unique name.
@@ -351,9 +371,9 @@ module Spectator::DSL
         # Start a new example group.
         # Given groups require additional configuration.
         ::Spectator::DSL::Builder.start_given_group(
-          {{collection.stringify}}, # String representation of the collection.
-          Collection%collection.new.%to_a, # All elements in the collection.
-          {{name.stringify}}, # Name for the current element.
+          {{collection.stringify}},   # String representation of the collection.
+          Collection%group.new.%to_a, # All elements in the collection.
+          {{name.stringify}},         # Name for the current element.
           :%group # Unique identifier for retrieving elements for the associated collection.
         )
 
@@ -453,26 +473,6 @@ module Spectator::DSL
     private macro _spectator_implicit_subject
       def subject
         described_class.new
-      end
-    end
-
-    # :nodoc:
-    # Don't use this outside of Spectator DSL.
-    # This macro creates a class that is used to return the given collection as an array.
-    # The collection could reference a helper method or method local to the context.
-    # The class that the collection is defined in must have access to the context.
-    # Since the names are generated, and macros can't return information,
-    # the names must be created outside of the macro and passed in.
-    private macro _spectator_given_collection(class_name, to_a_method_name, collection_method_name)
-      # Class for generating an array with the collection's contents.
-      class {{class_name.id}}
-        # Include the parent module.
-        include {{@type.id}}
-
-        # Method that returns an array from the collection.
-        def {{to_a_method_name.id}}
-          {{collection_method_name.id}}.to_a
-        end
       end
     end
 
