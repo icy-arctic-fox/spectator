@@ -312,6 +312,17 @@ module Spectator::DSL
       # If a block argument is provided, use it, otherwise use "value".
       {% name = block.args.empty? ? "value".id : block.args.first %}
 
+      # Method for retrieving the entire collection.
+      # This simplifies getting the element type.
+      # The name is uniquely generated to prevent namespace collision.
+      def %collection
+        {{collection}}
+      end
+
+      # Additional logic for setting up the collection.
+      # See the `#_spectator_given_collection` for nitty-gritty details.
+      _spectator_given_collection Collection%collection, %to_a, %collection
+
       # Module for the context.
       # The module uses a generated unique name.
       module Group%group
@@ -319,13 +330,6 @@ module Spectator::DSL
         # Since `@type` resolves immediately,
         # this will reference the parent type.
         include {{@type.id}}
-
-        # Method for retrieving the entire collection.
-        # This simplifies getting the element type.
-        # The name is uniquely generated to prevent namespace collision.
-        def %collection
-          {{collection}}
-        end
 
         # Value wrapper for the current element.
         @%wrapper : ::Spectator::Internals::ValueWrapper
@@ -343,10 +347,6 @@ module Spectator::DSL
           super
           @%wrapper = sample_values.get_wrapper(:%group)
         end
-
-        # Additional logic for setting up the collection.
-        # See the `#_spectator_given_collection` for nitty-gritty details.
-        _spectator_given_collection Collection%collection, %to_a, %collection
 
         # Start a new example group.
         # Given groups require additional configuration.
@@ -459,19 +459,14 @@ module Spectator::DSL
     # :nodoc:
     # Don't use this outside of Spectator DSL.
     # This macro creates a class that is used to return the given collection as an array.
-    # This macro is *required* and cannot be embedded in the `#given` macro.
-    # There are a couple of reasons for this:
-    # 1. `@type` is resolved immediately.
-    #    The resolution of `@type` in this macro occurs after the `#given` block.
-    # 2. The collection could reference a helper method or method local to the context.
-    #    The class that the collection is defined in must have access to the context.
+    # The collection could reference a helper method or method local to the context.
+    # The class that the collection is defined in must have access to the context.
     # Since the names are generated, and macros can't return information,
     # the names must be created outside of the macro and passed in.
     private macro _spectator_given_collection(class_name, to_a_method_name, collection_method_name)
       # Class for generating an array with the collection's contents.
       class {{class_name.id}}
         # Include the parent module.
-        # This should be the module created for the `#given` block.
         include {{@type.id}}
 
         # Method that returns an array from the collection.
