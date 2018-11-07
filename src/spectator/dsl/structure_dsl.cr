@@ -320,6 +320,7 @@ module Spectator::DSL
     # is repeated for each element in `some_integers`.
     # `some_integers` is ficticous collection.
     # The collection will be iterated once.
+    # `#given` blocks can be nested, and work similarly to loops.
     macro given(collection, &block)
       # Figure out the name to use for the current collection element.
       # If a block argument is provided, use it, otherwise use "value".
@@ -331,10 +332,6 @@ module Spectator::DSL
       # This method should be called only once.
       def %collection
         {{collection}}
-      end
-
-      # Method for getting the element type.
-      def %type
       end
 
       # Class for generating an array with the collection's contents.
