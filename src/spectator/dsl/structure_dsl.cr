@@ -268,8 +268,8 @@ module Spectator::DSL
 
           # Implicit subject definition.
           # Simply creates a new instance of the described type.
-          def subject
-            described_class.new
+          def subject(*args)
+            described_class.new(*args)
           end
         {% end %}
 
