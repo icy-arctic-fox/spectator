@@ -395,19 +395,137 @@ module Spectator::DSL
       end
     end
 
+    # Explicitly defines the subject being tested.
+    # The `#subject` method can be used in examples to retrieve the value (basically a method).
+    #
+    # This macro expects a block.
+    # The block should return the value.
+    # This can be used to define a value once and reuse it in multiple examples.
+    #
+    # For instance:
+    # ```
+    # subject { "foobar" }
+    #
+    # it "isn't empty" do
+    #   expect(subject.empty?).to be_false
+    # end
+    #
+    # it "is six characters" do
+    #   expect(subject.size).to eq(6)
+    # end
+    # ```
+    #
+    # By using a subject, some of the DSL becomes simpler.
+    # For example, `ExampleDSL#is_expected` can be used
+    # as short-hand for `expect(subject)`.
+    # ```
+    # subject { "foobar" }
+    #
+    # it "isn't empty" do
+    #   is_expected.to_not be_empty
+    # end
+    # ```
+    #
+    # This macro is functionaly equivalent to:
+    # ```
+    # let(:subject) { "foo" }
+    # ```
+    #
+    # The subject is created the first time it is referenced (lazy initialization).
+    # It is cached so that the same instance is used throughout the test.
+    # The subject will be recreated for each test it is used in.
+    #
+    # ```
+    # subject { [0, 1, 2] }
+    #
+    # it "modifies the array" do
+    #   subject[0] = 42
+    #   is_expected.to eq([42, 1, 2])
+    # end
+    #
+    # it "doesn't carry across tests" do
+    #   subject[1] = 777
+    #   is_expected.to eq([0, 777, 2])
+    # end
+    # ```
     macro subject(&block)
       let(:subject) {{block}}
     end
 
+    # Defines a value by name.
+    # The name can be used in examples to retrieve the value (basically a method).
+    # This can be used to define a value once and reuse it in multiple examples.
+    #
+    # This macro expects a name and a block.
+    # The name can be a symbol or a literal - same as `Object#getter`.
+    # The block should return the value.
+    #
+    # For instance:
+    # ```
+    # let(string) { "foobar" }
+    #
+    # it "isn't empty" do
+    #   expect(string.empty?).to be_false
+    # end
+    #
+    # it "is six characters" do
+    #   expect(string.size).to eq(6)
+    # end
+    # ```
+    #
+    # The value is lazy-evaluated -
+    # meaning that it is only created on the first reference to it.
+    # Afterwards, the value is cached,
+    # so the same value is returned with consecutive calls.
+    #
+    # ```
+    # let(current_time) { Time.now }
+    #
+    # it "lazy evaluates" do
+    #   now = current_time
+    #   sleep 5
+    #   expect(current_time).to eq(now)
+    # end
+    # ```
+    #
+    # However, the value is not reused across tests.
+    # It will be reconstructed the first time it is referenced in the next test.
+    #
+    # ```
+    # let(array) { [0, 1, 2] }
+    #
+    # it "modifies the array" do
+    #   array[0] = 42
+    #   expect(array).to eq([42, 1, 2])
+    # end
+    #
+    # it "doesn't carry across tests" do
+    #   array[1] = 777
+    #   expect(array).to eq([0, 777, 2])
+    # end
+    # ```
     macro let(name, &block)
+      # Create a block that returns the value.
       let!(%value) {{block}}
 
+      # Wrapper to hold the value.
+      # This will be `nil` if the value hasn't been referenced yet.
+      # After being referenced, the cached value will be stored in a wrapper.
       @%wrapper : ::Spectator::Internals::ValueWrapper?
 
+      # Method for returning the value.
       def {{name.id}}
+        # Check if the value is cached.
+        # The wrapper will be `nil` if it isn't.
         if (wrapper = @%wrapper)
+          # It is cached, return that value.
+          # Unwrap it from the wrapper variable.
+          # Here we use `typeof(METHOD)` to get around the issue
+          # that the macro has no idea what type the value is.
           wrapper.unsafe_as(::Spectator::Internals::TypedValueWrapper(typeof(%value))).value
         else
+          # The value isn't cached,
+          # Construct it and store it in the wrapper.
           %value.tap do |value|
             @%wrapper = ::Spectator::Internals::TypedValueWrapper(typeof(%value)).new(value)
           end
@@ -415,6 +533,41 @@ module Spectator::DSL
       end
     end
 
+    # The noiser sibling to `#let`.
+    # Defines a value by giving it a name.
+    # The name can be used in examples to retrieve the value (basically a method).
+    # This can be used to define a value once and reuse it in multiple examples.
+    #
+    # This macro expects a name and a block.
+    # The name can be a symbol or a literal - same as `Object#getter`.
+    # The block should return the value.
+    #
+    # For instance:
+    # ```
+    # let!(string) { "foobar" }
+    #
+    # it "isn't empty" do
+    #   expect(string.empty?).to be_false
+    # end
+    #
+    # it "is six characters" do
+    #   expect(string.size).to eq(6)
+    # end
+    # ```
+    #
+    # The value is lazy-evaluated -
+    # meaning that it is only created when it is referenced.
+    # Unlike `#let`, the value is not cached and is recreated on each call.
+    #
+    # ```
+    # let!(current_time) { Time.now }
+    #
+    # it "lazy evaluates" do
+    #   now = current_time
+    #   sleep 5
+    #   expect(current_time).to_not eq(now)
+    # end
+    # ```
     macro let!(name, &block)
       def {{name.id}}
         {{block.body}}
