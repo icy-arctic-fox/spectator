@@ -533,7 +533,7 @@ module Spectator::DSL
       end
     end
 
-    # The noiser sibling to `#let`.
+    # The noisier sibling to `#let`.
     # Defines a value by giving it a name.
     # The name can be used in examples to retrieve the value (basically a method).
     # This can be used to define a value once and reuse it in multiple examples.
@@ -574,22 +574,284 @@ module Spectator::DSL
       end
     end
 
+    # Creates a hook that will run prior to any example in the group.
+    # The block of code given to this macro is used for the hook.
+    # The hook is executed only once.
+    # If the hook raises an exception,
+    # the current example will be skipped and marked as an error.
+    #
+    # NOTE: Inside a `#given` block, the hook is run once, not once per iteration.
+    #
+    # This can be useful to initialize something before testing:
+    # ```
+    # before_all { Thing.start } # 1
+    #
+    # it "does something" do
+    #   # 2
+    # end
+    # ```
+    #
+    # The hook cannot use values and methods in the group like examples can.
+    # This is because the hook is not associated with one example, but many.
+    # ```
+    # let(array) { [1, 2, 3] }
+    # before_all { array << 4 } # *ERROR!*
+    # ```
+    #
+    # If multiple `#before_all` blocks are specified,
+    # then they are run in the order they were defined.
+    # ```
+    # before_all { Thing.first }  # 1
+    # before_all { Thing.second } # 2
+    # ```
+    #
+    # With nested groups, the outer blocks will run first.
+    # ```
+    # describe Something do
+    #   before_all { Something.start } # 1
+    #
+    #   describe "#foo" do
+    #     before_all { Something.foo } # 2
+    #
+    #     it "does a cool thing" do
+    #       # 3
+    #     end
+    #   end
+    # end
+    # ```
+    #
+    # See also: `#before_each`, `#after_all`, `#after_each`, and `#around_each`.
     macro before_all(&block)
       ::Spectator::DSL::Builder.add_before_all_hook {{block}}
     end
 
+    # Creates a hook that will run prior to every example in the group.
+    # The block of code given to this macro is used for the hook.
+    # The hook is executed once per example in the group (and sub-groups).
+    # If the hook raises an exception,
+    # the current example will be skipped and marked as an error.
+    #
+    # NOTE: Inside a `#given` block, the hook is run before every example of every iteration.
+    #
+    # This can be useful for setting up environments for tests:
+    # ```
+    # before_each { Thing.start } # 1
+    #
+    # it "does something" do
+    #   # 2
+    # end
+    # ```
+    #
+    # Currently, the hook cannot use values and methods in the group like examples can.
+    # This is a planned feature.
+    # ```
+    # let(array) { [1, 2, 3] }
+    # before_each { array << 4 } # *DOES NOT WORK YET!*
+    # ```
+    #
+    # This could also be used to verify pre-conditions:
+    # ```
+    # before_each { is_expected.to_not be_nil } # *DOES NOT WORK YET!*
+    # ```
+    #
+    # If multiple `#before_each` blocks are specified,
+    # then they are run in the order they were defined.
+    # ```
+    # before_each { Thing.first }  # 1
+    # before_each { Thing.second } # 2
+    # ```
+    #
+    # With nested groups, the outer blocks will run first.
+    # ```
+    # describe Something do
+    #   before_each { Something.start } # 1
+    #
+    #   describe "#foo" do
+    #     before_each { Something.foo } # 2
+    #
+    #     it "does a cool thing" do
+    #       # 3
+    #     end
+    #   end
+    # end
+    # ```
+    #
+    # See also: `#before_all`, `#after_all`, `#after_each`, and `#around_each`.
     macro before_each(&block)
       ::Spectator::DSL::Builder.add_before_each_hook {{block}}
     end
 
+    # Creates a hook that will run following all examples in the group.
+    # The block of code given to this macro is used for the hook.
+    # The hook is executed only once.
+    # Even if an example fails or raises an error, the hook will run.
+    #
+    # NOTE: Inside a `#given` block, the hook is run once, not once per iteration.
+    #
+    # This can be useful to cleanup after testing:
+    # ```
+    # after_all { Thing.stop } # 2
+    #
+    # it "does something" do
+    #   # 1
+    # end
+    # ```
+    #
+    # The hook cannot use values and methods in the group like examples can.
+    # This is because the hook is not associated with one example, but many.
+    # ```
+    # let(array) { [1, 2, 3] }
+    # after_all { array << 4 } # *ERROR!*
+    # ```
+    #
+    # If multiple `#after_all` blocks are specified,
+    # then they are run in the order they were defined.
+    # ```
+    # after_all { Thing.first }  # 1
+    # after_all { Thing.second } # 2
+    # ```
+    #
+    # With nested groups, the inner blocks will run first.
+    # ```
+    # describe Something do
+    #   after_all { Something.cleanup } # 3
+    #
+    #   describe "#foo" do
+    #     after_all { Something.stop } # 2
+    #
+    #     it "does a cool thing" do
+    #       # 1
+    #     end
+    #   end
+    # end
+    # ```
+    #
+    # See also: `#before_all`, `#before_each`, `#after_each`, and `#around_each`.
     macro after_all(&block)
       ::Spectator::DSL::Builder.add_after_all_hook {{block}}
     end
 
+    # Creates a hook that will run following every example in the group.
+    # The block of code given to this macro is used for the hook.
+    # The hook is executed once per example in the group (and sub-groups).
+    # Even if an example fails or raises an error, the hook will run.
+    #
+    # NOTE: Inside a `#given` block, the hook is run after every example of every iteration.
+    #
+    # This can be useful for cleaning up environments after tests:
+    # ```
+    # after_each { Thing.stop } # 2
+    #
+    # it "does something" do
+    #   # 1
+    # end
+    # ```
+    #
+    # Currently, the hook cannot use values and methods in the group like examples can.
+    # This is a planned feature.
+    # ```
+    # let(array) { [1, 2, 3] }
+    # after_each { array << 4 } # *DOES NOT WORK YET!*
+    # ```
+    #
+    # This could also be used to verify post-conditions:
+    # ```
+    # after_each { is_expected.to_not be_nil } # *DOES NOT WORK YET!*
+    # ```
+    #
+    # If multiple `#after_each` blocks are specified,
+    # then they are run in the order they were defined.
+    # ```
+    # after_each { Thing.first }  # 1
+    # after_each { Thing.second } # 2
+    # ```
+    #
+    # With nested groups, the inner blocks will run first.
+    # ```
+    # describe Something do
+    #   after_each { Something.cleanup } # 3
+    #
+    #   describe "#foo" do
+    #     after_each { Something.stop } # 2
+    #
+    #     it "does a cool thing" do
+    #       # 1
+    #     end
+    #   end
+    # end
+    # ```
+    #
+    # See also: `#before_all`, `#before_each`, `#after_all`, and `#around_each`.
     macro after_each(&block)
       ::Spectator::DSL::Builder.add_after_each_hook {{block}}
     end
 
+    # Creates a hook that will run for every example in the group.
+    # This can be used as an alternative to `#before_each` and `#after_each`.
+    # The block of code given to this macro is used for the hook.
+    # The hook is executed once per example in the group (and sub-groups).
+    # If the hook raises an exception,
+    # the current example will be skipped and marked as an error.
+    #
+    # Sometimes the test code must run in a block:
+    # ```
+    # around_each do |proc|
+    #   Thing.run do
+    #     proc.call
+    #   end
+    # end
+    #
+    # it "does something" do
+    #   # ...
+    # end
+    # ```
+    #
+    # The block argument is given a `Proc`.
+    # To run the example, that proc must be called.
+    # Make sure to call it!
+    # ```
+    # around_each do |proc|
+    #   Thing.run
+    #   # Missing proc.call
+    # end
+    #
+    # it "does something" do
+    #   # Whoops! This is never run.
+    # end
+    # ```
+    #
+    # If multiple `#around_each` blocks are specified,
+    # then they are run in the order they were defined.
+    # ```
+    # around_each { |p| p.call } # 1
+    # around_each { |p| p.call } # 2
+    # ```
+    #
+    # With nested groups, the outer blocks will run first.
+    # But the return from calling the proc will be in the oposite order.
+    # ```
+    # describe Something do
+    #   around_each do |proc|
+    #     Thing.foo # 1
+    #     proc.call
+    #     Thing.bar # 5
+    #   end
+    #
+    #   describe "#foo" do
+    #     around_each do |proc|
+    #       Thing.foo # 2
+    #       proc.call
+    #       Thing.bar # 4
+    #     end
+    #
+    #     it "does a cool thing" do
+    #       # 3
+    #     end
+    #   end
+    # end
+    # ```
+    #
+    # See also: `#before_all`, `#before_each`, `#after_all`, and `#after_each`.
     macro around_each(&block)
       ::Spectator::DSL::Builder.add_around_each_hook {{block}}
     end
