@@ -856,52 +856,138 @@ module Spectator::DSL
       ::Spectator::DSL::Builder.add_around_each_hook {{block}}
     end
 
+    # Creates an example, or a test case.
+    # The `what` argument describes "what" is being tested or asserted.
+    # The block contains the code to run the test.
+    # One or more expectations should be in the block.
+    #
+    # ```
+    # it "can do math" do
+    #   expect(1 + 2).to eq(3)
+    # end
+    # ```
+    #
+    # See `ExampleDSL` and `MatcherDSL` for additional macros and methods
+    # that can be used in example code blocks.
     macro it(what, &block)
+      # Create the wrapper class for the test code.
       _spectator_example_wrapper(Wrapper%example, %run) {{block}}
 
+      # Create a class derived from `RunnableExample` to run the test code.
       _spectator_example(Example%example, Wrapper%example, ::Spectator::RunnableExample, {{what}}) do
+        # Implement abstract method to run the wrapped example block.
         protected def run_instance
           @instance.%run
         end
       end
 
+      # Add the example to the current group.
       ::Spectator::DSL::Builder.add_example(Example%example)
     end
 
+    # Creates an example, or a test case, that does not run.
+    # This can be used to prototype functionality that isn't ready.
+    # The `what` argument describes "what" is being tested or asserted.
+    # The block contains the code to run the test.
+    # One or more expectations should be in the block.
+    #
+    # ```
+    # pending "something that isn't implemented yet" do
+    #   # ...
+    # end
+    # ```
+    #
+    # See `ExampleDSL` and `MatcherDSL` for additional macros and methods
+    # that can be used in example code blocks.
+    #
+    # NOTE: Crystal appears to "lazily" compile code.
+    # Any code that isn't referenced seems to be ignored.
+    # Sometimes syntax, type, and other compile-time errors
+    # can occur in unreferenced code and won't be caught by the compiler.
+    # By creating a `#pending` test, the code will be referenced.
+    # Thus, forcing the compiler to at least process the code, even if it isn't run.
     macro pending(what, &block)
+      # Create the wrapper class for the test code.
       _spectator_example_wrapper(Wrapper%example, %run) {{block}}
 
+      # Create a class derived from `PendingExample` to skip the test code.
       _spectator_example(Example%example, Wrapper%example, ::Spectator::PendingExample, {{what}})
 
+      # Add the example to the current group.
       ::Spectator::DSL::Builder.add_example(Example%example)
     end
 
+    # Creates a wrapper class for test code.
+    # The class serves multiple purposes, mostly dealing with scope.
+    # 1. Include the parent modules as mix-ins.
+    # 2. Enable DSL specific to examples.
+    # 3. Isolate methods in `Example` from the test code.
+    #
+    # Since the names are generated, and macros can't return values,
+    # the names for everything must be passed in as arguments.
+    # The `class_name` argument is the name of the class to define.
+    # The `run_method_name` argument is the name of the method in the wrapper class
+    # that will actually run the test code.
+    # The block passed to this macro is the actual test code.
     private macro _spectator_example_wrapper(class_name, run_method_name, &block)
+      # Wrapper class for isolating the test code.
       class {{class_name.id}}
+        # Mix in methods and macros specifically for example DSL.
         include ::Spectator::DSL::ExampleDSL
+
+        # Include the parent (example group) context.
         include {{@type.id}}
 
+        # Initializer that accepts sample values.
+        # The sample values are passed upward to the group modules.
+        # Any module that adds sample values can pull their values from this instance.
         def initialize(sample_values : ::Spectator::Internals::SampleValues)
           super
         end
 
+        # Generated method for actually running the test code.
         def {{run_method_name.id}}
           {{block.body}}
         end
       end
     end
 
+    # Creates an example class.
+    # Since the names are generated, and macros can't return values,
+    # the names for everything must be passed in as arguments.
+    # The `example_class_name` argument is the name of the class to define.
+    # The `wrapper_class_name` argument is the name of the wrapper class to reference.
+    # This must be the same as `class_name` for `#_spectator_example_wrapper`.
+    # The `base_class` argument specifies which type of example class the new class should derive from.
+    # This should typically be `RunnableExample` or `PendingExample`.
+    # The `what` argument is the description passed to the `#it` or `#pending` block.
+    # And lastly, the block given is any additional content to put in the class.
+    # For instance, to define a method in the class, do it in the block.
+    # ```
+    # _spectator_example(Example123, Wrapper123, RunnableExample, "does something") do
+    #   def something
+    #     # This method is defined in the Example123 class.
+    #   end
+    # end
+    # ```
+    # If nothing is needed, omit the block.
     private macro _spectator_example(example_class_name, wrapper_class_name, base_class, what, &block)
+      # Example class containing meta information and instructions for running the test.
       class {{example_class_name.id}} < {{base_class.id}}
+        # Stores the group the example belongs to
+        # and sample values specific to this instance of the test.
+        # This method's signature must match the one used in `ExampleFactory#build`.
         def initialize(group : ::Spectator::ExampleGroup, sample_values : ::Spectator::Internals::SampleValues)
           super
           @instance = {{wrapper_class_name.id}}.new(sample_values)
         end
 
+        # Add the block's content if one was provided.
         {% if block.is_a?(Block) %}
           {{block.body}}
         {% end %}
 
+        # Description for the test.
         def what
           {{what.is_a?(StringLiteral) ? what : what.stringify}}
         end
