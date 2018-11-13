@@ -3,7 +3,7 @@ require "./matcher"
 module Spectator::Matchers
   # Category of matcher that uses a value.
   # Matchers of this type expect that a SUT applies to the value in some way.
-  # Sub-types must implement `#match`, `#message`, and `#negated_message`.
+  # Sub-types must implement `#match?`, `#message`, and `#negated_message`.
   # Those methods accept a `ValueExpectationPartial` to work with.
   abstract struct ValueMatcher(ExpectedType) < Matcher
     # Expected value.
@@ -25,7 +25,14 @@ module Spectator::Matchers
     end
 
     # Determines whether the matcher is satisfied with the value given to it.
-    # True is returned if the match was successful, false otherwise.
+    # An `Expectation` is returned containing all match information.
+    def eval(partial : ValueExpectationPartial(ActualType), negated = false) : Expectation forall ActualType
+      matched = match?(partial)
+      ValueExpectation.new(matched, negated, partial, self)
+    end
+
+    # Determines whether the matcher is satisfied with the value given to it.
+    # True is returned if the matcher is satisfied, false otherwise.
     abstract def match?(partial : ValueExpectationPartial(ActualType)) : Bool forall ActualType
 
     # Describes the condition that satisfies the matcher.
