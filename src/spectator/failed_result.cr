@@ -3,7 +3,7 @@ require "./result"
 module Spectator
   class FailedResult < Result
     getter error : Exception
-    getter expectations : Expectations::ExpectationResults
+    getter expectations : Expectations::ExampleExpectations
 
     def initialize(example, elapsed, @expectations, @error)
       super(example, elapsed)

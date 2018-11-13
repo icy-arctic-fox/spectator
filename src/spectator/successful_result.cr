@@ -2,7 +2,7 @@ require "./result"
 
 module Spectator
   class SuccessfulResult < Result
-    getter expectations : Expectations::ExpectationResults
+    getter expectations : Expectations::ExampleExpectations
 
     def initialize(example, elapsed, @expectations)
       super(example, elapsed)
