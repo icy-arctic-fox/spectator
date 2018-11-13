@@ -29,7 +29,7 @@ module Spectator
 
     private def advance
       item = top.next
-      case(item)
+      case (item)
       when ExampleGroup
         @stack.push(item.each)
       when Iterator::Stop
