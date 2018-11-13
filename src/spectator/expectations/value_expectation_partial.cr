@@ -24,17 +24,13 @@ module Spectator::Expectations
     # Asserts that the `#actual` value matches some criteria.
     # The criteria is defined by the matcher passed to this method.
     def to(matcher : Matchers::ValueMatcher(ExpectedType)) : Nil forall ExpectedType
-      expectation = ValueExpectation.new(self, matcher)
-      result = expectation.eval
-      Internals::Harness.current.report_expectation(result)
+      report(matcher.eval(self))
     end
 
     # Asserts that the `#actual` value *does not* match some criteria.
     # This is effectively the opposite of `#to`.
     def to_not(matcher : Matchers::ValueMatcher(ExpectedType)) : Nil forall ExpectedType
-      expectation = ValueExpectation.new(self, matcher)
-      result = expectation.eval(true)
-      Internals::Harness.current.report_expectation(result)
+      report(matcher.eval(self, true))
     end
 
     # ditto

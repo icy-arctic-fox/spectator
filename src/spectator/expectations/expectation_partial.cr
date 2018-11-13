@@ -20,5 +20,10 @@ module Spectator::Expectations
     # Creates the base of the partial.
     private def initialize(@label)
     end
+
+    # Reports an expectation to the current harness.
+    private def report(expectation : Expectation)
+      Internals::Harness.current.report_expectation(expectation)
+    end
   end
 end
