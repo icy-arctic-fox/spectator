@@ -50,19 +50,6 @@ module Spectator
       end
     end
 
-    # TODO: Remove this method.
-    def all_examples
-      Array(Example).new(example_count).tap do |array|
-        children.each do |child|
-          if child.is_a?(Example)
-            array << child
-          else
-            array.concat(child.as(ExampleGroup).all_examples)
-          end
-        end
-      end
-    end
-
     def finished? : Bool
       children.all?(&.finished?)
     end

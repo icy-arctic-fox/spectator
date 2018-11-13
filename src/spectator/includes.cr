@@ -33,3 +33,5 @@ require "./successful_result"
 require "./pending_result"
 require "./failed_result"
 require "./errored_result"
+
+require "./example_iterator"
