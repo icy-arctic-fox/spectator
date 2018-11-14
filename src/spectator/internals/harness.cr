@@ -36,14 +36,14 @@ module Spectator::Internals
 
     # Reports the outcome of an expectation.
     # An exception will be raised when a failing result is given.
-    def report_expectation(result : Expectations::Expectation::Result) : Nil
-      @reporter.report(result)
+    def report_expectation(expectation : Expectations::Expectation) : Nil
+      @reporter.report(expectation)
     end
 
-    # Generates the reported expectation results from the example.
+    # Generates the reported expectations from the example.
     # This should be run after the example has finished.
-    def expectation_results : Expectations::ExpectationResults
-      @reporter.results
+    def expectations : Expectations::ExampleExpectations
+      @reporter.expectations
     end
 
     # Creates a new harness.
