@@ -25,13 +25,6 @@ module Spectator::Matchers
     end
 
     # Determines whether the matcher is satisfied with the value given to it.
-    # An `Expectation` is returned containing all match information.
-    def eval(partial : ValueExpectationPartial(ActualType), negated = false) : Expectation forall ActualType
-      matched = match?(partial)
-      ValueExpectation.new(matched, negated, partial, self)
-    end
-
-    # Determines whether the matcher is satisfied with the value given to it.
     # True is returned if the matcher is satisfied, false otherwise.
     abstract def match?(partial : ValueExpectationPartial(ActualType)) : Bool forall ActualType
 
