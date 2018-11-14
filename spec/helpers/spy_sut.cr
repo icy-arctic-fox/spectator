@@ -21,7 +21,7 @@ class PassingExample < Spectator::RunnableExample
   # Run the example that always passes.
   # If this doesn't something broke.
   private def run_instance
-    report_results(1, 0)
+    report_expectations(1, 0)
   end
 
   # Creates a passing example.

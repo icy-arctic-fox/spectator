@@ -23,7 +23,7 @@ module Spectator::Expectations
 
     # Text that indicates what the outcome was.
     def actual_message
-      @matched ? message : negated_message
+      satisfied? ? message : negated_message
     end
 
     # Describes the condition that must be met for the matcher to be satisifed.

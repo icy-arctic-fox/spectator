@@ -3,77 +3,77 @@ require "../spec_helper"
 describe Spectator::Expectations::ExpectationReporter do
   describe "#report" do
     context "with raise flag set" do
-      context "given a successful result" do
+      context "given a satisfied expectation" do
         it "stores the result" do
-          result = new_successful_result
+          expectation = new_satisfied_expectation
           reporter = Spectator::Expectations::ExpectationReporter.new(true)
-          reporter.report(result)
-          reporter.results.should contain(result)
+          reporter.report(expectation)
+          reporter.expectations.should contain(expectation)
         end
       end
 
-      context "given a failed result" do
+      context "given a unsatisfied expectation" do
         it "raises and error" do
-          result = new_failure_result
+          expectation = new_unsatisfied_expectation
           reporter = Spectator::Expectations::ExpectationReporter.new(true)
-          expect_raises(Spectator::ExpectationFailed) { reporter.report(result) }
+          expect_raises(Spectator::ExpectationFailed) { reporter.report(expectation) }
         end
 
-        it "stores the result" do
-          result = new_failure_result
+        it "stores the expectation" do
+          expectation = new_unsatisfied_expectation
           reporter = Spectator::Expectations::ExpectationReporter.new(true)
           begin
-            reporter.report(result)
+            reporter.report(expectation)
           rescue
             # Ignore error, not testing that in this example.
           end
-          reporter.results.should contain(result)
+          reporter.expectations.should contain(expectation)
         end
       end
     end
 
     context "with raise flag not set" do
-      context "given a successful result" do
-        it "stores the result" do
-          result = new_successful_result
+      context "given a satisfied expectation" do
+        it "stores the expectation" do
+          expectation = new_satisfied_expectation
           reporter = Spectator::Expectations::ExpectationReporter.new(false)
-          reporter.report(result)
-          reporter.results.should contain(result)
+          reporter.report(expectation)
+          reporter.expectations.should contain(expectation)
         end
       end
 
-      context "given a failed result" do
-        it "stores the result" do
-          result = new_failure_result
+      context "given a unsatisfied expectation" do
+        it "stores the expectation" do
+          expectation = new_unsatisfied_expectation
           reporter = Spectator::Expectations::ExpectationReporter.new(false)
-          reporter.report(result)
-          reporter.results.should contain(result)
+          reporter.report(expectation)
+          reporter.expectations.should contain(expectation)
         end
       end
     end
   end
 
-  describe "#results" do
+  describe "#expectations" do
     context "with no expectations" do
       it "is empty" do
         reporter = Spectator::Expectations::ExpectationReporter.new
-        reporter.results.size.should eq(0)
+        reporter.expectations.size.should eq(0)
       end
     end
 
     context "with multiple expectations" do
       it "contains all expectations" do
-        result1 = new_successful_result
-        result2 = new_failure_result
+        expectation1 = new_satisfied_expectation
+        expectation2 = new_unsatisfied_expectation
         reporter = Spectator::Expectations::ExpectationReporter.new(false)
         begin
-          reporter.report(result1)
-          reporter.report(result2)
+          reporter.report(expectation1)
+          reporter.report(expectation2)
         rescue
           # Ignore errors for this test.
         end
-        reporter.results.should contain(result1)
-        reporter.results.should contain(result2)
+        reporter.expectations.should contain(expectation1)
+        reporter.expectations.should contain(expectation2)
       end
     end
   end

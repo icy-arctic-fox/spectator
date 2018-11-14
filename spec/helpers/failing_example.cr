@@ -7,7 +7,7 @@ class FailingExample < Spectator::RunnableExample
 
   # Run the example that always fails.
   private def run_instance
-    report_results(0, 1)
+    report_expectations(0, 1)
   end
 
   # Creates a failing example.
