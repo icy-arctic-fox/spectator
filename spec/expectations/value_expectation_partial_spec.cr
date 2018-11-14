@@ -39,11 +39,112 @@ describe Spectator::Expectations::ValueExpectationPartial do
   end
 
   describe "#to" do
+    it "reports an expectation" do
+      spy = SpyExample.create do
+        actual = 777
+        expected = 777
+        partial = Spectator::Expectations::ValueExpectationPartial.new(actual)
+        matcher = Spectator::Matchers::EqualityMatcher.new(expected)
+        partial.to(matcher)
+      end
+      Spectator::Internals::Harness.run(spy)
+      spy.harness.expectations.size.should eq(1)
+    end
+
+    it "reports multiple expectations" do
+      spy = SpyExample.create do
+        actual = 777
+        expected = 777
+        partial = Spectator::Expectations::ValueExpectationPartial.new(actual)
+        matcher = Spectator::Matchers::EqualityMatcher.new(expected)
+        5.times { partial.to(matcher) }
+      end
+      Spectator::Internals::Harness.run(spy)
+      spy.harness.expectations.size.should eq(5)
+    end
+
+    context "with a met condition" do
+      it "reports a satisifed expectation" do
+        spy = SpyExample.create do
+          actual = 777
+          expected = 777
+          partial = Spectator::Expectations::ValueExpectationPartial.new(actual)
+          matcher = Spectator::Matchers::EqualityMatcher.new(expected)
+          partial.to(matcher)
+        end
+        Spectator::Internals::Harness.run(spy)
+        spy.harness.expectations.first.satisfied?.should be_true
+      end
+    end
+
+    context "with an unmet condition" do
+      it "reports an unsatisfied expectation" do
+        spy = SpyExample.create do
+          actual = 777
+          expected = 42
+          partial = Spectator::Expectations::ValueExpectationPartial.new(actual)
+          matcher = Spectator::Matchers::EqualityMatcher.new(expected)
+          partial.to(matcher)
+        end
+        Spectator::Internals::Harness.run(spy)
+        spy.harness.expectations.first.satisfied?.should be_false
+      end
+    end
   end
 
   {% for method in [:to_not, :not_to] %}
     describe "{{method.id}}" do
+      it "reports an expectation" do
+        spy = SpyExample.create do
+          actual = 777
+          expected = 777
+          partial = Spectator::Expectations::ValueExpectationPartial.new(actual)
+          matcher = Spectator::Matchers::EqualityMatcher.new(expected)
+          partial.{{method.id}}(matcher)
+        end
+        Spectator::Internals::Harness.run(spy)
+        spy.harness.expectations.size.should eq(1)
+      end
 
+      it "reports multiple expectations" do
+        spy = SpyExample.create do
+          actual = 777
+          expected = 42
+          partial = Spectator::Expectations::ValueExpectationPartial.new(actual)
+          matcher = Spectator::Matchers::EqualityMatcher.new(expected)
+          5.times { partial.{{method.id}}(matcher) }
+        end
+        Spectator::Internals::Harness.run(spy)
+        spy.harness.expectations.size.should eq(5)
+      end
+
+      context "with a met condition" do
+        it "reports an unsatisifed expectation" do
+          spy = SpyExample.create do
+            actual = 777
+            expected = 777
+            partial = Spectator::Expectations::ValueExpectationPartial.new(actual)
+            matcher = Spectator::Matchers::EqualityMatcher.new(expected)
+            partial.{{method.id}}(matcher)
+          end
+          Spectator::Internals::Harness.run(spy)
+          spy.harness.expectations.first.satisfied?.should be_false
+        end
+      end
+
+      context "with an unmet condition" do
+        it "reports an satisfied expectation" do
+          spy = SpyExample.create do
+            actual = 777
+            expected = 42
+            partial = Spectator::Expectations::ValueExpectationPartial.new(actual)
+            matcher = Spectator::Matchers::EqualityMatcher.new(expected)
+            partial.{{method.id}}(matcher)
+          end
+          Spectator::Internals::Harness.run(spy)
+          spy.harness.expectations.first.satisfied?.should be_true
+        end
+      end
     end
   {% end %}
 end
