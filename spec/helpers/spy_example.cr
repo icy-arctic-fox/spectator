@@ -14,10 +14,14 @@ class SpyExample < Spectator::RunnableExample
   # Sample values given to the example.
   getter sample_values : Spectator::Internals::SampleValues
 
+  # Harness that was used while running the example.
+  getter! harness : Spectator::Internals::Harness
+
   setter block : Proc(Nil)? = nil
 
   # Method called by the framework to run the example code.
   private def run_instance
+    @harness = Spectator::Internals::Harness.current
     if block = @block
       block.call
     end
