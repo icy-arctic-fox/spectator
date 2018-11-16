@@ -20,7 +20,7 @@ def new_expectation(expected : ExpectedType = 123, actual : ActualType = 123) fo
   partial = new_partial("foo", actual)
   matcher = new_matcher("bar", expected)
   matched = matcher.match?(partial)
-  Spectator::Expectations::ValueExpectation.new(matched, false, partial, matcher)
+  Spectator::Expectations::ValueExpectation.new(matched, false, partial, matcher).as(Spectator::Expectations::Expectation)
 end
 
 def new_satisfied_expectation(value : T = 123) forall T
