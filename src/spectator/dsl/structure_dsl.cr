@@ -931,7 +931,7 @@ module Spectator::DSL
     # The block passed to this macro is the actual test code.
     private macro _spectator_example_wrapper(class_name, run_method_name, &block)
       # Wrapper class for isolating the test code.
-      class {{class_name.id}}
+      struct {{class_name.id}}
         # Mix in methods and macros specifically for example DSL.
         include ::Spectator::DSL::ExampleDSL
 
