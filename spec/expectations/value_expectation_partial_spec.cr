@@ -92,8 +92,8 @@ describe Spectator::Expectations::ValueExpectationPartial do
     end
   end
 
-  {% for method in [:to_not, :not_to] %}
-    describe "{{method.id}}" do
+  {% for method in %i[to_not not_to] %}
+    describe "#" + {{method.id.stringify}} do
       it "reports an expectation" do
         spy = SpyExample.create do
           actual = 777
