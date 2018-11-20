@@ -127,10 +127,9 @@ module Spectator
     # The hooks will be run only once.
     # Subsequent calls to this method will do nothing.
     def run_before_all_hooks : Nil
-      unless @before_all_hooks_run
-        @hooks.run_before_all
-        @before_all_hooks_run = true
-      end
+      return if @before_all_hooks_run
+      @hooks.run_before_all
+      @before_all_hooks_run = true
     end
 
     # Runs all of the `before_each` hooks.
@@ -145,12 +144,10 @@ module Spectator
     # and only after all examples in the group have finished.
     # Subsequent calls after the hooks have been run will do nothing.
     def run_after_all_hooks : Nil
-      unless @after_all_hooks_run
-        if finished?
-          @hooks.run_after_all
-          @after_all_hooks_run = true
-        end
-      end
+      return if @after_all_hooks_run
+      return unless finished?
+      @hooks.run_after_all
+      @after_all_hooks_run = true
     end
 
     # Runs all of the `after_each` hooks.
