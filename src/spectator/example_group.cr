@@ -31,23 +31,30 @@ module Spectator
     getter example_count = 0
 
     def [](index : Int) : Example
-      offset = index
-      offset += example_count if offset < 0
-      raise IndexError.new if offset < 0 || offset >= example_count
-      found = children.find do |child|
-        count = child.example_count
-        if offset < count
-          true
-        else
-          offset -= count
-          false
-        end
-      end
-      if found
-        found[offset]
+      offset = check_bounds(index)
+      find_nested(offset)
+    end
+
+    private def check_bounds(index)
+      if index < 0
+        raise IndexError.new if index < -example_count
+        index + example_count
       else
-        raise IndexError.new
+        raise IndexError.new if index >= example_count
+        index
       end
+    end
+
+    private def find_nested(index)
+      offset = index
+      child = children.each do |child|
+        count = child.example_count
+        break child if offset < count
+        offset -= count
+      end
+      # It should be impossible to get `nil` here,
+      # provided the bounds check and example counts are correct.
+      child.not_nil![offset]
     end
 
     def finished? : Bool
