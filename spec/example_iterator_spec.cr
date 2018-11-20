@@ -180,8 +180,8 @@ describe Spectator::ExampleIterator do
     it "returns 'stop' after the end has been reached" do
       example = PassingExample.create
       iterator = Spectator::ExampleIterator.new(example.group)
-      iterator.next # Should return example.
-      iterator.next # Should return "stop".
+      iterator.next                             # Should return example.
+      iterator.next                             # Should return "stop".
       iterator.next.should be_a(Iterator::Stop) # Should still return "stop".
     end
   end
