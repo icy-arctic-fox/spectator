@@ -8,6 +8,69 @@ def new_nested_group(hooks = Spectator::ExampleHooks.empty, parent : Spectator::
   end
 end
 
+def nested_group_with_examples(example_count = 5)
+  root = Spectator::RootExampleGroup.new(Spectator::ExampleHooks.empty)
+  group = Spectator::NestedExampleGroup.new("what", root, Spectator::ExampleHooks.empty)
+  root.children = [group.as(Spectator::ExampleComponent)]
+  examples = [] of Spectator::Example
+  group.children = Array(Spectator::ExampleComponent).new(example_count) do
+    PassingExample.new(group, Spectator::Internals::SampleValues.empty).tap do |example|
+      examples << example
+    end
+  end
+  {group, examples}
+end
+
+def nested_group_with_sub_groups(sub_group_count = 5, example_count = 5)
+  root = Spectator::RootExampleGroup.new(Spectator::ExampleHooks.empty)
+  group = Spectator::NestedExampleGroup.new("what", root, Spectator::ExampleHooks.empty)
+  root.children = [group.as(Spectator::ExampleComponent)]
+  examples = [] of Spectator::Example
+  group.children = Array(Spectator::ExampleComponent).new(sub_group_count) do |i|
+    Spectator::NestedExampleGroup.new(i.to_s, group, Spectator::ExampleHooks.empty).tap do |sub_group|
+      sub_group.children = Array(Spectator::ExampleComponent).new(example_count) do |j|
+        PassingExample.new(group, Spectator::Internals::SampleValues.empty).tap do |example|
+          examples << example
+        end
+      end
+    end
+  end
+  {group, examples}
+end
+
+def complex_nested_group
+  root = Spectator::RootExampleGroup.new(Spectator::ExampleHooks.empty)
+  group = Spectator::NestedExampleGroup.new("what", root, Spectator::ExampleHooks.empty)
+  root.children = [group.as(Spectator::ExampleComponent)]
+  examples = [] of Spectator::Example
+  group.children = Array(Spectator::ExampleComponent).new(10) do |i|
+    if i % 2 == 0
+      PassingExample.new(group, Spectator::Internals::SampleValues.empty).tap do |example|
+        examples << example
+      end
+    else
+      Spectator::NestedExampleGroup.new(i.to_s, group, Spectator::ExampleHooks.empty).tap do |sub_group1|
+        sub_group1.children = Array(Spectator::ExampleComponent).new(10) do |j|
+          if i % 2 == 0
+            PassingExample.new(sub_group1, Spectator::Internals::SampleValues.empty).tap do |example|
+              examples << example
+            end
+          else
+            Spectator::NestedExampleGroup.new(j.to_s, sub_group1, Spectator::ExampleHooks.empty).tap do |sub_group2|
+              sub_group2.children = Array(Spectator::ExampleComponent).new(5) do
+                PassingExample.new(sub_group2, Spectator::Internals::SampleValues.empty).tap do |example|
+                  examples << example
+                end
+              end
+            end
+          end
+        end
+      end
+    end
+  end
+  {group, examples}
+end
+
 describe Spectator::NestedExampleGroup do
   describe "#what" do
     it "is the expected value" do
@@ -527,25 +590,37 @@ describe Spectator::NestedExampleGroup do
 
     context "with empty sub-groups" do
       it "is zero" do
-        # TODO
+        root = Spectator::RootExampleGroup.new(Spectator::ExampleHooks.empty)
+        group = Spectator::NestedExampleGroup.new("what", root, Spectator::ExampleHooks.empty)
+        root.children = [group.as(Spectator::ExampleComponent)]
+        group.children = Array(Spectator::ExampleComponent).new(5) do |i|
+          Spectator::NestedExampleGroup.new(i.to_s, group, Spectator::ExampleHooks.empty)
+        end
+        group.example_count.should eq(0)
       end
     end
 
     context "with direct descendant examples" do
       it "equals the number of examples" do
-        # TODO
+        example_count = 10
+        group, _ = nested_group_with_examples(example_count)
+        group.example_count.should eq(example_count)
       end
     end
 
     context "with examples sub-groups" do
       it "equals the total number of examples" do
-        # TODO
+        sub_group_count = 3
+        example_count = 10
+        group, _ = nested_group_with_sub_groups(sub_group_count, example_count)
+        group.example_count.should eq(sub_group_count * example_count)
       end
     end
 
     context "with examples at all levels" do
       it "equals the total number of examples" do
-        # TODO
+        group, examples = complex_nested_group
+        group.example_count.should eq(examples.size)
       end
     end
   end
@@ -561,37 +636,53 @@ describe Spectator::NestedExampleGroup do
     context "with direct descendant examples" do
       context "given 0" do
         it "returns the first example" do
-          # TODO
+          group, examples = nested_group_with_examples
+          group[0].should eq(examples.first)
         end
       end
 
       context "given -1" do
         it "returns the last example" do
-          # TODO
+          group, examples = nested_group_with_examples
+          group[-1].should eq(examples.last)
         end
       end
 
       context "given an in-bounds positive index" do
         it "returns the expected example" do
-          # TODO
+          group, examples = nested_group_with_examples(10)
+          group[3].should eq(examples[3])
         end
       end
 
       context "given an in-bounds negative index" do
         it "returns the expected example" do
-          # TODO
+          group, examples = nested_group_with_examples(10)
+          group[-3].should eq(examples[-3])
         end
       end
 
       context "an out-of-bounds positive index" do
         it "raises an index error" do
-          # TODO
+          group, _ = nested_group_with_examples(10)
+          expect_raises(IndexError) { group[15] }
+        end
+
+        it "handles off-by-one" do
+          group, _ = nested_group_with_examples(10)
+          expect_raises(IndexError) { group[10] }
         end
       end
 
       context "an out-of-bounds negative index" do
         it "raises an index error" do
-          # TODO
+          group, _ = nested_group_with_examples(10)
+          expect_raises(IndexError) { group[-15] }
+        end
+
+        it "handles off-by-one" do
+          group, _ = nested_group_with_examples(10)
+          expect_raises(IndexError) { group[-11] }
         end
       end
     end
@@ -599,37 +690,53 @@ describe Spectator::NestedExampleGroup do
     context "with examples only in sub-groups" do
       context "given 0" do
         it "returns the first example" do
-          # TODO
+          group, examples = nested_group_with_sub_groups
+          group[0].should eq(examples.first)
         end
       end
 
       context "given -1" do
         it "returns the last example" do
-          # TODO
+          group, examples = nested_group_with_sub_groups
+          group[-1].should eq(examples.last)
         end
       end
 
       context "given an in-bounds positive index" do
         it "returns the expected example" do
-          # TODO
+          group, examples = nested_group_with_sub_groups(10, 2)
+          group[6].should eq(examples[6])
         end
       end
 
       context "given an in-bounds negative index" do
         it "returns the expected example" do
-          # TODO
+          group, examples = nested_group_with_sub_groups(10, 2)
+          group[-6].should eq(examples[-6])
         end
       end
 
       context "an out-of-bounds positive index" do
         it "raises an index error" do
-          # TODO
+          group, _ = nested_group_with_sub_groups(10, 2)
+          expect_raises(IndexError) { group[25] }
+        end
+
+        it "handles off-by-one" do
+          group, _ = nested_group_with_sub_groups(10, 2)
+          expect_raises(IndexError) { group[20] }
         end
       end
 
       context "an out-of-bounds negative index" do
         it "raises an index error" do
-          # TODO
+          group, _ = nested_group_with_sub_groups(10, 2)
+          expect_raises(IndexError) { group[-25] }
+        end
+
+        it "handles off-by-one" do
+          group, _ = nested_group_with_sub_groups(10, 2)
+          expect_raises(IndexError) { group[-21] }
         end
       end
     end
@@ -637,44 +744,68 @@ describe Spectator::NestedExampleGroup do
     context "with examples at all levels" do
       context "given 0" do
         it "returns the first example" do
-          # TODO
+          group, examples = complex_nested_group
+          group[0].should eq(examples.first)
         end
       end
 
       context "given -1" do
         it "returns the last example" do
-          # TODO
+          group, examples = complex_nested_group
+          group[-1].should eq(examples.last)
         end
       end
 
       context "given an in-bounds positive index" do
         it "returns the expected example" do
-          # TODO
+          group, examples = complex_nested_group
+          group[42].should eq(examples[42])
         end
       end
 
       context "given an in-bounds negative index" do
         it "returns the expected example" do
-          # TODO
+          group, examples = complex_nested_group
+          group[-42].should eq(examples[-42])
         end
       end
 
       context "an out-of-bounds positive index" do
         it "raises an index error" do
-          # TODO
+          group, examples = complex_nested_group
+          expect_raises(IndexError) { group[examples.size + 5] }
+        end
+
+        it "handles off-by-one" do
+          group, examples = complex_nested_group
+          expect_raises(IndexError) { group[examples.size] }
         end
       end
 
       context "an out-of-bounds negative index" do
         it "raises an index error" do
-          # TODO
+          group, examples = complex_nested_group
+          expect_raises(IndexError) { group[-examples.size - 5] }
+        end
+
+        it "handles off-by-one" do
+          group, examples = complex_nested_group
+          expect_raises(IndexError) { group[-examples.size - 1] }
         end
       end
     end
 
     context "with only sub-groups and no examples" do
       it "raises an index error" do
-        # TODO
+        root = Spectator::RootExampleGroup.new(Spectator::ExampleHooks.empty)
+        group = Spectator::NestedExampleGroup.new("what", root, Spectator::ExampleHooks.empty)
+        root.children = [group.as(Spectator::ExampleComponent)]
+        group.children = Array(Spectator::ExampleComponent).new(5) do |i|
+          Spectator::NestedExampleGroup.new(i.to_s, group, Spectator::ExampleHooks.empty).tap do |sub_group|
+            sub_group.children = [] of Spectator::ExampleComponent
+          end
+        end
+        expect_raises(IndexError) { group[0] }
       end
     end
   end
@@ -688,44 +819,70 @@ describe Spectator::NestedExampleGroup do
 
     context "with all unfinished children" do
       it "is false" do
-        # TODO
+        group, _ = nested_group_with_examples
+        group.finished?.should be_false
       end
     end
 
     context "with some finished children" do
       it "is false" do
-        # TODO
+        group, examples = nested_group_with_examples
+        examples.each_with_index do |example, index|
+          Spectator::Internals::Harness.run(example) if index % 2 == 0
+        end
+        group.finished?.should be_false
       end
     end
 
     context "with all finished children" do
       it "is true" do
-        # TODO
+        group, examples = nested_group_with_examples
+        examples.each do |example|
+          Spectator::Internals::Harness.run(example)
+        end
+        group.finished?.should be_true
       end
     end
 
     context "with a sub-group" do
       context "with no children" do
         it "is true" do
-          # TODO
+          root = Spectator::RootExampleGroup.new(Spectator::ExampleHooks.empty)
+          group = Spectator::NestedExampleGroup.new("what", root, Spectator::ExampleHooks.empty)
+          root.children = [group.as(Spectator::ExampleComponent)]
+          group.children = Array(Spectator::ExampleComponent).new(5) do |i|
+            Spectator::NestedExampleGroup.new(i.to_s, group, Spectator::ExampleHooks.empty).tap do |sub_group|
+              sub_group.children = [] of Spectator::ExampleComponent
+            end
+          end
+          group.finished?.should be_true
         end
       end
 
       context "with all unfinished children" do
         it "is false" do
-          # TODO
+          group, _ = nested_group_with_sub_groups
+          group.finished?.should be_false
         end
       end
 
       context "with some finished children" do
         it "is false" do
-          # TODO
+          group, examples = nested_group_with_sub_groups
+          examples.each_with_index do |example, index|
+            Spectator::Internals::Harness.run(example) if index % 2 == 0
+          end
+          group.finished?.should be_false
         end
       end
 
       context "with all finished children" do
         it "is true" do
-          # TODO
+          group, examples = nested_group_with_sub_groups
+          examples.each do |example|
+            Spectator::Internals::Harness.run(example)
+          end
+          group.finished?.should be_true
         end
       end
     end
