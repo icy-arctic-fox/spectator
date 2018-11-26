@@ -10,10 +10,55 @@ def new_pending_example(group : Spectator::ExampleGroup? = nil)
   ConcretePendingExample.new(group || new_root_group, Spectator::Internals::SampleValues.empty)
 end
 
+def new_pending_example_with_hooks(hooks)
+  group = new_root_group(hooks)
+  new_pending_example(group)
+end
+
 describe Spectator::PendingExample do
   describe "#run" do
     it "returns a pending result" do
       new_pending_example.run.should be_a(Spectator::PendingResult)
+    end
+
+    it "doesn't run before_all hooks" do
+      called = false
+      hooks = new_hooks(before_all: ->{ called = true; nil })
+      example = new_pending_example_with_hooks(hooks)
+      Spectator::Internals::Harness.run(example)
+      called.should be_false
+    end
+
+    it "doesn't run before_each hooks" do
+      called = false
+      hooks = new_hooks(before_each: ->{ called = true; nil })
+      example = new_pending_example_with_hooks(hooks)
+      Spectator::Internals::Harness.run(example)
+      called.should be_false
+    end
+
+    it "doesn't run after_all hooks" do
+      called = false
+      hooks = new_hooks(after_all: ->{ called = true; nil })
+      example = new_pending_example_with_hooks(hooks)
+      Spectator::Internals::Harness.run(example)
+      called.should be_false
+    end
+
+    it "doesn't run after_each hooks" do
+      called = false
+      hooks = new_hooks(after_each: ->{ called = true; nil })
+      example = new_pending_example_with_hooks(hooks)
+      Spectator::Internals::Harness.run(example)
+      called.should be_false
+    end
+
+    it "doesn't run around_each hooks" do
+      called = false
+      hooks = new_hooks(around_each: ->(proc : ->) { called = true; proc.call })
+      example = new_pending_example_with_hooks(hooks)
+      Spectator::Internals::Harness.run(example)
+      called.should be_false
     end
   end
 
