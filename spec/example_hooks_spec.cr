@@ -46,7 +46,7 @@ describe Spectator::ExampleHooks do
 
     it "wraps a proc" do
       called = false
-      hooks = new_hooks(around_each: ->(proc : ->) { called = true; nil })
+      hooks = new_hooks(around_each: ->(proc : ->) { called = true; proc.call })
       wrapper = hooks.wrap_around_each { }
       wrapper.call
       called.should be_true

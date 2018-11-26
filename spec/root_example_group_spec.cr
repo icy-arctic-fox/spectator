@@ -275,7 +275,7 @@ describe Spectator::RootExampleGroup do
 
     it "wraps a proc" do
       called = false
-      hooks = new_hooks(around_each: ->(proc : ->) { called = true; nil })
+      hooks = new_hooks(around_each: ->(proc : ->) { called = true; proc.call })
       wrapper = new_root_group(hooks).wrap_around_each_hooks { }
       wrapper.call
       called.should be_true

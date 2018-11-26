@@ -408,7 +408,7 @@ describe Spectator::NestedExampleGroup do
 
     it "wraps a proc" do
       called = false
-      hooks = new_hooks(around_each: ->(proc : ->) { called = true; nil })
+      hooks = new_hooks(around_each: ->(proc : ->) { called = true; proc.call })
       wrapper = new_nested_group(hooks).wrap_around_each_hooks { }
       wrapper.call
       called.should be_true
@@ -440,7 +440,7 @@ describe Spectator::NestedExampleGroup do
 
     it "wraps the parent hooks" do
       called = false
-      hooks = new_hooks(around_each: ->(proc : ->) { called = true; nil })
+      hooks = new_hooks(around_each: ->(proc : ->) { called = true; proc.call })
       root = Spectator::RootExampleGroup.new(hooks)
       wrapper = new_nested_group(parent: root).wrap_around_each_hooks { }
       wrapper.call
