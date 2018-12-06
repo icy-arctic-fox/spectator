@@ -43,7 +43,7 @@ describe Spectator::DSL::RootExampleGroupBuilder do
         hook_called = true
       })
       group = builder.build(Spectator::Internals::SampleValues.empty)
-      group.run_before_all_hooks
+      group.run_before_hooks
       hook_called.should eq(true)
     end
 
@@ -56,7 +56,7 @@ describe Spectator::DSL::RootExampleGroupBuilder do
         })
       end
       group = builder.build(Spectator::Internals::SampleValues.empty)
-      group.run_before_all_hooks
+      group.run_before_hooks
       call_count.should eq(15)
     end
   end
@@ -69,7 +69,7 @@ describe Spectator::DSL::RootExampleGroupBuilder do
         hook_called = true
       })
       group = builder.build(Spectator::Internals::SampleValues.empty)
-      group.run_before_each_hooks
+      group.run_before_hooks
       hook_called.should eq(true)
     end
 
@@ -82,7 +82,7 @@ describe Spectator::DSL::RootExampleGroupBuilder do
         })
       end
       group = builder.build(Spectator::Internals::SampleValues.empty)
-      group.run_before_each_hooks
+      group.run_before_hooks
       call_count.should eq(15)
     end
   end
@@ -95,7 +95,7 @@ describe Spectator::DSL::RootExampleGroupBuilder do
         hook_called = true
       })
       group = builder.build(Spectator::Internals::SampleValues.empty)
-      group.run_after_all_hooks
+      group.run_after_hooks
       hook_called.should eq(true)
     end
 
@@ -108,7 +108,7 @@ describe Spectator::DSL::RootExampleGroupBuilder do
         })
       end
       group = builder.build(Spectator::Internals::SampleValues.empty)
-      group.run_after_all_hooks
+      group.run_after_hooks
       call_count.should eq(15)
     end
   end
@@ -121,7 +121,7 @@ describe Spectator::DSL::RootExampleGroupBuilder do
         hook_called = true
       })
       group = builder.build(Spectator::Internals::SampleValues.empty)
-      group.run_after_each_hooks
+      group.run_after_hooks
       hook_called.should eq(true)
     end
 
@@ -134,7 +134,7 @@ describe Spectator::DSL::RootExampleGroupBuilder do
         })
       end
       group = builder.build(Spectator::Internals::SampleValues.empty)
-      group.run_after_each_hooks
+      group.run_after_hooks
       call_count.should eq(15)
     end
   end

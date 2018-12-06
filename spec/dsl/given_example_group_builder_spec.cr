@@ -54,7 +54,7 @@ describe Spectator::DSL::GivenExampleGroupBuilder do
       })
       root = Spectator::DSL::RootExampleGroupBuilder.new.build(Spectator::Internals::SampleValues.empty)
       group = builder.build(root, Spectator::Internals::SampleValues.empty)
-      group.run_before_all_hooks
+      group.run_before_hooks
       hook_called.should eq(true)
     end
 
@@ -66,7 +66,7 @@ describe Spectator::DSL::GivenExampleGroupBuilder do
       })
       root = Spectator::DSL::RootExampleGroupBuilder.new.build(Spectator::Internals::SampleValues.empty)
       group = builder.build(root, Spectator::Internals::SampleValues.empty)
-      group.children.map(&.as(Spectator::ExampleGroup)).each(&.run_before_all_hooks)
+      group.children.map(&.as(Spectator::ExampleGroup)).each(&.run_before_hooks)
       call_count.should eq(1)
     end
 
@@ -80,7 +80,7 @@ describe Spectator::DSL::GivenExampleGroupBuilder do
       end
       root = Spectator::DSL::RootExampleGroupBuilder.new.build(Spectator::Internals::SampleValues.empty)
       group = builder.build(root, Spectator::Internals::SampleValues.empty)
-      group.run_before_all_hooks
+      group.run_before_hooks
       call_count.should eq(15)
     end
   end
@@ -94,7 +94,7 @@ describe Spectator::DSL::GivenExampleGroupBuilder do
       })
       root = Spectator::DSL::RootExampleGroupBuilder.new.build(Spectator::Internals::SampleValues.empty)
       group = builder.build(root, Spectator::Internals::SampleValues.empty)
-      group.run_before_each_hooks
+      group.run_before_hooks
       hook_called.should eq(true)
     end
 
@@ -107,7 +107,7 @@ describe Spectator::DSL::GivenExampleGroupBuilder do
       })
       root = Spectator::DSL::RootExampleGroupBuilder.new.build(Spectator::Internals::SampleValues.empty)
       group = builder.build(root, Spectator::Internals::SampleValues.empty)
-      group.children.map(&.as(Spectator::ExampleGroup)).each(&.run_before_each_hooks)
+      group.children.map(&.as(Spectator::ExampleGroup)).each(&.run_before_hooks)
       call_count.should eq(collection.size)
     end
 
@@ -121,7 +121,7 @@ describe Spectator::DSL::GivenExampleGroupBuilder do
       end
       root = Spectator::DSL::RootExampleGroupBuilder.new.build(Spectator::Internals::SampleValues.empty)
       group = builder.build(root, Spectator::Internals::SampleValues.empty)
-      group.run_before_each_hooks
+      group.run_before_hooks
       call_count.should eq(15)
     end
   end
@@ -135,7 +135,7 @@ describe Spectator::DSL::GivenExampleGroupBuilder do
       })
       root = Spectator::DSL::RootExampleGroupBuilder.new.build(Spectator::Internals::SampleValues.empty)
       group = builder.build(root, Spectator::Internals::SampleValues.empty)
-      group.run_after_all_hooks
+      group.run_after_hooks
       hook_called.should eq(true)
     end
 
@@ -147,7 +147,7 @@ describe Spectator::DSL::GivenExampleGroupBuilder do
       })
       root = Spectator::DSL::RootExampleGroupBuilder.new.build(Spectator::Internals::SampleValues.empty)
       group = builder.build(root, Spectator::Internals::SampleValues.empty)
-      group.children.map(&.as(Spectator::ExampleGroup)).each(&.run_after_all_hooks)
+      group.children.map(&.as(Spectator::ExampleGroup)).each(&.run_after_hooks)
       call_count.should eq(1)
     end
 
@@ -161,7 +161,7 @@ describe Spectator::DSL::GivenExampleGroupBuilder do
       end
       root = Spectator::DSL::RootExampleGroupBuilder.new.build(Spectator::Internals::SampleValues.empty)
       group = builder.build(root, Spectator::Internals::SampleValues.empty)
-      group.run_after_all_hooks
+      group.run_after_hooks
       call_count.should eq(15)
     end
   end
@@ -175,7 +175,7 @@ describe Spectator::DSL::GivenExampleGroupBuilder do
       })
       root = Spectator::DSL::RootExampleGroupBuilder.new.build(Spectator::Internals::SampleValues.empty)
       group = builder.build(root, Spectator::Internals::SampleValues.empty)
-      group.run_after_each_hooks
+      group.run_after_hooks
       hook_called.should eq(true)
     end
 
@@ -188,7 +188,7 @@ describe Spectator::DSL::GivenExampleGroupBuilder do
       })
       root = Spectator::DSL::RootExampleGroupBuilder.new.build(Spectator::Internals::SampleValues.empty)
       group = builder.build(root, Spectator::Internals::SampleValues.empty)
-      group.children.map(&.as(Spectator::ExampleGroup)).each(&.run_after_each_hooks)
+      group.children.map(&.as(Spectator::ExampleGroup)).each(&.run_after_hooks)
       call_count.should eq(collection.size)
     end
 
@@ -202,7 +202,7 @@ describe Spectator::DSL::GivenExampleGroupBuilder do
       end
       root = Spectator::DSL::RootExampleGroupBuilder.new.build(Spectator::Internals::SampleValues.empty)
       group = builder.build(root, Spectator::Internals::SampleValues.empty)
-      group.run_after_each_hooks
+      group.run_after_hooks
       call_count.should eq(15)
     end
   end

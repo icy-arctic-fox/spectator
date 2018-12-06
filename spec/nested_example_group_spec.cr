@@ -89,16 +89,24 @@ describe Spectator::NestedExampleGroup do
     end
   end
 
-  describe "#run_before_all_hooks" do
-    it "runs a single hook" do
+  describe "#run_before_hooks" do
+    it "runs a single before_all hook" do
       called = false
       hooks = new_hooks(before_all: ->{ called = true; nil })
       group = new_nested_group(hooks)
-      group.run_before_all_hooks
+      group.run_before_hooks
       called.should be_true
     end
 
-    it "runs multiple hooks" do
+    it "runs a single before_each hook" do
+      called = false
+      hooks = new_hooks(before_each: ->{ called = true; nil })
+      group = new_nested_group(hooks)
+      group.run_before_hooks
+      called.should be_true
+    end
+
+    it "runs multiple before_all hooks" do
       call_count = 0
       hooks = new_hooks(before_all: [
         ->{ call_count += 1; nil },
@@ -106,7 +114,19 @@ describe Spectator::NestedExampleGroup do
         ->{ call_count += 3; nil },
       ])
       group = new_nested_group(hooks)
-      group.run_before_all_hooks
+      group.run_before_hooks
+      call_count.should eq(6)
+    end
+
+    it "runs multiple before_each hooks" do
+      call_count = 0
+      hooks = new_hooks(before_each: [
+        ->{ call_count += 1; nil },
+        ->{ call_count += 2; nil },
+        ->{ call_count += 3; nil },
+      ])
+      group = new_nested_group(hooks)
+      group.run_before_hooks
       call_count.should eq(6)
     end
 
@@ -116,114 +136,85 @@ describe Spectator::NestedExampleGroup do
         ->{ calls << :a; nil },
         ->{ calls << :b; nil },
         ->{ calls << :c; nil },
-      ])
+      ],
+        before_each: [
+          ->{ calls << :d; nil },
+          ->{ calls << :e; nil },
+          ->{ calls << :f; nil },
+        ])
       group = new_nested_group(hooks)
-      group.run_before_all_hooks
-      calls.should eq(%i[a b c])
+      group.run_before_hooks
+      calls.should eq(%i[a b c d e f])
     end
 
-    it "runs the parent hooks" do
+    it "runs the parent before_all hooks" do
       called = false
       hooks = new_hooks(before_all: ->{ called = true; nil })
       root = Spectator::RootExampleGroup.new(hooks)
       group = new_nested_group(parent: root)
-      group.run_before_all_hooks
+      group.run_before_hooks
       called.should be_true
     end
 
-    it "runs the parent hooks first" do
+    it "runs the parent before_each hooks" do
+      called = false
+      hooks = new_hooks(before_each: ->{ called = true; nil })
+      root = Spectator::RootExampleGroup.new(hooks)
+      group = new_nested_group(parent: root)
+      group.run_before_hooks
+      called.should be_true
+    end
+
+    it "runs the parent before_all hooks first" do
       calls = [] of Symbol
       root_hooks = new_hooks(before_all: ->{ calls << :a; nil })
       group_hooks = new_hooks(before_all: ->{ calls << :b; nil })
       root = Spectator::RootExampleGroup.new(root_hooks)
       group = new_nested_group(group_hooks, root)
-      group.run_before_all_hooks
+      group.run_before_hooks
       calls.should eq(%i[a b])
     end
 
-    it "runs the hooks once" do
-      call_count = 0
-      hooks = new_hooks(before_all: ->{ call_count += 1; nil })
-      group = new_nested_group(hooks)
-      2.times { group.run_before_all_hooks }
-      call_count.should eq(1)
-    end
-  end
-
-  describe "#run_before_each_hooks" do
-    it "runs a single hook" do
-      called = false
-      hooks = new_hooks(before_each: ->{ called = true; nil })
-      group = new_nested_group(hooks)
-      group.run_before_each_hooks
-      called.should be_true
-    end
-
-    it "runs multiple hooks" do
-      call_count = 0
-      hooks = new_hooks(before_each: [
-        ->{ call_count += 1; nil },
-        ->{ call_count += 2; nil },
-        ->{ call_count += 3; nil },
-      ])
-      group = new_nested_group(hooks)
-      group.run_before_each_hooks
-      call_count.should eq(6)
-    end
-
-    it "runs hooks in the correct order" do
-      calls = [] of Symbol
-      hooks = new_hooks(before_each: [
-        ->{ calls << :a; nil },
-        ->{ calls << :b; nil },
-        ->{ calls << :c; nil },
-      ])
-      group = new_nested_group(hooks)
-      group.run_before_each_hooks
-      calls.should eq(%i[a b c])
-    end
-
-    it "runs the parent hooks" do
-      called = false
-      hooks = new_hooks(before_each: ->{ called = true; nil })
-      root = Spectator::RootExampleGroup.new(hooks)
-      group = new_nested_group(parent: root)
-      group.run_before_each_hooks
-      called.should be_true
-    end
-
-    it "runs the parent hooks first" do
+    it "runs the parent before_each hooks first" do
       calls = [] of Symbol
       root_hooks = new_hooks(before_each: ->{ calls << :a; nil })
       group_hooks = new_hooks(before_each: ->{ calls << :b; nil })
       root = Spectator::RootExampleGroup.new(root_hooks)
       group = new_nested_group(group_hooks, root)
-      group.run_before_each_hooks
+      group.run_before_hooks
       calls.should eq(%i[a b])
     end
 
-    it "runs the hooks multiple times" do
+    it "runs the before_all hooks once" do
+      call_count = 0
+      hooks = new_hooks(before_all: ->{ call_count += 1; nil })
+      group = new_nested_group(hooks)
+      2.times { group.run_before_hooks }
+      call_count.should eq(1)
+    end
+
+    it "runs the before_each hooks multiple times" do
       call_count = 0
       hooks = new_hooks(before_each: ->{ call_count += 1; nil })
       group = new_nested_group(hooks)
-      2.times { group.run_before_each_hooks }
+      2.times { group.run_before_hooks }
       call_count.should eq(2)
     end
   end
 
-  describe "#run_after_all_hooks" do
+  describe "#run_after_hooks" do
     # No children are used for most of these examples.
     # That's because `[].all?` is always true.
     # Which means that all examples are considered finished, since there are none.
-    it "runs a single hook" do
+    it "runs a single after_all hook" do
       called = false
       hooks = new_hooks(after_all: ->{ called = true; nil })
       group = new_nested_group(hooks)
-      group.run_after_all_hooks
+      group.run_after_hooks
       called.should be_true
     end
 
-    it "runs multiple hooks" do
+    it "runs multiple after_all hooks" do
       call_count = 0
       hooks = new_hooks(after_all: [
         ->{ call_count += 1; nil },
@@ -231,168 +222,195 @@ describe Spectator::NestedExampleGroup do
         ->{ call_count += 3; nil },
       ])
       group = new_nested_group(hooks)
-      group.run_after_all_hooks
+      group.run_after_hooks
       call_count.should eq(6)
     end
 
     it "runs hooks in the correct order" do
       calls = [] of Symbol
-      hooks = new_hooks(after_all: [
+      hooks = new_hooks(after_each: [
         ->{ calls << :a; nil },
         ->{ calls << :b; nil },
         ->{ calls << :c; nil },
-      ])
+      ],
+        after_all: [
+          ->{ calls << :d; nil },
+          ->{ calls << :e; nil },
+          ->{ calls << :f; nil },
+        ])
       group = new_nested_group(hooks)
-      group.run_after_all_hooks
-      calls.should eq(%i[a b c])
+      group.run_after_hooks
+      calls.should eq(%i[a b c d e f])
     end
 
-    it "runs the parent hooks" do
+    it "runs the parent after_all hooks" do
       called = false
       hooks = new_hooks(after_all: ->{ called = true; nil })
       root = Spectator::RootExampleGroup.new(hooks)
       group = new_nested_group(parent: root)
-      group.run_after_all_hooks
+      group.run_after_hooks
       called.should be_true
     end
 
-    it "runs the parent hooks last" do
+    it "runs the parent after_each hooks" do
+      called = false
+      hooks = new_hooks(after_each: ->{ called = true; nil })
+      root = Spectator::RootExampleGroup.new(hooks)
+      group = new_nested_group(parent: root)
+      group.run_after_hooks
+      called.should be_true
+    end
+
+    it "runs the parent after_all hooks last" do
       calls = [] of Symbol
       root_hooks = new_hooks(after_all: ->{ calls << :a; nil })
       group_hooks = new_hooks(after_all: ->{ calls << :b; nil })
       root = Spectator::RootExampleGroup.new(root_hooks)
       group = new_nested_group(group_hooks, root)
-      group.run_after_all_hooks
+      group.run_after_hooks
       calls.should eq(%i[b a])
     end
 
-    it "runs the hooks once" do
-      call_count = 0
-      hooks = new_hooks(after_all: ->{ call_count += 1; nil })
-      group = new_nested_group(hooks)
-      2.times { group.run_after_all_hooks }
-      call_count.should eq(1)
-    end
-
-    context "with no examples finished" do
-      it "doesn't run the hooks" do
-        called = false
-        hooks = new_hooks(after_all: ->{ called = true; nil })
-        root = Spectator::RootExampleGroup.new(Spectator::ExampleHooks.empty)
-        group = Spectator::NestedExampleGroup.new("what", root, hooks)
-        root.children = [group.as(Spectator::ExampleComponent)]
-        group.children = Array(Spectator::ExampleComponent).new(5) do
-          PassingExample.new(group, Spectator::Internals::SampleValues.empty)
-        end
-        group.run_after_all_hooks
-        called.should be_false
-      end
-
-      it "doesn't run the parent hooks" do
-        called = false
-        hooks = new_hooks(after_all: ->{ called = true; nil })
-        root = Spectator::RootExampleGroup.new(hooks)
-        group = Spectator::NestedExampleGroup.new("what", root, Spectator::ExampleHooks.empty)
-        root.children = [group.as(Spectator::ExampleComponent)]
-        group.children = Array(Spectator::ExampleComponent).new(5) do
-          PassingExample.new(group, Spectator::Internals::SampleValues.empty)
-        end
-        group.run_after_all_hooks
-        called.should be_false
-      end
-    end
-
-    context "with some examples finished" do
-      it "doesn't run the hooks" do
-        called = false
-        hooks = new_hooks(after_all: ->{ called = true; nil })
-        root = Spectator::RootExampleGroup.new(Spectator::ExampleHooks.empty)
-        group = Spectator::NestedExampleGroup.new("what", root, hooks)
-        root.children = [group.as(Spectator::ExampleComponent)]
-        group.children = Array(Spectator::ExampleComponent).new(5) do |i|
-          PassingExample.new(group, Spectator::Internals::SampleValues.empty).tap do |example|
-            Spectator::Internals::Harness.run(example) if i % 2 == 0
-          end
-        end
-        group.run_after_all_hooks
-        called.should be_false
-      end
-
-      it "doesn't run the parent hooks" do
-        called = false
-        hooks = new_hooks(after_all: ->{ called = true; nil })
-        root = Spectator::RootExampleGroup.new(hooks)
-        group = Spectator::NestedExampleGroup.new("what", root, Spectator::ExampleHooks.empty)
-        root.children = [group.as(Spectator::ExampleComponent)]
-        group.children = Array(Spectator::ExampleComponent).new(5) do |i|
-          PassingExample.new(group, Spectator::Internals::SampleValues.empty).tap do |example|
-            Spectator::Internals::Harness.run(example) if i % 2 == 0
-          end
-        end
-        group.run_after_all_hooks
-        called.should be_false
-      end
-    end
-  end
-
-  describe "#run_after_each_hooks" do
-    it "runs a single hook" do
-      called = false
-      hooks = new_hooks(after_each: ->{ called = true; nil })
-      group = new_nested_group(hooks)
-      group.run_after_each_hooks
-      called.should be_true
-    end
-
-    it "runs multiple hooks" do
-      call_count = 0
-      hooks = new_hooks(after_each: [
-        ->{ call_count += 1; nil },
-        ->{ call_count += 2; nil },
-        ->{ call_count += 3; nil },
-      ])
-      group = new_nested_group(hooks)
-      group.run_after_each_hooks
-      call_count.should eq(6)
-    end
-
-    it "runs hooks in the correct order" do
-      calls = [] of Symbol
-      hooks = new_hooks(after_each: [
-        ->{ calls << :a; nil },
-        ->{ calls << :b; nil },
-        ->{ calls << :c; nil },
-      ])
-      group = new_nested_group(hooks)
-      group.run_after_each_hooks
-      calls.should eq(%i[a b c])
-    end
-
-    it "runs the parent hooks" do
-      called = false
-      hooks = new_hooks(after_each: ->{ called = true; nil })
-      root = Spectator::RootExampleGroup.new(hooks)
-      group = new_nested_group(parent: root)
-      group.run_after_each_hooks
-      called.should be_true
-    end
-
-    it "runs the parent hooks last" do
+    it "runs the parent after_each hooks last" do
       calls = [] of Symbol
       root_hooks = new_hooks(after_each: ->{ calls << :a; nil })
       group_hooks = new_hooks(after_each: ->{ calls << :b; nil })
       root = Spectator::RootExampleGroup.new(root_hooks)
       group = new_nested_group(group_hooks, root)
-      group.run_after_each_hooks
+      group.run_after_hooks
       calls.should eq(%i[b a])
     end
 
-    it "runs the hooks multiple times" do
+    it "runs the after_all hooks once" do
+      call_count = 0
+      hooks = new_hooks(after_all: ->{ call_count += 1; nil })
+      group = new_nested_group(hooks)
+      2.times { group.run_after_hooks }
+      call_count.should eq(1)
+    end
+
+    it "runs the after_each hooks multiple times" do
       call_count = 0
       hooks = new_hooks(after_each: ->{ call_count += 1; nil })
       group = new_nested_group(hooks)
-      2.times { group.run_after_each_hooks }
+      2.times { group.run_after_hooks }
       call_count.should eq(2)
+    end
+
+    context "with no examples finished" do
+      it "doesn't run the after_all hooks" do
+        called = false
+        hooks = new_hooks(after_all: ->{ called = true; nil })
+        root = Spectator::RootExampleGroup.new(Spectator::ExampleHooks.empty)
+        group = Spectator::NestedExampleGroup.new("what", root, hooks)
+        root.children = [group.as(Spectator::ExampleComponent)]
+        group.children = Array(Spectator::ExampleComponent).new(5) do
+          PassingExample.new(group, Spectator::Internals::SampleValues.empty)
+        end
+        group.run_after_hooks
+        called.should be_false
+      end
+
+      it "runs the after_each hooks" do
+        called = false
+        hooks = new_hooks(after_each: ->{ called = true; nil })
+        root = Spectator::RootExampleGroup.new(Spectator::ExampleHooks.empty)
+        group = Spectator::NestedExampleGroup.new("what", root, hooks)
+        root.children = [group.as(Spectator::ExampleComponent)]
+        group.children = Array(Spectator::ExampleComponent).new(5) do
+          PassingExample.new(group, Spectator::Internals::SampleValues.empty)
+        end
+        group.run_after_hooks
+        called.should be_true
+      end
+
+      it "doesn't run the parent after_all hooks" do
+        called = false
+        hooks = new_hooks(after_all: ->{ called = true; nil })
+        root = Spectator::RootExampleGroup.new(hooks)
+        group = Spectator::NestedExampleGroup.new("what", root, Spectator::ExampleHooks.empty)
+        root.children = [group.as(Spectator::ExampleComponent)]
+        group.children = Array(Spectator::ExampleComponent).new(5) do
+          PassingExample.new(group, Spectator::Internals::SampleValues.empty)
+        end
+        group.run_after_hooks
+        called.should be_false
+      end
+
+      it "runs the parent after_each hooks" do
+        called = false
+        hooks = new_hooks(after_each: ->{ called = true; nil })
+        root = Spectator::RootExampleGroup.new(hooks)
+        group = Spectator::NestedExampleGroup.new("what", root, Spectator::ExampleHooks.empty)
+        root.children = [group.as(Spectator::ExampleComponent)]
+        group.children = Array(Spectator::ExampleComponent).new(5) do
+          PassingExample.new(group, Spectator::Internals::SampleValues.empty)
+        end
+        group.run_after_hooks
+        called.should be_true
+      end
+    end
+
+    context "with some examples finished" do
+      it "doesn't run the after_all hooks" do
+        called = false
+        hooks = new_hooks(after_all: ->{ called = true; nil })
+        root = Spectator::RootExampleGroup.new(Spectator::ExampleHooks.empty)
+        group = Spectator::NestedExampleGroup.new("what", root, hooks)
+        root.children = [group.as(Spectator::ExampleComponent)]
+        group.children = Array(Spectator::ExampleComponent).new(5) do |i|
+          PassingExample.new(group, Spectator::Internals::SampleValues.empty).tap do |example|
+            Spectator::Internals::Harness.run(example) if i % 2 == 0
+          end
+        end
+        group.run_after_hooks
+        called.should be_false
+      end
+
+      it "runs the after_each hooks" do
+        called = false
+        hooks = new_hooks(after_each: ->{ called = true; nil })
+        root = Spectator::RootExampleGroup.new(Spectator::ExampleHooks.empty)
+        group = Spectator::NestedExampleGroup.new("what", root, hooks)
+        root.children = [group.as(Spectator::ExampleComponent)]
+        group.children = Array(Spectator::ExampleComponent).new(5) do |i|
+          PassingExample.new(group, Spectator::Internals::SampleValues.empty).tap do |example|
+            Spectator::Internals::Harness.run(example) if i % 2 == 0
+          end
+        end
+        group.run_after_hooks
+        called.should be_true
+      end
+
+      it "doesn't run the parent after_all hooks" do
+        called = false
+        hooks = new_hooks(after_all: ->{ called = true; nil })
+        root = Spectator::RootExampleGroup.new(hooks)
+        group = Spectator::NestedExampleGroup.new("what", root, Spectator::ExampleHooks.empty)
+        root.children = [group.as(Spectator::ExampleComponent)]
+        group.children = Array(Spectator::ExampleComponent).new(5) do |i|
+          PassingExample.new(group, Spectator::Internals::SampleValues.empty).tap do |example|
+            Spectator::Internals::Harness.run(example) if i % 2 == 0
+          end
+        end
+        group.run_after_hooks
+        called.should be_false
+      end
+
+      it "runs the parent after_each hooks" do
+        called = false
+        hooks = new_hooks(after_each: ->{ called = true; nil })
+        root = Spectator::RootExampleGroup.new(hooks)
+        group = Spectator::NestedExampleGroup.new("what", root, Spectator::ExampleHooks.empty)
+        root.children = [group.as(Spectator::ExampleComponent)]
+        group.children = Array(Spectator::ExampleComponent).new(5) do |i|
+          PassingExample.new(group, Spectator::Internals::SampleValues.empty).tap do |example|
+            Spectator::Internals::Harness.run(example) if i % 2 == 0
+          end
+        end
+        group.run_after_hooks
+        called.should be_true
+      end
     end
   end
 
