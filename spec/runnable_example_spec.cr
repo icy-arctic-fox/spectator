@@ -190,11 +190,9 @@ describe Spectator::RunnableExample do
         end
 
         pending "doesn't run the test code" do
-
         end
 
         pending "doesn't run any additional hooks" do
-
         end
       end
     end
