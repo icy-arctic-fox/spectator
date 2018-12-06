@@ -19,8 +19,7 @@ module Spectator
 
     # Runs the hooks that should be performed before starting the test code.
     private def run_before_hooks
-      group.run_before_all_hooks
-      group.run_before_each_hooks
+      group.run_before_hooks
     rescue ex
       # If an error occurs in the before hooks, skip running the example.
       raise Exception.new("Error encountered while running before hooks", ex)
@@ -28,8 +27,7 @@ module Spectator
 
     # Runs the hooks that should be performed after the test code finishes.
     private def run_after_hooks(result)
-      group.run_after_each_hooks
-      group.run_after_all_hooks
+      group.run_after_hooks
     rescue ex
       # Store the error from the hooks
       # if the example didn't encounter an error.

@@ -122,11 +122,18 @@ module Spectator
       children.all?(&.finished?)
     end
 
+    # Runs all of the `before_all` and `before_each` hooks.
+    # This should run prior to every example in the group.
+    def run_before_hooks
+      run_before_all_hooks
+      run_before_each_hooks
+    end
+
     # Runs all of the `before_all` hooks.
     # This should run prior to any examples in the group.
     # The hooks will be run only once.
     # Subsequent calls to this method will do nothing.
-    def run_before_all_hooks : Nil
+    protected def run_before_all_hooks : Nil
       return if @before_all_hooks_run
       @hooks.run_before_all
       @before_all_hooks_run = true
@@ -134,8 +141,15 @@ module Spectator
 
     # Runs all of the `before_each` hooks.
     # This method should run prior to every example in the group.
-    def run_before_each_hooks : Nil
+    protected def run_before_each_hooks : Nil
       @hooks.run_before_each
+    end
+
+    # Runs all of the `after_all` and `after_each` hooks.
+    # This should run following every example in the group.
+    def run_after_hooks
+      run_after_each_hooks
+      run_after_all_hooks
     end
 
     # Runs all of the `after_all` hooks.
@@ -143,7 +157,7 @@ module Spectator
     # The hooks will be run only once,
     # and only after all examples in the group have finished.
     # Subsequent calls after the hooks have been run will do nothing.
-    def run_after_all_hooks : Nil
+    protected def run_after_all_hooks : Nil
       return if @after_all_hooks_run
       return unless finished?
       @hooks.run_after_all
@@ -152,7 +166,7 @@ module Spectator
 
     # Runs all of the `after_each` hooks.
     # This method should run following every example in the group.
-    def run_after_each_hooks : Nil
+    protected def run_after_each_hooks : Nil
       @hooks.run_after_each
     end
 
