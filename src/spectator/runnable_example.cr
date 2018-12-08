@@ -26,7 +26,7 @@ module Spectator
     end
 
     # Runs the hooks that should be performed after the test code finishes.
-    private def run_after_hooks(result)
+    private def run_after_hooks
       group.run_after_hooks
     rescue ex
       # If an error occurs in the after hooks, elevate it to abort testing.
@@ -39,11 +39,12 @@ module Spectator
       ResultCapture.new.tap do |result|
         # Get the proc that will call around-each hooks and the example.
         wrapper = wrap_run_example(result)
+        
         begin
           run_before_hooks
           wrapper.call
         ensure
-          run_after_hooks(result)
+          run_after_hooks
         end
       end
     end
