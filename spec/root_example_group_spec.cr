@@ -243,12 +243,16 @@ describe Spectator::RootExampleGroup do
     context "with some examples finished" do
       it "doesn't run the after_all hooks" do
         called = false
+        examples = [] of Spectator::Example
         hooks = new_hooks(after_all: ->{ called = true; nil })
         group = Spectator::RootExampleGroup.new(hooks)
         group.children = Array(Spectator::ExampleComponent).new(5) do |i|
           PassingExample.new(group, Spectator::Internals::SampleValues.empty).tap do |example|
-            Spectator::Internals::Harness.run(example) if i % 2 == 0
+            examples << example
           end
+        end
+        examples.each_with_index do |example, index|
+          Spectator::Internals::Harness.run(example) if index % 2 == 0
         end
         group.run_after_hooks
         called.should be_false
@@ -256,12 +260,16 @@ describe Spectator::RootExampleGroup do
 
       it "runs the after_each hooks" do
         called = false
+        examples = [] of Spectator::Example
         hooks = new_hooks(after_each: ->{ called = true; nil })
         group = Spectator::RootExampleGroup.new(hooks)
         group.children = Array(Spectator::ExampleComponent).new(5) do |i|
           PassingExample.new(group, Spectator::Internals::SampleValues.empty).tap do |example|
-            Spectator::Internals::Harness.run(example) if i % 2 == 0
+            examples << example
           end
+        end
+        examples.each_with_index do |example, index|
+          Spectator::Internals::Harness.run(example) if index % 2 == 0
         end
         group.run_after_hooks
         called.should be_true
