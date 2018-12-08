@@ -29,9 +29,8 @@ module Spectator
     private def run_after_hooks(result)
       group.run_after_hooks
     rescue ex
-      # Store the error from the hooks
-      # if the example didn't encounter an error.
-      result.error = ex unless result.error
+      # If an error occurs in the after hooks, elevate it to abort testing.
+      raise Exception.new("Error encountered while running after hooks", ex)
     end
 
     # Runs all hooks and the example code.
