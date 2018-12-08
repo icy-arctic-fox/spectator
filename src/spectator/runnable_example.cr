@@ -39,13 +39,10 @@ module Spectator
       ResultCapture.new.tap do |result|
         # Get the proc that will call around-each hooks and the example.
         wrapper = wrap_run_example(result)
-        
-        begin
-          run_before_hooks
-          wrapper.call
-        ensure
-          run_after_hooks
-        end
+
+        run_before_hooks
+        wrapper.call
+        run_after_hooks
       end
     end
 
