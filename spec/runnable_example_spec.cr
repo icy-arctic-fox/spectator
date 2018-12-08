@@ -663,7 +663,7 @@ describe Spectator::RunnableExample do
           before_each: ->{ nil },
           after_all: ->{ called = :after_all; nil },
           after_each: ->{ raise "oops"; nil },
-          around_each: ->(proc : ->) { called = :around_each; proc.call })
+          around_each: ->(proc : ->) { proc.call })
         expect_raises(Exception) do
           run_example(PassingExample, hooks)
         end
