@@ -14,6 +14,11 @@ def run_example(example_type : Spectator::Example.class, group : Spectator::Exam
   Spectator::Internals::Harness.run(example)
 end
 
+def run_example(hooks : Spectator::ExampleHooks? = nil, &block)
+  example = SpyExample.create(hooks ? hooks : Spectator::ExampleHooks.empty, &block)
+  Spectator::Internals::Harness.run(example)
+end
+
 describe Spectator::RunnableExample do
   describe "#run" do
     context "with a passing test" do
@@ -176,23 +181,130 @@ describe Spectator::RunnableExample do
       end
 
       context "when an error is raised in a before_all hook" do
-        pending "returns an errored result" do
+        it "raises the exception" do
           hooks = new_hooks(before_all: ->{ raise "oops"; nil })
-          result = run_example(PassingExample, hooks)
-          result.should be_a(Spectator::ErroredResult)
+          expect_raises(Exception) do
+            run_example(PassingExample, hooks)
+          end
+        end
+
+        it "doesn't run the test code" do
+          called = false
+          hooks = new_hooks(before_all: ->{ raise "oops"; nil })
+          expect_raises(Exception) do
+            run_example(hooks) do
+              called = true
+            end
+          end
+          called.should be_false
+        end
+
+        it "doesn't run any additional before_all hooks" do
+          called = false
+          hooks = new_hooks(before_all: [
+            ->{ raise "oops"; nil },
+            ->{ called = true; nil },
+          ])
+          expect_raises(Exception) do
+            run_example(PassingExample, hooks)
+          end
+          called.should be_false
+        end
+
+        it "doesn't run any additional hooks" do
+          called = :none
+          hooks = new_hooks(
+            before_all: ->{ raise "oops"; nil },
+            before_each: ->{ called = :before_each; nil },
+            after_all: ->{ called = :after_all; nil },
+            after_each: ->{ called = :after_each; nil },
+            around_each: ->(proc : ->) { called = :around_each; proc.call })
+          expect_raises(Exception) do
+            run_example(PassingExample, hooks)
+          end
+          called.should eq(:none)
+        end
+      end
+
+      context "when an error is raised in a before_each hook" do
+        pending "returns an errored result" do
         end
 
         pending "passes along the exception" do
-          exception = Exception.new("oops")
-          hooks = new_hooks(before_all: ->{ raise exception; nil })
-          result = run_example(PassingExample, hooks)
-          result.as(Spectator::ErroredResult).error.should eq(exception)
         end
 
         pending "doesn't run the test code" do
         end
 
-        pending "doesn't run any additional hooks" do
+        pending "doesn't run any additional before_each hooks" do
+        end
+
+        pending "doesn't run any around_each or after_each hooks" do
+        end
+      end
+
+      context "when an error is raised in an after_all hook" do
+        it "raises the exception" do
+          hooks = new_hooks(before_all: ->{ raise "oops"; nil })
+          expect_raises(Exception) do
+            run_example(PassingExample, hooks)
+          end
+        end
+
+        it "doesn't run any additional after_all hooks" do
+          called = false
+          hooks = new_hooks(before_all: [
+            ->{ raise "oops"; nil },
+            ->{ called = true; nil },
+          ])
+          expect_raises(Exception) do
+            run_example(PassingExample, hooks)
+          end
+          called.should be_false
+        end
+      end
+
+      context "when an error is raised in an after_each hook" do
+        pending "returns an errored result" do
+        end
+
+        pending "passes along the exception" do
+        end
+
+        pending "doesn't run any additional after_each hooks" do
+        end
+
+        pending "doesn't run any after_all hooks" do
+        end
+
+        context "with a failing result" do
+          pending "returns the original failure" do
+          end
+        end
+
+        context "with an errored result" do
+          pending "returns the original error" do
+          end
+        end
+      end
+
+      context "when an error is raised in an around_each hook" do
+        pending "raises the exception" do
+        end
+
+        pending "doesn't run the test code" do
+        end
+
+        pending "returns an errored result" do
+        end
+
+        pending "passes along the exception" do
+        end
+
+        pending "doesn't run any additional around_each hooks" do
+        end
+
+        pending "doesn't run any after_each or after_all hooks" do
         end
       end
     end
