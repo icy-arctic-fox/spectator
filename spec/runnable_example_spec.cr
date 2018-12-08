@@ -532,6 +532,16 @@ describe Spectator::RunnableExample do
         end
       end
 
+      it "passes along the original exception" do
+        error = Exception.new("oops")
+        hooks = new_hooks(before_all: ->{ raise error; nil })
+        begin
+          run_example(PassingExample, hooks)
+        rescue ex
+          ex.cause.should eq(error)
+        end
+      end
+
       it "doesn't run the test code" do
         called = false
         hooks = new_hooks(before_all: ->{ raise "oops"; nil })
@@ -578,6 +588,16 @@ describe Spectator::RunnableExample do
         end
       end
 
+      it "passes along the original exception" do
+        error = Exception.new("oops")
+        hooks = new_hooks(before_each: ->{ raise error; nil })
+        begin
+          run_example(PassingExample, hooks)
+        rescue ex
+          ex.cause.should eq(error)
+        end
+      end
+
       it "doesn't run the test code" do
         called = false
         hooks = new_hooks(before_each: ->{ raise "oops"; nil })
@@ -617,15 +637,25 @@ describe Spectator::RunnableExample do
 
     context "when an error is raised in an after_all hook" do
       it "raises the exception" do
-        hooks = new_hooks(before_all: ->{ raise "oops"; nil })
+        hooks = new_hooks(after_all: ->{ raise "oops"; nil })
         expect_raises(Exception) do
           run_example(PassingExample, hooks)
         end
       end
 
+      it "passes along the original exception" do
+        error = Exception.new("oops")
+        hooks = new_hooks(after_all: ->{ raise error; nil })
+        begin
+          run_example(PassingExample, hooks)
+        rescue ex
+          ex.cause.should eq(error)
+        end
+      end
+
       it "doesn't run any additional after_all hooks" do
         called = false
-        hooks = new_hooks(before_all: [
+        hooks = new_hooks(after_all: [
           ->{ raise "oops"; nil },
           ->{ called = true; nil },
         ])
@@ -641,6 +671,16 @@ describe Spectator::RunnableExample do
         hooks = new_hooks(after_each: ->{ raise "oops"; nil })
         expect_raises(Exception) do
           run_example(PassingExample, hooks)
+        end
+      end
+
+      it "passes along the original exception" do
+        error = Exception.new("oops")
+        hooks = new_hooks(after_each: ->{ raise error; nil })
+        begin
+          run_example(PassingExample, hooks)
+        rescue ex
+          ex.cause.should eq(error)
         end
       end
 
@@ -676,6 +716,16 @@ describe Spectator::RunnableExample do
         hooks = new_hooks(around_each: ->(proc : ->) { raise "oops"; proc.call })
         expect_raises(Exception) do
           run_example(PassingExample, hooks)
+        end
+      end
+
+      it "passes along the original exception" do
+        error = Exception.new("oops")
+        hooks = new_hooks(around_each: ->(proc : ->) { raise error; proc.call })
+        begin
+          run_example(PassingExample, hooks)
+        rescue ex
+          ex.cause.should eq(error)
         end
       end
 
