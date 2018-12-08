@@ -41,9 +41,18 @@ module Spectator
         wrapper = wrap_run_example(result)
 
         run_before_hooks
-        wrapper.call
+        run_wrapper(wrapper)
         run_after_hooks
       end
+    end
+
+    private def run_wrapper(wrapper)
+      wrapper.call
+    rescue ex
+      # If an error occurs calling the wrapper,
+      # it means it came from the `around_each` hooks.
+      # This is because the test code is completely wrapped with a begin/rescue block.
+      raise Exception.new("Error encountered while running around hooks", ex)
     end
 
     # Creates a proc that runs the test code
@@ -52,7 +61,6 @@ module Spectator
       # Wrap the method that runs and captures
       # the test code with the around-each hooks.
       group.wrap_around_each_hooks do
-        # Pass along the result capture utility.
         run_example(result)
       end
     end
