@@ -1,21 +1,18 @@
-require "./result"
+require "./finished_result"
 
 module Spectator
   # Outcome that indicates running an example was successful.
-  class SuccessfulResult < Result
+  class SuccessfulResult < FinishedResult
     # The expectations that were run in the example.
     getter expectations : Expectations::ExampleExpectations
-
-    # Length of time it took to run the example.
-    getter elapsed : Time::Span
 
     # Creates a successful result.
     # The `example` should refer to the example that was run
     # and that this result is for.
     # The `elapsed` argument is the length of time it took to run the example.
     # The `expectations` references the expectations that were checked in the example.
-    def initialize(example, @elapsed, @expectations)
-      super(example)
+    def initialize(example, elapsed, @expectations)
+      super(example, elapsed)
     end
 
     # Indicates that an example was run and it was successful.
@@ -35,12 +32,6 @@ module Spectator
     # Indicates whether an error was encountered while running the example.
     # This will always be false for this type of result.
     def errored?
-      false
-    end
-
-    # Indicates that an example was marked as pending.
-    # This will always be false for this type of result.
-    def pending?
       false
     end
   end

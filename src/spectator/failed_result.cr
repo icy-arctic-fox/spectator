@@ -2,15 +2,12 @@ require "./result"
 
 module Spectator
   # Outcome that indicates running an example was a failure.
-  class FailedResult < Result
+  class FailedResult < FinishedResult
     # Error that occurred while running the example.
     getter error : Exception
 
     # The expectations that were run in the example.
     getter expectations : Expectations::ExampleExpectations
-
-    # Length of time it took to run the example.
-    getter elapsed : Time::Span
 
     # Creates a failed result.
     # The `example` should refer to the example that was run
@@ -18,8 +15,8 @@ module Spectator
     # The `elapsed` argument is the length of time it took to run the example.
     # The `expectations` references the expectations that were checked in the example.
     # The `error` is the exception that was raised to cause the failure.
-    def initialize(example, @elapsed, @expectations, @error)
-      super(example)
+    def initialize(example, elapsed, @expectations, @error)
+      super(example, elapsed)
     end
 
     # Indicates that an example was run and it was successful.
@@ -39,12 +36,6 @@ module Spectator
     # Indicates whether an error was encountered while running the example.
     # This will always be false for this type of result.
     def errored?
-      false
-    end
-
-    # Indicates that an example was marked as pending.
-    # This will always be false for this type of result.
-    def pending?
       false
     end
   end

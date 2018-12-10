@@ -29,6 +29,7 @@ require "./test_results"
 require "./runner"
 
 require "./result"
+require "./finished_result"
 require "./successful_result"
 require "./pending_result"
 require "./failed_result"
