@@ -5,11 +5,9 @@ module Spectator
   # A pending result means the example is not ready to run yet.
   # This can happen when the functionality to be tested is not implemented yet.
   class PendingResult < Result
-    # Creates a pending result.
-    # The `example` should refer to the example that was run
-    # and that this result is for.
-    def initialize(example)
-      super(example, Time::Span.zero)
+    # Length of time it took to run the example.
+    def elapsed : Time::Span
+      Time::Span.zero
     end
 
     # Indicates that an example was run and it was successful.

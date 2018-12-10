@@ -6,7 +6,7 @@ module Spectator
     getter example : Example
 
     # Length of time it took to run the example.
-    getter elapsed : Time::Span
+    abstract def elapsed : Time::Span
 
     # Indicates that an example was run and it was successful.
     # NOTE: Examples with warnings count as successful.
@@ -25,8 +25,7 @@ module Spectator
     # Constructs the base of the result.
     # The `example` should refer to the example that was run
     # and that this result is for.
-    # The `elapsed` argument is the length of time it took to run the example.
-    private def initialize(@example, @elapsed)
+    def initialize(@example)
     end
   end
 end
