@@ -1,4 +1,5 @@
 module Spectator
+  # Main driver for executing tests and feeding results to formatters.
   class Runner
     def initialize(@group : ExampleGroup,
                    @formatter : Formatters::Formatter = Formatters::DefaultFormatter.new)
@@ -16,7 +17,7 @@ module Spectator
           end.as(Result)
         end.to_a
       end
-      @formatter.end_suite(TestResults.new(results, elapsed))
+      @formatter.end_suite(TestSuiteResults.new(results, elapsed))
     end
   end
 end

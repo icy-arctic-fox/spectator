@@ -25,7 +25,9 @@ require "./root_example_group"
 
 require "./example_failed"
 require "./expectation_failed"
-require "./test_results"
+require "./config"
+require "./test_suite"
+require "./test_suite_results"
 require "./runner"
 
 require "./result"

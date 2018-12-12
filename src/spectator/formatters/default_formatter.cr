@@ -16,7 +16,7 @@ module Spectator::Formatters
     def start_suite
     end
 
-    def end_suite(results : TestResults)
+    def end_suite(results : TestSuiteResults)
       puts
       puts
       display_failures(results)
