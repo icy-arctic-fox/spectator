@@ -74,9 +74,8 @@ module Spectator
 
   # Builds the tests and runs the framework.
   private def self.run
-    # Build the root-level example group and run it.
-    group = ::Spectator::DSL::Builder.build
-    suite = ::Spectator::TestSuite.new(group)
+    # Build the test suite and run it.
+    suite = ::Spectator::DSL::Builder.build
     Runner.new(suite).run
   rescue ex
     # Catch all unhandled exceptions here.

@@ -91,10 +91,11 @@ module Spectator::DSL
       current_group.add_around_each_hook(block)
     end
 
-    # Builds the entire spec and returns it as a group.
+    # Builds the entire spec and returns it as a test suite.
     # This should be called only once after the entire spec has been defined.
-    protected def build : ExampleGroup
-      root_group.build(Internals::SampleValues.empty)
+    protected def build : TestSuite
+      group = root_group.build(Internals::SampleValues.empty)
+      TestSuite.new(group)
     end
   end
 end
