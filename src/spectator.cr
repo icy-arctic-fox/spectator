@@ -83,10 +83,15 @@ module Spectator
     # But if an exception occurs outside an example,
     # it's likely the fault of the test framework (Spectator).
     # So we display a helpful error that could be reported and return non-zero.
+    display_error(ex)
+    exit(1)
+  end
+
+  # Displays an error message.
+  private def self.display_error(error)
     puts
     puts "Encountered an unexpected error in framework"
-    puts ex.message
-    puts ex.backtrace.join("\n")
-    exit(1)
+    puts error.message
+    puts error.backtrace.join("\n")
   end
 end
