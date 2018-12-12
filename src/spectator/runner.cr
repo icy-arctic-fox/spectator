@@ -1,23 +1,26 @@
 module Spectator
   # Main driver for executing tests and feeding results to formatters.
   class Runner
-    def initialize(@group : ExampleGroup,
+    def initialize(@suite : TestSuite,
                    @formatter : Formatters::Formatter = Formatters::DefaultFormatter.new)
     end
 
     def run : Nil
-      iterator = ExampleIterator.new(@group)
       results = [] of Result
+      @formatter.start_suite
       elapsed = Time.measure do
-        @formatter.start_suite
-        results = iterator.map do |example|
-          @formatter.start_example(example)
-          Internals::Harness.run(example).tap do |result|
-            @formatter.end_example(result)
-          end.as(Result)
-        end.to_a
+        results = @suite.map do |example|
+          run_example(example)
+        end
       end
       @formatter.end_suite(TestSuiteResults.new(results, elapsed))
+    end
+
+    private def run_example(example)
+      @formatter.start_example(example)
+      result = Internals::Harness.run(example)
+      @formatter.end_example(result)
+      result
     end
   end
 end

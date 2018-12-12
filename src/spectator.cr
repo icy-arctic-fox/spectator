@@ -76,7 +76,8 @@ module Spectator
   private def self.run
     # Build the root-level example group and run it.
     group = ::Spectator::DSL::Builder.build
-    Runner.new(group).run
+    suite = ::Spectator::TestSuite.new(group)
+    Runner.new(suite).run
   rescue ex
     # Catch all unhandled exceptions here.
     # Examples are already wrapped, so any exceptions they throw are caught.
