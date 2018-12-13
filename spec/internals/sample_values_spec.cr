@@ -49,14 +49,17 @@ describe Spectator::Internals::SampleValues do
 
     context "with multiple values" do
       it "returns the expected value" do
-        symbols = [:one, :two, :three]
-        numbers = [123, 456, 789]
+        symbols = {
+          one:   123,
+          two:   456,
+          three: 789,
+        }
         values = Spectator::Internals::SampleValues.empty
-        symbols.zip(numbers).each do |symbol, number|
+        symbols.each do |symbol, number|
           values = add_sample_value(values, symbol, symbol.to_s, number)
         end
-        selected_symbol = symbols[1]
-        selected_number = numbers[1]
+        selected_symbol = :one
+        selected_number = symbols[selected_symbol]
         wrapper = values.get_wrapper(selected_symbol)
         wrapper.should be_a(Spectator::Internals::TypedValueWrapper(typeof(selected_number)))
         wrapper.as(Spectator::Internals::TypedValueWrapper(typeof(selected_number))).value.should eq(selected_number)
@@ -74,14 +77,17 @@ describe Spectator::Internals::SampleValues do
 
     context "with multiple values" do
       it "returns the expected value" do
-        symbols = [:one, :two, :three]
-        numbers = [123, 456, 789]
+        symbols = {
+          one:   123,
+          two:   456,
+          three: 789,
+        }
         values = Spectator::Internals::SampleValues.empty
-        symbols.zip(numbers).each do |symbol, number|
+        symbols.each do |symbol, number|
           values = add_sample_value(values, symbol, symbol.to_s, number)
         end
-        selected_symbol = symbols[1]
-        selected_number = numbers[1]
+        selected_symbol = :one
+        selected_number = symbols[selected_symbol]
         value = values.get_value(selected_symbol, typeof(selected_number))
         value.should eq(selected_number)
       end
@@ -90,18 +96,20 @@ describe Spectator::Internals::SampleValues do
 
   describe "#each" do
     it "yields each entry" do
-      symbols = [:one, :two, :three]
-      numbers = [123, 456, 789]
+      symbols = {
+        one:   123,
+        two:   456,
+        three: 789,
+      }
       values = Spectator::Internals::SampleValues.empty
-      symbols.zip(numbers).each do |symbol, number|
+      symbols.each do |symbol, number|
         values = add_sample_value(values, symbol, symbol.to_s, number)
       end
 
       size = 0
       values.each do |entry|
         size += 1
-        symbol = symbols.find { |s| s.to_s == entry.name }
-        symbol.should_not be_nil
+        symbols.keys.map(&.to_s).should contain(entry.name)
       end
       size.should eq(symbols.size)
     end
