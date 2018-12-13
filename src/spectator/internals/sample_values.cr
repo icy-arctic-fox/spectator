@@ -37,6 +37,13 @@ module Spectator::Internals
       get_wrapper(id).as(TypedValueWrapper(T)).value
     end
 
+    # Iterates over all values and yields them.
+    def each
+      @values.each_value do |entry|
+        yield entry
+      end
+    end
+
     # Represents a single value in the set.
     private struct Entry
       # Human-friendly name for the value.
@@ -49,5 +56,9 @@ module Spectator::Internals
       def initialize(@name, @wrapper)
       end
     end
+
+    # This must be after `Entry` is defined.
+    # Could be a Cyrstal compiler bug?
+    include Enumerable(Entry)
   end
 end
