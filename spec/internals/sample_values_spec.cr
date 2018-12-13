@@ -87,4 +87,23 @@ describe Spectator::Internals::SampleValues do
       end
     end
   end
+
+  describe "#each" do
+    it "yields each entry" do
+      symbols = [:one, :two, :three]
+      numbers = [123, 456, 789]
+      values = Spectator::Internals::SampleValues.empty
+      symbols.zip(numbers).each do |symbol, number|
+        values = add_sample_value(values, symbol, symbol.to_s, number)
+      end
+
+      size = 0
+      values.each do |entry|
+        size += 1
+        symbol = symbols.find { |s| s.to_s == entry.name }
+        symbol.should_not be_nil
+      end
+      size.should eq(symbols.size)
+    end
+  end
 end
