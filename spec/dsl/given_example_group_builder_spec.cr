@@ -237,7 +237,7 @@ describe Spectator::DSL::GivenExampleGroupBuilder do
       all_children.map(&.as(SpyExample)).all? { |child| child.sample_values.get_wrapper(symbol) }.should be_true
     end
 
-    pending "it passes along the given value name" do
+    it "passes along the given value name" do
       symbol = :foo
       name = "value"
       factory = Spectator::DSL::ExampleFactory.new(SpyExample)
@@ -246,8 +246,10 @@ describe Spectator::DSL::GivenExampleGroupBuilder do
       root = Spectator::DSL::RootExampleGroupBuilder.new.build(Spectator::Internals::SampleValues.empty)
       group = builder.build(root, Spectator::Internals::SampleValues.empty)
       all_children = group.map { |child| child.as(Spectator::ExampleGroup).to_a }.flatten
-      # TODO: Ensure that all children have sample values with the name given to the builder.
-      # There is currently no method to retrieve the value's name.
+      all_children.each do |child|
+        entries = child.as(SpyExample).sample_values.map(&.name)
+        entries.should contain(name)
+      end
     end
 
     it "creates the correct number of sub-groups" do
