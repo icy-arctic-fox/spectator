@@ -72,11 +72,21 @@ module Spectator
     run if autorun?
   end
 
+  @@config_builder = ConfigBuilder.new
+
+  # Provides a means to configure how Spectator will run and report tests.
+  # A `ConfigBuilder` is yielded to allow changing the configuration.
+  # NOTE: The configuration set here can be overriden
+  # with a `.spectator` file and command-line arguments.
+  def configure : Nil
+    yield @@config_builder
+  end
+
   # Builds the tests and runs the framework.
   private def self.run
     # Build the test suite and run it.
     suite = ::Spectator::DSL::Builder.build
-    Runner.new(suite).run
+    Runner.new(suite, config).run
   rescue ex
     # Catch all unhandled exceptions here.
     # Examples are already wrapped, so any exceptions they throw are caught.
@@ -87,8 +97,40 @@ module Spectator
     exit(1)
   end
 
+  # Processes and builds up a configuration to use for running tests.
+  private def self.config
+    # Build up the configuration from various sources.
+    # The sources that take priority are later in the list.
+    apply_config_file
+    apply_command_line_args
+
+    @@config_builder.build
+  end
+
+  # Path to the Spectator configuration file.
+  # The contents of this file should contain command-line arguments.
+  # Those arguments are automatically applied when Spectator starts.
+  # Arguments should be placed with one per line.
+  CONFIG_FILE_PATH = ".spectator"
+
+  # Loads configuration arguments from a file.
+  # The file is expected to be new-line delimited,
+  # one argument per line.
+  # The arguments are identical to those
+  # that would be passed on the command-line.
+  private def self.apply_config_file(file_path = CONFIG_FILE_PATH) : Nil
+    return unless File.exists?(file_path)
+    args = File.read(file_path).lines
+    CommandLineArgumentsConfigSource.new(args).apply_to(@@config_builder)
+  end
+
+  # Applies configuration options from the command-line arguments
+  private def self.apply_command_line_args : Nil
+    CommandLineArgumentsConfigSource.new.apply_to(@@config_builder)
+  end
+
   # Displays an error message.
-  private def self.display_error(error)
+  private def self.display_error(error) : Nil
     puts
     puts "Encountered an unexpected error in framework"
     puts error.message

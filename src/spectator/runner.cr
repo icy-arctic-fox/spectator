@@ -1,8 +1,8 @@
 module Spectator
   # Main driver for executing tests and feeding results to formatters.
   class Runner
-    def initialize(@suite : TestSuite,
-                   @formatter : Formatters::Formatter = Formatters::DefaultFormatter.new)
+    def initialize(@suite : TestSuite, config : Config)
+      @formatter = Formatters::DefaultFormatter.new
     end
 
     def run : Nil
