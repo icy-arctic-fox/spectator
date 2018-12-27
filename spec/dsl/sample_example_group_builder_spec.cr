@@ -1,10 +1,10 @@
 require "../spec_helper"
 
-describe Spectator::DSL::GivenExampleGroupBuilder do
+describe Spectator::DSL::SampleExampleGroupBuilder do
   describe "#add_child" do
     it "creates the correct number of children" do
       collection = %i[foo bar baz]
-      builder = Spectator::DSL::GivenExampleGroupBuilder.new("foobar", collection, "value", :foo)
+      builder = Spectator::DSL::SampleExampleGroupBuilder.new("foobar", collection, "value", :foo)
       count = 4
       count.times do
         factory = Spectator::DSL::ExampleFactory.new(PassingExample)
@@ -21,7 +21,7 @@ describe Spectator::DSL::GivenExampleGroupBuilder do
     context "with an ExampleFactory" do
       it "creates an example for each item in the collection" do
         collection = %i[foo bar baz]
-        builder = Spectator::DSL::GivenExampleGroupBuilder.new("foobar", collection, "value", :foo)
+        builder = Spectator::DSL::SampleExampleGroupBuilder.new("foobar", collection, "value", :foo)
         factory = Spectator::DSL::ExampleFactory.new(PassingExample)
         builder.add_child(factory)
         root = Spectator::DSL::RootExampleGroupBuilder.new.build(Spectator::Internals::SampleValues.empty)
@@ -34,7 +34,7 @@ describe Spectator::DSL::GivenExampleGroupBuilder do
     context "with an ExampleGroupBuilder" do
       it "creates a group for each item in the collection" do
         collection = %i[foo bar baz]
-        builder = Spectator::DSL::GivenExampleGroupBuilder.new("foobar", collection, "value", :foo)
+        builder = Spectator::DSL::SampleExampleGroupBuilder.new("foobar", collection, "value", :foo)
         group_builder = Spectator::DSL::NestedExampleGroupBuilder.new("bar")
         builder.add_child(group_builder)
         root = Spectator::DSL::RootExampleGroupBuilder.new.build(Spectator::Internals::SampleValues.empty)
@@ -48,7 +48,7 @@ describe Spectator::DSL::GivenExampleGroupBuilder do
   describe "#add_before_all_hook" do
     it "adds a hook" do
       hook_called = false
-      builder = Spectator::DSL::GivenExampleGroupBuilder.new("foobar", %i[foo bar], "value", :foo)
+      builder = Spectator::DSL::SampleExampleGroupBuilder.new("foobar", %i[foo bar], "value", :foo)
       builder.add_before_all_hook(->{
         hook_called = true
       })
@@ -60,7 +60,7 @@ describe Spectator::DSL::GivenExampleGroupBuilder do
 
     it "attachs the hook to just the top-level group" do
       call_count = 0
-      builder = Spectator::DSL::GivenExampleGroupBuilder.new("foobar", %i[foo bar], "value", :foo)
+      builder = Spectator::DSL::SampleExampleGroupBuilder.new("foobar", %i[foo bar], "value", :foo)
       builder.add_before_all_hook(->{
         call_count += 1
       })
@@ -72,7 +72,7 @@ describe Spectator::DSL::GivenExampleGroupBuilder do
 
     it "supports multiple hooks" do
       call_count = 0
-      builder = Spectator::DSL::GivenExampleGroupBuilder.new("foobar", %i[foo bar], "value", :foo)
+      builder = Spectator::DSL::SampleExampleGroupBuilder.new("foobar", %i[foo bar], "value", :foo)
       5.times do |i|
         builder.add_before_all_hook(->{
           call_count += i + 1
@@ -88,7 +88,7 @@ describe Spectator::DSL::GivenExampleGroupBuilder do
   describe "#add_before_each_hook" do
     it "adds a hook" do
       hook_called = false
-      builder = Spectator::DSL::GivenExampleGroupBuilder.new("foobar", %i[foo bar], "value", :foo)
+      builder = Spectator::DSL::SampleExampleGroupBuilder.new("foobar", %i[foo bar], "value", :foo)
       builder.add_before_each_hook(->{
         hook_called = true
       })
@@ -101,7 +101,7 @@ describe Spectator::DSL::GivenExampleGroupBuilder do
     it "attachs the hook to just the top-level group" do
       call_count = 0
       collection = %i[foo bar]
-      builder = Spectator::DSL::GivenExampleGroupBuilder.new("foobar", collection, "value", :foo)
+      builder = Spectator::DSL::SampleExampleGroupBuilder.new("foobar", collection, "value", :foo)
       builder.add_before_each_hook(->{
         call_count += 1
       })
@@ -113,7 +113,7 @@ describe Spectator::DSL::GivenExampleGroupBuilder do
 
     it "supports multiple hooks" do
       call_count = 0
-      builder = Spectator::DSL::GivenExampleGroupBuilder.new("foobar", %i[foo bar], "value", :foo)
+      builder = Spectator::DSL::SampleExampleGroupBuilder.new("foobar", %i[foo bar], "value", :foo)
       5.times do |i|
         builder.add_before_each_hook(->{
           call_count += i + 1
@@ -129,7 +129,7 @@ describe Spectator::DSL::GivenExampleGroupBuilder do
   describe "#add_after_all_hook" do
     it "adds a hook" do
       hook_called = false
-      builder = Spectator::DSL::GivenExampleGroupBuilder.new("foobar", %i[foo bar], "value", :foo)
+      builder = Spectator::DSL::SampleExampleGroupBuilder.new("foobar", %i[foo bar], "value", :foo)
       builder.add_after_all_hook(->{
         hook_called = true
       })
@@ -141,7 +141,7 @@ describe Spectator::DSL::GivenExampleGroupBuilder do
 
     it "attachs the hook to just the top-level group" do
       call_count = 0
-      builder = Spectator::DSL::GivenExampleGroupBuilder.new("foobar", %i[foo bar], "value", :foo)
+      builder = Spectator::DSL::SampleExampleGroupBuilder.new("foobar", %i[foo bar], "value", :foo)
       builder.add_after_all_hook(->{
         call_count += 1
       })
@@ -153,7 +153,7 @@ describe Spectator::DSL::GivenExampleGroupBuilder do
 
     it "supports multiple hooks" do
       call_count = 0
-      builder = Spectator::DSL::GivenExampleGroupBuilder.new("foobar", %i[foo bar], "value", :foo)
+      builder = Spectator::DSL::SampleExampleGroupBuilder.new("foobar", %i[foo bar], "value", :foo)
       5.times do |i|
         builder.add_after_all_hook(->{
           call_count += i + 1
@@ -169,7 +169,7 @@ describe Spectator::DSL::GivenExampleGroupBuilder do
   describe "#add_after_each_hook" do
     it "adds a hook" do
       hook_called = false
-      builder = Spectator::DSL::GivenExampleGroupBuilder.new("foobar", %i[foo bar], "value", :foo)
+      builder = Spectator::DSL::SampleExampleGroupBuilder.new("foobar", %i[foo bar], "value", :foo)
       builder.add_after_each_hook(->{
         hook_called = true
       })
@@ -182,7 +182,7 @@ describe Spectator::DSL::GivenExampleGroupBuilder do
     it "attachs the hook to just the top-level group" do
       call_count = 0
       collection = %i[foo bar]
-      builder = Spectator::DSL::GivenExampleGroupBuilder.new("foobar", collection, "value", :foo)
+      builder = Spectator::DSL::SampleExampleGroupBuilder.new("foobar", collection, "value", :foo)
       builder.add_after_each_hook(->{
         call_count += 1
       })
@@ -194,7 +194,7 @@ describe Spectator::DSL::GivenExampleGroupBuilder do
 
     it "supports multiple hooks" do
       call_count = 0
-      builder = Spectator::DSL::GivenExampleGroupBuilder.new("foobar", %i[foo bar], "value", :foo)
+      builder = Spectator::DSL::SampleExampleGroupBuilder.new("foobar", %i[foo bar], "value", :foo)
       5.times do |i|
         builder.add_after_each_hook(->{
           call_count += i + 1
@@ -210,7 +210,7 @@ describe Spectator::DSL::GivenExampleGroupBuilder do
   describe "#build" do
     it "passes along the what value" do
       what = "TEST"
-      builder = Spectator::DSL::GivenExampleGroupBuilder.new(what, %i[foo bar], "value", :foo)
+      builder = Spectator::DSL::SampleExampleGroupBuilder.new(what, %i[foo bar], "value", :foo)
       root = Spectator::DSL::RootExampleGroupBuilder.new.build(Spectator::Internals::SampleValues.empty)
       group = builder.build(root, Spectator::Internals::SampleValues.empty)
       group.what.should eq(what)
@@ -218,7 +218,7 @@ describe Spectator::DSL::GivenExampleGroupBuilder do
 
     it "passes along the parent" do
       factory = Spectator::DSL::ExampleFactory.new(SpyExample)
-      builder = Spectator::DSL::GivenExampleGroupBuilder.new("foobar", %i[foo bar], "value", :foo)
+      builder = Spectator::DSL::SampleExampleGroupBuilder.new("foobar", %i[foo bar], "value", :foo)
       builder.add_child(factory)
       root = Spectator::DSL::RootExampleGroupBuilder.new.build(Spectator::Internals::SampleValues.empty)
       group = builder.build(root, Spectator::Internals::SampleValues.empty)
@@ -227,7 +227,7 @@ describe Spectator::DSL::GivenExampleGroupBuilder do
 
     it "passes along the sample values" do
       factory = Spectator::DSL::ExampleFactory.new(SpyExample)
-      builder = Spectator::DSL::GivenExampleGroupBuilder.new("foobar", %i[foo bar], "value", :foo)
+      builder = Spectator::DSL::SampleExampleGroupBuilder.new("foobar", %i[foo bar], "value", :foo)
       builder.add_child(factory)
       symbol = :test
       values = Spectator::Internals::SampleValues.empty.add(symbol, "foo", 12345)
@@ -237,11 +237,11 @@ describe Spectator::DSL::GivenExampleGroupBuilder do
       all_children.map(&.as(SpyExample)).all? { |child| child.sample_values.get_wrapper(symbol) }.should be_true
     end
 
-    it "passes along the given value name" do
+    it "passes along the value name" do
       symbol = :foo
       name = "value"
       factory = Spectator::DSL::ExampleFactory.new(SpyExample)
-      builder = Spectator::DSL::GivenExampleGroupBuilder.new("foobar", %i[foo bar], name, symbol)
+      builder = Spectator::DSL::SampleExampleGroupBuilder.new("foobar", %i[foo bar], name, symbol)
       builder.add_child(factory)
       root = Spectator::DSL::RootExampleGroupBuilder.new.build(Spectator::Internals::SampleValues.empty)
       group = builder.build(root, Spectator::Internals::SampleValues.empty)
@@ -254,7 +254,7 @@ describe Spectator::DSL::GivenExampleGroupBuilder do
 
     it "creates the correct number of sub-groups" do
       collection = %i[foo bar baz]
-      builder = Spectator::DSL::GivenExampleGroupBuilder.new("foobar", collection, "value", :foo)
+      builder = Spectator::DSL::SampleExampleGroupBuilder.new("foobar", collection, "value", :foo)
       factory = Spectator::DSL::ExampleFactory.new(PassingExample)
       builder.add_child(factory)
       root = Spectator::DSL::RootExampleGroupBuilder.new.build(Spectator::Internals::SampleValues.empty)
@@ -268,7 +268,7 @@ describe Spectator::DSL::GivenExampleGroupBuilder do
       count = 3
       collection = %i[foo bar baz]
       expected = Array.new(collection.size * count) { |i| collection[i / count] }
-      builder = Spectator::DSL::GivenExampleGroupBuilder.new("foobar", collection, "value", symbol)
+      builder = Spectator::DSL::SampleExampleGroupBuilder.new("foobar", collection, "value", symbol)
       count.times { builder.add_child(factory) }
       root = Spectator::DSL::RootExampleGroupBuilder.new.build(Spectator::Internals::SampleValues.empty)
       group = builder.build(root, Spectator::Internals::SampleValues.empty)
@@ -277,7 +277,7 @@ describe Spectator::DSL::GivenExampleGroupBuilder do
     end
 
     it "specifies the parent of the children correctly" do
-      builder = Spectator::DSL::GivenExampleGroupBuilder.new("foobar", %i[foo bar], "value", :foo)
+      builder = Spectator::DSL::SampleExampleGroupBuilder.new("foobar", %i[foo bar], "value", :foo)
       3.times do
         factory = Spectator::DSL::ExampleFactory.new(PassingExample)
         group_builder = Spectator::DSL::NestedExampleGroupBuilder.new("baz")
@@ -299,7 +299,7 @@ describe Spectator::DSL::GivenExampleGroupBuilder do
     end
 
     it "specifies the container for the parent of the sub-groups" do
-      builder = Spectator::DSL::GivenExampleGroupBuilder.new("foobar", %i[foo bar], "value", :foo)
+      builder = Spectator::DSL::SampleExampleGroupBuilder.new("foobar", %i[foo bar], "value", :foo)
       3.times do
         factory = Spectator::DSL::ExampleFactory.new(PassingExample)
         group_builder = Spectator::DSL::NestedExampleGroupBuilder.new("baz")

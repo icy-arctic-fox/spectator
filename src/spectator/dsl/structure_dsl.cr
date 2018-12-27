@@ -286,19 +286,19 @@ module Spectator::DSL
       end
     end
 
-    # Creates a new example group to given multiple values to.
+    # Creates a new example group to test multiple values with.
     # This method takes a collection of values
     # and repeats the contents of the block with each value.
     # The `collection` argument should be a literal collection,
     # such as an array, or a function that returns an enumerable.
-    # The block should accept an argument.
+    # The block can accept an argument.
     # If it does, then the argument's name is used to reference
     # the current item in the collection.
     # If an argument isn't provided, then `#value` can be used instead.
     #
     # Example with a block argument:
     # ```
-    # given some_integers do |integer|
+    # sample some_integers do |integer|
     #   it "sets the value" do
     #     subject.value = integer
     #     expect(subject.value).to eq(integer)
@@ -308,7 +308,7 @@ module Spectator::DSL
     #
     # Same spec, but without a block argument:
     # ```
-    # given some_integers do
+    # sample some_integers do
     #   it "sets the value" do
     #     subject.value = value
     #     expect(subject.value).to eq(value)
@@ -318,10 +318,10 @@ module Spectator::DSL
     #
     # In the examples above, the test case (`#it` block)
     # is repeated for each element in `some_integers`.
-    # `some_integers` is ficticous collection.
+    # `some_integers` is a ficticous collection.
     # The collection will be iterated once.
-    # `#given` blocks can be nested, and work similarly to loops.
-    macro given(collection, &block)
+    # `#sample` blocks can be nested, and work similarly to loops.
+    macro sample(collection, &block)
       # Figure out the name to use for the current collection element.
       # If a block argument is provided, use it, otherwise use "value".
       {% name = block.args.empty? ? "value".id : block.args.first %}
@@ -346,7 +346,7 @@ module Spectator::DSL
         # This method should be called only once.
         # The framework stores the collection as an array for a couple of reasons.
         # 1. The collection may not support multiple iterations.
-        # 2. The collection might contain random values.
+        # 2. The collection might contain randomly generated values.
         #    Iterating multiple times would generate inconsistent values at runtime.
         def %to_a
           %collection.to_a
@@ -379,8 +379,8 @@ module Spectator::DSL
         end
 
         # Start a new example group.
-        # Given groups require additional configuration.
-        ::Spectator::DSL::Builder.start_given_group(
+        # Sample groups require additional configuration.
+        ::Spectator::DSL::Builder.start_sample_group(
           {{collection.stringify}},   # String representation of the collection.
           Collection%group.new.%to_a, # All elements in the collection.
           {{name.stringify}},         # Name for the current element.
@@ -575,12 +575,12 @@ module Spectator::DSL
     end
 
     # Creates a hook that will run prior to any example in the group.
-    # The block of code given to this macro is used for the hook.
+    # The block of code provided to this macro is used for the hook.
     # The hook is executed only once.
     # If the hook raises an exception,
     # the current example will be skipped and marked as an error.
     #
-    # NOTE: Inside a `#given` block, the hook is run once, not once per iteration.
+    # NOTE: Inside a `#sample` block, the hook is run once, not once per iteration.
     #
     # This can be useful to initialize something before testing:
     # ```
@@ -626,12 +626,12 @@ module Spectator::DSL
     end
 
     # Creates a hook that will run prior to every example in the group.
-    # The block of code given to this macro is used for the hook.
+    # The block of code provided to this macro is used for the hook.
     # The hook is executed once per example in the group (and sub-groups).
     # If the hook raises an exception,
     # the current example will be skipped and marked as an error.
     #
-    # NOTE: Inside a `#given` block, the hook is run before every example of every iteration.
+    # NOTE: Inside a `#sample` block, the hook is run before every example of every iteration.
     #
     # This can be useful for setting up environments for tests:
     # ```
@@ -682,11 +682,11 @@ module Spectator::DSL
     end
 
     # Creates a hook that will run following all examples in the group.
-    # The block of code given to this macro is used for the hook.
+    # The block of code provided to this macro is used for the hook.
     # The hook is executed only once.
     # Even if an example fails or raises an error, the hook will run.
     #
-    # NOTE: Inside a `#given` block, the hook is run once, not once per iteration.
+    # NOTE: Inside a `#sample` block, the hook is run once, not once per iteration.
     #
     # This can be useful to cleanup after testing:
     # ```
@@ -732,11 +732,11 @@ module Spectator::DSL
     end
 
     # Creates a hook that will run following every example in the group.
-    # The block of code given to this macro is used for the hook.
+    # The block of code provided to this macro is used for the hook.
     # The hook is executed once per example in the group (and sub-groups).
     # Even if an example fails or raises an error, the hook will run.
     #
-    # NOTE: Inside a `#given` block, the hook is run after every example of every iteration.
+    # NOTE: Inside a `#sample` block, the hook is run after every example of every iteration.
     #
     # This can be useful for cleaning up environments after tests:
     # ```
@@ -788,7 +788,7 @@ module Spectator::DSL
 
     # Creates a hook that will run for every example in the group.
     # This can be used as an alternative to `#before_each` and `#after_each`.
-    # The block of code given to this macro is used for the hook.
+    # The block of code provided to this macro is used for the hook.
     # The hook is executed once per example in the group (and sub-groups).
     # If the hook raises an exception,
     # the current example will be skipped and marked as an error.
@@ -806,7 +806,7 @@ module Spectator::DSL
     # end
     # ```
     #
-    # The block argument is given a `Proc`.
+    # The block argument is provided a `Proc`.
     # To run the example, that proc must be called.
     # Make sure to call it!
     # ```
@@ -961,7 +961,7 @@ module Spectator::DSL
     # The `base_class` argument specifies which type of example class the new class should derive from.
     # This should typically be `RunnableExample` or `PendingExample`.
     # The `what` argument is the description passed to the `#it` or `#pending` block.
-    # And lastly, the block given is any additional content to put in the class.
+    # And lastly, the block specified is any additional content to put in the class.
     # For instance, to define a method in the class, do it in the block.
     # ```
     # _spectator_example(Example123, Wrapper123, RunnableExample, "does something") do

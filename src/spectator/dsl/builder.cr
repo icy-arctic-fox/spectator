@@ -37,19 +37,19 @@ module Spectator::DSL
       push_group(group)
     end
 
-    # Begins a new given group in the spec -
-    # that is, a group defined by the `given` keyword in the DSL.
+    # Begins a new sample group in the spec -
+    # that is, a group defined by the `sample` keyword in the DSL.
     # A corresponding `#end_group` call must be made
     # when the group being started is finished.
-    # See `GivenExampleGroupBuilder#initialize` for the arguments
+    # See `SampleExampleGroupBuilder#initialize` for the arguments
     # as arguments to this method are passed directly to it.
-    def start_given_group(*args) : Nil
-      group = GivenExampleGroupBuilder.new(*args)
+    def start_sample_group(*args) : Nil
+      group = SampleExampleGroupBuilder.new(*args)
       push_group(group)
     end
 
     # Marks the end of a group in the spec.
-    # This must be called for every `#start_group` and `#start_given_group` call.
+    # This must be called for every `#start_group` and `#start_sample_group` call.
     # It is also important to line up the start and end calls.
     # Otherwise examples might get placed into wrong groups.
     def end_group : Nil

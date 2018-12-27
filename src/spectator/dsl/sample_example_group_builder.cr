@@ -1,12 +1,12 @@
 require "./nested_example_group_builder"
 
 module Spectator::DSL
-  # Specialized example group builder for "given" groups.
-  # The type parameter `T` should be the type of each element in the given collection.
+  # Specialized example group builder for "sample" groups.
+  # The type parameter `T` should be the type of each element in the sample collection.
   # This builder creates a container group with groups inside for each item in the collection.
   # The hooks are only defined for the container group.
   # By doing so, the hooks are defined once, are inherited, and use less memory.
-  class GivenExampleGroupBuilder(T) < NestedExampleGroupBuilder
+  class SampleExampleGroupBuilder(T) < NestedExampleGroupBuilder
     # Creates a new group builder.
     # The value for `what` should be the text the user specified for the collection.
     # The `collection` is the actual array of items to create examples for.
@@ -14,7 +14,7 @@ module Spectator::DSL
     #
     # In this code:
     # ```
-    # given random_integers do |integer|
+    # sample random_integers do |integer|
     #   # ...
     # end
     # ```
