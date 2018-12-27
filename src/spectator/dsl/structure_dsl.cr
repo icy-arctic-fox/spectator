@@ -321,7 +321,20 @@ module Spectator::DSL
     # `some_integers` is a ficticous collection.
     # The collection will be iterated once.
     # `#sample` blocks can be nested, and work similarly to loops.
-    macro sample(collection, &block)
+    #
+    # A limit can be specified as well.
+    # After the collection, a count can be added to limit
+    # the number of items taken from the collection.
+    # For instance:
+    # ```
+    # sample some_integers, 5 do |integer|
+    #   it "sets the value" do
+    #     subject.value = integer
+    #     expect(subject.value).to eq(integer)
+    #   end
+    # end
+    # ```
+    macro sample(collection, count = nil, &block)
       # Figure out the name to use for the current collection element.
       # If a block argument is provided, use it, otherwise use "value".
       {% name = block.args.empty? ? "value".id : block.args.first %}
@@ -349,7 +362,14 @@ module Spectator::DSL
         # 2. The collection might contain randomly generated values.
         #    Iterating multiple times would generate inconsistent values at runtime.
         def %to_a
-          %collection.to_a
+          # If a count was provided,
+          # only select the first `count` items from the collection.
+          # Otherwise, select all of them.
+          {% if count %}
+            %collection.first({{count}})
+          {% else %}
+            %collection.to_a
+          {% end %}
         end
       end
 
