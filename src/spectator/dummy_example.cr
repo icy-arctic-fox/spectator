@@ -14,6 +14,11 @@ module Spectator
       "DUMMY"
     end
 
+    # Dummy instance.
+    def instance
+      nil
+    end
+
     # Dummy run that does nothing.
     def run_instance
       raise "You shouldn't be running this."

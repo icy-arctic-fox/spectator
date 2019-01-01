@@ -1002,6 +1002,9 @@ module Spectator::DSL
           @instance = {{wrapper_class_name.id}}.new(sample_values)
         end
 
+        # Retrieves the underlying, wrapped instance.
+        getter instance
+
         # Add the block's content if one was provided.
         {% if block.is_a?(Block) %}
           {{block.body}}

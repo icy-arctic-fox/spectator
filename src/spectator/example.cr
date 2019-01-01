@@ -2,13 +2,16 @@ require "./example_component"
 
 module Spectator
   # Base class for all types of examples.
-  # Concrete types must implement the `#run_inner` and `#what` methods.
+  # Concrete types must implement the `#run_inner`, `#what`, and `#instance` methods.
   abstract class Example < ExampleComponent
     # Indicates whether the example has already been run.
     getter? finished = false
 
     # Group that the example belongs to.
     getter group : ExampleGroup
+
+    # Retrieves the internal wrapped instance.
+    abstract def instance
 
     # Runs the example code.
     # A result is returned, which represents the outcome of the test.
