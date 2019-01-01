@@ -7,9 +7,9 @@ module Spectator
     def self.empty
       new(
         [] of ->,
+        [] of Example ->,
         [] of ->,
-        [] of ->,
-        [] of ->,
+        [] of Example ->,
         [] of Proc(Nil) ->
       )
     end
@@ -17,9 +17,9 @@ module Spectator
     # Creates a new set of hooks.
     def initialize(
       @before_all : Array(->),
-      @before_each : Array(->),
+      @before_each : Array(Example ->),
       @after_all : Array(->),
-      @after_each : Array(->),
+      @after_each : Array(Example ->),
       @around_each : Array(Proc(Nil) ->)
     )
     end
@@ -32,8 +32,9 @@ module Spectator
 
     # Runs all `before_each` hooks.
     # These hooks should be run every time before each example in a group.
-    def run_before_each
-      @before_each.each &.call
+    # The `example` argument should be the example about to be run.
+    def run_before_each(example : Example)
+      @before_each.each &.call(example)
     end
 
     # Runs all `after_all` hooks.
@@ -44,8 +45,9 @@ module Spectator
 
     # Runs all `after_each` hooks.
     # These hooks should be run every time after each example in a group.
-    def run_after_each
-      @after_each.each &.call
+    # The `example` argument should be the example that just ran.
+    def run_after_each(example : Example)
+      @after_each.each &.call(example)
     end
 
     # Creates a proc that runs the `around_each` hooks

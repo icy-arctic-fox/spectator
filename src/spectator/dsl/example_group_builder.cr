@@ -12,9 +12,9 @@ module Spectator::DSL
 
     # Hooks added to the group so far.
     @before_all_hooks = [] of ->
-    @before_each_hooks = [] of ->
+    @before_each_hooks = [] of Example ->
     @after_all_hooks = [] of ->
-    @after_each_hooks = [] of ->
+    @after_each_hooks = [] of Example ->
     @around_each_hooks = [] of Proc(Nil) ->
 
     # Adds a new example factory or group builder to this group.
@@ -28,7 +28,7 @@ module Spectator::DSL
     end
 
     # Adds a hook to run before each example (and nested example) in this group.
-    def add_before_each_hook(block : ->) : Nil
+    def add_before_each_hook(block : Example ->) : Nil
       @before_each_hooks << block
     end
 
@@ -38,7 +38,7 @@ module Spectator::DSL
     end
 
     # Adds a hook to run after each example (and nested example) in this group.
-    def add_after_each_hook(block : ->) : Nil
+    def add_after_each_hook(block : Example ->) : Nil
       @after_each_hooks << block
     end
 
