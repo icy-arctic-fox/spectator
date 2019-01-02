@@ -291,6 +291,12 @@ module Spectator::DSL
     # and repeats the contents of the block with each value.
     # The `collection` argument should be a literal collection,
     # such as an array, or a function that returns an enumerable.
+    # Additionally, a count may be specified to limit the number of values tested.
+    #
+    # NOTE: If an infinite enumerable is provided for the collection,
+    # then a count must be specified.
+    # Only the first `count` items will be used.
+    #
     # The block can accept an argument.
     # If it does, then the argument's name is used to reference
     # the current item in the collection.
@@ -320,7 +326,8 @@ module Spectator::DSL
     # is repeated for each element in `some_integers`.
     # `some_integers` is a ficticous collection.
     # The collection will be iterated once.
-    # `#sample` blocks can be nested, and work similarly to loops.
+    # `#sample` and `#random_sample` blocks can be nested,
+    # and work similarly to loops.
     #
     # A limit can be specified as well.
     # After the collection, a count can be added to limit
@@ -334,6 +341,8 @@ module Spectator::DSL
     #   end
     # end
     # ```
+    #
+    # See also: `#random_sample`
     macro sample(collection, count = nil, &block)
       # Figure out the name to use for the current collection element.
       # If a block argument is provided, use it, otherwise use "value".
@@ -370,6 +379,126 @@ module Spectator::DSL
           {% else %}
             %collection.to_a
           {% end %}
+        end
+      end
+
+      # Module for the context.
+      # The module uses a generated unique name.
+      module Group%group
+        # Include the parent module.
+        # Since `@type` resolves immediately,
+        # this will reference the parent type.
+        include {{@type.id}}
+
+        # Value wrapper for the current element.
+        @%wrapper : ::Spectator::Internals::ValueWrapper
+
+        # Retrieves the current element from the collection.
+        def {{name}}
+          # Unwrap the value and return it.
+          # The `#first` method has a return type that matches the element type.
+          # So it is used on the collection method proxy to resolve the type at compile-time.
+          @%wrapper.as(::Spectator::Internals::TypedValueWrapper(typeof(%collection.first))).value
+        end
+
+        # Initializer to extract current element of the collection from sample values.
+        def initialize(sample_values : ::Spectator::Internals::SampleValues)
+          super
+          @%wrapper = sample_values.get_wrapper(:%group)
+        end
+
+        # Start a new example group.
+        # Sample groups require additional configuration.
+        ::Spectator::DSL::Builder.start_sample_group(
+          {{collection.stringify}},   # String representation of the collection.
+          Collection%group.new.%to_a, # All elements in the collection.
+          {{name.stringify}},         # Name for the current element.
+          :%group # Unique identifier for retrieving elements for the associated collection.
+        )
+
+        # Nest the block's content in the module.
+        {{block.body}}
+
+        # End the current group.
+        ::Spectator::DSL::Builder.end_group
+      end
+    end
+
+    # Creates a new example group to test multiple random values with.
+    # This method takes a collection of values and count
+    # and repeats the contents of the block with each value.
+    # This method randomly selects `count` items from the collection.
+    # The `collection` argument should be a literal collection,
+    # such as an array, or a function that returns an enumerable.
+    #
+    # NOTE: If an enumerable is used, it must be finite.
+    #
+    # The block can accept an argument.
+    # If it does, then the argument's name is used to reference
+    # the current item in the collection.
+    # If an argument isn't provided, then `#value` can be used instead.
+    #
+    # Example with a block argument:
+    # ```
+    # random_sample some_integers, 5 do |integer|
+    #   it "sets the value" do
+    #     subject.value = integer
+    #     expect(subject.value).to eq(integer)
+    #   end
+    # end
+    # ```
+    #
+    # Same spec, but without a block argument:
+    # ```
+    # random_sample some_integers, 5 do
+    #   it "sets the value" do
+    #     subject.value = value
+    #     expect(subject.value).to eq(value)
+    #   end
+    # end
+    # ```
+    #
+    # In the examples above, the test case (`#it` block)
+    # is repeated for 5 random elements in `some_integers`.
+    # `some_integers` is a ficticous collection.
+    # The collection will be iterated once.
+    # `#sample` and `#random_sample` blocks can be nested,
+    # and work similarly to loops.
+    #
+    # NOTE: If the count is the same or higher
+    # than the number of elements in the collection,
+    # then this method if functionaly equivalent to `#sample`.
+    #
+    # See also: `#sample`
+    macro random_sample(collection, count, &block)
+      # Figure out the name to use for the current collection element.
+      # If a block argument is provided, use it, otherwise use "value".
+      {% name = block.args.empty? ? "value".id : block.args.first %}
+
+      # Method for retrieving the entire collection.
+      # This simplifies getting the element type.
+      # The name is uniquely generated to prevent namespace collision.
+      # This method should be called only once.
+      def %collection
+        {{collection}}
+      end
+
+      # Class for generating an array with the collection's contents.
+      # This has to be a class that includes the parent module.
+      # The collection could reference a helper method
+      # or anything else in the parent scope.
+      class Collection%group
+        # Include the parent module.
+        include {{@type.id}}
+
+        # Method that returns an array containing the collection.
+        # This method should be called only once.
+        # The framework stores the collection as an array for a couple of reasons.
+        # 1. The collection may not support multiple iterations.
+        # 2. The collection might contain randomly generated values.
+        #    Iterating multiple times would generate inconsistent values at runtime.
+        def %to_a
+          %collection.to_a.sample({{count}})
         end
       end
 
