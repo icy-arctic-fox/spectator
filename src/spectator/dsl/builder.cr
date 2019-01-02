@@ -70,7 +70,7 @@ module Spectator::DSL
     end
 
     # Adds a block of code to run before each example in the current group.
-    def add_before_each_hook(&block : Example ->) : Nil
+    def add_before_each_hook(&block : ->) : Nil
       current_group.add_before_each_hook(block)
     end
 
@@ -80,7 +80,7 @@ module Spectator::DSL
     end
 
     # Adds a block of code to run after each example in the current group.
-    def add_after_each_hook(&block : Example ->) : Nil
+    def add_after_each_hook(&block : ->) : Nil
       current_group.add_after_each_hook(block)
     end
 
