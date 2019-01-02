@@ -1052,9 +1052,27 @@ module Spectator::DSL
     #
     # See `ExampleDSL` and `MatcherDSL` for additional macros and methods
     # that can be used in example code blocks.
+    #
+    # A short-hand, one-liner syntax can also be used.
+    # Typically, this is combined with `#subject`.
+    # For instance:
+    # ```
+    # subject { 1 + 2 }
+    # it is_expected.to eq(3)
+    # ```
     macro it(what, &block)
       # Create the wrapper class for the test code.
-      _spectator_example_wrapper(Wrapper%example, %run) {{block}}
+      {% if block.is_a?(Nop) %}
+        {% if what.is_a?(Call) %}
+          _spectator_example_wrapper(Wrapper%example, %run) do
+            {{what}}
+          end
+        {% else %}
+          {% raise "Unrecognized syntax: `it #{what}`" %}
+        {% end %}
+      {% else %}
+        _spectator_example_wrapper(Wrapper%example, %run) {{block}}
+      {% end %}
 
       # Create a class derived from `RunnableExample` to run the test code.
       _spectator_example(Example%example, Wrapper%example, ::Spectator::RunnableExample, {{what}}) do
