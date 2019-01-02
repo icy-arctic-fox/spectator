@@ -472,7 +472,7 @@ module Spectator::DSL
       let(:subject) {{block}}
     end
 
-    # Defines a value by name.
+    # Defines an expression by name.
     # The name can be used in examples to retrieve the value (basically a method).
     # This can be used to define a value once and reuse it in multiple examples.
     #
@@ -554,7 +554,7 @@ module Spectator::DSL
     end
 
     # The noisier sibling to `#let`.
-    # Defines a value by giving it a name.
+    # Defines an expression by giving it a name.
     # The name can be used in examples to retrieve the value (basically a method).
     # This can be used to define a value once and reuse it in multiple examples.
     #
