@@ -5,6 +5,11 @@ class PassingExample < Spectator::RunnableExample
     "PASS"
   end
 
+  # Dummy instance.
+  def instance
+    nil
+  end
+
   # Run the example that always passes.
   # If this doesn't something broke.
   private def run_instance

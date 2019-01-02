@@ -5,6 +5,11 @@ class ErroredExample < Spectator::RunnableExample
     "ERROR"
   end
 
+  # Dummy instance.
+  def instance
+    nil
+  end
+
   # Run the example that always produces an error.
   private def run_instance
     raise "Oops"

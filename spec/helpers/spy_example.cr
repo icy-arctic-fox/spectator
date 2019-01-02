@@ -6,6 +6,11 @@ class SpyExample < Spectator::RunnableExample
     "SPY"
   end
 
+  # Dummy instance.
+  def instance
+    nil
+  end
+
   # Captures the sample values when the example is created.
   def initialize(group, @sample_values)
     super(group, @sample_values)

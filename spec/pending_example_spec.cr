@@ -4,6 +4,10 @@ class ConcretePendingExample < Spectator::PendingExample
   def what
     "PENDING_TEST_EXAMPLE"
   end
+
+  def instance
+    nil
+  end
 end
 
 def new_pending_example(group : Spectator::ExampleGroup? = nil)

@@ -5,6 +5,11 @@ class FailingExample < Spectator::RunnableExample
     "FAIL"
   end
 
+  # Dummy instance.
+  def instance
+    nil
+  end
+
   # Run the example that always fails.
   private def run_instance
     report_expectations(0, 1)
