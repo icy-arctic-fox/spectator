@@ -852,6 +852,17 @@ module Spectator::DSL
     # end
     # ```
     #
+    # The hook can use values and methods in the group like examples can.
+    # It is called in the same scope as the example code.
+    # ```
+    # let(array) { [1, 2, 3] }
+    # around_each do |proc|
+    #   array << 4
+    #   proc.call
+    #   array.pop
+    # end
+    # ```
+    #
     # If multiple `#around_each` blocks are specified,
     # then they are run in the order they were defined.
     # ```
@@ -885,7 +896,18 @@ module Spectator::DSL
     #
     # See also: `#before_all`, `#before_each`, `#after_all`, and `#after_each`.
     macro around_each(&block)
-      ::Spectator::DSL::Builder.add_around_each_hook {{block}}
+      # Around each hook.
+      # Defined as a method so that it can access the same scope as the example code.
+      def %hook({{block.args.splat}}) : Nil
+        {{block.body}}
+      end
+
+      ::Spectator::DSL::Builder.add_around_each_hook do |proc|
+        # Get the wrapper instance and cast to current group type.
+        example = ::Spectator::Internals::Harness.current.example
+        instance = example.instance.as({{@type.id}})
+        instance.%hook(proc)
+      end
     end
 
     # Creates an example, or a test case.
