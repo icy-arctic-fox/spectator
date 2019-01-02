@@ -662,16 +662,11 @@ module Spectator::DSL
     # end
     # ```
     #
-    # Currently, the hook cannot use values and methods in the group like examples can.
-    # This is a planned feature.
+    # The hook can use values and methods in the group like examples can.
+    # It is called in the same scope as the example code.
     # ```
     # let(array) { [1, 2, 3] }
-    # before_each { array << 4 } # *DOES NOT WORK YET!*
-    # ```
-    #
-    # This could also be used to verify pre-conditions:
-    # ```
-    # before_each { is_expected.to_not be_nil } # *DOES NOT WORK YET!*
+    # before_each { array << 4 }
     # ```
     #
     # If multiple `#before_each` blocks are specified,
@@ -698,7 +693,18 @@ module Spectator::DSL
     #
     # See also: `#before_all`, `#after_all`, `#after_each`, and `#around_each`.
     macro before_each(&block)
-      ::Spectator::DSL::Builder.add_before_each_hook {{block}}
+      # Before each hook.
+      # Defined as a method so that it can access the same scope as the example code.
+      def %hook : Nil
+        {{block.body}}
+      end
+
+      ::Spectator::DSL::Builder.add_before_each_hook do
+        # Get the wrapper instance and cast to current group type.
+        example = ::Spectator::Internals::Harness.current.example
+        instance = example.instance.as({{@type.id}})
+        instance.%hook
+      end
     end
 
     # Creates a hook that will run following all examples in the group.
@@ -767,16 +773,11 @@ module Spectator::DSL
     # end
     # ```
     #
-    # Currently, the hook cannot use values and methods in the group like examples can.
-    # This is a planned feature.
+    # The hook can use values and methods in the group like examples can.
+    # It is called in the same scope as the example code.
     # ```
     # let(array) { [1, 2, 3] }
-    # after_each { array << 4 } # *DOES NOT WORK YET!*
-    # ```
-    #
-    # This could also be used to verify post-conditions:
-    # ```
-    # after_each { is_expected.to_not be_nil } # *DOES NOT WORK YET!*
+    # after_each { array << 4 }
     # ```
     #
     # If multiple `#after_each` blocks are specified,
@@ -803,7 +804,18 @@ module Spectator::DSL
     #
     # See also: `#before_all`, `#before_each`, `#after_all`, and `#around_each`.
     macro after_each(&block)
-      ::Spectator::DSL::Builder.add_after_each_hook {{block}}
+      # After each hook.
+      # Defined as a method so that it can access the same scope as the example code.
+      def %hook : Nil
+        {{block.body}}
+      end
+
+      ::Spectator::DSL::Builder.add_after_each_hook do
+        # Get the wrapper instance and cast to current group type.
+        example = ::Spectator::Internals::Harness.current.example
+        instance = example.instance.as({{@type.id}})
+        instance.%hook
+      end
     end
 
     # Creates a hook that will run for every example in the group.
