@@ -18,6 +18,7 @@ require "./runnable_example"
 require "./pending_example"
 require "./dummy_example"
 
+require "./example_conditions"
 require "./example_hooks"
 require "./example_group"
 require "./nested_example_group"

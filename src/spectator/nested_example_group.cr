@@ -17,8 +17,8 @@ module Spectator
     # The parent's children must contain this group,
     # otherwise there may be unexpected behavior.
     # The `hooks` are stored to be triggered later.
-    def initialize(@what, @parent, hooks : ExampleHooks)
-      super(hooks)
+    def initialize(@what, @parent, hooks : ExampleHooks, conditions : ExampleConditions)
+      super(hooks, conditions)
     end
 
     # Runs all of the `before_all` hooks.
@@ -56,6 +56,16 @@ module Spectator
     protected def run_after_each_hooks : Nil
       super
       parent.run_after_each_hooks
+    end
+
+    def run_pre_conditions : Nil
+      super
+      parent.run_pre_conditions
+    end
+
+    def run_post_conditions : Nil
+      super
+      parent.run_post_conditions
     end
 
     # Creates a proc that runs the `around_each` hooks

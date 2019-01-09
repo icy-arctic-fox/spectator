@@ -17,6 +17,10 @@ module Spectator::DSL
     @after_each_hooks = [] of ->
     @around_each_hooks = [] of Proc(Nil) ->
 
+    # Pre and post conditions so far.
+    @pre_conditions = [] of ->
+    @post_conditions = [] of ->
+
     # Adds a new example factory or group builder to this group.
     def add_child(child : Child)
       @children << child
@@ -49,6 +53,14 @@ module Spectator::DSL
       @around_each_hooks << block
     end
 
+    def add_pre_condition(block : ->) : Nil
+      @pre_conditions << block
+    end
+
+    def add_post_condition(block : ->) : Nil
+      @post_conditions << block
+    end
+
     # Constructs an `ExampleHooks` instance with all the hooks defined for this group.
     # This method should be only when the group is being built,
     # otherwise some hooks may be missing.
@@ -60,6 +72,10 @@ module Spectator::DSL
         @after_each_hooks,
         @around_each_hooks
       )
+    end
+
+    private def conditions
+      ExampleConditions.new(@pre_conditions, @post_conditions)
     end
   end
 end

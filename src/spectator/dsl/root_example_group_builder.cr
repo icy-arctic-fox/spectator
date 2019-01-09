@@ -6,7 +6,7 @@ module Spectator::DSL
     # Creates a `RootExampleGroup` which can have instances of `Example` and `ExampleGroup` nested in it.
     # The `sample_values` will be given to all of the examples (and groups) nested in this group.
     def build(sample_values : Internals::SampleValues) : RootExampleGroup
-      RootExampleGroup.new(hooks).tap do |group|
+      RootExampleGroup.new(hooks, conditions).tap do |group|
         # Set the group's children to built versions of the children from this instance.
         group.children = @children.map do |child|
           # Build the child and up-cast to prevent type errors.

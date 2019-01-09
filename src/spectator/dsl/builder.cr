@@ -91,6 +91,14 @@ module Spectator::DSL
       current_group.add_around_each_hook(block)
     end
 
+    def add_pre_condition(&block : ->) : Nil
+      current_group.add_pre_condition(block)
+    end
+
+    def add_post_condition(&block : ->) : Nil
+      current_group.add_post_condition(block)
+    end
+
     # Builds the entire spec and returns it as a test suite.
     # This should be called only once after the entire spec has been defined.
     protected def build : TestSuite

@@ -1182,6 +1182,30 @@ module Spectator::DSL
       end
     end
 
+    macro pre_condition(&block)
+      def %condition : Nil
+        {{block.body}}
+      end
+
+      ::Spectator::DSL::Builder.add_pre_condition do
+        example = ::Spectator::Internals::Harness.current.example
+        instance = example.instance.as({{@type.id}})
+        instance.%condition
+      end
+    end
+
+    macro post_condition
+      def %condition : Nil
+        {{block.body}}
+      end
+
+      ::Spectator::DSL::Builder.add_post_condition do
+        example = ::Spectator::Internals::Harness.current.example
+        instance = example.instance.as({{@type.id}})
+        instance.%condition
+      end
+    end
+
     # Creates an example, or a test case.
     # The `what` argument describes "what" is being tested or asserted.
     # The block contains the code to run the test.

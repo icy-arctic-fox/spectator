@@ -70,8 +70,9 @@ module Spectator
       # Capture how long it takes to run the test code.
       result.elapsed = Time.measure do
         begin
-          # Actually run the example code.
-          run_instance
+          group.run_pre_conditions
+          run_instance # Actually run the example code.
+          group.run_post_conditions
         rescue ex # Catch all errors and handle them later.
           result.error = ex
         end

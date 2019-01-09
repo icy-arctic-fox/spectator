@@ -17,7 +17,7 @@ module Spectator
 
     # Creates the example group.
     # The hooks are stored to be triggered later.
-    def initialize(@hooks : ExampleHooks)
+    def initialize(@hooks : ExampleHooks, @conditions : ExampleConditions)
       @before_all_hooks_run = false
       @after_all_hooks_run = false
     end
@@ -127,6 +127,14 @@ module Spectator
     def run_before_hooks
       run_before_all_hooks
       run_before_each_hooks
+    end
+
+    def run_pre_conditions
+      @conditions.run_pre_conditions
+    end
+
+    def run_post_conditions
+      @conditions.run_post_conditions
     end
 
     # Runs all of the `before_all` hooks.

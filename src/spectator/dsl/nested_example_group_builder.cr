@@ -25,7 +25,7 @@ module Spectator::DSL
     # The `parent` should be the group that contains this group.
     # The `sample_values` will be given to all of the examples (and groups) nested in this group.
     def build(parent : ExampleGroup, sample_values : Internals::SampleValues) : NestedExampleGroup
-      NestedExampleGroup.new(@what, parent, hooks).tap do |group|
+      NestedExampleGroup.new(@what, parent, hooks, conditions).tap do |group|
         # Set the group's children to built versions of the children from this instance.
         group.children = @children.map do |child|
           # Build the child and up-cast to prevent type errors.
