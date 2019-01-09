@@ -100,11 +100,11 @@ In no particular order, features that have been implemented and are planned:
     - [X] `describe` and `context` blocks
     - [X] Contextual values with `let`, `let!`, `subject`, `described_class`
     - [X] Test multiple and generated values - `sample`, `random_sample`
-    - [ ] Concise syntax - `given`
+    - [X] Concise syntax - `given`
     - [X] Before and after hooks - `before_each`, `before_all`, `after_each`, `after_all`, `around_each`
     - [ ] Pre- and post-conditions - `pre_condition`, `post_condition`
     - [ ] Other hooks - `on_success`, `on_failure`, `on_error`
-    - [ ] One-liner syntax
+    - [X] One-liner syntax
     - [X] Should syntax - `should`, `should_not`
     - [X] Helper methods and modules
     - [ ] Aliasing - custom example group types with preset attributes
