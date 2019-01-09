@@ -16,8 +16,49 @@ module Spectator::DSL
     # ```
     # Where the actual value is returned by the system-under-test,
     # and the expected value is what the actual value should be to satisfy the condition.
-    macro expect(actual)
-      ::Spectator::Expectations::ValueExpectationPartial.new({{actual.stringify}}, {{actual}})
+    #
+    # Multiple values can be checked, for instance:
+    # ```
+    # expect(actual1, actual2).to eq(expected)
+    # ```
+    # This will verify that both `actual1` and `actual2` equal `expected`.
+    #
+    # The short, one argument syntax used for passing methods to blocks can be used.
+    # So instead of doing this:
+    # ```
+    # expect(subject.size).to eq(5)
+    # ```
+    # The following syntax can be used instead:
+    # ```
+    # expect(&.size).to eq(5)
+    # ```
+    # The method passed will always be evaluated on `#subject`.
+    macro expect(*actual, &block)
+      # The signature for this macro is strange because of how it can be used.
+      # If no block is provided, then the base case is used.
+      {% if block.is_a?(Nop) %}
+        # Loop over every "actual" to check - this is typically just one item.
+        {% for item in actual %}
+          ::Spectator::Expectations::ValueExpectationPartial.new({{item.stringify}}, {{item}})
+        {% end %}
+      {% else %}
+        # A block was provided.
+        # Check if the short-hand method syntax is used.
+        # This is a hack, since macros don't get this as a "literal" or something similar.
+        # The Crystal compiler will translate `&.foo` to `{ |__arg0| __arg0.foo }`.
+        # The hack used here is to check if it looks like a compiler-generated block.
+        {% if block.args == ["__arg0".id] && block.body.is_a?(Call) && block.body.id =~ /^__arg0\./ %}
+          # Extract the method name to make it clear to the user what is tested.
+          # The raw block can't be used because it's not clear to the user.
+          {% method_name = block.body.id.split('.').last %}
+          # TODO: Maybe pass the subject in as __arg0 instead of prefixing with `subject.`.
+          ::Spectator::Expectations::ValueExpectationPartial.new({{"#" + method_name}}, subject.{{method_name.id}})
+        {% else %}
+          # In this case, it looks like the short-hand method syntax wasn't used.
+          # Just drop in the block as-is.
+          ::Spectator::Expectations::ValueExpectationPartial.new({{block.body.stringify}}, {{block.body}})
+        {% end %}
+      {% end %}
     end
 
     # Starts an expectation.
@@ -33,8 +74,8 @@ module Spectator::DSL
     # ```
     # Where the actual value is returned by the system-under-test,
     # and the expected value is what the actual value should be to satisfy the condition.
-    macro expects(actual)
-      expect({{actual}})
+    macro expects(*actual, &block)
+      expect({{actual.splat}}) {{block}}
     end
 
     # Short-hand for expecting something of the subject.
