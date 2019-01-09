@@ -286,6 +286,130 @@ module Spectator::DSL
       end
     end
 
+    # Creates an example group with a very concise syntax.
+    # This can be used in scenarios where one or more input values
+    # change the result of various methods.
+    # The normal DSL can be used within this context,
+    # but a shorter syntax provides an easier way to read and write multiple tests.
+    #
+    # Here's an example of where this is useful:
+    # ```
+    # describe Int32 do
+    #   subject { described_class.new(value) }
+    #
+    #   context "when given 5" do
+    #     describe "#odd?" do
+    #       subject { value.odd? }
+    #
+    #       it "is true" do
+    #         is_expected.to be_true
+    #       end
+    #
+    #       # NOTE: These could also be the one-liner syntax,
+    #       # but that is still very verbose.
+    #     end
+    #
+    #     describe "#even?" do
+    #       subject { value.even? }
+    #
+    #       it "is false" do
+    #         is_expected.to be_false
+    #       end
+    #     end
+    #   end
+    #
+    #   context "when given 42" do
+    #     describe "#odd?" do
+    #       subject { value.odd? }
+    #
+    #       it "is false" do
+    #         is_expected.to be_false
+    #       end
+    #     end
+    #
+    #     describe "#even?" do
+    #       subject { value.even? }
+    #
+    #       it "is true" do
+    #         is_expected.to be_true
+    #       end
+    #     end
+    #   end
+    # end
+    # ```
+    #
+    # There's a lot of repetition and nested groups
+    # to test a very simple scenario.
+    #
+    # Using a `#given` block, this type of scenario becomes much more compact.
+    # ```
+    # describe Int32 do
+    #   subject { described_class.new(value) }
+    #
+    #   given value = 5 do
+    #     expect(&.odd?).to be_true
+    #     expect(&.event?).to be_false
+    #   end
+    #
+    #   given value = 42 do
+    #     expect(&.odd?).to be_false
+    #     expect(&.event?).to be_true
+    #   end
+    # end
+    # ```
+    #
+    # One or more assignments can be used.
+    # Each assignment is passed to its own `#let`.
+    # For example:
+    # ```
+    # given x = 1, y = 2 do
+    #   expect(x + y).to eq(3)
+    # end
+    # ```
+    #
+    # Each statement in the block is converted to the one-liner syntax of `#it`.
+    # For instance:
+    # ```
+    # given x = 1 do
+    #   expect(x).to eq(1)
+    # end
+    # ```
+    # is converted to:
+    # ```
+    # context "x = 1" do
+    #   let(x) { 1 }
+    #
+    #   it expect(x).to eq(1)
+    # end
+    # ```
+    macro given(*assignments, &block)
+      context({{assignments.splat.stringify}}) do
+        # Create a `let` entry for each assignment.
+        {% for assignment in assignments %}
+          let({{assignment.target}}) { {{assignment.value}} }
+        {% end %}
+
+        # Trick to get the contents of the block as an array of nodes.
+        # If there are multiple expressions/statements in the block,
+        # then the body will be a `Expressions` type.
+        # If there's only one expression, then the body is just that.
+        {%
+          body = if block.body.is_a?(Expressions)
+                   # Get the expressions, which is already an array.
+                   block.body.expressions
+                 else
+                   # Wrap the expression in an array.
+                   [block.body]
+                 end
+        %}
+
+        # Create a one-liner "it" for each expression.
+        {% for item in body %}
+          it {{item}}
+        {% end %}
+      end
+    end
+
     # Creates a new example group to test multiple values with.
     # This method takes a collection of values
     # and repeats the contents of the block with each value.
