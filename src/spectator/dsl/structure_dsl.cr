@@ -382,6 +382,18 @@ module Spectator::DSL
     #   it expect(x).to eq(1)
     # end
     # ```
+    #
+    # Additionally, the "it" syntax can be used and mixed in.
+    # This allows for flexibility and a more readable format when needed.
+    # ```
+    # given x = 1 do
+    #   it "is odd" do
+    #     expect(x.odd?).to be_true
+    #   end
+    #
+    #   it is(&.odd?)
+    # end
+    # ```
     macro given(*assignments, &block)
       context({{assignments.splat.stringify}}) do
         # Create a `let` entry for each assignment.
@@ -403,9 +415,16 @@ module Spectator::DSL
                  end
         %}
 
-        # Create a one-liner "it" for each expression.
+        # Transform every item in the block to a test case.
         {% for item in body %}
-          it {{item}}
+          # If the item starts with "it", then leave it as-is.
+          # Otherwise, prefix it with "it"
+          # and treat it as the one-liner "it" syntax.
+          {% if item.is_a?(Call) && item.name == "it".id %}
+            {{item}}
+          {% else %}
+            it {{item}}
+          {% end %}
         {% end %}
       end
     end
