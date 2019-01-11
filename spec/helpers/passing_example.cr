@@ -19,7 +19,8 @@ class PassingExample < Spectator::RunnableExample
   # Creates a passing example.
   def self.create
     hooks = Spectator::ExampleHooks.empty
-    group = Spectator::RootExampleGroup.new(hooks)
+    conditions = Spectator::ExampleConditions.empty
+    group = Spectator::RootExampleGroup.new(hooks, conditions)
     values = Spectator::Internals::SampleValues.empty
     new(group, values).tap do |example|
       group.children = [example.as(Spectator::ExampleComponent)]

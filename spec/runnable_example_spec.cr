@@ -1,19 +1,19 @@
 require "./spec_helper"
 
 def new_runnable_example(group : Spectator::ExampleGroup? = nil)
-  actual_group = group || Spectator::RootExampleGroup.new(Spectator::ExampleHooks.empty)
+  actual_group = group || Spectator::RootExampleGroup.new(Spectator::ExampleHooks.empty, Spectator::ExampleConditions.empty)
   PassingExample.new(actual_group, Spectator::Internals::SampleValues.empty).tap do |example|
     actual_group.children = [example.as(Spectator::ExampleComponent)]
   end
 end
 
 def run_example(example_type : Spectator::Example.class, hooks : Spectator::ExampleHooks? = nil)
-  group = Spectator::RootExampleGroup.new(hooks || Spectator::ExampleHooks.empty)
+  group = Spectator::RootExampleGroup.new(hooks || Spectator::ExampleHooks.empty, Spectator::ExampleConditions.empty)
   run_example(example_type, group)
 end
 
 def run_example(example_type : Spectator::Example.class, group : Spectator::ExampleGroup? = nil)
-  actual_group = group || Spectator::RootExampleGroup.new(Spectator::ExampleHooks.empty)
+  actual_group = group || Spectator::RootExampleGroup.new(Spectator::ExampleHooks.empty, Spectator::ExampleConditions.empty)
   example = example_type.new(actual_group, Spectator::Internals::SampleValues.empty)
   actual_group.children = [example.as(Spectator::ExampleComponent)]
   Spectator::Internals::Harness.run(example)
@@ -65,8 +65,8 @@ describe Spectator::RunnableExample do
           it "runs parent group hooks" do
             called = false
             hooks = new_hooks({{hook_type.id}}: -> { called = true; nil })
-            root = Spectator::RootExampleGroup.new(hooks)
-            group = Spectator::NestedExampleGroup.new("what", root, Spectator::ExampleHooks.empty)
+            root = Spectator::RootExampleGroup.new(hooks, Spectator::ExampleConditions.empty)
+            group = Spectator::NestedExampleGroup.new("what", root, Spectator::ExampleHooks.empty, Spectator::ExampleConditions.empty)
             root.children = [group.as(Spectator::ExampleComponent)]
             run_example(PassingExample, group)
             called.should be_true
@@ -76,8 +76,8 @@ describe Spectator::RunnableExample do
             calls = [] of Symbol
             root_hooks = new_hooks({{hook_type.id}}: -> { calls << :a; nil })
             group_hooks = new_hooks({{hook_type.id}}: -> { calls << :b; nil })
-            root = Spectator::RootExampleGroup.new(root_hooks)
-            group = Spectator::NestedExampleGroup.new("what", root, group_hooks)
+            root = Spectator::RootExampleGroup.new(root_hooks, Spectator::ExampleConditions.empty)
+            group = Spectator::NestedExampleGroup.new("what", root, group_hooks, Spectator::ExampleConditions.empty)
             root.children = [group.as(Spectator::ExampleComponent)]
             run_example(PassingExample, group)
             calls.should eq(\%i[a b])
@@ -119,8 +119,8 @@ describe Spectator::RunnableExample do
           it "runs parent group hooks" do
             called = false
             hooks = new_hooks({{hook_type.id}}: -> { called = true; nil })
-            root = Spectator::RootExampleGroup.new(hooks)
-            group = Spectator::NestedExampleGroup.new("what", root, Spectator::ExampleHooks.empty)
+            root = Spectator::RootExampleGroup.new(hooks, Spectator::ExampleConditions.empty)
+            group = Spectator::NestedExampleGroup.new("what", root, Spectator::ExampleHooks.empty, Spectator::ExampleConditions.empty)
             root.children = [group.as(Spectator::ExampleComponent)]
             run_example(PassingExample, group)
             called.should be_true
@@ -130,8 +130,8 @@ describe Spectator::RunnableExample do
             calls = [] of Symbol
             root_hooks = new_hooks({{hook_type.id}}: -> { calls << :a; nil })
             group_hooks = new_hooks({{hook_type.id}}: -> { calls << :b; nil })
-            root = Spectator::RootExampleGroup.new(root_hooks)
-            group = Spectator::NestedExampleGroup.new("what", root, group_hooks)
+            root = Spectator::RootExampleGroup.new(root_hooks, Spectator::ExampleConditions.empty)
+            group = Spectator::NestedExampleGroup.new("what", root, group_hooks, Spectator::ExampleConditions.empty)
             root.children = [group.as(Spectator::ExampleComponent)]
             run_example(PassingExample, group)
             calls.should eq(\%i[b a])
@@ -172,8 +172,8 @@ describe Spectator::RunnableExample do
         it "runs parent group hooks" do
           called = false
           hooks = new_hooks(around_each: ->(proc : ->) { called = true; proc.call })
-          root = Spectator::RootExampleGroup.new(hooks)
-          group = Spectator::NestedExampleGroup.new("what", root, Spectator::ExampleHooks.empty)
+          root = Spectator::RootExampleGroup.new(hooks, Spectator::ExampleConditions.empty)
+          group = Spectator::NestedExampleGroup.new("what", root, Spectator::ExampleHooks.empty, Spectator::ExampleConditions.empty)
           root.children = [group.as(Spectator::ExampleComponent)]
           run_example(PassingExample, group)
           called.should be_true
@@ -183,8 +183,8 @@ describe Spectator::RunnableExample do
           calls = [] of Symbol
           root_hooks = new_hooks(around_each: ->(proc : ->) { calls << :a; proc.call })
           group_hooks = new_hooks(around_each: ->(proc : ->) { calls << :b; proc.call })
-          root = Spectator::RootExampleGroup.new(root_hooks)
-          group = Spectator::NestedExampleGroup.new("what", root, group_hooks)
+          root = Spectator::RootExampleGroup.new(root_hooks, Spectator::ExampleConditions.empty)
+          group = Spectator::NestedExampleGroup.new("what", root, group_hooks, Spectator::ExampleConditions.empty)
           root.children = [group.as(Spectator::ExampleComponent)]
           run_example(PassingExample, group)
           calls.should eq(%i[a b])
@@ -231,8 +231,8 @@ describe Spectator::RunnableExample do
           it "runs parent group hooks" do
             called = false
             hooks = new_hooks({{hook_type.id}}: -> { called = true; nil })
-            root = Spectator::RootExampleGroup.new(hooks)
-            group = Spectator::NestedExampleGroup.new("what", root, Spectator::ExampleHooks.empty)
+            root = Spectator::RootExampleGroup.new(hooks, Spectator::ExampleConditions.empty)
+            group = Spectator::NestedExampleGroup.new("what", root, Spectator::ExampleHooks.empty, Spectator::ExampleConditions.empty)
             root.children = [group.as(Spectator::ExampleComponent)]
             run_example(FailingExample, group)
             called.should be_true
@@ -242,8 +242,8 @@ describe Spectator::RunnableExample do
             calls = [] of Symbol
             root_hooks = new_hooks({{hook_type.id}}: -> { calls << :a; nil })
             group_hooks = new_hooks({{hook_type.id}}: -> { calls << :b; nil })
-            root = Spectator::RootExampleGroup.new(root_hooks)
-            group = Spectator::NestedExampleGroup.new("what", root, group_hooks)
+            root = Spectator::RootExampleGroup.new(root_hooks, Spectator::ExampleConditions.empty)
+            group = Spectator::NestedExampleGroup.new("what", root, group_hooks, Spectator::ExampleConditions.empty)
             root.children = [group.as(Spectator::ExampleComponent)]
             run_example(FailingExample, group)
             calls.should eq(\%i[a b])
@@ -285,8 +285,8 @@ describe Spectator::RunnableExample do
           it "runs parent group hooks" do
             called = false
             hooks = new_hooks({{hook_type.id}}: -> { called = true; nil })
-            root = Spectator::RootExampleGroup.new(hooks)
-            group = Spectator::NestedExampleGroup.new("what", root, Spectator::ExampleHooks.empty)
+            root = Spectator::RootExampleGroup.new(hooks, Spectator::ExampleConditions.empty)
+            group = Spectator::NestedExampleGroup.new("what", root, Spectator::ExampleHooks.empty, Spectator::ExampleConditions.empty)
             root.children = [group.as(Spectator::ExampleComponent)]
             run_example(FailingExample, group)
             called.should be_true
@@ -296,8 +296,8 @@ describe Spectator::RunnableExample do
             calls = [] of Symbol
             root_hooks = new_hooks({{hook_type.id}}: -> { calls << :a; nil })
             group_hooks = new_hooks({{hook_type.id}}: -> { calls << :b; nil })
-            root = Spectator::RootExampleGroup.new(root_hooks)
-            group = Spectator::NestedExampleGroup.new("what", root, group_hooks)
+            root = Spectator::RootExampleGroup.new(root_hooks, Spectator::ExampleConditions.empty)
+            group = Spectator::NestedExampleGroup.new("what", root, group_hooks, Spectator::ExampleConditions.empty)
             root.children = [group.as(Spectator::ExampleComponent)]
             run_example(FailingExample, group)
             calls.should eq(\%i[b a])
@@ -338,8 +338,8 @@ describe Spectator::RunnableExample do
         it "runs parent group hooks" do
           called = false
           hooks = new_hooks(around_each: ->(proc : ->) { called = true; proc.call })
-          root = Spectator::RootExampleGroup.new(hooks)
-          group = Spectator::NestedExampleGroup.new("what", root, Spectator::ExampleHooks.empty)
+          root = Spectator::RootExampleGroup.new(hooks, Spectator::ExampleConditions.empty)
+          group = Spectator::NestedExampleGroup.new("what", root, Spectator::ExampleHooks.empty, Spectator::ExampleConditions.empty)
           root.children = [group.as(Spectator::ExampleComponent)]
           run_example(FailingExample, group)
           called.should be_true
@@ -349,8 +349,8 @@ describe Spectator::RunnableExample do
           calls = [] of Symbol
           root_hooks = new_hooks(around_each: ->(proc : ->) { calls << :a; proc.call })
           group_hooks = new_hooks(around_each: ->(proc : ->) { calls << :b; proc.call })
-          root = Spectator::RootExampleGroup.new(root_hooks)
-          group = Spectator::NestedExampleGroup.new("what", root, group_hooks)
+          root = Spectator::RootExampleGroup.new(root_hooks, Spectator::ExampleConditions.empty)
+          group = Spectator::NestedExampleGroup.new("what", root, group_hooks, Spectator::ExampleConditions.empty)
           root.children = [group.as(Spectator::ExampleComponent)]
           run_example(FailingExample, group)
           calls.should eq(%i[a b])
@@ -397,8 +397,8 @@ describe Spectator::RunnableExample do
           it "runs parent group hooks" do
             called = false
             hooks = new_hooks({{hook_type.id}}: -> { called = true; nil })
-            root = Spectator::RootExampleGroup.new(hooks)
-            group = Spectator::NestedExampleGroup.new("what", root, Spectator::ExampleHooks.empty)
+            root = Spectator::RootExampleGroup.new(hooks, Spectator::ExampleConditions.empty)
+            group = Spectator::NestedExampleGroup.new("what", root, Spectator::ExampleHooks.empty, Spectator::ExampleConditions.empty)
             root.children = [group.as(Spectator::ExampleComponent)]
             run_example(ErroredExample, group)
             called.should be_true
@@ -408,8 +408,8 @@ describe Spectator::RunnableExample do
             calls = [] of Symbol
             root_hooks = new_hooks({{hook_type.id}}: -> { calls << :a; nil })
             group_hooks = new_hooks({{hook_type.id}}: -> { calls << :b; nil })
-            root = Spectator::RootExampleGroup.new(root_hooks)
-            group = Spectator::NestedExampleGroup.new("what", root, group_hooks)
+            root = Spectator::RootExampleGroup.new(root_hooks, Spectator::ExampleConditions.empty)
+            group = Spectator::NestedExampleGroup.new("what", root, group_hooks, Spectator::ExampleConditions.empty)
             root.children = [group.as(Spectator::ExampleComponent)]
             run_example(ErroredExample, group)
             calls.should eq(\%i[a b])
@@ -451,8 +451,8 @@ describe Spectator::RunnableExample do
           it "runs parent group hooks" do
             called = false
             hooks = new_hooks({{hook_type.id}}: -> { called = true; nil })
-            root = Spectator::RootExampleGroup.new(hooks)
-            group = Spectator::NestedExampleGroup.new("what", root, Spectator::ExampleHooks.empty)
+            root = Spectator::RootExampleGroup.new(hooks, Spectator::ExampleConditions.empty)
+            group = Spectator::NestedExampleGroup.new("what", root, Spectator::ExampleHooks.empty, Spectator::ExampleConditions.empty)
             root.children = [group.as(Spectator::ExampleComponent)]
             run_example(ErroredExample, group)
             called.should be_true
@@ -462,8 +462,8 @@ describe Spectator::RunnableExample do
             calls = [] of Symbol
             root_hooks = new_hooks({{hook_type.id}}: -> { calls << :a; nil })
             group_hooks = new_hooks({{hook_type.id}}: -> { calls << :b; nil })
-            root = Spectator::RootExampleGroup.new(root_hooks)
-            group = Spectator::NestedExampleGroup.new("what", root, group_hooks)
+            root = Spectator::RootExampleGroup.new(root_hooks, Spectator::ExampleConditions.empty)
+            group = Spectator::NestedExampleGroup.new("what", root, group_hooks, Spectator::ExampleConditions.empty)
             root.children = [group.as(Spectator::ExampleComponent)]
             run_example(ErroredExample, group)
             calls.should eq(\%i[b a])
@@ -504,8 +504,8 @@ describe Spectator::RunnableExample do
         it "runs parent group hooks" do
           called = false
           hooks = new_hooks(around_each: ->(proc : ->) { called = true; proc.call })
-          root = Spectator::RootExampleGroup.new(hooks)
-          group = Spectator::NestedExampleGroup.new("what", root, Spectator::ExampleHooks.empty)
+          root = Spectator::RootExampleGroup.new(hooks, Spectator::ExampleConditions.empty)
+          group = Spectator::NestedExampleGroup.new("what", root, Spectator::ExampleHooks.empty, Spectator::ExampleConditions.empty)
           root.children = [group.as(Spectator::ExampleComponent)]
           run_example(ErroredExample, group)
           called.should be_true
@@ -515,8 +515,8 @@ describe Spectator::RunnableExample do
           calls = [] of Symbol
           root_hooks = new_hooks(around_each: ->(proc : ->) { calls << :a; proc.call })
           group_hooks = new_hooks(around_each: ->(proc : ->) { calls << :b; proc.call })
-          root = Spectator::RootExampleGroup.new(root_hooks)
-          group = Spectator::NestedExampleGroup.new("what", root, group_hooks)
+          root = Spectator::RootExampleGroup.new(root_hooks, Spectator::ExampleConditions.empty)
+          group = Spectator::NestedExampleGroup.new("what", root, group_hooks, Spectator::ExampleConditions.empty)
           root.children = [group.as(Spectator::ExampleComponent)]
           run_example(ErroredExample, group)
           calls.should eq(%i[a b])
@@ -780,7 +780,7 @@ describe Spectator::RunnableExample do
 
   describe "#group" do
     it "is the expected value" do
-      group = Spectator::RootExampleGroup.new(Spectator::ExampleHooks.empty)
+      group = Spectator::RootExampleGroup.new(Spectator::ExampleHooks.empty, Spectator::ExampleConditions.empty)
       example = new_runnable_example(group)
       example.group.should eq(group)
     end
@@ -806,8 +806,8 @@ describe Spectator::RunnableExample do
     end
 
     it "contains the group's #what" do
-      root = Spectator::RootExampleGroup.new(Spectator::ExampleHooks.empty)
-      group = Spectator::NestedExampleGroup.new("the parent", root, Spectator::ExampleHooks.empty)
+      root = Spectator::RootExampleGroup.new(Spectator::ExampleHooks.empty, Spectator::ExampleConditions.empty)
+      group = Spectator::NestedExampleGroup.new("the parent", root, Spectator::ExampleHooks.empty, Spectator::ExampleConditions.empty)
       root.children = [group.as(Spectator::ExampleComponent)]
       example = new_runnable_example(group)
       example.to_s.should contain(group.what)
