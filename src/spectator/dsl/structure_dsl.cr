@@ -912,6 +912,10 @@ module Spectator::DSL
     # end
     # ```
     #
+    # NOTE: Pre-conditions should not be checked in a `#before_all` or related block.
+    # Errors that occur in a `#before_all` block will halt testing and abort with an error.
+    # Use `#pre_condition` instead for pre-test checks.
+    #
     # See also: `#before_each`, `#after_all`, `#after_each`, and `#around_each`.
     macro before_all(&block)
       ::Spectator::DSL::Builder.add_before_all_hook {{block}}
@@ -962,6 +966,10 @@ module Spectator::DSL
     #   end
     # end
     # ```
+    #
+    # NOTE: Pre-conditions should not be checked in a `#before_each` or related block.
+    # Errors that occur in a `#before_each` block will halt testing and abort with an error.
+    # Use `#pre_condition` instead for pre-test checks.
     #
     # See also: `#before_all`, `#after_all`, `#after_each`, and `#around_each`.
     macro before_each(&block)
@@ -1024,6 +1032,10 @@ module Spectator::DSL
     # end
     # ```
     #
+    # NOTE: Post-conditions should not be checked in an `#after_all` or related block.
+    # Errors that occur in an `#after_all` block will halt testing and abort with an error.
+    # Use `#post_condition` instead for post-test checks.
+    #
     # See also: `#before_all`, `#before_each`, `#after_each`, and `#around_each`.
     macro after_all(&block)
       ::Spectator::DSL::Builder.add_after_all_hook {{block}}
@@ -1073,6 +1085,10 @@ module Spectator::DSL
     #   end
     # end
     # ```
+    #
+    # NOTE: Post-conditions should not be checked in an `#after_each` or related block.
+    # Errors that occur in an `#after_each` block will halt testing and abort with an error.
+    # Use `#post_condition` instead for post-test checks.
     #
     # See also: `#before_all`, `#before_each`, `#after_all`, and `#around_each`.
     macro after_each(&block)
@@ -1165,6 +1181,10 @@ module Spectator::DSL
     #   end
     # end
     # ```
+    #
+    # NOTE: Pre- and post-conditions should not be checked in an `#around_each` or similar block.
+    # Errors that occur in an `#around_each` block will halt testing and abort with an error.
+    # Use `#pre_condition` and `#post_condition` instead for pre- and post-test checks.
     #
     # See also: `#before_all`, `#before_each`, `#after_all`, and `#after_each`.
     macro around_each(&block)
