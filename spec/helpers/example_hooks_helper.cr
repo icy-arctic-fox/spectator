@@ -32,3 +32,28 @@ def new_hooks(
     around_each ? [around_each] : [] of Proc(Nil) ->
   )
 end
+
+# Creates a new `Spectator::ExampleConditions` instance.
+# All arguments are optional,
+# only specify the sets of conditions that are needed.
+# The conditions that aren't specified will be left empty.
+def new_conditions(
+  pre_conditions = [] of ->,
+  post_conditions = [] of ->
+)
+  Spectator::ExampleConditions.new(pre_conditions, post_conditions)
+end
+
+# Creates a new `Spectator::ExampleConditions` instance.
+# All arguments are optional,
+# only specify a condition for the types that are needed.
+# The conditions that aren't specified will be left empty.
+def new_conditions(
+  pre_condition : Proc(Nil)? = nil,
+  post_condition : Proc(Nil)? = nil
+)
+  new_conditions(
+    pre_condition ? [pre_condition] : [] of ->,
+    post_condition ? [post_condition] : [] of ->
+  )
+end
