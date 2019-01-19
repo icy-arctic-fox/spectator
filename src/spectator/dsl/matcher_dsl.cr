@@ -28,5 +28,20 @@ module Spectator::DSL
     macro be(expected)
       ::Spectator::Matchers::CaseMatcher.new({{expected.stringify}}, {{expected}})
     end
+
+    # Indicates that some value should be of a specified type.
+    # The `#is_a?` method is used for this check.
+    # A type name or type union should be used for `expected`.
+    #
+    # Examples:
+    # ```
+    # expect("foo").to be_a(String)
+    #
+    # x = Random.rand(2) == 0 ? "foobar" : 5
+    # expect(x).to be_a(Int32 | String)
+    # ```
+    macro be_a(expected)
+      ::Spectator::Matchers::TypeMatcher({{expected}}).new({{expected.stringify}}, nil)
+    end
   end
 end
