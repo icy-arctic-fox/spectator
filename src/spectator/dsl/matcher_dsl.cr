@@ -41,7 +41,7 @@ module Spectator::DSL
     # expect(x).to be_a(Int32 | String)
     # ```
     macro be_a(expected)
-      ::Spectator::Matchers::TypeMatcher({{expected}}).new({{expected.stringify}}, nil)
+      ::Spectator::Matchers::TypeMatcher({{expected}}).new
     end
   end
 end
