@@ -7,7 +7,7 @@ module Spectator::Matchers
     # Determines whether the matcher is satisfied with the value given to it.
     # True is returned if the match was successful, false otherwise.
     def match?(partial : Expectations::ValueExpectationPartial(ActualType)) : Bool forall ActualType
-      partial.actual === expected
+      expected === partial.actual
     end
 
     # Describes the condition that satisfies the matcher.
