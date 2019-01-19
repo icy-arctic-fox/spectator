@@ -258,12 +258,8 @@ module Spectator::DSL
         # Need to investigate, but would also increase minimum version.
         {% if what.is_a?(Path) || what.is_a?(Generic) %}
           # Returns the type currently being described.
-          def described_class
-            {{what}}.tap do |thing|
-              # Runtime check to ensure that `what` is a type.
-              raise "#{thing} must be a type name to use #described_class or #subject,\
-               but it is a #{typeof(thing)}" unless thing.is_a?(Class)
-            end
+          macro described_class
+            {{what}}
           end
 
           # Implicit subject definition.
