@@ -9,13 +9,13 @@ module Spectator
       @config.formatter.start_suite
       elapsed = Time.measure do
         results = @suite.map do |example|
-          run_example(example)
+          run_example(example).as(Result)
         end
       end
       @config.formatter.end_suite(TestSuiteResults.new(results, elapsed))
     end
 
-    private def run_example(example)
+    private def run_example(example) : Result
       @config.formatter.start_example(example)
       result = Internals::Harness.run(example)
       @config.formatter.end_example(result)
