@@ -43,5 +43,19 @@ module Spectator::DSL
     macro be_a(expected)
       ::Spectator::Matchers::TypeMatcher({{expected}}).new
     end
+
+    # Indicates that some value should match another.
+    # The `=~` operator is used for this check.
+    # Typically a regular expression is used,
+    # but any type that has the `=~` operator will work.
+    #
+    # Examples:
+    # ```
+    # expect("foo").to match(/foo|bar/)
+    # expect("BAR").to match(/foo|bar/i)
+    # ```
+    macro match(expected)
+      ::Spectator::Matchers::RegexMatcher.new({{expected.stringify}}, {{expected}})
+    end
   end
 end
