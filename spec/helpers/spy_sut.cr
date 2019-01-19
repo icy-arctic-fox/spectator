@@ -7,6 +7,9 @@ class SpySUT
   # Number of times the `#===` method was called.
   getter case_eq_call_count = 0
 
+  # Number of times the `#=~` method was called.
+  getter match_call_count = 0
+
   # Returns true and increments `#eq_call_count`.
   def ==(other : T) forall T
     @eq_call_count += 1
@@ -16,6 +19,12 @@ class SpySUT
   # Returns true and increments `#case_eq_call_count`.
   def ===(other : T) forall T
     @case_eq_call_count += 1
+    true
+  end
+
+  # Returns true and increments `#match_eq_call_count`.
+  def =~(other : T) forall T
+    @match_call_count += 1
     true
   end
 end

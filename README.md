@@ -111,7 +111,7 @@ In no particular order, features that have been implemented and are planned:
     - [X] Pending tests - `pending`
     - [ ] Shared examples - `behaves_like`, `include_examples`
 - [ ] Matchers
-    - [ ] Equality matchers - `eq`, `be`, `be_a`, `match`
+    - [X] Equality matchers - `eq`, `be`, `be_a`, `match`
     - [ ] Truthy matchers - `be_true`, `be_false`, `be_truthy`, `be_falsey`
     - [ ] Comparison matchers - `<`, `<=`, `>`, `>=`, `be_within`
     - [ ] Question matchers - `be_nil`, `be_xxx`
