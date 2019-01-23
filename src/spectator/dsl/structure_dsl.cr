@@ -1198,7 +1198,53 @@ module Spectator::DSL
       end
     end
 
+    # Defines a block of code to run prior to every example in the group.
+    # The condition is executed once per example in the group (and sub-groups).
+    # If the condition fails, then the example fails.
+    #
+    # NOTE: Inside a `#sample` block, the condition is checked before every example of every iteration.
+    #
+    # This can be useful for ensuring the state before a test.
+    # ```
+    # pre_condition { expect(array).to_not be_nil }
+    #
+    # it "is the correct length" do
+    #   expect(array.size).to eq(3)
+    # end
+    # ```
+    #
+    # The condition can use values and methods in the group like examples can.
+    # It is called in the same scope as the example code.
+    # ```
+    # let(array) { [1, 2, 3] }
+    # pre_condition { expect(array.size).to eq(3) }
+    # ```
+    #
+    # If multiple `#pre_condition` blocks are specified,
+    # then they are run in the order they were defined.
+    # ```
+    # pre_condition { expect(array).to_not be_nil } # 1
+    # pre_condition { expect(array.size).to eq(3) } # 2
+    # ```
+    #
+    # With nested groups, the inner blocks will run first.
+    # ```
+    # describe Something do
+    #   pre_condition { is_expected.to_not be_nil } # 1
+    #
+    #   describe "#foo" do
+    #     pre_condition { expect(subject.foo).to_not be_nil } # 2
+    #
+    #     it "does a cool thing" do
+    #       # 3
+    #     end
+    #   end
+    # end
+    # ```
+    #
+    # See also: `#post_condition`.
     macro pre_condition(&block)
+      # Pre-condition check.
       def %condition : Nil
         {{block.body}}
       end
@@ -1210,7 +1256,54 @@ module Spectator::DSL
       end
     end
 
+    # Defines a block of code to run after every example in the group.
+    # The condition is executed once per example in the group (and sub-groups).
+    # If the condition fails, then the example fails.
+    #
+    # NOTE: Inside a `#sample` block, the condition is checked before every example of every iteration.
+    #
+    # This can be useful for ensuring the state after a test.
+    # ```
+    # # The variable x shouldn't be modified if an error is raised.
+    # post_condition { expect(x).to eq(original_x) }
+    #
+    # it "raises on divide by zero" do
+    #   expect_raises { x /= 0 }
+    # end
+    # ```
+    #
+    # The condition can use values and methods in the group like examples can.
+    # It is called in the same scope as the example code.
+    # ```
+    # let(array) { [1, 2, 3] }
+    # post_condition { expect(array.size).to eq(3) }
+    # ```
+    #
+    # If multiple `#post_condition` blocks are specified,
+    # then they are run in the order they were defined.
+    # ```
+    # post_condition { expect(array).to_not be_nil } # 1
+    # post_condition { expect(array.size).to eq(3) } # 2
+    # ```
+    #
+    # With nested groups, the inner blocks will run first.
+    # ```
+    # describe Something do
+    #   post_condition { is_expected.to_not be_nil } # 3
+    #
+    #   describe "#foo" do
+    #     post_condition { expect(subject.foo).to_not be_nil } # 2
+    #
+    #     it "does a cool thing" do
+    #       # 1
+    #     end
+    #   end
+    # end
+    # ```
+    #
+    # See also: `#pre_condition`.
     macro post_condition
+      # Post-condition check.
       def %condition : Nil
         {{block.body}}
       end
