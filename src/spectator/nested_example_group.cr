@@ -59,8 +59,8 @@ module Spectator
     end
 
     def run_pre_conditions : Nil
-      super
       parent.run_pre_conditions
+      super
     end
 
     def run_post_conditions : Nil
