@@ -402,7 +402,9 @@ module Spectator::DSL
         # then the body will be a `Expressions` type.
         # If there's only one expression, then the body is just that.
         {%
-          body = if block.body.is_a?(Expressions)
+          body = if block.is_a?(Nop)
+                   raise "Missing body for given block"
+                 elsif block.body.is_a?(Expressions)
                    # Get the expressions, which is already an array.
                    block.body.expressions
                  else
