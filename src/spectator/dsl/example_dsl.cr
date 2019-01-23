@@ -17,12 +17,6 @@ module Spectator::DSL
     # Where the actual value is returned by the system-under-test,
     # and the expected value is what the actual value should be to satisfy the condition.
     #
-    # Multiple values can be checked, for instance:
-    # ```
-    # expect(actual1, actual2).to eq(expected)
-    # ```
-    # This will verify that both `actual1` and `actual2` equal `expected`.
-    #
     # The short, one argument syntax used for passing methods to blocks can be used.
     # So instead of doing this:
     # ```
@@ -33,11 +27,8 @@ module Spectator::DSL
     # expect(&.size).to eq(5)
     # ```
     # The method passed will always be evaluated on `#subject`.
-    macro expect(*actual)
-      # Loop over every "actual" to check - this is typically just one item.
-      {% for item in actual %}
-        ::Spectator::Expectations::ValueExpectationPartial.new({{item.stringify}}, {{item}})
-      {% end %}
+    macro expect(actual)
+      ::Spectator::Expectations::ValueExpectationPartial.new({{actual.stringify}}, {{actual}})
     end
 
     # Starts an expectation on a block of code.
