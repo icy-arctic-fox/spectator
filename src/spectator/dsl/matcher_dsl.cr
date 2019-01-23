@@ -57,5 +57,27 @@ module Spectator::DSL
     macro match(expected)
       ::Spectator::Matchers::RegexMatcher.new({{expected.stringify}}, {{expected}})
     end
+
+    # Indicates that some value should be true.
+    #
+    # Examples:
+    # ```
+    # expect(nil.nil?).to be_true
+    # expect(%i[a b c].any?).to be_true
+    # ```
+    macro be_true
+      eq(true)
+    end
+
+    # Indicates that some value should be false.
+    #
+    # Examples:
+    # ```
+    # expect("foo".nil?).to be_false
+    # expect(%i[a b c].empty?).to be_false
+    # ```
+    macro be_false
+      eq(false)
+    end
   end
 end
