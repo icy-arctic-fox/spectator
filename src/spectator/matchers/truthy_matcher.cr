@@ -7,6 +7,8 @@ module Spectator::Matchers
   # Truthy is the opposite of falsey.
   struct TruthyMatcher < ValueMatcher(Bool)
     # Creates the truthy matcher.
+    # The `truthy` argument should be true to match "truthy" values,
+    # and false to match "falsey" values.
     def initialize(truthy : Bool)
       super(truthy ? "truthy" : "falsey", truthy)
     end
