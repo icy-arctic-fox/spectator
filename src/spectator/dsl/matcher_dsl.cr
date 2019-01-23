@@ -79,5 +79,29 @@ module Spectator::DSL
     macro be_false
       eq(false)
     end
+
+    # Indicates that some value should be truthy.
+    # This means that the value is not `false` and not `nil`.
+    #
+    # Examples:
+    # ```
+    # expect(123).to be_truthy
+    # expect(true).to be_truthy
+    # ```
+    macro be_truthy
+      ::Spectator::Matchers::TruthyMatcher.new(true)
+    end
+
+    # Indicates that some value should be falsey.
+    # This means that the value is either `false` or `nil`.
+    #
+    # Examples:
+    # ```
+    # expect(false).to be_falsey
+    # expect(nil).to be_falsey
+    # ```
+    macro be_falsey
+      ::Spectator::Matchers::TruthyMatcher.new(false)
+    end
   end
 end
