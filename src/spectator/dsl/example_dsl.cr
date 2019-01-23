@@ -33,31 +33,53 @@ module Spectator::DSL
     # expect(&.size).to eq(5)
     # ```
     # The method passed will always be evaluated on `#subject`.
-    macro expect(*actual, &block)
-      # The signature for this macro is strange because of how it can be used.
-      # If no block is provided, then the base case is used.
+    macro expect(*actual)
+      # Loop over every "actual" to check - this is typically just one item.
+      {% for item in actual %}
+        ::Spectator::Expectations::ValueExpectationPartial.new({{item.stringify}}, {{item}})
+      {% end %}
+    end
+
+    # Starts an expectation on a block of code.
+    # This should be followed up with `to` or `to_not`.
+    # The block passed in, or its return value, will be checked
+    # to see if it satisfies the conditions specified.
+    #
+    # This method should be used like so:
+    # ```
+    # expect { raise "foo" }.to raise_error
+    # ```
+    # The block of code is passed along for validation to the matchers.
+    #
+    # The short, one argument syntax used for passing methods to blocks can be used.
+    # So instead of doing this:
+    # ```
+    # expect(subject.size).to eq(5)
+    # ```
+    # The following syntax can be used instead:
+    # ```
+    # expect(&.size).to eq(5)
+    # ```
+    # The method passed will always be evaluated on `#subject`.
+    macro expect(&block)
       {% if block.is_a?(Nop) %}
-        # Loop over every "actual" to check - this is typically just one item.
-        {% for item in actual %}
-          ::Spectator::Expectations::ValueExpectationPartial.new({{item.stringify}}, {{item}})
-        {% end %}
+        {% raise "Argument or block must be provided to expect" %}
+      {% end %}
+
+      # Check if the short-hand method syntax is used.
+      # This is a hack, since macros don't get this as a "literal" or something similar.
+      # The Crystal compiler will translate `&.foo` to `{ |__arg0| __arg0.foo }`.
+      # The hack used here is to check if it looks like a compiler-generated block.
+      {% if block.args == ["__arg0".id] && block.body.is_a?(Call) && block.body.id =~ /^__arg0\./ %}
+        # Extract the method name to make it clear to the user what is tested.
+        # The raw block can't be used because it's not clear to the user.
+        {% method_name = block.body.id.split('.').last %}
+        # TODO: Maybe pass the subject in as __arg0 instead of prefixing with `subject.`.
+        ::Spectator::Expectations::ValueExpectationPartial.new({{"#" + method_name}}, subject.{{method_name.id}})
       {% else %}
-        # A block was provided.
-        # Check if the short-hand method syntax is used.
-        # This is a hack, since macros don't get this as a "literal" or something similar.
-        # The Crystal compiler will translate `&.foo` to `{ |__arg0| __arg0.foo }`.
-        # The hack used here is to check if it looks like a compiler-generated block.
-        {% if block.args == ["__arg0".id] && block.body.is_a?(Call) && block.body.id =~ /^__arg0\./ %}
-          # Extract the method name to make it clear to the user what is tested.
-          # The raw block can't be used because it's not clear to the user.
-          {% method_name = block.body.id.split('.').last %}
-          # TODO: Maybe pass the subject in as __arg0 instead of prefixing with `subject.`.
-          ::Spectator::Expectations::ValueExpectationPartial.new({{"#" + method_name}}, subject.{{method_name.id}})
-        {% else %}
-          # In this case, it looks like the short-hand method syntax wasn't used.
-          # Just drop in the block as-is.
-          ::Spectator::Expectations::ValueExpectationPartial.new({{block.body.stringify}}, {{block.body}})
-        {% end %}
+        # In this case, it looks like the short-hand method syntax wasn't used.
+        # Just drop in the block as-is.
+        ::Spectator::Expectations::ValueExpectationPartial.new({{block.body.stringify}}, {{block.body}})
       {% end %}
     end
 
