@@ -15,7 +15,7 @@ module Spectator::Matchers
     # True is returned if the match was successful, false otherwise.
     def match?(partial : Expectations::ValueExpectationPartial(ActualType)) : Bool forall ActualType
       # Cast value to truthy value and compare.
-      @expected == !!partial.value
+      @expected == !!partial.actual
     end
 
     # Describes the condition that satisfies the matcher.
