@@ -58,11 +58,17 @@ module Spectator
       parent.run_after_each_hooks
     end
 
+    # Runs all of the pre-condition checks.
+    # This method should run prior to every example in the group.
+    # Parent pre-conditions will be checked first.
     def run_pre_conditions : Nil
       parent.run_pre_conditions
       super
     end
 
+    # Runs all of the post-condition checks.
+    # This method should run following every example in the group.
+    # Parent post-conditions will be checked last.
     def run_post_conditions : Nil
       super
       parent.run_post_conditions
