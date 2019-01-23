@@ -38,10 +38,10 @@ end
 # only specify the sets of conditions that are needed.
 # The conditions that aren't specified will be left empty.
 def new_conditions(
-  pre_conditions = [] of ->,
-  post_conditions = [] of ->
+  pre = [] of ->,
+  post = [] of ->
 )
-  Spectator::ExampleConditions.new(pre_conditions, post_conditions)
+  Spectator::ExampleConditions.new(pre, post)
 end
 
 # Creates a new `Spectator::ExampleConditions` instance.
@@ -49,11 +49,11 @@ end
 # only specify a condition for the types that are needed.
 # The conditions that aren't specified will be left empty.
 def new_conditions(
-  pre_condition : Proc(Nil)? = nil,
-  post_condition : Proc(Nil)? = nil
+  pre : Proc(Nil)? = nil,
+  post : Proc(Nil)? = nil
 )
   new_conditions(
-    pre_condition ? [pre_condition] : [] of ->,
-    post_condition ? [post_condition] : [] of ->
+    pre ? [pre] : [] of ->,
+    post ? [post] : [] of ->
   )
 end
