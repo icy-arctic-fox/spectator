@@ -1,8 +1,8 @@
 require "./spec_helper"
 
-def new_nested_group(hooks = Spectator::ExampleHooks.empty, parent : Spectator::ExampleGroup? = nil)
+def new_nested_group(hooks = Spectator::ExampleHooks.empty, conditions = Spectator::ExampleConditions.empty, parent : Spectator::ExampleGroup? = nil)
   parent ||= Spectator::RootExampleGroup.new(Spectator::ExampleHooks.empty, Spectator::ExampleConditions.empty)
-  Spectator::NestedExampleGroup.new("what", parent, hooks, Spectator::ExampleConditions.empty).tap do |group|
+  Spectator::NestedExampleGroup.new("what", parent, hooks, conditions).tap do |group|
     parent.children = [group.as(Spectator::ExampleComponent)]
     group.children = [] of Spectator::ExampleComponent
   end
@@ -170,7 +170,7 @@ describe Spectator::NestedExampleGroup do
       root_hooks = new_hooks(before_all: ->{ calls << :a; nil })
       group_hooks = new_hooks(before_all: ->{ calls << :b; nil })
       root = Spectator::RootExampleGroup.new(root_hooks, Spectator::ExampleConditions.empty)
-      group = new_nested_group(group_hooks, root)
+      group = new_nested_group(hooks: group_hooks, parent: root)
       group.run_before_hooks
       calls.should eq(%i[a b])
     end
@@ -180,7 +180,7 @@ describe Spectator::NestedExampleGroup do
       root_hooks = new_hooks(before_each: ->{ calls << :a; nil })
       group_hooks = new_hooks(before_each: ->{ calls << :b; nil })
       root = Spectator::RootExampleGroup.new(root_hooks, Spectator::ExampleConditions.empty)
-      group = new_nested_group(group_hooks, root)
+      group = new_nested_group(hooks: group_hooks, parent: root)
       group.run_before_hooks
       calls.should eq(%i[a b])
     end
@@ -188,7 +188,7 @@ describe Spectator::NestedExampleGroup do
     it "runs the before_all hooks once" do
       call_count = 0
       hooks = new_hooks(before_all: ->{ call_count += 1; nil })
-      group = new_nested_group(hooks)
+      group = new_nested_group(hooks: hooks)
       2.times { group.run_before_hooks }
       call_count.should eq(1)
     end
@@ -196,7 +196,7 @@ describe Spectator::NestedExampleGroup do
     it "runs the before_each hooks multiple times" do
       call_count = 0
       hooks = new_hooks(before_each: ->{ call_count += 1; nil })
-      group = new_nested_group(hooks)
+      group = new_nested_group(hooks: hooks)
       2.times { group.run_before_hooks }
       call_count.should eq(2)
     end
@@ -209,7 +209,7 @@ describe Spectator::NestedExampleGroup do
     it "runs a single after_all hook" do
       called = false
       hooks = new_hooks(after_all: ->{ called = true; nil })
-      group = new_nested_group(hooks)
+      group = new_nested_group(hooks: hooks)
       group.run_after_hooks
       called.should be_true
     end
@@ -221,7 +221,7 @@ describe Spectator::NestedExampleGroup do
         ->{ call_count += 2; nil },
         ->{ call_count += 3; nil },
       ])
-      group = new_nested_group(hooks)
+      group = new_nested_group(hooks: hooks)
       group.run_after_hooks
       call_count.should eq(6)
     end
@@ -238,7 +238,7 @@ describe Spectator::NestedExampleGroup do
           ->{ calls << :e; nil },
           ->{ calls << :f; nil },
         ])
-      group = new_nested_group(hooks)
+      group = new_nested_group(hooks: hooks)
       group.run_after_hooks
       calls.should eq(%i[a b c d e f])
     end
@@ -266,7 +266,7 @@ describe Spectator::NestedExampleGroup do
       root_hooks = new_hooks(after_all: ->{ calls << :a; nil })
       group_hooks = new_hooks(after_all: ->{ calls << :b; nil })
       root = Spectator::RootExampleGroup.new(root_hooks, Spectator::ExampleConditions.empty)
-      group = new_nested_group(group_hooks, root)
+      group = new_nested_group(hooks: group_hooks, parent: root)
       group.run_after_hooks
       calls.should eq(%i[b a])
     end
@@ -276,7 +276,7 @@ describe Spectator::NestedExampleGroup do
       root_hooks = new_hooks(after_each: ->{ calls << :a; nil })
       group_hooks = new_hooks(after_each: ->{ calls << :b; nil })
       root = Spectator::RootExampleGroup.new(root_hooks, Spectator::ExampleConditions.empty)
-      group = new_nested_group(group_hooks, root)
+      group = new_nested_group(hooks: group_hooks, parent: root)
       group.run_after_hooks
       calls.should eq(%i[b a])
     end
@@ -284,7 +284,7 @@ describe Spectator::NestedExampleGroup do
     it "runs the after_all hooks once" do
       call_count = 0
       hooks = new_hooks(after_all: ->{ call_count += 1; nil })
-      group = new_nested_group(hooks)
+      group = new_nested_group(hooks: hooks)
       2.times { group.run_after_hooks }
       call_count.should eq(1)
     end
@@ -292,7 +292,7 @@ describe Spectator::NestedExampleGroup do
     it "runs the after_each hooks multiple times" do
       call_count = 0
       hooks = new_hooks(after_each: ->{ call_count += 1; nil })
-      group = new_nested_group(hooks)
+      group = new_nested_group(hooks: hooks)
       2.times { group.run_after_hooks }
       call_count.should eq(2)
     end
@@ -486,10 +486,132 @@ describe Spectator::NestedExampleGroup do
       root_hooks = new_hooks(around_each: ->(proc : ->) { calls << :a; proc.call })
       group_hooks = new_hooks(around_each: ->(proc : ->) { calls << :b; proc.call })
       root = Spectator::RootExampleGroup.new(root_hooks, Spectator::ExampleConditions.empty)
-      group = new_nested_group(group_hooks, root)
+      group = new_nested_group(hooks: group_hooks, parent: root)
       wrapper = group.wrap_around_each_hooks { }
       wrapper.call
       calls.should eq(%i[a b])
+    end
+  end
+
+  describe "#run_pre_conditions" do
+    it "runs a single pre-condition" do
+      called = false
+      conditions = new_conditions(pre: ->{ called = true; nil })
+      group = new_nested_group(conditions: conditions)
+      group.run_pre_conditions
+      called.should be_true
+    end
+
+    it "runs multiple pre-conditions" do
+      call_count = 0
+      conditions = new_conditions(pre: [
+        ->{ call_count += 1; nil },
+        ->{ call_count += 2; nil },
+        ->{ call_count += 3; nil },
+      ])
+      group = new_nested_group(conditions: conditions)
+      group.run_pre_conditions
+      call_count.should eq(6)
+    end
+
+    it "runs conditions in the correct order" do
+      calls = [] of Symbol
+      conditions = new_conditions(pre: [
+        ->{ calls << :a; nil },
+        ->{ calls << :b; nil },
+        ->{ calls << :c; nil },
+      ])
+      group = new_nested_group(conditions: conditions)
+      group.run_pre_conditions
+      calls.should eq(%i[a b c])
+    end
+
+    it "runs the parent conditions" do
+      called = false
+      conditions = new_conditions(pre: ->{ called = true; nil })
+      root = Spectator::RootExampleGroup.new(Spectator::ExampleHooks.empty, conditions)
+      group = new_nested_group(parent: root)
+      group.run_pre_conditions
+      called.should be_true
+    end
+
+    it "runs the parent conditions first" do
+      calls = [] of Symbol
+      root_conditions = new_conditions(pre: ->{ calls << :a; nil })
+      group_conditions = new_conditions(pre: ->{ calls << :b; nil })
+      root = Spectator::RootExampleGroup.new(Spectator::ExampleHooks.empty, root_conditions)
+      group = new_nested_group(conditions: group_conditions, parent: root)
+      group.run_pre_conditions
+      calls.should eq(%i[a b])
+    end
+
+    it "runs the conditions multiple times" do
+      call_count = 0
+      conditions = new_conditions(pre: ->{ call_count += 1; nil })
+      group = new_nested_group(conditions: conditions)
+      2.times { group.run_pre_conditions }
+      call_count.should eq(2)
+    end
+  end
+
+  describe "#run_post_conditions" do
+    it "runs a single condition" do
+      called = false
+      conditions = new_conditions(post: ->{ called = true; nil })
+      group = new_nested_group(conditions: conditions)
+      group.run_post_conditions
+      called.should be_true
+    end
+
+    it "runs multiple conditions" do
+      call_count = 0
+      conditions = new_conditions(post: [
+        ->{ call_count += 1; nil },
+        ->{ call_count += 2; nil },
+        ->{ call_count += 3; nil },
+      ])
+      group = new_nested_group(conditions: conditions)
+      group.run_post_conditions
+      call_count.should eq(6)
+    end
+
+    it "runs conditions in the correct order" do
+      calls = [] of Symbol
+      conditions = new_conditions(post: [
+        ->{ calls << :a; nil },
+        ->{ calls << :b; nil },
+        ->{ calls << :c; nil },
+      ])
+      group = new_nested_group(conditions: conditions)
+      group.run_post_conditions
+      calls.should eq(%i[a b c])
+    end
+
+    it "runs the parent conditions" do
+      called = false
+      conditions = new_conditions(post: ->{ called = true; nil })
+      root = Spectator::RootExampleGroup.new(Spectator::ExampleHooks.empty, conditions)
+      group = new_nested_group(parent: root)
+      group.run_post_conditions
+      called.should be_true
+    end
+
+    it "runs the parent conditions last" do
+      calls = [] of Symbol
+      root_conditions = new_conditions(post: ->{ calls << :a; nil })
+      group_conditions = new_conditions(post: ->{ calls << :b; nil })
+      root = Spectator::RootExampleGroup.new(Spectator::ExampleHooks.empty, root_conditions)
+      group = new_nested_group(conditions: group_conditions, parent: root)
+      group.run_post_conditions
+      calls.should eq(%i[b a])
+    end
+
+    it "runs the conditions multiple times" do
+      call_count = 0
+      conditions = new_conditions(post: ->{ call_count += 1; nil })
+      group = new_nested_group(conditions: conditions)
+      2.times { group.run_post_conditions }
+      call_count.should eq(2)
     end
   end
 

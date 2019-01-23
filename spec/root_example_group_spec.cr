@@ -320,6 +320,90 @@ describe Spectator::RootExampleGroup do
     end
   end
 
+  describe "#run_pre_conditions" do
+    it "runs a condition" do
+      called = false
+      conditions = new_conditions(pre: ->{ called = true; nil })
+      group = new_root_group(conditions: conditions)
+      group.run_pre_conditions
+      called.should be_true
+    end
+
+    it "runs multiple conditions" do
+      call_count = 0
+      conditions = new_conditions(pre: [
+        ->{ call_count += 1; nil },
+        ->{ call_count += 2; nil },
+        ->{ call_count += 3; nil },
+      ])
+      group = new_root_group(conditions: conditions)
+      group.run_pre_conditions
+      call_count.should eq(6)
+    end
+
+    it "runs conditions in the correct order" do
+      calls = [] of Symbol
+      conditions = new_conditions(pre: [
+        ->{ calls << :a; nil },
+        ->{ calls << :b; nil },
+        ->{ calls << :c; nil },
+      ])
+      group = new_root_group(conditions: conditions)
+      group.run_pre_conditions
+      calls.should eq(%i[a b c])
+    end
+
+    it "runs the conditions multiple times" do
+      call_count = 0
+      conditions = new_conditions(pre: ->{ call_count += 1; nil })
+      group = new_root_group(conditions: conditions)
+      2.times { group.run_pre_conditions }
+      call_count.should eq(2)
+    end
+  end
+
+  describe "#run_post_conditions" do
+    it "runs a single condition" do
+      called = false
+      conditions = new_conditions(post: ->{ called = true; nil })
+      group = new_root_group(conditions: conditions)
+      group.run_post_conditions
+      called.should be_true
+    end
+
+    it "runs multiple conditions" do
+      call_count = 0
+      conditions = new_conditions(post: [
+        ->{ call_count += 1; nil },
+        ->{ call_count += 2; nil },
+        ->{ call_count += 3; nil },
+      ])
+      group = new_root_group(conditions: conditions)
+      group.run_post_conditions
+      call_count.should eq(6)
+    end
+
+    it "runs conditions in the correct order" do
+      calls = [] of Symbol
+      conditions = new_conditions(post: [
+        ->{ calls << :a; nil },
+        ->{ calls << :b; nil },
+        ->{ calls << :c; nil },
+      ])
+      group = new_root_group(conditions: conditions)
+      group.run_post_conditions
+      calls.should eq(%i[a b c])
+    end
+
+    it "runs the conditions multiple times" do
+      call_count = 0
+      conditions = new_conditions(post: ->{ call_count += 1; nil })
+      group = new_root_group(conditions: conditions)
+      2.times { group.run_post_conditions }
+      call_count.should eq(2)
+    end
+  end
+
   describe "#to_s" do
     it "is empty" do
       new_root_group.to_s.should be_empty
