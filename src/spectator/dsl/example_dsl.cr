@@ -87,8 +87,35 @@ module Spectator::DSL
     # ```
     # Where the actual value is returned by the system-under-test,
     # and the expected value is what the actual value should be to satisfy the condition.
-    macro expects(*actual, &block)
-      expect({{actual.splat}}) {{block}}
+    macro expects(actual)
+      expect({{actual}})
+    end
+
+    # Starts an expectation on a block of code.
+    # This should be followed up with `to` or `to_not`.
+    # The block passed in, or its return value, will be checked
+    # to see if it satisfies the conditions specified.
+    #
+    # This method is identical to `#expect`,
+    # but is grammatically correct for the one-liner syntax.
+    # It can be used like so:
+    # ```
+    # it expects { 5 / 0 }.to raise_error
+    # ```
+    # The block of code is passed along for validation to the matchers.
+    #
+    # The short, one argument syntax used for passing methods to blocks can be used.
+    # So instead of doing this:
+    # ```
+    # it expects(subject.size).to eq(5)
+    # ```
+    # The following syntax can be used instead:
+    # ```
+    # it expects(&.size).to eq(5)
+    # ```
+    # The method passed will always be evaluated on `#subject`.
+    macro expects(&block)
+      expect {{block}}
     end
 
     # Short-hand for expecting something of the subject.
