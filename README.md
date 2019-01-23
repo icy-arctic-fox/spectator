@@ -112,7 +112,7 @@ In no particular order, features that have been implemented and are planned:
     - [ ] Shared examples - `behaves_like`, `include_examples`
 - [ ] Matchers
     - [X] Equality matchers - `eq`, `be`, `be_a`, `match`
-    - [ ] Truthy matchers - `be_true`, `be_false`, `be_truthy`, `be_falsey`
+    - [X] Truthy matchers - `be_true`, `be_false`, `be_truthy`, `be_falsey`
     - [ ] Comparison matchers - `<`, `<=`, `>`, `>=`, `be_within`
     - [ ] Question matchers - `be_nil`, `be_xxx`
     - [ ] Exception matchers - `raise_error`
