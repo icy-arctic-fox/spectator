@@ -55,8 +55,8 @@ module Spectator::Matchers
     # ```
     # expect(0).to be != 1
     # ```
-    def !=(other : ExpectedType) forall ExpectedType
-      raise NotImplementedError.new("be !=")
+    def !=(expected : ExpectedType) forall ExpectedType
+      InequalityMatcher.new(expected)
     end
   end
 end
