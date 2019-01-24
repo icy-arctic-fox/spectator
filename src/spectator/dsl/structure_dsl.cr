@@ -1364,6 +1364,13 @@ module Spectator::DSL
       ::Spectator::DSL::Builder.add_example(Example%example)
     end
 
+    # An alternative way to write an example.
+    # This is identical to `#it`,
+    # except that it doesn't take a "what" argument.
+    macro specify(&block)
+      it({{block.body.stringify}}) {{block}}
+    end
+
     # Creates an example, or a test case, that does not run.
     # This can be used to prototype functionality that isn't ready.
     # The `what` argument describes "what" is being tested or asserted.
