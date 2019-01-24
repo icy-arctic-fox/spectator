@@ -15,6 +15,18 @@ module Spectator::DSL
       ::Spectator::Matchers::EqualityMatcher.new({{expected.stringify}}, {{expected}})
     end
 
+    # Indicates that some value should not equal another.
+    # The `!=` operator is used for this check.
+    # The value passed to this method is the unexpected value.
+    #
+    # Example:
+    # ```
+    # expect(1 + 2).to ne(5)
+    # ```
+    macro ne(expected)
+      ::Spectator::Matchers::InequalityMatcher.new({{expected.stringify}}, {{expected}})
+    end
+
     # Indicates that some value when compared to another satisfies an operator.
     # An operator should follow, such as: `<`, `<=`, `>`, or `>=`.
     #
@@ -56,6 +68,54 @@ module Spectator::DSL
     # ```
     macro be_a(expected)
       ::Spectator::Matchers::TypeMatcher({{expected}}).new
+    end
+
+    # Indicates that some value should be less than another.
+    # The `<` operator is used for this check.
+    # The value passed to this method is the value expected to be larger.
+    #
+    # Example:
+    # ```
+    # expect(3 - 1).to be_lt(3)
+    # ```
+    macro be_lt(expected)
+      ::Spectator::Matchers::LessThanMatcher.new({{expected.stringify}}, {{expected}})
+    end
+
+    # Indicates that some value should be less than or equal to another.
+    # The `<=` operator is used for this check.
+    # The value passed to this method is the value expected to be larger or equal.
+    #
+    # Example:
+    # ```
+    # expect(3 - 1).to be_le(3)
+    # ```
+    macro be_le(expected)
+      ::Spectator::Matchers::LessThanEqualMatcher.new({{expected.stringify}}, {{expected}})
+    end
+
+    # Indicates that some value should be greater than another.
+    # The `>` operator is used for this check.
+    # The value passed to this method is the value expected to be smaller.
+    #
+    # Example:
+    # ```
+    # expect(3 + 1).to be_gt(3)
+    # ```
+    macro be_gt(expected)
+      ::Spectator::Matchers::GreaterThanMatcher.new({{expected.stringify}}, {{expected}})
+    end
+
+    # Indicates that some value should be greater than or equal to another.
+    # The `>=` operator is used for this check.
+    # The value passed to this method is the value expected to be smaller or equal.
+    #
+    # Example:
+    # ```
+    # expect(3 + 1).to be_ge(3)
+    # ```
+    macro be_ge(expected)
+      ::Spectator::Matchers::GreaterThanEqualMatcher.new({{expected.stringify}}, {{expected}})
     end
 
     # Indicates that some value should match another.
