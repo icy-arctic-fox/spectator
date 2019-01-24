@@ -46,8 +46,8 @@ module Spectator::Matchers
     # ```
     # expect(0).to be == 0
     # ```
-    def ==(other : ExpectedType) forall ExpectedType
-      raise NotImplementedError.new("be ==")
+    def ==(expected : ExpectedType) forall ExpectedType
+      EqualityMatcher.new(expected)
     end
 
     # Creates a matcher that checks if a value is not equal to an expected value.
