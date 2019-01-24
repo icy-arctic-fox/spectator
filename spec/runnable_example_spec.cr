@@ -82,8 +82,16 @@ describe Spectator::RunnableExample do
             run_example(PassingExample, group)
             calls.should eq(\%i[a b])
           end
+
+          pending "runs the hook before the test code" do
+
+          end
         end
       {% end %}
+
+      pending "runs before_all hooks prior to before_each hooks" do
+
+      end
 
       {% for hook_type in %i[after_all after_each] %}
         context "{{hook_type.id}} hooks" do
@@ -136,8 +144,16 @@ describe Spectator::RunnableExample do
             run_example(PassingExample, group)
             calls.should eq(\%i[b a])
           end
+
+          pending "runs the hook after the test code" do
+
+          end
         end
       {% end %}
+
+      pending "runs after_each hooks prior to after_all hooks" do
+
+      end
 
       context "around_each hooks" do
         it "runs a hook" do
@@ -189,6 +205,14 @@ describe Spectator::RunnableExample do
           run_example(PassingExample, group)
           calls.should eq(%i[a b])
         end
+      end
+
+      pending "runs around_each hooks after to before hooks" do
+
+      end
+
+      pending "runs around_each hooks prior to after hooks" do
+
       end
 
       {% for condition in %i[pre post] %}
@@ -257,6 +281,18 @@ describe Spectator::RunnableExample do
           {% end %}
         end
       {% end %}
+
+      pending "runs before hooks prior to pre-conditions" do
+
+      end
+
+      pending "runs around_each hooks prior to pre-conditions" do
+
+      end
+
+      pending "runs post-conditions prior to after hooks" do
+
+      end
 
       context "failing pre-condition" do
         pending "fails the test" do
@@ -371,8 +407,16 @@ describe Spectator::RunnableExample do
             run_example(FailingExample, group)
             calls.should eq(\%i[a b])
           end
+
+          pending "runs the hook before the test code" do
+
+          end
         end
       {% end %}
+
+      pending "runs before_all hooks prior to before_each hooks" do
+
+      end
 
       {% for hook_type in %i[after_all after_each] %}
         context "{{hook_type.id}} hooks" do
@@ -425,8 +469,16 @@ describe Spectator::RunnableExample do
             run_example(FailingExample, group)
             calls.should eq(\%i[b a])
           end
+
+          pending "runs the hook after the test code" do
+
+          end
         end
       {% end %}
+
+      pending "runs after_each hooks prior to after_all hooks" do
+
+      end
 
       context "around_each hooks" do
         it "runs a hook" do
@@ -480,6 +532,14 @@ describe Spectator::RunnableExample do
         end
       end
 
+      pending "runs around_each hooks after to before hooks" do
+
+      end
+
+      pending "runs around_each hooks prior to after hooks" do
+
+      end
+
       context "pre-conditions" do
         it "checks a single condition" do
           called = false
@@ -530,6 +590,18 @@ describe Spectator::RunnableExample do
           run_example(FailingExample, group)
           calls.should eq(%i[a b])
         end
+      end
+
+      pending "runs before hooks prior to pre-conditions" do
+
+      end
+
+      pending "runs around_each hooks prior to pre-conditions" do
+
+      end
+
+      pending "runs post-conditions prior to after hooks" do
+
       end
 
       context "failing pre-condition" do
@@ -633,8 +705,16 @@ describe Spectator::RunnableExample do
             run_example(ErroredExample, group)
             calls.should eq(\%i[a b])
           end
+
+          pending "runs the hook before the test code" do
+
+          end
         end
       {% end %}
+
+      pending "runs before_all hooks prior to before_each hooks" do
+
+      end
 
       {% for hook_type in %i[after_all after_each] %}
         context "{{hook_type.id}} hooks" do
@@ -687,8 +767,16 @@ describe Spectator::RunnableExample do
             run_example(ErroredExample, group)
             calls.should eq(\%i[b a])
           end
+
+          pending "runs the hook after the test code" do
+
+          end
         end
       {% end %}
+
+      pending "runs after_each hooks prior to after_all hooks" do
+
+      end
 
       context "around_each hooks" do
         it "runs a hook" do
@@ -742,6 +830,14 @@ describe Spectator::RunnableExample do
         end
       end
 
+      pending "runs around_each hooks after to before hooks" do
+
+      end
+
+      pending "runs around_each hooks prior to after hooks" do
+
+      end
+
       context "pre-conditions" do
         it "checks a single condition" do
           called = false
@@ -792,6 +888,18 @@ describe Spectator::RunnableExample do
           run_example(ErroredExample, group)
           calls.should eq(%i[a b])
         end
+      end
+
+      pending "runs before hooks prior to pre-conditions" do
+
+      end
+
+      pending "runs around_each hooks prior to pre-conditions" do
+
+      end
+
+      pending "runs post-conditions prior to after hooks" do
+
       end
 
       context "failing pre-condition" do
