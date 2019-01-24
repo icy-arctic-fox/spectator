@@ -10,7 +10,7 @@ module Spectator::Matchers
     # ```
     # expect(0).to be < 1
     # ```
-    def <(other : ActualType) forall ActualType
+    def <(other : ExpectedType) forall ExpectedType
       raise NotImplementedError.new("be <")
     end
 
@@ -19,7 +19,7 @@ module Spectator::Matchers
     # ```
     # expect(0).to be <= 1
     # ```
-    def <=(other : ActualType) forall ActualType
+    def <=(other : ExpectedType) forall ExpectedType
       raise NotImplementedError.new("be <=")
     end
 
@@ -28,7 +28,7 @@ module Spectator::Matchers
     # ```
     # expect(2).to be > 1
     # ```
-    def >(other : ActualType) forall ActualType
+    def >(other : ExpectedType) forall ExpectedType
       raise NotImplementedError.new("be >")
     end
 
@@ -37,7 +37,7 @@ module Spectator::Matchers
     # ```
     # expect(2).to be >= 1
     # ```
-    def >=(other : ActualType) forall ActualType
+    def >=(other : ExpectedType) forall ExpectedType
       raise NotImplementedError.new("be >=")
     end
 
@@ -46,7 +46,7 @@ module Spectator::Matchers
     # ```
     # expect(0).to be == 0
     # ```
-    def ==(other : ActualType) forall ActualType
+    def ==(other : ExpectedType) forall ExpectedType
       raise NotImplementedError.new("be ==")
     end
 
@@ -55,7 +55,7 @@ module Spectator::Matchers
     # ```
     # expect(0).to be != 1
     # ```
-    def !=(other : ActualType) forall ActualType
+    def !=(other : ExpectedType) forall ExpectedType
       raise NotImplementedError.new("be !=")
     end
   end
