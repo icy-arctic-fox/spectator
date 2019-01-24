@@ -10,8 +10,8 @@ module Spectator::Matchers
     # ```
     # expect(0).to be < 1
     # ```
-    def <(other : ExpectedType) forall ExpectedType
-      raise NotImplementedError.new("be <")
+    def <(expected : ExpectedType) forall ExpectedType
+      LessThanMatcher.new(expected)
     end
 
     # Creates a matcher that checks if a value is less than or equal to an expected value.
