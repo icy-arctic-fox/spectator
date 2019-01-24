@@ -90,7 +90,6 @@ describe Spectator::RunnableExample do
       {% end %}
 
       pending "runs before_all hooks prior to before_each hooks" do
-
       end
 
       {% for hook_type in %i[after_all after_each] %}
@@ -152,7 +151,6 @@ describe Spectator::RunnableExample do
       {% end %}
 
       pending "runs after_each hooks prior to after_all hooks" do
-
       end
 
       context "around_each hooks" do
@@ -208,11 +206,9 @@ describe Spectator::RunnableExample do
       end
 
       pending "runs around_each hooks after to before hooks" do
-
       end
 
       pending "runs around_each hooks prior to after hooks" do
-
       end
 
       {% for condition in %i[pre post] %}
@@ -283,69 +279,54 @@ describe Spectator::RunnableExample do
       {% end %}
 
       pending "runs before hooks prior to pre-conditions" do
-
       end
 
       pending "runs around_each hooks prior to pre-conditions" do
-
       end
 
       pending "runs post-conditions prior to after hooks" do
-
       end
 
       context "failing pre-condition" do
         pending "fails the test" do
-
         end
 
         pending "prevents the test code from running" do
-
         end
 
         pending "prevents additional pre-conditions from running" do
-
         end
 
         pending "prevents additional post-conditiosn from running" do
-
         end
 
         context "in a parent group" do
           pending "fails the test" do
-
           end
 
           pending "prevents the test code from running" do
-
           end
 
           pending "doesn't run child pre-conditions" do
-
           end
 
           pending "doesn't run child post-conditions" do
-
           end
         end
       end
 
       context "failing post-condition" do
         pending "fails the test" do
-
         end
 
         pending "prevents additional post-conditions from running" do
-
         end
 
         context "in a parent group" do
           pending "fails the test" do
-
           end
 
           pending "doesn't run child post-conditions" do
-
           end
         end
       end
@@ -415,7 +396,6 @@ describe Spectator::RunnableExample do
       {% end %}
 
       pending "runs before_all hooks prior to before_each hooks" do
-
       end
 
       {% for hook_type in %i[after_all after_each] %}
@@ -477,7 +457,6 @@ describe Spectator::RunnableExample do
       {% end %}
 
       pending "runs after_each hooks prior to after_all hooks" do
-
       end
 
       context "around_each hooks" do
@@ -533,17 +512,15 @@ describe Spectator::RunnableExample do
       end
 
       pending "runs around_each hooks after to before hooks" do
-
       end
 
       pending "runs around_each hooks prior to after hooks" do
-
       end
 
       context "pre-conditions" do
         it "checks a single condition" do
           called = false
-          conditions = new_conditions(pre: -> { called = true; nil })
+          conditions = new_conditions(pre: ->{ called = true; nil })
           run_example(FailingExample, conditions: conditions)
           called.should be_true
         end
@@ -551,9 +528,9 @@ describe Spectator::RunnableExample do
         it "checks multiple conditions" do
           call_count = 0
           conditions = new_conditions(pre: [
-            -> { call_count += 1; nil },
-            -> { call_count += 2; nil },
-            -> { call_count += 3; nil },
+            ->{ call_count += 1; nil },
+            ->{ call_count += 2; nil },
+            ->{ call_count += 3; nil },
           ])
           run_example(FailingExample, conditions: conditions)
           call_count.should eq(6)
@@ -562,9 +539,9 @@ describe Spectator::RunnableExample do
         it "checks them in the correct order" do
           calls = [] of Symbol
           conditions = new_conditions(pre: [
-            -> { calls << :a; nil },
-            -> { calls << :b; nil },
-            -> { calls << :c; nil },
+            ->{ calls << :a; nil },
+            ->{ calls << :b; nil },
+            ->{ calls << :c; nil },
           ])
           run_example(FailingExample, conditions: conditions)
           calls.should eq(%i[a b c])
@@ -572,7 +549,7 @@ describe Spectator::RunnableExample do
 
         it "checks parent group conditions" do
           called = false
-          conditions = new_conditions(pre: -> { called = true; nil })
+          conditions = new_conditions(pre: ->{ called = true; nil })
           root = Spectator::RootExampleGroup.new(Spectator::ExampleHooks.empty, conditions)
           group = Spectator::NestedExampleGroup.new("what", root, Spectator::ExampleHooks.empty, Spectator::ExampleConditions.empty)
           root.children = [group.as(Spectator::ExampleComponent)]
@@ -582,8 +559,8 @@ describe Spectator::RunnableExample do
 
         it "checks parent group conditions first" do
           calls = [] of Symbol
-          root_conditions = new_conditions(pre: -> { calls << :a; nil })
-          group_conditions = new_conditions(pre: -> { calls << :b; nil })
+          root_conditions = new_conditions(pre: ->{ calls << :a; nil })
+          group_conditions = new_conditions(pre: ->{ calls << :b; nil })
           root = Spectator::RootExampleGroup.new(Spectator::ExampleHooks.empty, root_conditions)
           group = Spectator::NestedExampleGroup.new("what", root, Spectator::ExampleHooks.empty, group_conditions)
           root.children = [group.as(Spectator::ExampleComponent)]
@@ -593,59 +570,46 @@ describe Spectator::RunnableExample do
       end
 
       pending "runs before hooks prior to pre-conditions" do
-
       end
 
       pending "runs around_each hooks prior to pre-conditions" do
-
       end
 
       pending "runs post-conditions prior to after hooks" do
-
       end
 
       context "failing pre-condition" do
         pending "fails the test" do
-
         end
 
         pending "prevents the test code from running" do
-
         end
 
         pending "prevents additional pre-conditions from running" do
-
         end
 
         pending "prevents additional post-conditiosn from running" do
-
         end
 
         context "in a parent group" do
           pending "fails the test" do
-
           end
 
           pending "prevents the test code from running" do
-
           end
 
           pending "doesn't run child pre-conditions" do
-
           end
 
           pending "doesn't run child post-conditions" do
-
           end
         end
       end
 
       pending "doesn't run post-conditions" do
-
       end
 
       pending "doesn't run parent group post-conditions" do
-
       end
     end
 
@@ -713,7 +677,6 @@ describe Spectator::RunnableExample do
       {% end %}
 
       pending "runs before_all hooks prior to before_each hooks" do
-
       end
 
       {% for hook_type in %i[after_all after_each] %}
@@ -775,7 +738,6 @@ describe Spectator::RunnableExample do
       {% end %}
 
       pending "runs after_each hooks prior to after_all hooks" do
-
       end
 
       context "around_each hooks" do
@@ -831,17 +793,15 @@ describe Spectator::RunnableExample do
       end
 
       pending "runs around_each hooks after to before hooks" do
-
       end
 
       pending "runs around_each hooks prior to after hooks" do
-
       end
 
       context "pre-conditions" do
         it "checks a single condition" do
           called = false
-          conditions = new_conditions(pre: -> { called = true; nil })
+          conditions = new_conditions(pre: ->{ called = true; nil })
           run_example(ErroredExample, conditions: conditions)
           called.should be_true
         end
@@ -849,9 +809,9 @@ describe Spectator::RunnableExample do
         it "checks multiple conditions" do
           call_count = 0
           conditions = new_conditions(pre: [
-            -> { call_count += 1; nil },
-            -> { call_count += 2; nil },
-            -> { call_count += 3; nil },
+            ->{ call_count += 1; nil },
+            ->{ call_count += 2; nil },
+            ->{ call_count += 3; nil },
           ])
           run_example(ErroredExample, conditions: conditions)
           call_count.should eq(6)
@@ -860,9 +820,9 @@ describe Spectator::RunnableExample do
         it "checks them in the correct order" do
           calls = [] of Symbol
           conditions = new_conditions(pre: [
-            -> { calls << :a; nil },
-            -> { calls << :b; nil },
-            -> { calls << :c; nil },
+            ->{ calls << :a; nil },
+            ->{ calls << :b; nil },
+            ->{ calls << :c; nil },
           ])
           run_example(ErroredExample, conditions: conditions)
           calls.should eq(%i[a b c])
@@ -870,7 +830,7 @@ describe Spectator::RunnableExample do
 
         it "checks parent group conditions" do
           called = false
-          conditions = new_conditions(pre: -> { called = true; nil })
+          conditions = new_conditions(pre: ->{ called = true; nil })
           root = Spectator::RootExampleGroup.new(Spectator::ExampleHooks.empty, conditions)
           group = Spectator::NestedExampleGroup.new("what", root, Spectator::ExampleHooks.empty, Spectator::ExampleConditions.empty)
           root.children = [group.as(Spectator::ExampleComponent)]
@@ -880,8 +840,8 @@ describe Spectator::RunnableExample do
 
         it "checks parent group conditions first" do
           calls = [] of Symbol
-          root_conditions = new_conditions(pre: -> { calls << :a; nil })
-          group_conditions = new_conditions(pre: -> { calls << :b; nil })
+          root_conditions = new_conditions(pre: ->{ calls << :a; nil })
+          group_conditions = new_conditions(pre: ->{ calls << :b; nil })
           root = Spectator::RootExampleGroup.new(Spectator::ExampleHooks.empty, root_conditions)
           group = Spectator::NestedExampleGroup.new("what", root, Spectator::ExampleHooks.empty, group_conditions)
           root.children = [group.as(Spectator::ExampleComponent)]
@@ -891,59 +851,46 @@ describe Spectator::RunnableExample do
       end
 
       pending "runs before hooks prior to pre-conditions" do
-
       end
 
       pending "runs around_each hooks prior to pre-conditions" do
-
       end
 
       pending "runs post-conditions prior to after hooks" do
-
       end
 
       context "failing pre-condition" do
         pending "fails the test" do
-
         end
 
         pending "prevents the test code from running" do
-
         end
 
         pending "prevents additional pre-conditions from running" do
-
         end
 
         pending "prevents additional post-conditiosn from running" do
-
         end
 
         context "in a parent group" do
           pending "fails the test" do
-
           end
 
           pending "prevents the test code from running" do
-
           end
 
           pending "doesn't run child pre-conditions" do
-
           end
 
           pending "doesn't run child post-conditions" do
-
           end
         end
       end
 
       pending "doesn't run post-conditions" do
-
       end
 
       pending "doesn't run parent group post-conditions" do
-
       end
     end
 
