@@ -1403,6 +1403,12 @@ module Spectator::DSL
       ::Spectator::DSL::Builder.add_example(Example%example)
     end
 
+    # Same as `#pending`.
+    # Include for compatibility with RSpec.
+    macro xit(what, &block)
+      pending({{what}}) {{block}}
+    end
+
     # Creates a wrapper class for test code.
     # The class serves multiple purposes, mostly dealing with scope.
     # 1. Include the parent modules as mix-ins.
