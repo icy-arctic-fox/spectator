@@ -15,6 +15,20 @@ module Spectator::DSL
       ::Spectator::Matchers::EqualityMatcher.new({{expected.stringify}}, {{expected}})
     end
 
+    # Indicates that some value when compared to another satisfies an operator.
+    # An operator should follow, such as: `<`, `<=`, `>`, or `>=`.
+    #
+    # Examples:
+    # ```
+    # expect(1 + 1).to be > 1
+    # expect(5).to be >= 3
+    # ```
+    #
+    # See `Spectator::Matchers::BeComparison` for supported operators and methods.
+    macro be
+      ::Spectator::Matchers::BeComparison.new
+    end
+
     # Indicates that some value should semantically equal another.
     # The `===` operator is used for this check.
     # This has identical behavior as a `when` condition in a `case` block.
