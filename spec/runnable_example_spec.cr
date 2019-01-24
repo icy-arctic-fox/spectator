@@ -7,8 +7,8 @@ def new_runnable_example(group : Spectator::ExampleGroup? = nil)
   end
 end
 
-def run_example(example_type : Spectator::Example.class, hooks : Spectator::ExampleHooks? = nil)
-  group = Spectator::RootExampleGroup.new(hooks || Spectator::ExampleHooks.empty, Spectator::ExampleConditions.empty)
+def run_example(example_type : Spectator::Example.class, hooks : Spectator::ExampleHooks? = nil, conditions : Spectator::ExampleConditions? = nil)
+  group = Spectator::RootExampleGroup.new(hooks || Spectator::ExampleHooks.empty, conditions || Spectator::ExampleConditions.empty)
   run_example(example_type, group)
 end
 
@@ -19,8 +19,8 @@ def run_example(example_type : Spectator::Example.class, group : Spectator::Exam
   Spectator::Internals::Harness.run(example)
 end
 
-def run_example(hooks : Spectator::ExampleHooks? = nil, &block)
-  example = SpyExample.create(hooks || Spectator::ExampleHooks.empty, &block)
+def run_example(hooks : Spectator::ExampleHooks? = nil, conditions : Spectator::ExampleConditions? = nil, &block)
+  example = SpyExample.create(hooks || Spectator::ExampleHooks.empty, conditions || Spectator::ExampleConditions.empty, &block)
   Spectator::Internals::Harness.run(example)
 end
 
@@ -190,6 +190,129 @@ describe Spectator::RunnableExample do
           calls.should eq(%i[a b])
         end
       end
+
+      {% for condition in %i[pre post] %}
+        context "{{condition.id}}-conditions" do
+          it "checks a single condition" do
+            called = false
+            conditions = new_conditions({{condition.id}}: -> { called = true; nil })
+            run_example(PassingExample, conditions: conditions)
+            called.should be_true
+          end
+
+          it "checks multiple conditions" do
+            call_count = 0
+            conditions = new_conditions({{condition.id}}: [
+              -> { call_count += 1; nil },
+              -> { call_count += 2; nil },
+              -> { call_count += 3; nil },
+            ])
+            run_example(PassingExample, conditions: conditions)
+            call_count.should eq(6)
+          end
+
+          it "checks them in the correct order" do
+            calls = [] of Symbol
+            conditions = new_conditions({{condition.id}}: [
+              -> { calls << :a; nil },
+              -> { calls << :b; nil },
+              -> { calls << :c; nil },
+            ])
+            run_example(PassingExample, conditions: conditions)
+            calls.should eq(\%i[a b c])
+          end
+
+          it "checks parent group conditions" do
+            called = false
+            conditions = new_conditions({{condition.id}}: -> { called = true; nil })
+            root = Spectator::RootExampleGroup.new(Spectator::ExampleHooks.empty, conditions)
+            group = Spectator::NestedExampleGroup.new("what", root, Spectator::ExampleHooks.empty, Spectator::ExampleConditions.empty)
+            root.children = [group.as(Spectator::ExampleComponent)]
+            run_example(PassingExample, group)
+            called.should be_true
+          end
+
+          {% if condition == :pre %}
+            it "checks parent group conditions first" do
+              calls = [] of Symbol
+              root_conditions = new_conditions({{condition.id}}: -> { calls << :a; nil })
+              group_conditions = new_conditions({{condition.id}}: -> { calls << :b; nil })
+              root = Spectator::RootExampleGroup.new(Spectator::ExampleHooks.empty, root_conditions)
+              group = Spectator::NestedExampleGroup.new("what", root, Spectator::ExampleHooks.empty, group_conditions)
+              root.children = [group.as(Spectator::ExampleComponent)]
+              run_example(PassingExample, group)
+              calls.should eq(\%i[a b])
+            end
+          {% else %}
+            it "checks parent group conditions last" do
+              calls = [] of Symbol
+              root_conditions = new_conditions({{condition.id}}: -> { calls << :a; nil })
+              group_conditions = new_conditions({{condition.id}}: -> { calls << :b; nil })
+              root = Spectator::RootExampleGroup.new(Spectator::ExampleHooks.empty, root_conditions)
+              group = Spectator::NestedExampleGroup.new("what", root, Spectator::ExampleHooks.empty, group_conditions)
+              root.children = [group.as(Spectator::ExampleComponent)]
+              run_example(PassingExample, group)
+              calls.should eq(\%i[b a])
+            end
+          {% end %}
+        end
+      {% end %}
+
+      context "failing pre-condition" do
+        pending "fails the test" do
+
+        end
+
+        pending "prevents the test code from running" do
+
+        end
+
+        pending "prevents additional pre-conditions from running" do
+
+        end
+
+        pending "prevents additional post-conditiosn from running" do
+
+        end
+
+        context "in a parent group" do
+          pending "fails the test" do
+
+          end
+
+          pending "prevents the test code from running" do
+
+          end
+
+          pending "doesn't run child pre-conditions" do
+
+          end
+
+          pending "doesn't run child post-conditions" do
+
+          end
+        end
+      end
+
+      context "failing post-condition" do
+        pending "fails the test" do
+
+        end
+
+        pending "prevents additional post-conditions from running" do
+
+        end
+
+        context "in a parent group" do
+          pending "fails the test" do
+
+          end
+
+          pending "doesn't run child post-conditions" do
+
+          end
+        end
+      end
     end
 
     context "with a failing test" do
@@ -356,6 +479,102 @@ describe Spectator::RunnableExample do
           calls.should eq(%i[a b])
         end
       end
+
+      context "pre-conditions" do
+        it "checks a single condition" do
+          called = false
+          conditions = new_conditions(pre: -> { called = true; nil })
+          run_example(FailingExample, conditions: conditions)
+          called.should be_true
+        end
+
+        it "checks multiple conditions" do
+          call_count = 0
+          conditions = new_conditions(pre: [
+            -> { call_count += 1; nil },
+            -> { call_count += 2; nil },
+            -> { call_count += 3; nil },
+          ])
+          run_example(FailingExample, conditions: conditions)
+          call_count.should eq(6)
+        end
+
+        it "checks them in the correct order" do
+          calls = [] of Symbol
+          conditions = new_conditions(pre: [
+            -> { calls << :a; nil },
+            -> { calls << :b; nil },
+            -> { calls << :c; nil },
+          ])
+          run_example(FailingExample, conditions: conditions)
+          calls.should eq(%i[a b c])
+        end
+
+        it "checks parent group conditions" do
+          called = false
+          conditions = new_conditions(pre: -> { called = true; nil })
+          root = Spectator::RootExampleGroup.new(Spectator::ExampleHooks.empty, conditions)
+          group = Spectator::NestedExampleGroup.new("what", root, Spectator::ExampleHooks.empty, Spectator::ExampleConditions.empty)
+          root.children = [group.as(Spectator::ExampleComponent)]
+          run_example(FailingExample, group)
+          called.should be_true
+        end
+
+        it "checks parent group conditions first" do
+          calls = [] of Symbol
+          root_conditions = new_conditions(pre: -> { calls << :a; nil })
+          group_conditions = new_conditions(pre: -> { calls << :b; nil })
+          root = Spectator::RootExampleGroup.new(Spectator::ExampleHooks.empty, root_conditions)
+          group = Spectator::NestedExampleGroup.new("what", root, Spectator::ExampleHooks.empty, group_conditions)
+          root.children = [group.as(Spectator::ExampleComponent)]
+          run_example(FailingExample, group)
+          calls.should eq(%i[a b])
+        end
+      end
+
+      context "failing pre-condition" do
+        pending "fails the test" do
+
+        end
+
+        pending "prevents the test code from running" do
+
+        end
+
+        pending "prevents additional pre-conditions from running" do
+
+        end
+
+        pending "prevents additional post-conditiosn from running" do
+
+        end
+
+        context "in a parent group" do
+          pending "fails the test" do
+
+          end
+
+          pending "prevents the test code from running" do
+
+          end
+
+          pending "doesn't run child pre-conditions" do
+
+          end
+
+          pending "doesn't run child post-conditions" do
+
+          end
+        end
+      end
+
+      pending "doesn't run post-conditions" do
+
+      end
+
+      pending "doesn't run parent group post-conditions" do
+
+      end
     end
 
     context "with an errored test" do
@@ -521,6 +740,102 @@ describe Spectator::RunnableExample do
           run_example(ErroredExample, group)
           calls.should eq(%i[a b])
         end
+      end
+
+      context "pre-conditions" do
+        it "checks a single condition" do
+          called = false
+          conditions = new_conditions(pre: -> { called = true; nil })
+          run_example(ErroredExample, conditions: conditions)
+          called.should be_true
+        end
+
+        it "checks multiple conditions" do
+          call_count = 0
+          conditions = new_conditions(pre: [
+            -> { call_count += 1; nil },
+            -> { call_count += 2; nil },
+            -> { call_count += 3; nil },
+          ])
+          run_example(ErroredExample, conditions: conditions)
+          call_count.should eq(6)
+        end
+
+        it "checks them in the correct order" do
+          calls = [] of Symbol
+          conditions = new_conditions(pre: [
+            -> { calls << :a; nil },
+            -> { calls << :b; nil },
+            -> { calls << :c; nil },
+          ])
+          run_example(ErroredExample, conditions: conditions)
+          calls.should eq(%i[a b c])
+        end
+
+        it "checks parent group conditions" do
+          called = false
+          conditions = new_conditions(pre: -> { called = true; nil })
+          root = Spectator::RootExampleGroup.new(Spectator::ExampleHooks.empty, conditions)
+          group = Spectator::NestedExampleGroup.new("what", root, Spectator::ExampleHooks.empty, Spectator::ExampleConditions.empty)
+          root.children = [group.as(Spectator::ExampleComponent)]
+          run_example(ErroredExample, group)
+          called.should be_true
+        end
+
+        it "checks parent group conditions first" do
+          calls = [] of Symbol
+          root_conditions = new_conditions(pre: -> { calls << :a; nil })
+          group_conditions = new_conditions(pre: -> { calls << :b; nil })
+          root = Spectator::RootExampleGroup.new(Spectator::ExampleHooks.empty, root_conditions)
+          group = Spectator::NestedExampleGroup.new("what", root, Spectator::ExampleHooks.empty, group_conditions)
+          root.children = [group.as(Spectator::ExampleComponent)]
+          run_example(ErroredExample, group)
+          calls.should eq(%i[a b])
+        end
+      end
+
+      context "failing pre-condition" do
+        pending "fails the test" do
+
+        end
+
+        pending "prevents the test code from running" do
+
+        end
+
+        pending "prevents additional pre-conditions from running" do
+
+        end
+
+        pending "prevents additional post-conditiosn from running" do
+
+        end
+
+        context "in a parent group" do
+          pending "fails the test" do
+
+          end
+
+          pending "prevents the test code from running" do
+
+          end
+
+          pending "doesn't run child pre-conditions" do
+
+          end
+
+          pending "doesn't run child post-conditions" do
+
+          end
+        end
+      end
+
+      pending "doesn't run post-conditions" do
+
+      end
+
+      pending "doesn't run parent group post-conditions" do
+
       end
     end
 
