@@ -28,8 +28,8 @@ module Spectator::Matchers
     # ```
     # expect(2).to be > 1
     # ```
-    def >(other : ExpectedType) forall ExpectedType
-      raise NotImplementedError.new("be >")
+    def >(expected : ExpectedType) forall ExpectedType
+      GreaterThanMatcher.new(expected)
     end
 
     # Creates a matcher that checks if a value is greater than or equal to an expected value.
