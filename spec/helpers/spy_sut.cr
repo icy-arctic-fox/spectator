@@ -2,15 +2,15 @@
 # This class tracks calls made to it.
 class SpySUT
   {% for item in [
-    {"==",  "eq"},
-    {"!=",  "ne"},
-    {"<",   "lt"},
-    {"<=",  "le"},
-    {">",   "gt"},
-    {">=",  "ge"},
-    {"===", "case_eq"},
-    {"=~",  "match"}
-  ] %}
+                   {"==", "eq"},
+                   {"!=", "ne"},
+                   {"<", "lt"},
+                   {"<=", "le"},
+                   {">", "gt"},
+                   {">=", "ge"},
+                   {"===", "case_eq"},
+                   {"=~", "match"},
+                 ] %}
   {% operator = item[0].id %}
   {% name = item[1].id %}
 
