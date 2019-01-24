@@ -28,7 +28,7 @@ module Spectator::DSL
     end
 
     # Indicates that some value when compared to another satisfies an operator.
-    # An operator should follow, such as: `<`, `<=`, `>`, or `>=`.
+    # An operator can follow, such as: `<`, `<=`, `>`, or `>=`.
     #
     # Examples:
     # ```
@@ -36,9 +36,14 @@ module Spectator::DSL
     # expect(5).to be >= 3
     # ```
     #
-    # See `Spectator::Matchers::BeComparison` for supported operators and methods.
+    # Additionally, a value can just "be" truthy by omitting an operator.
+    # ```
+    # expect("foo").to be
+    # # is the same as:
+    # expect("foo").to be_truthy
+    # ```
     macro be
-      ::Spectator::Matchers::BeComparison.new
+      ::Spectator::Matchers::TruthyMatcher.new(true)
     end
 
     # Indicates that some value should semantically equal another.
