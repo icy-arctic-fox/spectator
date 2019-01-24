@@ -1,30 +1,27 @@
 # Example system to test that doubles as a spy.
 # This class tracks calls made to it.
 class SpySUT
-  # Number of times the `#==` method was called.
-  getter eq_call_count = 0
+  {% for item in [
+    {"==",  "eq"},
+    {"!=",  "ne"},
+    {"<",   "lt"},
+    {"<=",  "le"},
+    {">",   "gt"},
+    {">=",  "ge"},
+    {"===", "case_eq"},
+    {"=~",  "match"}
+  ] %}
+  {% operator = item[0].id %}
+  {% name = item[1].id %}
 
-  # Number of times the `#===` method was called.
-  getter case_eq_call_count = 0
+  # Number of times the `#{{operator}}` method was called.
+  getter {{name}}_call_count = 0
 
-  # Number of times the `#=~` method was called.
-  getter match_call_count = 0
-
-  # Returns true and increments `#eq_call_count`.
-  def ==(other : T) forall T
-    @eq_call_count += 1
+  # Returns true and increments `#{{name}}_call_count`.
+  def {{operator}}(other : T) forall T
+    @{{name}}_call_count += 1
     true
   end
 
-  # Returns true and increments `#case_eq_call_count`.
-  def ===(other : T) forall T
-    @case_eq_call_count += 1
-    true
-  end
-
-  # Returns true and increments `#match_eq_call_count`.
-  def =~(other : T) forall T
-    @match_call_count += 1
-    true
-  end
+  {% end %}
 end
