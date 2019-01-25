@@ -83,13 +83,25 @@ describe Spectator::RunnableExample do
             calls.should eq(\%i[a b])
           end
 
-          pending "runs the hook before the test code" do
-
+          it "runs the hook before the test code" do
+            calls = [] of Symbol
+            hooks = new_hooks({{hook_type.id}}: ->{ calls << :a; nil })
+            run_example(hooks) do
+              calls << :b
+            end
+            calls.should eq(\%i[a b])
           end
         end
       {% end %}
 
-      pending "runs before_all hooks prior to before_each hooks" do
+      it "runs before_all hooks prior to before_each hooks" do
+        calls = [] of Symbol
+        hooks = new_hooks(
+          before_all: ->{ calls << :a; nil },
+          before_each: ->{ calls << :b; nil }
+        )
+        run_example(PassingExample, hooks)
+        calls.should eq(%i[a b])
       end
 
       {% for hook_type in %i[after_all after_each] %}
@@ -144,13 +156,25 @@ describe Spectator::RunnableExample do
             calls.should eq(\%i[b a])
           end
 
-          pending "runs the hook after the test code" do
-
+          it "runs the hook after the test code" do
+            calls = [] of Symbol
+            hooks = new_hooks({{hook_type.id}}: ->{ calls << :a; nil })
+            run_example(hooks) do
+              calls << :b
+            end
+            calls.should eq(\%i[b a])
           end
         end
       {% end %}
 
-      pending "runs after_each hooks prior to after_all hooks" do
+      it "runs after_each hooks prior to after_all hooks" do
+        calls = [] of Symbol
+        hooks = new_hooks(
+          after_each: ->{ calls << :a; nil },
+          after_all: ->{ calls << :b; nil }
+        )
+        run_example(PassingExample, hooks)
+        calls.should eq(%i[a b])
       end
 
       context "around_each hooks" do
@@ -205,10 +229,26 @@ describe Spectator::RunnableExample do
         end
       end
 
-      pending "runs around_each hooks after to before hooks" do
+      it "runs around_each hooks after to before hooks" do
+        calls = [] of Symbol
+        hooks = new_hooks(
+          before_all: ->{ calls << :b; nil },
+          before_each: ->{ calls << :b; nil },
+          around_each: ->(proc : ->) { calls << :c; proc.call }
+        )
+        run_example(PassingExample, hooks)
+        calls.should eq(%i[b b c])
       end
 
-      pending "runs around_each hooks prior to after hooks" do
+      it "runs around_each hooks prior to after hooks" do
+        calls = [] of Symbol
+        hooks = new_hooks(
+          around_each: ->(proc : ->) { calls << :c; proc.call },
+          after_each: ->{ calls << :a; nil },
+          after_all: ->{ calls << :a; nil },
+        )
+        run_example(PassingExample, hooks)
+        calls.should eq(%i[c a a])
       end
 
       {% for condition in %i[pre post] %}
@@ -388,14 +428,17 @@ describe Spectator::RunnableExample do
             run_example(FailingExample, group)
             calls.should eq(\%i[a b])
           end
-
-          pending "runs the hook before the test code" do
-
-          end
         end
       {% end %}
 
-      pending "runs before_all hooks prior to before_each hooks" do
+      it "runs before_all hooks prior to before_each hooks" do
+        calls = [] of Symbol
+        hooks = new_hooks(
+          before_all: ->{ calls << :a; nil },
+          before_each: ->{ calls << :b; nil }
+        )
+        run_example(FailingExample, hooks)
+        calls.should eq(%i[a b])
       end
 
       {% for hook_type in %i[after_all after_each] %}
@@ -449,14 +492,17 @@ describe Spectator::RunnableExample do
             run_example(FailingExample, group)
             calls.should eq(\%i[b a])
           end
-
-          pending "runs the hook after the test code" do
-
-          end
         end
       {% end %}
 
-      pending "runs after_each hooks prior to after_all hooks" do
+      it "runs after_each hooks prior to after_all hooks" do
+        calls = [] of Symbol
+        hooks = new_hooks(
+          after_each: ->{ calls << :a; nil },
+          after_all: ->{ calls << :b; nil }
+        )
+        run_example(FailingExample, hooks)
+        calls.should eq(%i[a b])
       end
 
       context "around_each hooks" do
@@ -511,10 +557,26 @@ describe Spectator::RunnableExample do
         end
       end
 
-      pending "runs around_each hooks after to before hooks" do
+      it "runs around_each hooks after to before hooks" do
+        calls = [] of Symbol
+        hooks = new_hooks(
+          before_all: ->{ calls << :b; nil },
+          before_each: ->{ calls << :b; nil },
+          around_each: ->(proc : ->) { calls << :c; proc.call }
+        )
+        run_example(FailingExample, hooks)
+        calls.should eq(%i[b b c])
       end
 
-      pending "runs around_each hooks prior to after hooks" do
+      it "runs around_each hooks prior to after hooks" do
+        calls = [] of Symbol
+        hooks = new_hooks(
+          around_each: ->(proc : ->) { calls << :c; proc.call },
+          after_each: ->{ calls << :a; nil },
+          after_all: ->{ calls << :a; nil },
+        )
+        run_example(FailingExample, hooks)
+        calls.should eq(%i[c a a])
       end
 
       context "pre-conditions" do
@@ -669,14 +731,17 @@ describe Spectator::RunnableExample do
             run_example(ErroredExample, group)
             calls.should eq(\%i[a b])
           end
-
-          pending "runs the hook before the test code" do
-
-          end
         end
       {% end %}
 
-      pending "runs before_all hooks prior to before_each hooks" do
+      it "runs before_all hooks prior to before_each hooks" do
+        calls = [] of Symbol
+        hooks = new_hooks(
+          before_all: ->{ calls << :a; nil },
+          before_each: ->{ calls << :b; nil }
+        )
+        run_example(ErroredExample, hooks)
+        calls.should eq(%i[a b])
       end
 
       {% for hook_type in %i[after_all after_each] %}
@@ -730,14 +795,17 @@ describe Spectator::RunnableExample do
             run_example(ErroredExample, group)
             calls.should eq(\%i[b a])
           end
-
-          pending "runs the hook after the test code" do
-
-          end
         end
       {% end %}
 
-      pending "runs after_each hooks prior to after_all hooks" do
+      it "runs after_each hooks prior to after_all hooks" do
+        calls = [] of Symbol
+        hooks = new_hooks(
+          after_each: ->{ calls << :a; nil },
+          after_all: ->{ calls << :b; nil }
+        )
+        run_example(ErroredExample, hooks)
+        calls.should eq(%i[a b])
       end
 
       context "around_each hooks" do
@@ -792,10 +860,26 @@ describe Spectator::RunnableExample do
         end
       end
 
-      pending "runs around_each hooks after to before hooks" do
+      it "runs around_each hooks after to before hooks" do
+        calls = [] of Symbol
+        hooks = new_hooks(
+          before_all: ->{ calls << :b; nil },
+          before_each: ->{ calls << :b; nil },
+          around_each: ->(proc : ->) { calls << :c; proc.call }
+        )
+        run_example(ErroredExample, hooks)
+        calls.should eq(%i[b b c])
       end
 
-      pending "runs around_each hooks prior to after hooks" do
+      it "runs around_each hooks prior to after hooks" do
+        calls = [] of Symbol
+        hooks = new_hooks(
+          around_each: ->(proc : ->) { calls << :c; proc.call },
+          after_each: ->{ calls << :a; nil },
+          after_all: ->{ calls << :a; nil },
+        )
+        run_example(ErroredExample, hooks)
+        calls.should eq(%i[c a a])
       end
 
       context "pre-conditions" do
