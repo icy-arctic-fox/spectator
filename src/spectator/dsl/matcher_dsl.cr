@@ -75,6 +75,20 @@ module Spectator::DSL
       ::Spectator::Matchers::TypeMatcher({{expected}}).new
     end
 
+    # Indicates that some value should be of a specified type.
+    # The `#is_a?` method is used for this check.
+    # A type name or type union should be used for `expected`.
+    # This method is identical to `#be_a`,
+    # and exists just to improve grammar.
+    #
+    # Examples:
+    # ```
+    # expect(123).to be_an(Int32)
+    # ```
+    macro be_an(expected)
+      be_a({{expected}})
+    end
+
     # Indicates that some value should be less than another.
     # The `<` operator is used for this check.
     # The value passed to this method is the value expected to be larger.
