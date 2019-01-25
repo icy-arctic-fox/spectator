@@ -10,6 +10,7 @@ class SpySUT
                    {">=", "ge"},
                    {"===", "case_eq"},
                    {"=~", "match"},
+                   {"includes?", "includes"},
                  ] %}
   {% operator = item[0].id %}
   {% name = item[1].id %}
