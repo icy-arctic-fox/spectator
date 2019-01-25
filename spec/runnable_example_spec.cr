@@ -227,28 +227,28 @@ describe Spectator::RunnableExample do
           run_example(PassingExample, group)
           calls.should eq(%i[a b])
         end
-      end
 
-      it "runs around_each hooks after to before hooks" do
-        calls = [] of Symbol
-        hooks = new_hooks(
-          before_all: ->{ calls << :b; nil },
-          before_each: ->{ calls << :b; nil },
-          around_each: ->(proc : ->) { calls << :c; proc.call }
-        )
-        run_example(PassingExample, hooks)
-        calls.should eq(%i[b b c])
-      end
+        it "runs around_each hooks after the before hooks" do
+          calls = [] of Symbol
+          hooks = new_hooks(
+            before_all: ->{ calls << :b; nil },
+            before_each: ->{ calls << :b; nil },
+            around_each: ->(proc : ->) { calls << :c; proc.call }
+          )
+          run_example(PassingExample, hooks)
+          calls.should eq(%i[b b c])
+        end
 
-      it "runs around_each hooks prior to after hooks" do
-        calls = [] of Symbol
-        hooks = new_hooks(
-          around_each: ->(proc : ->) { calls << :c; proc.call },
-          after_each: ->{ calls << :a; nil },
-          after_all: ->{ calls << :a; nil },
-        )
-        run_example(PassingExample, hooks)
-        calls.should eq(%i[c a a])
+        it "runs around_each hooks prior to after hooks" do
+          calls = [] of Symbol
+          hooks = new_hooks(
+            around_each: ->(proc : ->) { calls << :c; proc.call },
+            after_each: ->{ calls << :a; nil },
+            after_all: ->{ calls << :a; nil },
+          )
+          run_example(PassingExample, hooks)
+          calls.should eq(%i[c a a])
+        end
       end
 
       {% for condition in %i[pre post] %}
@@ -293,6 +293,15 @@ describe Spectator::RunnableExample do
           end
 
           {% if condition == :pre %}
+            it "runs prior to the test code" do
+              calls = [] of Symbol
+              conditions = new_conditions({{condition.id}}: ->{ calls << :a; nil })
+              run_example(conditions: conditions) do
+                calls << :b
+              end
+              calls.should eq(\%i[a b])
+            end
+
             it "checks parent group conditions first" do
               calls = [] of Symbol
               root_conditions = new_conditions({{condition.id}}: -> { calls << :a; nil })
@@ -304,6 +313,15 @@ describe Spectator::RunnableExample do
               calls.should eq(\%i[a b])
             end
           {% else %}
+            it "runs after the test code" do
+              calls = [] of Symbol
+              conditions = new_conditions({{condition.id}}: ->{ calls << :b; nil })
+              run_example(conditions: conditions) do
+                calls << :a
+              end
+              calls.should eq(\%i[a b])
+            end
+
             it "checks parent group conditions last" do
               calls = [] of Symbol
               root_conditions = new_conditions({{condition.id}}: -> { calls << :a; nil })
@@ -318,55 +336,163 @@ describe Spectator::RunnableExample do
         end
       {% end %}
 
-      pending "runs before hooks prior to pre-conditions" do
+      it "runs before hooks prior to pre-conditions" do
+        calls = [] of Symbol
+        hooks = new_hooks(
+          before_all: ->{ calls << :b; nil },
+          before_each: ->{ calls << :b; nil }
+        )
+        conditions = new_conditions(pre: ->{ calls << :p; nil })
+        run_example(PassingExample, hooks, conditions)
+        calls.should eq(%i[b b p])
       end
 
-      pending "runs around_each hooks prior to pre-conditions" do
+      it "runs around_each hooks prior to pre-conditions" do
+        calls = [] of Symbol
+        hooks = new_hooks(
+          around_each: ->(proc : ->) { calls << :c; proc.call }
+        )
+        conditions = new_conditions(pre: ->{ calls << :p; nil })
+        run_example(PassingExample, hooks, conditions)
+        calls.should eq(%i[c p])
       end
 
-      pending "runs post-conditions prior to after hooks" do
+      it "runs post-conditions prior to after hooks" do
+        calls = [] of Symbol
+        hooks = new_hooks(
+          after_all: ->{ calls << :a; nil },
+          after_each: ->{ calls << :a; nil }
+        )
+        conditions = new_conditions(pre: ->{ calls << :p; nil })
+        run_example(PassingExample, hooks, conditions)
+        calls.should eq(%i[p a a])
       end
 
       context "failing pre-condition" do
-        pending "fails the test" do
+        it "fails the test" do
+          conditions = new_conditions(pre: ->{ report_expectations(0, 1) })
+          result = run_example(PassingExample, conditions: conditions)
+          result.should be_a(Spectator::FailedResult)
         end
 
-        pending "prevents the test code from running" do
+        it "prevents the test code from running" do
+          called = false
+          conditions = new_conditions(pre: ->{ report_expectations(0, 1) })
+          run_example(conditions: conditions) do
+            called = true
+          end
+          called.should be_false
         end
 
-        pending "prevents additional pre-conditions from running" do
+        it "prevents additional pre-conditions from running" do
+          called = false
+          conditions = new_conditions(pre: [
+            ->{ report_expectations(0, 1) },
+            ->{ called = true; nil }
+            ])
+          run_example(PassingExample, conditions: conditions)
+          called.should be_false
         end
 
-        pending "prevents additional post-conditiosn from running" do
+        it "prevents additional post-conditions from running" do
+          called = false
+          conditions = new_conditions(
+            pre: ->{ report_expectations(0, 1) },
+            post: -> { called = true; nil }
+          )
+          run_example(PassingExample, conditions: conditions)
+          called.should be_false
         end
 
         context "in a parent group" do
-          pending "fails the test" do
+          it "fails the test" do
+            conditions = new_conditions(pre: -> { report_expectations(0, 1) })
+            root = Spectator::RootExampleGroup.new(Spectator::ExampleHooks.empty, conditions)
+            group = Spectator::NestedExampleGroup.new("what", root, Spectator::ExampleHooks.empty, Spectator::ExampleConditions.empty)
+            root.children = [group.as(Spectator::ExampleComponent)]
+            result = run_example(PassingExample, group)
+            result.should be_a(Spectator::FailedResult)
           end
 
-          pending "prevents the test code from running" do
+          it "prevents the test code from running" do
+            called = false
+            conditions = new_conditions(pre: -> { report_expectations(0, 1) })
+            root = Spectator::RootExampleGroup.new(Spectator::ExampleHooks.empty, conditions)
+            group = Spectator::NestedExampleGroup.new("what", root, Spectator::ExampleHooks.empty, Spectator::ExampleConditions.empty)
+            root.children = [group.as(Spectator::ExampleComponent)]
+            example = SpyExample.new(group, Spectator::Internals::SampleValues.empty)
+            group.children = [example.as(Spectator::ExampleComponent)]
+            example.block = ->{ called = true; nil }
+            Spectator::Internals::Harness.run(example)
+            called.should be_false
           end
 
-          pending "doesn't run child pre-conditions" do
+          it "doesn't run child pre-conditions" do
+            called = false
+            root_conditions = new_conditions(pre: -> { report_expectations(0, 1) })
+            group_conditions = new_conditions(pre: -> { called = true; nil })
+            root = Spectator::RootExampleGroup.new(Spectator::ExampleHooks.empty, root_conditions)
+            group = Spectator::NestedExampleGroup.new("what", root, Spectator::ExampleHooks.empty, group_conditions)
+            root.children = [group.as(Spectator::ExampleComponent)]
+            example = PassingExample.new(group, Spectator::Internals::SampleValues.empty)
+            group.children = [example.as(Spectator::ExampleComponent)]
+            Spectator::Internals::Harness.run(example)
+            called.should be_false
           end
 
-          pending "doesn't run child post-conditions" do
+          it "doesn't run child post-conditions" do
+            called = false
+            root_conditions = new_conditions(pre: -> { report_expectations(0, 1) })
+            group_conditions = new_conditions(post: -> { called = true; nil })
+            root = Spectator::RootExampleGroup.new(Spectator::ExampleHooks.empty, root_conditions)
+            group = Spectator::NestedExampleGroup.new("what", root, Spectator::ExampleHooks.empty, group_conditions)
+            root.children = [group.as(Spectator::ExampleComponent)]
+            example = PassingExample.new(group, Spectator::Internals::SampleValues.empty)
+            group.children = [example.as(Spectator::ExampleComponent)]
+            Spectator::Internals::Harness.run(example)
+            called.should be_false
           end
         end
       end
 
       context "failing post-condition" do
-        pending "fails the test" do
+        it "fails the test" do
+          conditions = new_conditions(post: ->{ report_expectations(0, 1) })
+          result = run_example(PassingExample, conditions: conditions)
+          result.should be_a(Spectator::FailedResult)
         end
 
-        pending "prevents additional post-conditions from running" do
+        it "prevents additional post-conditions from running" do
+          called = false
+          conditions = new_conditions(post: [
+            ->{ report_expectations(0, 1) },
+            ->{ called = true; nil }
+            ])
+          run_example(PassingExample, conditions: conditions)
+          called.should be_false
         end
 
         context "in a parent group" do
-          pending "fails the test" do
+          it "fails the test" do
+            conditions = new_conditions(post: -> { report_expectations(0, 1) })
+            root = Spectator::RootExampleGroup.new(Spectator::ExampleHooks.empty, conditions)
+            group = Spectator::NestedExampleGroup.new("what", root, Spectator::ExampleHooks.empty, Spectator::ExampleConditions.empty)
+            root.children = [group.as(Spectator::ExampleComponent)]
+            result = run_example(PassingExample, group)
+            result.should be_a(Spectator::FailedResult)
           end
 
-          pending "doesn't run child post-conditions" do
+          it "doesn't run parent post-conditions" do
+            called = false
+            root_conditions = new_conditions(post: -> { called = true; nil })
+            group_conditions = new_conditions(post: -> { report_expectations(0, 1) })
+            root = Spectator::RootExampleGroup.new(Spectator::ExampleHooks.empty, root_conditions)
+            group = Spectator::NestedExampleGroup.new("what", root, Spectator::ExampleHooks.empty, group_conditions)
+            root.children = [group.as(Spectator::ExampleComponent)]
+            example = PassingExample.new(group, Spectator::Internals::SampleValues.empty)
+            group.children = [example.as(Spectator::ExampleComponent)]
+            Spectator::Internals::Harness.run(example)
+            called.should be_false
           end
         end
       end
@@ -555,28 +681,28 @@ describe Spectator::RunnableExample do
           run_example(FailingExample, group)
           calls.should eq(%i[a b])
         end
-      end
 
-      it "runs around_each hooks after to before hooks" do
-        calls = [] of Symbol
-        hooks = new_hooks(
-          before_all: ->{ calls << :b; nil },
-          before_each: ->{ calls << :b; nil },
-          around_each: ->(proc : ->) { calls << :c; proc.call }
-        )
-        run_example(FailingExample, hooks)
-        calls.should eq(%i[b b c])
-      end
+        it "runs around_each hooks after the before hooks" do
+          calls = [] of Symbol
+          hooks = new_hooks(
+            before_all: ->{ calls << :b; nil },
+            before_each: ->{ calls << :b; nil },
+            around_each: ->(proc : ->) { calls << :c; proc.call }
+          )
+          run_example(FailingExample, hooks)
+          calls.should eq(%i[b b c])
+        end
 
-      it "runs around_each hooks prior to after hooks" do
-        calls = [] of Symbol
-        hooks = new_hooks(
-          around_each: ->(proc : ->) { calls << :c; proc.call },
-          after_each: ->{ calls << :a; nil },
-          after_all: ->{ calls << :a; nil },
-        )
-        run_example(FailingExample, hooks)
-        calls.should eq(%i[c a a])
+        it "runs around_each hooks prior to after hooks" do
+          calls = [] of Symbol
+          hooks = new_hooks(
+            around_each: ->(proc : ->) { calls << :c; proc.call },
+            after_each: ->{ calls << :a; nil },
+            after_all: ->{ calls << :a; nil },
+          )
+          run_example(FailingExample, hooks)
+          calls.should eq(%i[c a a])
+        end
       end
 
       context "pre-conditions" do
@@ -631,47 +757,107 @@ describe Spectator::RunnableExample do
         end
       end
 
-      pending "runs before hooks prior to pre-conditions" do
+      it "runs before hooks prior to pre-conditions" do
+        calls = [] of Symbol
+        hooks = new_hooks(
+          before_all: ->{ calls << :b; nil },
+          before_each: ->{ calls << :b; nil }
+        )
+        conditions = new_conditions(pre: ->{ calls << :p; nil })
+        run_example(FailingExample, hooks, conditions)
+        calls.should eq(%i[b b p])
       end
 
-      pending "runs around_each hooks prior to pre-conditions" do
-      end
-
-      pending "runs post-conditions prior to after hooks" do
+      it "runs around_each hooks prior to pre-conditions" do
+        calls = [] of Symbol
+        hooks = new_hooks(
+          around_each: ->(proc : ->) { calls << :c; proc.call }
+        )
+        conditions = new_conditions(pre: ->{ calls << :p; nil })
+        run_example(FailingExample, hooks, conditions)
+        calls.should eq(%i[c p])
       end
 
       context "failing pre-condition" do
-        pending "fails the test" do
+        it "fails the test" do
+          conditions = new_conditions(pre: ->{ report_expectations(0, 1) })
+          result = run_example(FailingExample, conditions: conditions)
+          result.should be_a(Spectator::FailedResult)
         end
 
-        pending "prevents the test code from running" do
+        it "prevents additional pre-conditions from running" do
+          called = false
+          conditions = new_conditions(pre: [
+            ->{ report_expectations(0, 1) },
+            ->{ called = true; nil }
+            ])
+          run_example(FailingExample, conditions: conditions)
+          called.should be_false
         end
 
-        pending "prevents additional pre-conditions from running" do
-        end
-
-        pending "prevents additional post-conditiosn from running" do
+        it "prevents additional post-conditions from running" do
+          called = false
+          conditions = new_conditions(
+            pre: ->{ report_expectations(0, 1) },
+            post: -> { called = true; nil }
+          )
+          run_example(FailingExample, conditions: conditions)
+          called.should be_false
         end
 
         context "in a parent group" do
-          pending "fails the test" do
+          it "fails the test" do
+            conditions = new_conditions(pre: -> { report_expectations(0, 1) })
+            root = Spectator::RootExampleGroup.new(Spectator::ExampleHooks.empty, conditions)
+            group = Spectator::NestedExampleGroup.new("what", root, Spectator::ExampleHooks.empty, Spectator::ExampleConditions.empty)
+            root.children = [group.as(Spectator::ExampleComponent)]
+            result = run_example(FailingExample, group)
+            result.should be_a(Spectator::FailedResult)
           end
 
-          pending "prevents the test code from running" do
+          it "doesn't run child pre-conditions" do
+            called = false
+            root_conditions = new_conditions(pre: -> { report_expectations(0, 1) })
+            group_conditions = new_conditions(pre: -> { called = true; nil })
+            root = Spectator::RootExampleGroup.new(Spectator::ExampleHooks.empty, root_conditions)
+            group = Spectator::NestedExampleGroup.new("what", root, Spectator::ExampleHooks.empty, group_conditions)
+            root.children = [group.as(Spectator::ExampleComponent)]
+            example = FailingExample.new(group, Spectator::Internals::SampleValues.empty)
+            group.children = [example.as(Spectator::ExampleComponent)]
+            Spectator::Internals::Harness.run(example)
+            called.should be_false
           end
 
-          pending "doesn't run child pre-conditions" do
-          end
-
-          pending "doesn't run child post-conditions" do
+          it "doesn't run child post-conditions" do
+            called = false
+            root_conditions = new_conditions(pre: -> { report_expectations(0, 1) })
+            group_conditions = new_conditions(post: -> { called = true; nil })
+            root = Spectator::RootExampleGroup.new(Spectator::ExampleHooks.empty, root_conditions)
+            group = Spectator::NestedExampleGroup.new("what", root, Spectator::ExampleHooks.empty, group_conditions)
+            root.children = [group.as(Spectator::ExampleComponent)]
+            example = FailingExample.new(group, Spectator::Internals::SampleValues.empty)
+            group.children = [example.as(Spectator::ExampleComponent)]
+            Spectator::Internals::Harness.run(example)
+            called.should be_false
           end
         end
       end
 
-      pending "doesn't run post-conditions" do
+      it "doesn't run post-conditions" do
+        called = false
+        conditions = new_conditions(post: ->{ called = true; nil })
+        run_example(FailingExample, conditions: conditions)
+        called.should be_false
       end
 
-      pending "doesn't run parent group post-conditions" do
+      it "doesn't run parent group post-conditions" do
+        called = false
+        conditions = new_conditions(post: -> { called = true; nil })
+        root = Spectator::RootExampleGroup.new(Spectator::ExampleHooks.empty, conditions)
+        group = Spectator::NestedExampleGroup.new("what", root, Spectator::ExampleHooks.empty, Spectator::ExampleConditions.empty)
+        root.children = [group.as(Spectator::ExampleComponent)]
+        result = run_example(FailingExample, group)
+        called.should be_false
       end
     end
 
@@ -858,28 +1044,28 @@ describe Spectator::RunnableExample do
           run_example(ErroredExample, group)
           calls.should eq(%i[a b])
         end
-      end
 
-      it "runs around_each hooks after to before hooks" do
-        calls = [] of Symbol
-        hooks = new_hooks(
-          before_all: ->{ calls << :b; nil },
-          before_each: ->{ calls << :b; nil },
-          around_each: ->(proc : ->) { calls << :c; proc.call }
-        )
-        run_example(ErroredExample, hooks)
-        calls.should eq(%i[b b c])
-      end
+        it "runs around_each hooks after the before hooks" do
+          calls = [] of Symbol
+          hooks = new_hooks(
+            before_all: ->{ calls << :b; nil },
+            before_each: ->{ calls << :b; nil },
+            around_each: ->(proc : ->) { calls << :c; proc.call }
+          )
+          run_example(ErroredExample, hooks)
+          calls.should eq(%i[b b c])
+        end
 
-      it "runs around_each hooks prior to after hooks" do
-        calls = [] of Symbol
-        hooks = new_hooks(
-          around_each: ->(proc : ->) { calls << :c; proc.call },
-          after_each: ->{ calls << :a; nil },
-          after_all: ->{ calls << :a; nil },
-        )
-        run_example(ErroredExample, hooks)
-        calls.should eq(%i[c a a])
+        it "runs around_each hooks prior to after hooks" do
+          calls = [] of Symbol
+          hooks = new_hooks(
+            around_each: ->(proc : ->) { calls << :c; proc.call },
+            after_each: ->{ calls << :a; nil },
+            after_all: ->{ calls << :a; nil },
+          )
+          run_example(ErroredExample, hooks)
+          calls.should eq(%i[c a a])
+        end
       end
 
       context "pre-conditions" do
@@ -934,47 +1120,107 @@ describe Spectator::RunnableExample do
         end
       end
 
-      pending "runs before hooks prior to pre-conditions" do
+      it "runs before hooks prior to pre-conditions" do
+        calls = [] of Symbol
+        hooks = new_hooks(
+          before_all: ->{ calls << :b; nil },
+          before_each: ->{ calls << :b; nil }
+        )
+        conditions = new_conditions(pre: ->{ calls << :p; nil })
+        run_example(ErroredExample, hooks, conditions)
+        calls.should eq(%i[b b p])
       end
 
-      pending "runs around_each hooks prior to pre-conditions" do
-      end
-
-      pending "runs post-conditions prior to after hooks" do
+      it "runs around_each hooks prior to pre-conditions" do
+        calls = [] of Symbol
+        hooks = new_hooks(
+          around_each: ->(proc : ->) { calls << :c; proc.call }
+        )
+        conditions = new_conditions(pre: ->{ calls << :p; nil })
+        run_example(ErroredExample, hooks, conditions)
+        calls.should eq(%i[c p])
       end
 
       context "failing pre-condition" do
-        pending "fails the test" do
+        it "fails the test" do
+          conditions = new_conditions(pre: ->{ report_expectations(0, 1) })
+          result = run_example(ErroredExample, conditions: conditions)
+          result.should be_a(Spectator::FailedResult)
         end
 
-        pending "prevents the test code from running" do
+        it "prevents additional pre-conditions from running" do
+          called = false
+          conditions = new_conditions(pre: [
+            ->{ report_expectations(0, 1) },
+            ->{ called = true; nil }
+            ])
+          run_example(ErroredExample, conditions: conditions)
+          called.should be_false
         end
 
-        pending "prevents additional pre-conditions from running" do
-        end
-
-        pending "prevents additional post-conditiosn from running" do
+        it "prevents additional post-conditions from running" do
+          called = false
+          conditions = new_conditions(
+            pre: ->{ report_expectations(0, 1) },
+            post: -> { called = true; nil }
+          )
+          run_example(ErroredExample, conditions: conditions)
+          called.should be_false
         end
 
         context "in a parent group" do
-          pending "fails the test" do
+          it "fails the test" do
+            conditions = new_conditions(pre: -> { report_expectations(0, 1) })
+            root = Spectator::RootExampleGroup.new(Spectator::ExampleHooks.empty, conditions)
+            group = Spectator::NestedExampleGroup.new("what", root, Spectator::ExampleHooks.empty, Spectator::ExampleConditions.empty)
+            root.children = [group.as(Spectator::ExampleComponent)]
+            result = run_example(ErroredExample, group)
+            result.should be_a(Spectator::FailedResult)
           end
 
-          pending "prevents the test code from running" do
+          it "doesn't run child pre-conditions" do
+            called = false
+            root_conditions = new_conditions(pre: -> { report_expectations(0, 1) })
+            group_conditions = new_conditions(pre: -> { called = true; nil })
+            root = Spectator::RootExampleGroup.new(Spectator::ExampleHooks.empty, root_conditions)
+            group = Spectator::NestedExampleGroup.new("what", root, Spectator::ExampleHooks.empty, group_conditions)
+            root.children = [group.as(Spectator::ExampleComponent)]
+            example = ErroredExample.new(group, Spectator::Internals::SampleValues.empty)
+            group.children = [example.as(Spectator::ExampleComponent)]
+            Spectator::Internals::Harness.run(example)
+            called.should be_false
           end
 
-          pending "doesn't run child pre-conditions" do
-          end
-
-          pending "doesn't run child post-conditions" do
+          it "doesn't run child post-conditions" do
+            called = false
+            root_conditions = new_conditions(pre: -> { report_expectations(0, 1) })
+            group_conditions = new_conditions(post: -> { called = true; nil })
+            root = Spectator::RootExampleGroup.new(Spectator::ExampleHooks.empty, root_conditions)
+            group = Spectator::NestedExampleGroup.new("what", root, Spectator::ExampleHooks.empty, group_conditions)
+            root.children = [group.as(Spectator::ExampleComponent)]
+            example = ErroredExample.new(group, Spectator::Internals::SampleValues.empty)
+            group.children = [example.as(Spectator::ExampleComponent)]
+            Spectator::Internals::Harness.run(example)
+            called.should be_false
           end
         end
       end
 
-      pending "doesn't run post-conditions" do
+      it "doesn't run post-conditions" do
+        called = false
+        conditions = new_conditions(post: ->{ called = true; nil })
+        run_example(ErroredExample, conditions: conditions)
+        called.should be_false
       end
 
-      pending "doesn't run parent group post-conditions" do
+      it "doesn't run parent group post-conditions" do
+        called = false
+        conditions = new_conditions(post: -> { called = true; nil })
+        root = Spectator::RootExampleGroup.new(Spectator::ExampleHooks.empty, conditions)
+        group = Spectator::NestedExampleGroup.new("what", root, Spectator::ExampleHooks.empty, Spectator::ExampleConditions.empty)
+        root.children = [group.as(Spectator::ExampleComponent)]
+        result = run_example(ErroredExample, group)
+        called.should be_false
       end
     end
 
