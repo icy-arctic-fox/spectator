@@ -196,5 +196,71 @@ module Spectator::DSL
     macro be_falsey
       ::Spectator::Matchers::TruthyMatcher.new(false)
     end
+
+    # Indicates that some value should be contained within another.
+    # This checker can be used in one of two ways.
+    #
+    # The first: the `expected` argument can be anything that implements `#includes?`.
+    # This is typically a `Range`, but can also be `Enumerable`.
+    #
+    # Examples:
+    # ```
+    # expect(:foo).to be_within(%i[foo bar baz])
+    # expect(7).to be_within(1..10)
+    # ```
+    #
+    # The other way is to use this in conjunction with `of`.
+    # This creates a lower and upper bound
+    # centered around the value of the `expected` argument.
+    # This usage is helpful for comparisons on floating-point numbers.
+    #
+    # Examples:
+    # ```
+    # expect(50.0).to be_within(0.01).of(50.0)
+    # expect(speed).to be_within(5).of(speed_limit)
+    # ```
+    #
+    # NOTE: The `of` suffix must be used
+    # if the `expected` argument does not implement `#includes?`
+    #
+    # Additionally, for this second usage,
+    # an `inclusive` or `exclusive` suffix can be added.
+    # These modify the upper-bound on the range being checked against.
+    # By default, the range is *inclusive*.
+    #
+    # Examples:
+    # ```
+    # expect(days).to be_within(1).of(30).inclusive # 29, 30, or 31
+    # expect(100).to be_within(2).of(99).exclusive  # 97, 98, 99, or 100 (not 101)
+    # ```
+    #
+    # NOTE: Do not attempt to mix the two use cases.
+    # It likely won't work and will result in a compilation error.
+    macro be_within(expected)
+      ::Spectator::Matchers::RangeMatcher.new({{expected.stringify}}, {{expected}})
+    end
+
+    # Indicates that some value should be between a lower and upper-bound.
+    #
+    # Example:
+    # ```
+    # expect(7).to be_within(1, 10)
+    # ```
+    #
+    # Additionally, an `inclusive` or `exclusive` suffix can be added.
+    # These modify the upper-bound on the range being checked against.
+    # By default, the range is *inclusive*.
+    #
+    # Examples:
+    # ```
+    # expect(days).to be_within(28, 31).inclusive # 28, 29, 30, or 31
+    # expect(100).to be_within(97, 101).exclusive # 97, 98, 99, or 100 (not 101)
+    # ```
+    macro be_within(min, max)
+      :Spectator::Matchers::RangeMatcher.new(
+        [{{min.stringify}}, {{max.stringify}}].join(" to "),
+        Range.new({{min}}, {{max}})
+      )
+    end
   end
 end
