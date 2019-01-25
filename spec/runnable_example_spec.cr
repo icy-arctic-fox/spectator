@@ -388,8 +388,8 @@ describe Spectator::RunnableExample do
           called = false
           conditions = new_conditions(pre: [
             ->{ report_expectations(0, 1) },
-            ->{ called = true; nil }
-            ])
+            ->{ called = true; nil },
+          ])
           run_example(PassingExample, conditions: conditions)
           called.should be_false
         end
@@ -398,7 +398,7 @@ describe Spectator::RunnableExample do
           called = false
           conditions = new_conditions(
             pre: ->{ report_expectations(0, 1) },
-            post: -> { called = true; nil }
+            post: ->{ called = true; nil }
           )
           run_example(PassingExample, conditions: conditions)
           called.should be_false
@@ -406,7 +406,7 @@ describe Spectator::RunnableExample do
 
         context "in a parent group" do
           it "fails the test" do
-            conditions = new_conditions(pre: -> { report_expectations(0, 1) })
+            conditions = new_conditions(pre: ->{ report_expectations(0, 1) })
             root = Spectator::RootExampleGroup.new(Spectator::ExampleHooks.empty, conditions)
             group = Spectator::NestedExampleGroup.new("what", root, Spectator::ExampleHooks.empty, Spectator::ExampleConditions.empty)
             root.children = [group.as(Spectator::ExampleComponent)]
@@ -416,7 +416,7 @@ describe Spectator::RunnableExample do
 
           it "prevents the test code from running" do
             called = false
-            conditions = new_conditions(pre: -> { report_expectations(0, 1) })
+            conditions = new_conditions(pre: ->{ report_expectations(0, 1) })
             root = Spectator::RootExampleGroup.new(Spectator::ExampleHooks.empty, conditions)
             group = Spectator::NestedExampleGroup.new("what", root, Spectator::ExampleHooks.empty, Spectator::ExampleConditions.empty)
             root.children = [group.as(Spectator::ExampleComponent)]
@@ -429,8 +429,8 @@ describe Spectator::RunnableExample do
 
           it "doesn't run child pre-conditions" do
             called = false
-            root_conditions = new_conditions(pre: -> { report_expectations(0, 1) })
-            group_conditions = new_conditions(pre: -> { called = true; nil })
+            root_conditions = new_conditions(pre: ->{ report_expectations(0, 1) })
+            group_conditions = new_conditions(pre: ->{ called = true; nil })
             root = Spectator::RootExampleGroup.new(Spectator::ExampleHooks.empty, root_conditions)
             group = Spectator::NestedExampleGroup.new("what", root, Spectator::ExampleHooks.empty, group_conditions)
             root.children = [group.as(Spectator::ExampleComponent)]
@@ -442,8 +442,8 @@ describe Spectator::RunnableExample do
 
           it "doesn't run child post-conditions" do
             called = false
-            root_conditions = new_conditions(pre: -> { report_expectations(0, 1) })
-            group_conditions = new_conditions(post: -> { called = true; nil })
+            root_conditions = new_conditions(pre: ->{ report_expectations(0, 1) })
+            group_conditions = new_conditions(post: ->{ called = true; nil })
             root = Spectator::RootExampleGroup.new(Spectator::ExampleHooks.empty, root_conditions)
             group = Spectator::NestedExampleGroup.new("what", root, Spectator::ExampleHooks.empty, group_conditions)
             root.children = [group.as(Spectator::ExampleComponent)]
@@ -466,15 +466,15 @@ describe Spectator::RunnableExample do
           called = false
           conditions = new_conditions(post: [
             ->{ report_expectations(0, 1) },
-            ->{ called = true; nil }
-            ])
+            ->{ called = true; nil },
+          ])
           run_example(PassingExample, conditions: conditions)
           called.should be_false
         end
 
         context "in a parent group" do
           it "fails the test" do
-            conditions = new_conditions(post: -> { report_expectations(0, 1) })
+            conditions = new_conditions(post: ->{ report_expectations(0, 1) })
             root = Spectator::RootExampleGroup.new(Spectator::ExampleHooks.empty, conditions)
             group = Spectator::NestedExampleGroup.new("what", root, Spectator::ExampleHooks.empty, Spectator::ExampleConditions.empty)
             root.children = [group.as(Spectator::ExampleComponent)]
@@ -484,8 +484,8 @@ describe Spectator::RunnableExample do
 
           it "doesn't run parent post-conditions" do
             called = false
-            root_conditions = new_conditions(post: -> { called = true; nil })
-            group_conditions = new_conditions(post: -> { report_expectations(0, 1) })
+            root_conditions = new_conditions(post: ->{ called = true; nil })
+            group_conditions = new_conditions(post: ->{ report_expectations(0, 1) })
             root = Spectator::RootExampleGroup.new(Spectator::ExampleHooks.empty, root_conditions)
             group = Spectator::NestedExampleGroup.new("what", root, Spectator::ExampleHooks.empty, group_conditions)
             root.children = [group.as(Spectator::ExampleComponent)]
@@ -789,8 +789,8 @@ describe Spectator::RunnableExample do
           called = false
           conditions = new_conditions(pre: [
             ->{ report_expectations(0, 1) },
-            ->{ called = true; nil }
-            ])
+            ->{ called = true; nil },
+          ])
           run_example(FailingExample, conditions: conditions)
           called.should be_false
         end
@@ -799,7 +799,7 @@ describe Spectator::RunnableExample do
           called = false
           conditions = new_conditions(
             pre: ->{ report_expectations(0, 1) },
-            post: -> { called = true; nil }
+            post: ->{ called = true; nil }
           )
           run_example(FailingExample, conditions: conditions)
           called.should be_false
@@ -807,7 +807,7 @@ describe Spectator::RunnableExample do
 
         context "in a parent group" do
           it "fails the test" do
-            conditions = new_conditions(pre: -> { report_expectations(0, 1) })
+            conditions = new_conditions(pre: ->{ report_expectations(0, 1) })
             root = Spectator::RootExampleGroup.new(Spectator::ExampleHooks.empty, conditions)
             group = Spectator::NestedExampleGroup.new("what", root, Spectator::ExampleHooks.empty, Spectator::ExampleConditions.empty)
             root.children = [group.as(Spectator::ExampleComponent)]
@@ -817,8 +817,8 @@ describe Spectator::RunnableExample do
 
           it "doesn't run child pre-conditions" do
             called = false
-            root_conditions = new_conditions(pre: -> { report_expectations(0, 1) })
-            group_conditions = new_conditions(pre: -> { called = true; nil })
+            root_conditions = new_conditions(pre: ->{ report_expectations(0, 1) })
+            group_conditions = new_conditions(pre: ->{ called = true; nil })
             root = Spectator::RootExampleGroup.new(Spectator::ExampleHooks.empty, root_conditions)
             group = Spectator::NestedExampleGroup.new("what", root, Spectator::ExampleHooks.empty, group_conditions)
             root.children = [group.as(Spectator::ExampleComponent)]
@@ -830,8 +830,8 @@ describe Spectator::RunnableExample do
 
           it "doesn't run child post-conditions" do
             called = false
-            root_conditions = new_conditions(pre: -> { report_expectations(0, 1) })
-            group_conditions = new_conditions(post: -> { called = true; nil })
+            root_conditions = new_conditions(pre: ->{ report_expectations(0, 1) })
+            group_conditions = new_conditions(post: ->{ called = true; nil })
             root = Spectator::RootExampleGroup.new(Spectator::ExampleHooks.empty, root_conditions)
             group = Spectator::NestedExampleGroup.new("what", root, Spectator::ExampleHooks.empty, group_conditions)
             root.children = [group.as(Spectator::ExampleComponent)]
@@ -852,7 +852,7 @@ describe Spectator::RunnableExample do
 
       it "doesn't run parent group post-conditions" do
         called = false
-        conditions = new_conditions(post: -> { called = true; nil })
+        conditions = new_conditions(post: ->{ called = true; nil })
         root = Spectator::RootExampleGroup.new(Spectator::ExampleHooks.empty, conditions)
         group = Spectator::NestedExampleGroup.new("what", root, Spectator::ExampleHooks.empty, Spectator::ExampleConditions.empty)
         root.children = [group.as(Spectator::ExampleComponent)]
@@ -1152,8 +1152,8 @@ describe Spectator::RunnableExample do
           called = false
           conditions = new_conditions(pre: [
             ->{ report_expectations(0, 1) },
-            ->{ called = true; nil }
-            ])
+            ->{ called = true; nil },
+          ])
           run_example(ErroredExample, conditions: conditions)
           called.should be_false
         end
@@ -1162,7 +1162,7 @@ describe Spectator::RunnableExample do
           called = false
           conditions = new_conditions(
             pre: ->{ report_expectations(0, 1) },
-            post: -> { called = true; nil }
+            post: ->{ called = true; nil }
           )
           run_example(ErroredExample, conditions: conditions)
           called.should be_false
@@ -1170,7 +1170,7 @@ describe Spectator::RunnableExample do
 
         context "in a parent group" do
           it "fails the test" do
-            conditions = new_conditions(pre: -> { report_expectations(0, 1) })
+            conditions = new_conditions(pre: ->{ report_expectations(0, 1) })
             root = Spectator::RootExampleGroup.new(Spectator::ExampleHooks.empty, conditions)
             group = Spectator::NestedExampleGroup.new("what", root, Spectator::ExampleHooks.empty, Spectator::ExampleConditions.empty)
             root.children = [group.as(Spectator::ExampleComponent)]
@@ -1180,8 +1180,8 @@ describe Spectator::RunnableExample do
 
           it "doesn't run child pre-conditions" do
             called = false
-            root_conditions = new_conditions(pre: -> { report_expectations(0, 1) })
-            group_conditions = new_conditions(pre: -> { called = true; nil })
+            root_conditions = new_conditions(pre: ->{ report_expectations(0, 1) })
+            group_conditions = new_conditions(pre: ->{ called = true; nil })
             root = Spectator::RootExampleGroup.new(Spectator::ExampleHooks.empty, root_conditions)
             group = Spectator::NestedExampleGroup.new("what", root, Spectator::ExampleHooks.empty, group_conditions)
             root.children = [group.as(Spectator::ExampleComponent)]
@@ -1193,8 +1193,8 @@ describe Spectator::RunnableExample do
 
           it "doesn't run child post-conditions" do
             called = false
-            root_conditions = new_conditions(pre: -> { report_expectations(0, 1) })
-            group_conditions = new_conditions(post: -> { called = true; nil })
+            root_conditions = new_conditions(pre: ->{ report_expectations(0, 1) })
+            group_conditions = new_conditions(post: ->{ called = true; nil })
             root = Spectator::RootExampleGroup.new(Spectator::ExampleHooks.empty, root_conditions)
             group = Spectator::NestedExampleGroup.new("what", root, Spectator::ExampleHooks.empty, group_conditions)
             root.children = [group.as(Spectator::ExampleComponent)]
@@ -1215,7 +1215,7 @@ describe Spectator::RunnableExample do
 
       it "doesn't run parent group post-conditions" do
         called = false
-        conditions = new_conditions(post: -> { called = true; nil })
+        conditions = new_conditions(post: ->{ called = true; nil })
         root = Spectator::RootExampleGroup.new(Spectator::ExampleHooks.empty, conditions)
         group = Spectator::NestedExampleGroup.new("what", root, Spectator::ExampleHooks.empty, Spectator::ExampleConditions.empty)
         root.children = [group.as(Spectator::ExampleComponent)]
