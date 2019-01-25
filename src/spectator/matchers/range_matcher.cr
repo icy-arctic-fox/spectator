@@ -23,5 +23,38 @@ module Spectator::Matchers
     def negated_message(partial : Expectations::ValueExpectationPartial(ActualType)) : String forall ActualType
       "Expected #{partial.label} to not be in #{label}"
     end
+
+    # Creates a new range matcher with bounds based off of `center`.
+    #
+    # This method expects that the original matcher was created with a "difference" value.
+    # That is:
+    # ```
+    # RangeMatcher.new(diff).of(center)
+    # ```
+    # This implies that `#match?` would not work on the original matcher.
+    #
+    # The new range will be centered at `center`
+    # and have lower and upper bounds
+    # equal to `center - diff` and `center + diff` respectively.
+    # The range will be inclusive.
+    def of(center)
+      diff = @expected
+      lower = center - diff
+      upper = center + diff
+      range = Range.new(lower, upper)
+      new("#{center} +/- #{label}", range)
+    end
+
+    # Returns a new matcher, with the same bounds, but uses an inclusive range.
+    def inclusive
+      range = Range.new(@expected.begin, @expected.end, exclusive: false)
+      new(label + " (inclusive)", range)
+    end
+
+    # Returns a new matcher, with the same bounds, but uses an exclusive range.
+    def exclusive
+      range = Range.new(@expected.begin, @expected.end, exclusive: true)
+      new(label + " (exclusive)", range)
+    end
   end
 end
