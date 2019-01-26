@@ -29,6 +29,15 @@ describe Spectator::Matchers::TypeMatcher do
       end
     end
 
+    context "with a child type" do
+      it "is false" do
+        value = Exception.new("foobar")
+        partial = Spectator::Expectations::ValueExpectationPartial.new(value)
+        matcher = Spectator::Matchers::TypeMatcher(ArgumentError).new
+        matcher.match?(partial).should be_false
+      end
+    end
+
     context "with a mix-in" do
       it "is true" do
         value = %i[a b c]
