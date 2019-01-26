@@ -1,13 +1,13 @@
-require "./value_matcher"
+require "./condition_matcher"
 
 module Spectator::Matchers
   # Matcher that tests a value is of a specified type.
   # The values are compared with the `#is_a?` method.
-  struct TypeMatcher(Expected) < ValueMatcher(Nil)
+  struct TypeMatcher(Expected) < ConditionMatcher
     # Creates the type matcher.
     # The `Expected` type param will be used to populate the underlying label.
     def initialize
-      super(Expected.to_s, nil)
+      super(Expected.to_s)
     end
 
     # Determines whether the matcher is satisfied with the value given to it.
