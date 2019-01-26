@@ -19,6 +19,24 @@ describe Spectator::Matchers::TypeMatcher do
         matcher.match?(partial).should be_false
       end
     end
+
+    context "with a parent type" do
+      it "is true" do
+        value = IO::Memory.new
+        partial = Spectator::Expectations::ValueExpectationPartial.new(value)
+        matcher = Spectator::Matchers::TypeMatcher(IO).new
+        matcher.match?(partial).should be_true
+      end
+    end
+
+    context "with a mix-in" do
+      it "is true" do
+        value = %i[a b c]
+        partial = Spectator::Expectations::ValueExpectationPartial.new(value)
+        matcher = Spectator::Matchers::TypeMatcher(Enumerable(Symbol)).new
+        matcher.match?(partial).should be_true
+      end
+    end
   end
 
   describe "#message" do
