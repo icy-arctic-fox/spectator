@@ -262,5 +262,16 @@ module Spectator::DSL
         Range.new({{min}}, {{max}})
       )
     end
+
+    # Indicates that some value should or should not be nil.
+    #
+    # Examples:
+    # ```
+    # expect(error).to be_nil
+    # expect(input).to_not be_nil
+    # ```
+    macro be_nil
+      ::Spectator::Matchers::NilMatcher.new
+    end
   end
 end
