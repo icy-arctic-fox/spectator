@@ -4,6 +4,11 @@ module Spectator::Matchers
   # Common matcher that tests whether a value is nil.
   # The values are compared with the `#nil?` method.
   struct NilMatcher < ConditionMatcher
+    # Creates the matcher.
+    def initialize
+      super("nil?")
+    end
+
     # Determines whether the matcher is satisfied with the value given to it.
     # True is returned if the match was successful, false otherwise.
     def match?(partial : Expectations::ValueExpectationPartial(ActualType)) : Bool forall ActualType
