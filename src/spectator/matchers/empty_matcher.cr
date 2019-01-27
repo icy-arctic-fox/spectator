@@ -3,7 +3,7 @@ require "./value_matcher"
 module Spectator::Matchers
   # Matcher that tests whether a collection is empty.
   # The values are checked with the `#empty?` method.
-  struct NilMatcher < ConditionMatcher
+  struct EmptyMatcher < ConditionMatcher
     # Creates the matcher.
     def initialize
       super("empty?")
@@ -18,13 +18,13 @@ module Spectator::Matchers
     # Describes the condition that satisfies the matcher.
     # This is informational and displayed to the end-user.
     def message(partial : Expectations::ValueExpectationPartial(ActualType)) : String forall ActualType
-      "Expected #{partial.label} to be nil"
+      "Expected #{partial.label} to be empty"
     end
 
     # Describes the condition that won't satsify the matcher.
     # This is informational and displayed to the end-user.
     def negated_message(partial : Expectations::ValueExpectationPartial(ActualType)) : String forall ActualType
-      "Expected #{partial.label} to not be nil"
+      "Expected #{partial.label} to not be empty"
     end
   end
 end
