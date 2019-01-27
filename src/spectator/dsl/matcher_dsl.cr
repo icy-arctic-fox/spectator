@@ -273,5 +273,15 @@ module Spectator::DSL
     macro be_nil
       ::Spectator::Matchers::NilMatcher.new
     end
+
+    # Indicates that some collection should be empty.
+    #
+    # Example:
+    # ```
+    # expect([]).to be_empty
+    # ```
+    macro be_empty
+      ::Spectator::Matchers::EmptyMatcher.new
+    end
   end
 end
