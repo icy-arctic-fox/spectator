@@ -114,7 +114,7 @@ In no particular order, features that have been implemented and are planned:
     - [X] Equality matchers - `eq`, `be`, `be_a`, `match`
     - [X] Truthy matchers - `be_true`, `be_false`, `be_truthy`, `be_falsey`
     - [X] Comparison matchers - `<`, `<=`, `>`, `>=`, `be_within`
-    - [ ] Question matchers - `be_nil`, `be_xxx`
+    - [X] Question matchers - `be_nil`, `be_empty`
     - [ ] Exception matchers - `raise_error`
     - [ ] Collection matchers - `start_with`, `end_with`, `contain`, `contain_exactly`
     - [ ] Change matchers - `change`, `from`, `to`, `by`, `by_at_least`, `by_at_most`
