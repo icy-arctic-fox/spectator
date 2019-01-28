@@ -5,7 +5,7 @@ module Spectator::Expectations
   # There are two values - the actual and expected.
   # The actual value is what the SUT returned.
   # The expected value is what the test wants to see.
-  class ValueExpectation(ActualType, ExpectedType) < Expectation
+  class ValueExpectation(ActualType) < Expectation
     # Creates the expectation.
     # The `matched` flag should be true if the matcher is satisfied with the partial.
     # The `negated` flag should be true if the expectation is inverted.
@@ -14,7 +14,7 @@ module Spectator::Expectations
     # the actual and expected value with matcher respectively.
     def initialize(matched, negated,
                    @partial : ValueExpectationPartial(ActualType),
-                   @matcher : Matchers::ValueMatcher(ExpectedType))
+                   @matcher : Matchers::Matcher)
       super(matched, negated)
     end
 

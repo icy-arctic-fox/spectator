@@ -21,26 +21,8 @@ module Spectator::Expectations
       super(@actual.to_s)
     end
 
-    # Asserts that the `#actual` value matches some criteria.
-    # The criteria is defined by the matcher passed to this method.
-    def to(matcher : Matchers::ValueMatcher(ExpectedType)) : Nil forall ExpectedType
-      report(eval(matcher))
-    end
-
-    # Asserts that the `#actual` value *does not* match some criteria.
-    # This is effectively the opposite of `#to`.
-    def to_not(matcher : Matchers::ValueMatcher(ExpectedType)) : Nil forall ExpectedType
-      report(eval(matcher, true))
-    end
-
-    # ditto
-    @[AlwaysInline]
-    def not_to(matcher : Matchers::ValueMatcher(ExpectedType)) : Nil forall ExpectedType
-      to_not(matcher)
-    end
-
     # Evaluates the expectation and returns it.
-    private def eval(matcher : Matchers::ValueMatcher(ExpectedType), negated = false) forall ExpectedType
+    private def eval(matcher, negated = false) : Expectation
       matched = matcher.match?(self)
       ValueExpectation.new(matched, negated, self, matcher)
     end
