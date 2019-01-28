@@ -2,9 +2,8 @@ require "./expectation"
 
 module Spectator::Expectations
   # Expectation that operates on values.
-  # There are two values - the actual and expected.
-  # The actual value is what the SUT returned.
-  # The expected value is what the test wants to see.
+  # There is a primary "actual" value that the SUT produced.
+  # A matcher is used on that value to determine whether it satisfies some criteria.
   class ValueExpectation(ActualType) < Expectation
     # Creates the expectation.
     # The `matched` flag should be true if the matcher is satisfied with the partial.
