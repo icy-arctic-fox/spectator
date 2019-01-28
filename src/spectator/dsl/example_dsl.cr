@@ -16,17 +16,6 @@ module Spectator::DSL
     # ```
     # Where the actual value is returned by the system-under-test,
     # and the expected value is what the actual value should be to satisfy the condition.
-    #
-    # The short, one argument syntax used for passing methods to blocks can be used.
-    # So instead of doing this:
-    # ```
-    # expect(subject.size).to eq(5)
-    # ```
-    # The following syntax can be used instead:
-    # ```
-    # expect(&.size).to eq(5)
-    # ```
-    # The method passed will always be evaluated on `#subject`.
     macro expect(actual)
       ::Spectator::Expectations::ValueExpectationPartial.new({{actual.stringify}}, {{actual}})
     end
