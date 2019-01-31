@@ -283,5 +283,27 @@ module Spectator::DSL
     macro be_empty
       ::Spectator::Matchers::EmptyMatcher.new
     end
+
+    # Indicates that some value or set should start with another value.
+    # This is typically used on a `String` or `Array` (any `Enumerable` works).
+    # The `expected` argument can be a `String`, `Char`, or `Regex`
+    # when the actual type (being comapred against) is a `String`.
+    # For `Enumerable` types, only the first item is inspected.
+    # It is compared with the `===` operator,
+    # so that values, types, regular expressions, and others can be tested.
+    #
+    # Examples:
+    # ```
+    # expect("foobar").to start_with("foo")
+    # expect("foobar").to start_with('f')
+    # expect("FOOBAR").to start_with(/foo/i)
+    #
+    # expect(%i[a b c]).to start_with(:a)
+    # expect(%i[a b c]).to start_with(Symbol)
+    # expect(%w[foo bar]).to start_with(/foo/)
+    # ```
+    macro start_with(expected)
+      ::Spectator::Matchers::StartWithMatcher.new({{expected.stringify}}, {{expected}})
+    end
   end
 end
