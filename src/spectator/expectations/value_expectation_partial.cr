@@ -20,11 +20,5 @@ module Spectator::Expectations
     protected def initialize(@actual : ActualType)
       super(@actual.to_s)
     end
-
-    # Evaluates the expectation and returns it.
-    private def eval(matcher, negated = false) : Expectation
-      matched = matcher.match?(self)
-      Expectation.new(matched, negated, self, matcher)
-    end
   end
 end
