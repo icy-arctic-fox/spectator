@@ -1,9 +1,9 @@
-require "./value_matcher"
+require "./matcher"
 
 module Spectator::Matchers
   # Common matcher that tests whether a value is nil.
   # The values are compared with the `#nil?` method.
-  struct NilMatcher < ConditionMatcher
+  struct NilMatcher < Matcher
     # Creates the matcher.
     def initialize
       super("nil?")
