@@ -8,7 +8,7 @@ module Spectator::Expectations
     # The `partial` and the `matcher` arguments should reference
     # the actual and expected result respectively.
     def initialize(@matched : Bool, @negated : Bool,
-      @partial : ExpectationPartial, @matcher : Matchers::Matcher)
+                   @partial : ExpectationPartial, @matcher : Matchers::Matcher)
     end
 
     # Indicates whether the expectation was satisifed.
