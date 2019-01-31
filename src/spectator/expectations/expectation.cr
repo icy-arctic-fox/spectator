@@ -30,12 +30,12 @@ module Spectator::Expectations
     end
 
     # Describes the condition that must be met for the expectation to be satisifed.
-    private def message : String
+    private def message
       @matcher.message(@partial)
     end
 
     # Describes the condition under which the expectation won't be satisifed.
-    private def negated_message : String
+    private def negated_message
       @matcher.negated_message(@partial)
     end
   end
