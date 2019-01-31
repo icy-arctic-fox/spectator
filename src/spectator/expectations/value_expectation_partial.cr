@@ -24,7 +24,7 @@ module Spectator::Expectations
     # Evaluates the expectation and returns it.
     private def eval(matcher, negated = false) : Expectation
       matched = matcher.match?(self)
-      ValueExpectation.new(matched, negated, self, matcher)
+      Expectation.new(matched, negated, self, matcher)
     end
   end
 end
