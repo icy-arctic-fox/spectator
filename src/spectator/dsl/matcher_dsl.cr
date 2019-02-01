@@ -305,5 +305,27 @@ module Spectator::DSL
     macro start_with(expected)
       ::Spectator::Matchers::StartWithMatcher.new({{expected.stringify}}, {{expected}})
     end
+
+    # Indicates that some value or set should end with another value.
+    # This is typically used on a `String` or `Array` (any `Indexable` works).
+    # The `expected` argument can be a `String`, `Char`, or `Regex`
+    # when the actual type (being comapred against) is a `String`.
+    # For `Indexable` types, only the last item is inspected.
+    # It is compared with the `===` operator,
+    # so that values, types, regular expressions, and others can be tested.
+    #
+    # Examples:
+    # ```
+    # expect("foobar").to end_with("bar")
+    # expect("foobar").to end_with('r')
+    # expect("FOOBAR").to end_with(/bar/i)
+    #
+    # expect(%i[a b c]).to end_with(:c)
+    # expect(%i[a b c]).to end_with(Symbol)
+    # expect(%w[foo bar]).to end_with(/bar/)
+    # ```
+    macro end_with(expected)
+      ::Spectator::Matchers::EndWithMatcher.new({{expected.stringify}}, {{expected}})
+    end
   end
 end
