@@ -111,15 +111,16 @@ In no particular order, features that have been implemented and are planned:
     - [X] Pending tests - `pending`
     - [ ] Shared examples - `behaves_like`, `include_examples`
 - [ ] Matchers
-    - [X] Equality matchers - `eq`, `be`, `be_a`, `match`
-    - [X] Truthy matchers - `be_true`, `be_false`, `be_truthy`, `be_falsey`, `be_nil`
-    - [X] Comparison matchers - `<`, `<=`, `>`, `>=`, `be_within`
-    - [ ] Exception matchers - `raise_error`
-    - [ ] Collection matchers - `start_with`, `end_with`, `contain`, `contain_exactly`, `be_empty`
-    - [ ] Change matchers - `change`, `from`, `to`, `by`, `by_at_least`, `by_at_most`
-    - [ ] Satisfy matcher - `satisfy`
-    - [ ] Yield matchers - `yield_control`, `times`, `yield_values`
-    - [ ] Expectation combining with `&` and `|`
+    - [X] Equality matchers - `eq`, `ne`, `be ==`, `be !=`
+    - [ ] Comparison matchers - `lt`, `le`, `gt`, `ge`, `be <`, `be <=`, `be >`, `be >=`, `be_within[.of]`, `be_close`
+    - [ ] Type matchers - `be_a`, `respond_to`
+    - [ ] Collection matchers - `contain`, `include`, `contain_exactly[.in_order|.in_any_order]`, `match_array[.in_order|.in_any_order]`, `start_with`, `end_with`, `be_empty`, `has_key`, `has_value`, `all`, `all_satisfy`
+    - [X] Truthy matchers - `be`, `be_true`, `be_truthy`, `be_false`, `be_falsey`, `be_nil`
+    - [ ] Error matchers - `raise_error`
+    - [ ] Yield matchers - `yield_control[.times]`, `yield_with_args[.times]`, `yield_with_no_args[.times]`, `yield_successive_args`
+    - [ ] Output matchers - `output[.to_stdout|.to_stderr]`
+    - [ ] Misc. matchers - `exist`, `match`, `satisfy`, `change[.by|.from[.to]|.to|.by_at_least|.by_at_most]`, `have_attributes`
+    - [ ] Expectation combining - `and`, `or`
 - [ ] Runner
     - [ ] Fail fast
     - [ ] Test filtering - by name, context, and tags
