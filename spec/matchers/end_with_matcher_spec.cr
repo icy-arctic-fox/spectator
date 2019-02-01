@@ -202,6 +202,13 @@ describe Spectator::Matchers::EndWithMatcher do
         matcher = Spectator::Matchers::EndWithMatcher.new(array.last)
         matcher.message(partial).should contain("===")
       end
+
+      it "mentions last" do
+        array = %i[a b c]
+        partial = Spectator::Expectations::ValueExpectationPartial.new(array)
+        matcher = Spectator::Matchers::EndWithMatcher.new(array.last)
+        matcher.message(partial).should contain("last")
+      end
     end
 
     it "contains the actual label" do
@@ -250,6 +257,13 @@ describe Spectator::Matchers::EndWithMatcher do
         partial = Spectator::Expectations::ValueExpectationPartial.new(array)
         matcher = Spectator::Matchers::EndWithMatcher.new(array.last)
         matcher.negated_message(partial).should contain("===")
+      end
+
+      it "mentions last" do
+        array = %i[a b c]
+        partial = Spectator::Expectations::ValueExpectationPartial.new(array)
+        matcher = Spectator::Matchers::EndWithMatcher.new(array.last)
+        matcher.negated_message(partial).should contain("last")
       end
     end
 

@@ -202,6 +202,13 @@ describe Spectator::Matchers::StartWithMatcher do
         matcher = Spectator::Matchers::StartWithMatcher.new(array.first)
         matcher.message(partial).should contain("===")
       end
+
+      it "mentions first" do
+        array = %i[a b c]
+        partial = Spectator::Expectations::ValueExpectationPartial.new(array)
+        matcher = Spectator::Matchers::StartWithMatcher.new(array.first)
+        matcher.message(partial).should contain("first")
+      end
     end
 
     it "contains the actual label" do
@@ -250,6 +257,13 @@ describe Spectator::Matchers::StartWithMatcher do
         partial = Spectator::Expectations::ValueExpectationPartial.new(array)
         matcher = Spectator::Matchers::StartWithMatcher.new(array.first)
         matcher.negated_message(partial).should contain("===")
+      end
+
+      it "mentions first" do
+        array = %i[a b c]
+        partial = Spectator::Expectations::ValueExpectationPartial.new(array)
+        matcher = Spectator::Matchers::StartWithMatcher.new(array.first)
+        matcher.negated_message(partial).should contain("first")
       end
     end
 
