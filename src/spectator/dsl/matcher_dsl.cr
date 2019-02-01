@@ -327,5 +327,22 @@ module Spectator::DSL
     macro end_with(expected)
       ::Spectator::Matchers::EndWithMatcher.new({{expected.stringify}}, {{expected}})
     end
+
+    # Indicates that some value or set should contain another value.
+    # This is typically used on a `String` or `Array` (any `Enumerable` works).
+    # The `expected` argument can be a `String` or `Char`
+    # when the actual type (being comapred against) is a `String`.
+    # For `Enumerable` types, each item is inspected until one matches.
+    # In both cases, the `includes?` method is used.
+    #
+    # Examples:
+    # ```
+    # expect("foobar").to contain("foo")
+    # expect("foobar").to contain('o')
+    # expect(%i[a b c]).to contain(:b)
+    # ```
+    macro contain(expected)
+      ::Spectator::Matchers::ContainMatcher.new({{expected.stringify}}, {{expected}})
+    end
   end
 end
