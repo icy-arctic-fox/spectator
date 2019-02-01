@@ -332,7 +332,7 @@ module Spectator::DSL
     # This is typically used on a `String` or `Array` (any `Enumerable` works).
     # The `expected` argument can be a `String` or `Char`
     # when the actual type (being comapred against) is a `String`.
-    # For `Enumerable` types, each item is inspected until one matches.
+    # For `Enumerable` types, items are compared using the underying implementation.
     # In both cases, the `includes?` method is used.
     #
     # Examples:
@@ -343,6 +343,28 @@ module Spectator::DSL
     # ```
     macro contain(expected)
       ::Spectator::Matchers::ContainMatcher.new({{expected.stringify}}, {{expected}})
+    end
+
+    # Indicates that some value or set should contain another value.
+    # This is similar to `#contain`, but uses a different method for matching.
+    # Typically a `String` or `Array` (any `Enumerable` works) is checked against.
+    # The `expected` argument can be a `String` or `Char`
+    # when the actual type (being comapred against) is a `String`.
+    # The `includes?` method is used for this case.
+    # For `Enumerable` types, each item is inspected until one matches.
+    # The `===` operator is used for this case, which allows for equality, type, regex, and other matches.
+    #
+    # Examples:
+    # ```
+    # expect("foobar").to have("foo")
+    # expect("foobar").to have('o')
+    #
+    # expect(%i[a b c]).to have(:b)
+    # expect(%w[FOO BAR BAZ]).to have(/bar/i)
+    # expect([1, 2, 3, :a, :b, :c]).to have(Int32)
+    # ```
+    macro have(expected)
+      ::Spectator::Matchers::HaveMatcher.new({{expected.stringify}}, {{expected}})
     end
   end
 end
