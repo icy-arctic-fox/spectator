@@ -394,5 +394,19 @@ module Spectator::DSL
     macro have(*expected)
       ::Spectator::Matchers::HaveMatcher.new({{expected.splat.stringify}}, {{expected}})
     end
+
+    # Indicates that some value should have a set of attributes matching some conditions.
+    # A list of named arguments are expected.
+    # The names correspond to the attributes in the instance to check.
+    # The values are conditions to check with the `===` operator against the attribute's value.
+    #
+    # Examples:
+    # ```
+    # expect("foobar").to have_attributes(size: 6, upcase: "FOOBAR")
+    # expect(%i[a b c]).to have_attributes(size: 1..5, first: Symbol)
+    # ```
+    macro have_attributes(**expected)
+      ::Spectator::Matchers::AttributesMatcher.new({{expected.double_splat.stringify}}, {{expected}})
+    end
   end
 end
