@@ -112,7 +112,7 @@ In no particular order, features that have been implemented and are planned:
     - [ ] Shared examples - `behaves_like`, `include_examples`
 - [ ] Matchers
     - [X] Equality matchers - `eq`, `ne`, `be ==`, `be !=`
-    - [X] Comparison matchers - `lt`, `le`, `gt`, `ge`, `be <`, `be <=`, `be >`, `be >=`, `be_within[.of]`, `be_close`
+    - [X] Comparison matchers - `be <`, `be <=`, `be >`, `be >=`, `be_within[.of]`, `be_close`
     - [X] Type matchers - `be_a`
     - [ ] Collection matchers - `contain`, `have`, `contain_exactly[.in_order|.in_any_order]`, `match_array[.in_order|.in_any_order]`, `start_with`, `end_with`, `be_empty`, `has_key`, `has_value`, `all`, `all_satisfy`
     - [X] Truthy matchers - `be`, `be_true`, `be_truthy`, `be_false`, `be_falsey`, `be_nil`
