@@ -1,7 +1,7 @@
 require "./value_matcher"
 
 module Spectator::Matchers
-  # Matcher that tests whether a value, such as a `String` or `Array`, matches a value.
+  # Matcher that tests whether a value, such as a `String` or `Array`, matches one or more values.
   # For a `String`, the `includes?` method is used.
   # Otherwise, it expects an `Enumerable` and iterates over each item until `===` is true.
   struct HaveMatcher(ExpectedType) < ValueMatcher(ExpectedType)
@@ -16,19 +16,23 @@ module Spectator::Matchers
       end
     end
 
-    # Checks if a `String` matches the expected value.
+    # Checks if a `String` matches the expected values.
     # The `includes?` method is used for this check.
     private def match_string?(actual)
-      actual.includes?(expected)
+      expected.all? do |item|
+        actual.includes?(item)
+      end
     end
 
-    # Checks if an `Enumerable` matches the expected value.
+    # Checks if an `Enumerable` matches the expected values.
     # The `===` operator is used on every item.
     private def match_enumerable?(actual)
-      actual.each do |item|
-        return true if expected === item
+      array = actual.to_a
+      expected.all? do |item|
+        array.any? do |elem|
+          item === elem
+        end
       end
-      false
     end
 
     # Describes the condition that satisfies the matcher.

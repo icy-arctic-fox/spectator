@@ -384,8 +384,15 @@ module Spectator::DSL
     # expect(%w[FOO BAR BAZ]).to have(/bar/i)
     # expect([1, 2, 3, :a, :b, :c]).to have(Int32)
     # ```
-    macro have(expected)
-      ::Spectator::Matchers::HaveMatcher.new({{expected.stringify}}, {{expected}})
+    #
+    # Additionally, multiple arguments can be specified.
+    # ```
+    # expect("foobarbaz").to have("foo", "bar")
+    # expect(%i[a b c]).to have(:a, :b)
+    # expect(%w[FOO BAR BAZ]).to have(/foo/i, String)
+    # ```
+    macro have(*expected)
+      ::Spectator::Matchers::HaveMatcher.new({{expected.splat.stringify}}, {{expected}})
     end
   end
 end
