@@ -263,6 +263,21 @@ module Spectator::DSL
       )
     end
 
+    # Indicates that some value should be within a delta of an expected value.
+    #
+    # Example:
+    # ```
+    # expect(pi).to be_close(3.14159265359, 0.0000001)
+    # ```
+    #
+    # This is functionly equivalent to:
+    # ```
+    # be_within(expected).of(delta)
+    # ```
+    macro be_close(expected, delta)
+      be_within({{delta}}).of({{expected}})
+    end
+
     # Indicates that some value should or should not be nil.
     #
     # Examples:
