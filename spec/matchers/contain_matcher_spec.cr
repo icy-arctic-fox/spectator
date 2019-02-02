@@ -8,7 +8,7 @@ describe Spectator::Matchers::ContainMatcher do
           value = "foobarbaz"
           search = "bar"
           partial = Spectator::Expectations::ValueExpectationPartial.new(value)
-          matcher = Spectator::Matchers::ContainMatcher.new(search)
+          matcher = Spectator::Matchers::ContainMatcher.new({search})
           matcher.match?(partial).should be_true
         end
 
@@ -17,7 +17,7 @@ describe Spectator::Matchers::ContainMatcher do
             value = "foobar"
             search = "foo"
             partial = Spectator::Expectations::ValueExpectationPartial.new(value)
-            matcher = Spectator::Matchers::ContainMatcher.new(search)
+            matcher = Spectator::Matchers::ContainMatcher.new({search})
             matcher.match?(partial).should be_true
           end
         end
@@ -27,7 +27,7 @@ describe Spectator::Matchers::ContainMatcher do
             value = "foobar"
             search = "bar"
             partial = Spectator::Expectations::ValueExpectationPartial.new(value)
-            matcher = Spectator::Matchers::ContainMatcher.new(search)
+            matcher = Spectator::Matchers::ContainMatcher.new({search})
             matcher.match?(partial).should be_true
           end
         end
@@ -38,7 +38,7 @@ describe Spectator::Matchers::ContainMatcher do
           value = "foobar"
           search = "baz"
           partial = Spectator::Expectations::ValueExpectationPartial.new(value)
-          matcher = Spectator::Matchers::ContainMatcher.new(search)
+          matcher = Spectator::Matchers::ContainMatcher.new({search})
           matcher.match?(partial).should be_false
         end
       end
@@ -48,7 +48,7 @@ describe Spectator::Matchers::ContainMatcher do
           value = "foobar"
           search = 'o'
           partial = Spectator::Expectations::ValueExpectationPartial.new(value)
-          matcher = Spectator::Matchers::ContainMatcher.new(search)
+          matcher = Spectator::Matchers::ContainMatcher.new({search})
           matcher.match?(partial).should be_true
         end
 
@@ -57,7 +57,7 @@ describe Spectator::Matchers::ContainMatcher do
             value = "foobar"
             search = 'f'
             partial = Spectator::Expectations::ValueExpectationPartial.new(value)
-            matcher = Spectator::Matchers::ContainMatcher.new(search)
+            matcher = Spectator::Matchers::ContainMatcher.new({search})
             matcher.match?(partial).should be_true
           end
         end
@@ -67,7 +67,7 @@ describe Spectator::Matchers::ContainMatcher do
             value = "foobar"
             search = 'r'
             partial = Spectator::Expectations::ValueExpectationPartial.new(value)
-            matcher = Spectator::Matchers::ContainMatcher.new(search)
+            matcher = Spectator::Matchers::ContainMatcher.new({search})
             matcher.match?(partial).should be_true
           end
         end
@@ -78,7 +78,7 @@ describe Spectator::Matchers::ContainMatcher do
           value = "foobar"
           search = 'z'
           partial = Spectator::Expectations::ValueExpectationPartial.new(value)
-          matcher = Spectator::Matchers::ContainMatcher.new(search)
+          matcher = Spectator::Matchers::ContainMatcher.new({search})
           matcher.match?(partial).should be_false
         end
       end
@@ -90,7 +90,7 @@ describe Spectator::Matchers::ContainMatcher do
           array = %i[a b c]
           search = :b
           partial = Spectator::Expectations::ValueExpectationPartial.new(array)
-          matcher = Spectator::Matchers::ContainMatcher.new(search)
+          matcher = Spectator::Matchers::ContainMatcher.new({search})
           matcher.match?(partial).should be_true
         end
 
@@ -99,7 +99,7 @@ describe Spectator::Matchers::ContainMatcher do
             array = %i[a b c]
             search = :a
             partial = Spectator::Expectations::ValueExpectationPartial.new(array)
-            matcher = Spectator::Matchers::ContainMatcher.new(search)
+            matcher = Spectator::Matchers::ContainMatcher.new({search})
             matcher.match?(partial).should be_true
           end
         end
@@ -109,7 +109,7 @@ describe Spectator::Matchers::ContainMatcher do
             array = %i[a b c]
             search = :c
             partial = Spectator::Expectations::ValueExpectationPartial.new(array)
-            matcher = Spectator::Matchers::ContainMatcher.new(search)
+            matcher = Spectator::Matchers::ContainMatcher.new({search})
             matcher.match?(partial).should be_true
           end
         end
@@ -120,7 +120,7 @@ describe Spectator::Matchers::ContainMatcher do
           array = %i[a b c]
           search = :z
           partial = Spectator::Expectations::ValueExpectationPartial.new(array)
-          matcher = Spectator::Matchers::ContainMatcher.new(search)
+          matcher = Spectator::Matchers::ContainMatcher.new({search})
           matcher.match?(partial).should be_false
         end
       end
@@ -133,7 +133,7 @@ describe Spectator::Matchers::ContainMatcher do
       search = "baz"
       label = "everything"
       partial = Spectator::Expectations::ValueExpectationPartial.new(label, value)
-      matcher = Spectator::Matchers::ContainMatcher.new(search)
+      matcher = Spectator::Matchers::ContainMatcher.new({search})
       matcher.message(partial).should contain(label)
     end
 
@@ -142,7 +142,7 @@ describe Spectator::Matchers::ContainMatcher do
       search = "baz"
       label = "everything"
       partial = Spectator::Expectations::ValueExpectationPartial.new(value)
-      matcher = Spectator::Matchers::ContainMatcher.new(label, search)
+      matcher = Spectator::Matchers::ContainMatcher.new(label, {search})
       matcher.message(partial).should contain(label)
     end
 
@@ -151,7 +151,7 @@ describe Spectator::Matchers::ContainMatcher do
         value = "foobar"
         search = "baz"
         partial = Spectator::Expectations::ValueExpectationPartial.new(value)
-        matcher = Spectator::Matchers::ContainMatcher.new(search)
+        matcher = Spectator::Matchers::ContainMatcher.new({search})
         matcher.message(partial).should contain(search)
       end
     end
@@ -163,7 +163,7 @@ describe Spectator::Matchers::ContainMatcher do
       search = "baz"
       label = "everything"
       partial = Spectator::Expectations::ValueExpectationPartial.new(label, value)
-      matcher = Spectator::Matchers::ContainMatcher.new(search)
+      matcher = Spectator::Matchers::ContainMatcher.new({search})
       matcher.negated_message(partial).should contain(label)
     end
 
@@ -172,7 +172,7 @@ describe Spectator::Matchers::ContainMatcher do
       search = "baz"
       label = "everything"
       partial = Spectator::Expectations::ValueExpectationPartial.new(value)
-      matcher = Spectator::Matchers::ContainMatcher.new(label, search)
+      matcher = Spectator::Matchers::ContainMatcher.new(label, {search})
       matcher.negated_message(partial).should contain(label)
     end
 
@@ -181,7 +181,7 @@ describe Spectator::Matchers::ContainMatcher do
         value = "foobar"
         search = "baz"
         partial = Spectator::Expectations::ValueExpectationPartial.new(value)
-        matcher = Spectator::Matchers::ContainMatcher.new(search)
+        matcher = Spectator::Matchers::ContainMatcher.new({search})
         matcher.negated_message(partial).should contain(search)
       end
     end
