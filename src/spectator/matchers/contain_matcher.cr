@@ -7,7 +7,9 @@ module Spectator::Matchers
     # Determines whether the matcher is satisfied with the value given to it.
     # True is returned if the match was successful, false otherwise.
     def match?(partial)
-      partial.actual.includes?(expected)
+      expected.all? do |item|
+        partial.actual.includes?(item)
+      end
     end
 
     # Describes the condition that satisfies the matcher.

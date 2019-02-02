@@ -356,8 +356,14 @@ module Spectator::DSL
     # expect("foobar").to contain('o')
     # expect(%i[a b c]).to contain(:b)
     # ```
-    macro contain(expected)
-      ::Spectator::Matchers::ContainMatcher.new({{expected.stringify}}, {{expected}})
+    #
+    # Additionally, multiple arguments can be specified.
+    # ```
+    # expect("foobarbaz").to contain("foo", "bar")
+    # expect(%i[a b c]).to contain(:a, :b)
+    # ```
+    macro contain(*expected)
+      ::Spectator::Matchers::ContainMatcher.new({{expected.splat.stringify}}, {{expected}})
     end
 
     # Indicates that some value or set should contain another value.
