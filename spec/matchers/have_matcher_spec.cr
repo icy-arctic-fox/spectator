@@ -445,7 +445,7 @@ describe Spectator::Matchers::HaveMatcher do
         context "against equal and matching type and regex" do
           it "is true" do
             array = [:a, 42, "FOO"]
-            search = {Symbol, Int32, String}
+            search = {:a, Int32, /foo/i}
             partial = Spectator::Expectations::ValueExpectationPartial.new(array)
             matcher = Spectator::Matchers::HaveMatcher.new(search)
             matcher.match?(partial).should be_true
