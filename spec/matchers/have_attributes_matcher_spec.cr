@@ -1,0 +1,273 @@
+require "../spec_helper"
+
+describe Spectator::Matchers::AttributesMatcher do
+  describe "#match?" do
+    context "one argument" do
+      context "against an equal value" do
+        it "is true" do
+          array = %i[a b c]
+          attributes = {first: :a}
+          partial = Spectator::Expectations::ValueExpectationPartial.new(array)
+          matcher = Spectator::Matchers::AttributesMatcher.new(attributes)
+          matcher.match?(partial).should be_true
+        end
+      end
+
+      context "against a different value" do
+        it "is false" do
+          array = %i[a b c]
+          attributes = {first: :z}
+          partial = Spectator::Expectations::ValueExpectationPartial.new(array)
+          matcher = Spectator::Matchers::AttributesMatcher.new(attributes)
+          matcher.match?(partial).should be_false
+        end
+      end
+
+      context "against a matching type" do
+        it "is true" do
+          array = %i[a b c]
+          attributes = {first: Symbol}
+          partial = Spectator::Expectations::ValueExpectationPartial.new(array)
+          matcher = Spectator::Matchers::AttributesMatcher.new(attributes)
+          matcher.match?(partial).should be_true
+        end
+      end
+
+      context "against a non-matching type" do
+        it "is false" do
+          array = %i[a b c]
+          attributes = {first: Int32}
+          partial = Spectator::Expectations::ValueExpectationPartial.new(array)
+          matcher = Spectator::Matchers::AttributesMatcher.new(attributes)
+          matcher.match?(partial).should be_false
+        end
+      end
+
+      context "against a matching regex" do
+        it "is true" do
+          array = %w[FOO BAR BAZ]
+          attributes = {first: /foo/i}
+          partial = Spectator::Expectations::ValueExpectationPartial.new(array)
+          matcher = Spectator::Matchers::AttributesMatcher.new(attributes)
+          matcher.match?(partial).should be_true
+        end
+      end
+
+      context "against a non-matching regex" do
+        it "is false" do
+          array = %w[FOO BAR BAZ]
+          attributes = {first: /qux/i}
+          partial = Spectator::Expectations::ValueExpectationPartial.new(array)
+          matcher = Spectator::Matchers::AttributesMatcher.new(attributes)
+          matcher.match?(partial).should be_false
+        end
+      end
+    end
+
+    context "multiple attributes" do
+      context "against equal values" do
+        it "is true" do
+          array = %i[a b c]
+          attributes = {first: :a, last: :c}
+          partial = Spectator::Expectations::ValueExpectationPartial.new(array)
+          matcher = Spectator::Matchers::AttributesMatcher.new(attributes)
+          matcher.match?(partial).should be_true
+        end
+
+        context "matching type" do
+          context "matching regex" do
+            it "is true" do
+              array = [:a, 42, "FOO"]
+              attributes = {first: Symbol, last: /foo/i}
+              partial = Spectator::Expectations::ValueExpectationPartial.new(array)
+              matcher = Spectator::Matchers::AttributesMatcher.new(attributes)
+              matcher.match?(partial).should be_true
+            end
+          end
+
+          context "non-matching regex" do
+            it "is false" do
+              array = [:a, 42, "FOO"]
+              attributes = {first: Symbol, last: /bar/i}
+              partial = Spectator::Expectations::ValueExpectationPartial.new(array)
+              matcher = Spectator::Matchers::AttributesMatcher.new(attributes)
+              matcher.match?(partial).should be_false
+            end
+          end
+        end
+
+        context "non-matching type" do
+          context "matching regex" do
+            it "is false" do
+              array = [:a, 42, "FOO"]
+              attributes = {first: Float32, last: /foo/i}
+              partial = Spectator::Expectations::ValueExpectationPartial.new(array)
+              matcher = Spectator::Matchers::AttributesMatcher.new(attributes)
+              matcher.match?(partial).should be_false
+            end
+          end
+
+          context "non-matching regex" do
+            it "is false" do
+              array = [:a, 42, "FOO"]
+              attributes = {first: Float32, last: /bar/i}
+              partial = Spectator::Expectations::ValueExpectationPartial.new(array)
+              matcher = Spectator::Matchers::AttributesMatcher.new(attributes)
+              matcher.match?(partial).should be_false
+            end
+          end
+        end
+      end
+
+      context "against one equal value" do
+        it "is false" do
+          array = %i[a b c]
+          attributes = {first: :a, last: :d}
+          partial = Spectator::Expectations::ValueExpectationPartial.new(array)
+          matcher = Spectator::Matchers::AttributesMatcher.new(attributes)
+          matcher.match?(partial).should be_false
+        end
+      end
+
+      context "against no equal values" do
+        it "is false" do
+          array = %i[a b c]
+          attributes = {first: :d, last: :e}
+          partial = Spectator::Expectations::ValueExpectationPartial.new(array)
+          matcher = Spectator::Matchers::AttributesMatcher.new(attributes)
+          matcher.match?(partial).should be_false
+        end
+      end
+
+      context "against matching types" do
+        it "is true" do
+          array = [:a, 42, "FOO"]
+          attributes = {first: Symbol, last: String}
+          partial = Spectator::Expectations::ValueExpectationPartial.new(array)
+          matcher = Spectator::Matchers::AttributesMatcher.new(attributes)
+          matcher.match?(partial).should be_true
+        end
+      end
+
+      context "against one matching type" do
+        it "is false" do
+          array = [:a, 42, "FOO"]
+          attributes = {first: Symbol, last: Float32}
+          partial = Spectator::Expectations::ValueExpectationPartial.new(array)
+          matcher = Spectator::Matchers::AttributesMatcher.new(attributes)
+          matcher.match?(partial).should be_false
+        end
+      end
+
+      context "against no matching types" do
+        it "is false" do
+          array = [:a, 42, "FOO"]
+          attributes = {first: Float32, last: Bytes}
+          partial = Spectator::Expectations::ValueExpectationPartial.new(array)
+          matcher = Spectator::Matchers::AttributesMatcher.new(attributes)
+          matcher.match?(partial).should be_false
+        end
+      end
+
+      context "against matching regexes" do
+        it "is true" do
+          array = %w[FOO BAR BAZ]
+          attributes = {first: /foo/i, last: /baz/i}
+          partial = Spectator::Expectations::ValueExpectationPartial.new(array)
+          matcher = Spectator::Matchers::AttributesMatcher.new(attributes)
+          matcher.match?(partial).should be_true
+        end
+      end
+
+      context "against one matching regex" do
+        it "is false" do
+          array = %w[FOO BAR BAZ]
+          attributes = {first: /foo/i, last: /qux/i}
+          partial = Spectator::Expectations::ValueExpectationPartial.new(array)
+          matcher = Spectator::Matchers::AttributesMatcher.new(attributes)
+          matcher.match?(partial).should be_false
+        end
+      end
+
+      context "against no matching regexes" do
+        it "is false" do
+          array = %w[FOO BAR]
+          attributes = {first: /baz/i, last: /qux/i}
+          partial = Spectator::Expectations::ValueExpectationPartial.new(array)
+          matcher = Spectator::Matchers::AttributesMatcher.new(attributes)
+          matcher.match?(partial).should be_false
+        end
+      end
+
+      context "against equal and matching type and regex" do
+        it "is true" do
+          array = [:a, 42, "FOO"]
+          attributes = {first: Symbol, last: /foo/i, size: 3}
+          partial = Spectator::Expectations::ValueExpectationPartial.new(array)
+          matcher = Spectator::Matchers::AttributesMatcher.new(attributes)
+          matcher.match?(partial).should be_true
+        end
+      end
+    end
+  end
+
+  describe "#message" do
+    it "contains the actual label" do
+      value = "foobar"
+      attributes = {size: 6}
+      label = "everything"
+      partial = Spectator::Expectations::ValueExpectationPartial.new(label, value)
+      matcher = Spectator::Matchers::AttributesMatcher.new(attributes)
+      matcher.message(partial).should contain(label)
+    end
+
+    it "contains the expected label" do
+      value = "foobar"
+      attributes = {size: 6}
+      label = "everything"
+      partial = Spectator::Expectations::ValueExpectationPartial.new(value)
+      matcher = Spectator::Matchers::AttributesMatcher.new(label, attributes)
+      matcher.message(partial).should contain(label)
+    end
+
+    context "when expected label is omitted" do
+      it "contains stringified form of expected value" do
+        value = "foobar"
+        attributes = {size: 6}
+        partial = Spectator::Expectations::ValueExpectationPartial.new(value)
+        matcher = Spectator::Matchers::AttributesMatcher.new(attributes)
+        matcher.message(partial).should contain(attributes.to_s)
+      end
+    end
+  end
+
+  describe "#negated_message" do
+    it "contains the actual label" do
+      value = "foobar"
+      attributes = {size: 6}
+      label = "everything"
+      partial = Spectator::Expectations::ValueExpectationPartial.new(label, value)
+      matcher = Spectator::Matchers::AttributesMatcher.new(attributes)
+      matcher.negated_message(partial).should contain(label)
+    end
+
+    it "contains the expected label" do
+      value = "foobar"
+      attributes = {size: 6}
+      label = "everything"
+      partial = Spectator::Expectations::ValueExpectationPartial.new(value)
+      matcher = Spectator::Matchers::AttributesMatcher.new(label, attributes)
+      matcher.negated_message(partial).should contain(label)
+    end
+
+    context "when expected label is omitted" do
+      it "contains stringified form of expected value" do
+        value = "foobar"
+        attributes = {size: 6}
+        partial = Spectator::Expectations::ValueExpectationPartial.new(value)
+        matcher = Spectator::Matchers::AttributesMatcher.new(attributes)
+        matcher.negated_message(partial).should contain(attributes.to_s)
+      end
+    end
+  end
+end
