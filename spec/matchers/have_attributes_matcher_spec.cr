@@ -10,7 +10,7 @@ describe Spectator::Matchers::AttributesMatcher do
       matcher.match?(partial).should be_true
       spy.case_eq_call_count.should be > 0
     end
-    
+
     context "one argument" do
       context "against an equal value" do
         it "is true" do
