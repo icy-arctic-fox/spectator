@@ -2,6 +2,15 @@ require "../spec_helper"
 
 describe Spectator::Matchers::AttributesMatcher do
   describe "#match?" do
+    it "uses ===" do
+      array = %i[a b c]
+      spy = SpySUT.new
+      partial = Spectator::Expectations::ValueExpectationPartial.new(array)
+      matcher = Spectator::Matchers::HaveMatcher.new({spy})
+      matcher.match?(partial).should be_true
+      spy.case_eq_call_count.should be > 0
+    end
+    
     context "one argument" do
       context "against an equal value" do
         it "is true" do
