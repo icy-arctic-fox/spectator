@@ -408,5 +408,25 @@ module Spectator::DSL
     macro have_attributes(**expected)
       ::Spectator::Matchers::AttributesMatcher.new({{expected.double_splat.stringify}}, {{expected}})
     end
+
+    # Used to create predicate matchers.
+    # Any missing method that starts with `be_` will be handled.
+    # All other method names will be ignored and raise a compile-time error.
+    #
+    # This can be used to simply check a predicate method that ends in `?`.
+    # For instance:
+    # ```
+    # expect("foobar").to be_ascii_only
+    # # Is equivalent to:
+    # expect("foobar".ascii_only?).to be_true
+    # ```
+    macro method_missing(call)
+      {% if call.name.starts_with?("be_") %}
+      {% method_name = call.name[3..-1] %} # Remove `be_` prefix.
+      ::Spectator::Matchers::PredicateMatcher.new({{method_name.stringify}}, { {{method_name}}: nil })
+      {% else %}
+      {% raise "Undefined local variable or method '#{call}'" %}
+      {% end %}
+    end
   end
 end
