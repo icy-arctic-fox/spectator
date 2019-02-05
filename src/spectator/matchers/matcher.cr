@@ -9,7 +9,7 @@ module Spectator::Matchers
     private getter label : String
 
     # Creates the base of the matcher.
-    private def initialize(@label)
+    def initialize(@label)
     end
 
     # Determines whether the matcher is satisfied with the value given to it.
