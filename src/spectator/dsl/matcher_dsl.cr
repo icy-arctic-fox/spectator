@@ -395,6 +395,23 @@ module Spectator::DSL
       ::Spectator::Matchers::HaveMatcher.new({{expected.splat.stringify}}, {{expected}})
     end
 
+    # Indicates that some set, such as a `Hash`, has a given key.
+    # The `has_key?` method is used for this check.
+    #
+    # Examples:
+    # ```
+    # expect({foo: "bar"}).to have_key(:foo)
+    # expect({"lucky" => 7}).to have_key("lucky")
+    # ```
+    macro have_key(expected)
+      ::Spectator::Matchers::HasKeyMatcher.new({{expected.stringify}}, {{expected}})
+    end
+
+    # ditto
+    macro has_key(expected)
+      have_key({{expected}})
+    end
+
     # Indicates that some value should have a set of attributes matching some conditions.
     # A list of named arguments are expected.
     # The names correspond to the attributes in the instance to check.
