@@ -412,6 +412,23 @@ module Spectator::DSL
       have_key({{expected}})
     end
 
+    # Indicates that some set, such as a `Hash`, has a given value.
+    # The `has_value?` method is used for this check.
+    #
+    # Examples:
+    # ```
+    # expect({foo: "bar"}).to have_value("bar")
+    # expect({"lucky" => 7}).to have_value(7)
+    # ```
+    macro have_value(expected)
+      ::Spectator::Matchers::HaveValueMatcher.new({{expected.stringify}}, {{expected}})
+    end
+
+    # ditto
+    macro has_value(expected)
+      have_value({{expected}})
+    end
+
     # Indicates that some value should have a set of attributes matching some conditions.
     # A list of named arguments are expected.
     # The names correspond to the attributes in the instance to check.
