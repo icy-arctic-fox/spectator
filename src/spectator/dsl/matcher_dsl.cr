@@ -404,7 +404,7 @@ module Spectator::DSL
     # expect({"lucky" => 7}).to have_key("lucky")
     # ```
     macro have_key(expected)
-      ::Spectator::Matchers::HasKeyMatcher.new({{expected.stringify}}, {{expected}})
+      ::Spectator::Matchers::HaveKeyMatcher.new({{expected.stringify}}, {{expected}})
     end
 
     # ditto
