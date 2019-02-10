@@ -1342,18 +1342,18 @@ module Spectator::DSL
       # Create the wrapper class for the test code.
       {% if block.is_a?(Nop) %}
         {% if what.is_a?(Call) %}
-          _spectator_example_wrapper(Wrapper%example, %run) do
+          _spectator_test(Test%example, %run) do
             {{what}}
           end
         {% else %}
           {% raise "Unrecognized syntax: `it #{what}`" %}
         {% end %}
       {% else %}
-        _spectator_example_wrapper(Wrapper%example, %run) {{block}}
+        _spectator_test(Test%example, %run) {{block}}
       {% end %}
 
       # Create a class derived from `RunnableExample` to run the test code.
-      _spectator_example(Example%example, Wrapper%example, ::Spectator::RunnableExample, {{what}}) do
+      _spectator_example(Example%example, Test%example, ::Spectator::RunnableExample, {{what}}) do
         # Implement abstract method to run the wrapped example block.
         protected def run_instance
           @instance.%run
@@ -1394,10 +1394,10 @@ module Spectator::DSL
     # Thus, forcing the compiler to at least process the code, even if it isn't run.
     macro pending(what, &block)
       # Create the wrapper class for the test code.
-      _spectator_example_wrapper(Wrapper%example, %run) {{block}}
+      _spectator_test(Test%example, %run) {{block}}
 
       # Create a class derived from `PendingExample` to skip the test code.
-      _spectator_example(Example%example, Wrapper%example, ::Spectator::PendingExample, {{what}})
+      _spectator_example(Example%example, Test%example, ::Spectator::PendingExample, {{what}})
 
       # Add the example to the current group.
       ::Spectator::DSL::Builder.add_example(Example%example)
@@ -1421,7 +1421,7 @@ module Spectator::DSL
     # The `run_method_name` argument is the name of the method in the wrapper class
     # that will actually run the test code.
     # The block passed to this macro is the actual test code.
-    private macro _spectator_example_wrapper(class_name, run_method_name, &block)
+    private macro _spectator_test(class_name, run_method_name, &block)
       # Wrapper class for isolating the test code.
       struct {{class_name.id}}
         # Mix in methods and macros specifically for example DSL.
@@ -1448,7 +1448,7 @@ module Spectator::DSL
     # Since the names are generated, and macros can't return values,
     # the names for everything must be passed in as arguments.
     # The `example_class_name` argument is the name of the class to define.
-    # The `wrapper_class_name` argument is the name of the wrapper class to reference.
+    # The `test_class_name` argument is the name of the wrapper class to reference.
     # This must be the same as `class_name` for `#_spectator_example_wrapper`.
     # The `base_class` argument specifies which type of example class the new class should derive from.
     # This should typically be `RunnableExample` or `PendingExample`.
@@ -1456,14 +1456,14 @@ module Spectator::DSL
     # And lastly, the block specified is any additional content to put in the class.
     # For instance, to define a method in the class, do it in the block.
     # ```
-    # _spectator_example(Example123, Wrapper123, RunnableExample, "does something") do
+    # _spectator_example(Example123, Test123, RunnableExample, "does something") do
     #   def something
     #     # This method is defined in the Example123 class.
     #   end
     # end
     # ```
     # If nothing is needed, omit the block.
-    private macro _spectator_example(example_class_name, wrapper_class_name, base_class, what, &block)
+    private macro _spectator_example(example_class_name, test_class_name, base_class, what, &block)
       # Example class containing meta information and instructions for running the test.
       class {{example_class_name.id}} < {{base_class.id}}
         # Stores the group the example belongs to
@@ -1471,10 +1471,10 @@ module Spectator::DSL
         # This method's signature must match the one used in `ExampleFactory#build`.
         def initialize(group : ::Spectator::ExampleGroup, sample_values : ::Spectator::Internals::SampleValues)
           super
-          @instance = {{wrapper_class_name.id}}.new(sample_values)
+          @instance = {{test_class_name.id}}.new(sample_values)
         end
 
-        # Retrieves the underlying, wrapped instance.
+        # Retrieves the underlying, wrapped test code.
         getter instance
 
         # Add the block's content if one was provided.
