@@ -34,7 +34,7 @@ module Spectator::DSL
   #   def initialize(group, sample_values)
   #     # group and sample_values are covered later.
   #     super
-  #     @wrapper = Wrapper123.new(sample_values)
+  #     @instance = Test123.new(sample_values)
   #   end
   #
   #   # Returns the text provided by the user.
@@ -47,13 +47,13 @@ module Spectator::DSL
   #   # This method is called by `RunnableExample`
   #   # when the example code should be ran.
   #   def run_instance
-  #     @wrapper._run123
+  #     @instance._run123
   #   end
   # end
   #
   # # Wrapper class for the example code.
   # # This isolates it from Spectator's internals.
-  # class Wrapper123
+  # class Test123
   #   include Context123 # More on this in a bit.
   #   include ExampleDSL # Include DSL for the example code.
   #
@@ -89,7 +89,7 @@ module Spectator::DSL
   # # becomes...
   #
   # # describe "#foo"
-  # module Group123
+  # module Context123
   #   # Start a new group.
   #   # More on this in a bit.
   #   Builder.start_group("#foo")
@@ -99,8 +99,8 @@ module Spectator::DSL
   #   end
   #
   #   # context "when given :bar"
-  #   module Group456
-  #     include Group123 # Inherit parent module.
+  #   module Context456
+  #     include Context123 # Inherit parent module.
   #
   #     # Start a nested group.
   #     Builder.start_group("when given :bar")
@@ -110,10 +110,10 @@ module Spectator::DSL
   #     end
   #
   #     # Wrapper class for the test case.
-  #     class Wrapper456
-  #       include Group456 # Include context.
+  #     class Test456
+  #       include Context456 # Include context.
   #
-  #       # Rest of example code...
+  #       # Rest of test code...
   #     end
   #
   #     # Example class for the test case.
@@ -242,7 +242,7 @@ module Spectator::DSL
     macro context(what, &block)
       # Module for the context.
       # The module uses a generated unique name.
-      module Group%group
+      module Context%context
         # Include the parent module.
         # Since `@type` resolves immediately,
         # this will reference the parent type.
@@ -493,7 +493,7 @@ module Spectator::DSL
       # This simplifies getting the element type.
       # The name is uniquely generated to prevent namespace collision.
       # This method should be called only once.
-      def %collection
+      def %sample
         {{collection}}
       end
 
@@ -501,7 +501,7 @@ module Spectator::DSL
       # This has to be a class that includes the parent module.
       # The collection could reference a helper method
       # or anything else in the parent scope.
-      class Collection%group
+      class Sample%sample
         # Include the parent module.
         include {{@type.id}}
 
@@ -516,16 +516,16 @@ module Spectator::DSL
           # only select the first `count` items from the collection.
           # Otherwise, select all of them.
           {% if count %}
-            %collection.first({{count}})
+            %sample.first({{count}})
           {% else %}
-            %collection.to_a
+            %sample.to_a
           {% end %}
         end
       end
 
       # Module for the context.
       # The module uses a generated unique name.
-      module Group%group
+      module Context%sample
         # Include the parent module.
         # Since `@type` resolves immediately,
         # this will reference the parent type.
@@ -539,22 +539,22 @@ module Spectator::DSL
           # Unwrap the value and return it.
           # The `#first` method has a return type that matches the element type.
           # So it is used on the collection method proxy to resolve the type at compile-time.
-          @%wrapper.as(::Spectator::Internals::TypedValueWrapper(typeof(%collection.first))).value
+          @%wrapper.as(::Spectator::Internals::TypedValueWrapper(typeof(%sample.first))).value
         end
 
         # Initializer to extract current element of the collection from sample values.
         def initialize(sample_values : ::Spectator::Internals::SampleValues)
           super
-          @%wrapper = sample_values.get_wrapper(:%group)
+          @%wrapper = sample_values.get_wrapper(:%sample)
         end
 
         # Start a new example group.
         # Sample groups require additional configuration.
         ::Spectator::DSL::Builder.start_sample_group(
-          {{collection.stringify}},   # String representation of the collection.
-          Collection%group.new.%to_a, # All elements in the collection.
-          {{name.stringify}},         # Name for the current element.
-          :%group # Unique identifier for retrieving elements for the associated collection.
+          {{collection.stringify}}, # String representation of the collection.
+          Sample%sample.new.%to_a,  # All elements in the collection.
+          {{name.stringify}},       # Name for the current element.
+          :%sample                  # Unique identifier for retrieving elements for the associated collection.
         )
 
         # Nest the block's content in the module.
@@ -620,7 +620,7 @@ module Spectator::DSL
       # This simplifies getting the element type.
       # The name is uniquely generated to prevent namespace collision.
       # This method should be called only once.
-      def %collection
+      def %sample
         {{collection}}
       end
 
@@ -628,7 +628,7 @@ module Spectator::DSL
       # This has to be a class that includes the parent module.
       # The collection could reference a helper method
       # or anything else in the parent scope.
-      class Collection%group
+      class Sample%sample
         # Include the parent module.
         include {{@type.id}}
 
@@ -639,13 +639,13 @@ module Spectator::DSL
         # 2. The collection might contain randomly generated values.
         #    Iterating multiple times would generate inconsistent values at runtime.
         def %to_a
-          %collection.to_a.sample({{count}})
+          %sample.to_a.sample({{count}})
         end
       end
 
       # Module for the context.
       # The module uses a generated unique name.
-      module Group%group
+      module Context%sample
         # Include the parent module.
         # Since `@type` resolves immediately,
         # this will reference the parent type.
@@ -659,22 +659,22 @@ module Spectator::DSL
           # Unwrap the value and return it.
           # The `#first` method has a return type that matches the element type.
           # So it is used on the collection method proxy to resolve the type at compile-time.
-          @%wrapper.as(::Spectator::Internals::TypedValueWrapper(typeof(%collection.first))).value
+          @%wrapper.as(::Spectator::Internals::TypedValueWrapper(typeof(%sample.first))).value
         end
 
         # Initializer to extract current element of the collection from sample values.
         def initialize(sample_values : ::Spectator::Internals::SampleValues)
           super
-          @%wrapper = sample_values.get_wrapper(:%group)
+          @%wrapper = sample_values.get_wrapper(:%sample)
         end
 
         # Start a new example group.
         # Sample groups require additional configuration.
         ::Spectator::DSL::Builder.start_sample_group(
-          {{collection.stringify}},   # String representation of the collection.
-          Collection%group.new.%to_a, # All elements in the collection.
-          {{name.stringify}},         # Name for the current element.
-          :%group # Unique identifier for retrieving elements for the associated collection.
+          {{collection.stringify}}, # String representation of the collection.
+          Sample%sample.new.%to_a,  # All elements in the collection.
+          {{name.stringify}},       # Name for the current element.
+          :%sample                  # Unique identifier for retrieving elements for the associated collection.
         )
 
         # Nest the block's content in the module.
