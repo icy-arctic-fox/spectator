@@ -1,6 +1,6 @@
 module Spectator
   # Outcome of all tests in a suite.
-  class TestSuiteResults
+  class Report
     getter runtime : Time::Span
 
     @results : Array(Result)

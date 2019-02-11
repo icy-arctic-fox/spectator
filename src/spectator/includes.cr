@@ -32,7 +32,7 @@ require "./command_line_arguments_config_source"
 require "./example_failed"
 require "./expectation_failed"
 require "./test_suite"
-require "./test_suite_results"
+require "./report"
 require "./runner"
 
 require "./result"

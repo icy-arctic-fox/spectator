@@ -16,16 +16,16 @@ module Spectator::Formatters
     def start_suite
     end
 
-    def end_suite(results : TestSuiteResults)
+    def end_suite(report : Report)
       puts
       puts
-      display_failures(results)
-      display_errors(results)
-      display_summary(results)
+      display_failures(report)
+      display_errors(report)
+      display_summary(report)
     end
 
-    private def display_failures(results)
-      failures = results.failures
+    private def display_failures(report)
+      failures = report.failures
       if failures.any?
         puts "Failures:"
         puts
@@ -46,12 +46,12 @@ module Spectator::Formatters
       puts
     end
 
-    private def display_errors(results)
+    private def display_errors(report)
     end
 
-    private def display_summary(results)
-      puts finish_time_string(results)
-      puts result_string(results)
+    private def display_summary(report)
+      puts finish_time_string(report)
+      puts result_string(report)
     end
 
     def start_example(example : Example)
@@ -74,15 +74,15 @@ module Spectator::Formatters
       end
     end
 
-    private def finish_time_string(results)
-      "Finished in #{human_time(results.runtime)}"
+    private def finish_time_string(report)
+      "Finished in #{human_time(report.runtime)}"
     end
 
-    private def result_string(results)
-      examples = results.examples
-      failures = results.failed_examples
-      errors = results.errored_examples
-      pending = results.pending_examples
+    private def result_string(report)
+      examples = report.examples
+      failures = report.failed_examples
+      errors = report.errored_examples
+      pending = report.pending_examples
       string = "#{examples} examples, #{failures} failures, #{errors} errors, #{pending} pending"
       if failures > 0 || errors > 0
         string.colorize(FAILURE_COLOR)

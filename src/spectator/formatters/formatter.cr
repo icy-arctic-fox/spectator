@@ -14,7 +14,7 @@ module Spectator::Formatters
 
     # Called when a test suite finishes.
     # The results from the entire suite are provided.
-    abstract def end_suite(results : TestSuiteResults)
+    abstract def end_suite(report : Report)
 
     # Called before a test starts.
     abstract def start_example(example : Example)

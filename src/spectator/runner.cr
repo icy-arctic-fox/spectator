@@ -12,7 +12,7 @@ module Spectator
           run_example(example).as(Result)
         end
       end
-      @config.formatter.end_suite(TestSuiteResults.new(results, elapsed))
+      @config.formatter.end_suite(Report.new(results, elapsed))
     end
 
     private def run_example(example) : Result
