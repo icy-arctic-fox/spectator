@@ -148,7 +148,7 @@ describe Spectator::Runner do
         spy = SpyFormatter.new
         runner = Spectator::Runner.new(suite, spectator_test_config(spy))
         max_time = Time.measure { runner.run }
-        min_time = spy.end_example_calls.sum(&.elapsed)
+        min_time = spy.end_example_calls.each.map(&.as(Spectator::FinishedResult)).sum(&.elapsed)
         report = spy.end_suite_calls.first
         report.runtime.should be <= max_time
         report.runtime.should be >= min_time

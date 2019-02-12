@@ -5,9 +5,6 @@ module Spectator
     # Example that was run that this result is for.
     getter example : Example
 
-    # Length of time it took to run the example.
-    abstract def elapsed : Time::Span
-
     # Indicates that an example was run and it was successful.
     # NOTE: Examples with warnings count as successful.
     abstract def passed? : Bool

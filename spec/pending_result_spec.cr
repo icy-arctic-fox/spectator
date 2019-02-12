@@ -36,10 +36,4 @@ describe Spectator::PendingResult do
       result.example.should eq(example)
     end
   end
-
-  describe "#elapsed" do
-    it "is zero" do
-      new_pending_result.elapsed.should eq(Time::Span.zero)
-    end
-  end
 end
