@@ -42,4 +42,18 @@ class SpyExample < Spectator::RunnableExample
       example.block = block
     end
   end
+
+  # Creates a group of spy examples.
+  # Specify the number of examplese to create and a block to invoke when the example is run.
+  # The block is given the index of the example in the group.
+  def self.create_group(count, &block : Int32 -> Nil)
+    values = Spectator::Internals::SampleValues.empty
+    Spectator::RootExampleGroup.new(Spectator::ExampleHooks.empty, Spectator::ExampleConditions.empty).tap do |group|
+      group.children = Array.new(count) do |index|
+        new(group, values).tap do |example|
+          example.block = block.partial(index)
+        end.as(Spectator::ExampleComponent)
+      end
+    end
+  end
 end
