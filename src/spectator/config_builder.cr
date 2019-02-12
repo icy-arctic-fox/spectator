@@ -3,6 +3,11 @@ module Spectator
   # Use the setters in this class to incrementally build a configuration.
   # Then call `#build` to create the final configuration.
   class ConfigBuilder
+    # Creates a default configuration.
+    def self.default
+      new.build
+    end
+
     @formatter : Formatters::Formatter? = nil
 
     # Sets the formatter to use for reporting test progress and results.
