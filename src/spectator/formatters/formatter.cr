@@ -10,7 +10,7 @@ module Spectator::Formatters
   # Steps 2 and 3 are called for each example in the suite.
   abstract class Formatter
     # Called when a test suite is starting to execute.
-    abstract def start_suite
+    abstract def start_suite(suite : TestSuite)
 
     # Called when a test suite finishes.
     # The results from the entire suite are provided.

@@ -13,7 +13,7 @@ module Spectator::Formatters
     ERROR_CHAR   = 'E'.colorize(ERROR_COLOR)
     PENDING_CHAR = '*'.colorize(PENDING_COLOR)
 
-    def start_suite
+    def start_suite(suite : TestSuite)
     end
 
     def end_suite(report : Report)

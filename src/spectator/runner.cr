@@ -11,7 +11,7 @@ module Spectator
     # and invoke the formatter to output results.
     def run : Nil
       # Indicate the suite is starting.
-      @config.formatter.start_suite
+      @config.formatter.start_suite(@suite)
 
       # Run all examples and capture the results.
       results = [] of Result
