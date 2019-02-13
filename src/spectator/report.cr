@@ -26,24 +26,24 @@ module Spectator
       @results.count(&.failed?)
     end
 
-    # Returns a set of results for all failed examples.
-    def failures
-      @results.select(&.failed?).map(&.as(FailedResult))
-    end
-
     # Number of examples that had errors.
     def error_count
       @results.count(&.errored?)
     end
 
-    # Returns a set of results for all errored examples.
-    def errors
-      @results.select(&.errored?).map(&.as(ErroredResult))
-    end
-
     # Number of pending examples.
     def pending_count
       @results.count(&.pending?)
+    end
+
+    # Returns a set of results for all failed examples.
+    def failures
+      @results.select(&.failed?).map(&.as(FailedResult))
+    end
+
+    # Returns a set of results for all errored examples.
+    def errors
+      @results.select(&.errored?).map(&.as(ErroredResult))
     end
 
     # Length of time it took to run just example code.
