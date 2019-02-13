@@ -28,7 +28,7 @@ module Spectator
 
     # Returns a set of results for all failed examples.
     def failures
-      @results.select(&.failed?)
+      @results.select(&.failed?).map(&.as(FailedResult))
     end
 
     # Number of examples that had errors.
@@ -38,7 +38,7 @@ module Spectator
 
     # Returns a set of results for all errored examples.
     def errors
-      @results.select(&.errored?)
+      @results.select(&.errored?).map(&.as(ErroredResult))
     end
 
     # Number of pending examples.

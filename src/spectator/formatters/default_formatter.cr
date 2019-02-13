@@ -30,7 +30,7 @@ module Spectator::Formatters
         puts "Failures:"
         puts
         failures.each_with_index do |failure, index|
-          display_failure(failure.as(FailedResult), index + 1)
+          display_failure(failure, index + 1)
         end
       end
     end
