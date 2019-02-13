@@ -79,10 +79,10 @@ module Spectator::Formatters
     end
 
     private def result_string(report)
-      examples = report.examples
-      failures = report.failed_examples
-      errors = report.errored_examples
-      pending = report.pending_examples
+      examples = report.example_count
+      failures = report.failed_count
+      errors = report.error_count
+      pending = report.pending_count
       string = "#{examples} examples, #{failures} failures, #{errors} errors, #{pending} pending"
       if failures > 0 || errors > 0
         string.colorize(FAILURE_COLOR)

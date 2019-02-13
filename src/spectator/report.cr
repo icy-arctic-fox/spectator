@@ -5,27 +5,24 @@ module Spectator
     # This includes examples, hooks, and framework processes.
     getter runtime : Time::Span
 
-    @results : Array(Result)
-
     # Creates the report.
     # The `results` are from running the examples in the test suite.
     # The `runtime` is the total time it took to execute the suite.
-    def initialize(results : Enumerable(Result), @runtime)
-      @results = results.to_a
+    def initialize(@results : Array(Result), @runtime)
     end
 
     # Number of examples.
-    def examples
+    def example_count
       @results.size
     end
 
     # Number of passing examples.
-    def successful_examples
+    def successful_count
       @results.count(&.successful?)
     end
 
     # Number of failing examples (includes errors).
-    def failed_examples
+    def failed_count
       @results.count(&.failed?)
     end
 
@@ -35,7 +32,7 @@ module Spectator
     end
 
     # Number of examples that had errors.
-    def errored_examples
+    def error_count
       @results.count(&.errored?)
     end
 
@@ -45,7 +42,7 @@ module Spectator
     end
 
     # Number of pending examples.
-    def pending_examples
+    def pending_count
       @results.count(&.pending?)
     end
 
