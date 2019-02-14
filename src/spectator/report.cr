@@ -18,7 +18,7 @@ module Spectator
 
     # Number of passing examples.
     def successful_count
-      @results.count(&.successful?)
+      @results.count(&.passed?)
     end
 
     # Number of failing examples (includes errors).
@@ -50,7 +50,13 @@ module Spectator
     # This does not include hooks,
     # but it does include pre- and post-conditions.
     def example_runtime
-      @results.map(&.elapsed).sum
+      @results.sum do |result|
+        if result.is_a?(FinishedResult)
+          result.elapsed
+        else
+          Time::Span.zero
+        end
+      end
     end
 
     # Length of time spent in framework processes and hooks.
