@@ -6,6 +6,16 @@ class SpyExample < Spectator::RunnableExample
     "SPY"
   end
 
+  # Dummy source file.
+  def source_file
+    __FILE__
+  end
+
+  # Dummy source line number.
+  def source_line
+    __LINE__
+  end
+
   # Dummy instance.
   def instance
     nil

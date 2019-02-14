@@ -5,6 +5,14 @@ class ConcretePendingExample < Spectator::PendingExample
     "PENDING_TEST_EXAMPLE"
   end
 
+  def source_file
+    __FILE__
+  end
+
+  def source_line
+    __LINE__
+  end
+
   def instance
     nil
   end
