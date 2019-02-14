@@ -16,8 +16,8 @@ module Spectator::DSL
     # ```
     # Where the actual value is returned by the system-under-test,
     # and the expected value is what the actual value should be to satisfy the condition.
-    macro expect(actual)
-      ::Spectator::Expectations::ValueExpectationPartial.new({{actual.stringify}}, {{actual}})
+    macro expect(actual, _source_file = __FILE__, _source_line = __LINE__)
+      ::Spectator::Expectations::ValueExpectationPartial.new({{actual.stringify}}, {{_source_file}}, {{_source_line}}, {{actual}})
     end
 
     # Starts an expectation on a block of code.
@@ -41,7 +41,7 @@ module Spectator::DSL
     # expect(&.size).to eq(5)
     # ```
     # The method passed will always be evaluated on `#subject`.
-    macro expect(&block)
+    macro expect(_source_file = __FILE__, _source_line = __LINE__, &block)
       {% if block.is_a?(Nop) %}
         {% raise "Argument or block must be provided to expect" %}
       {% end %}
@@ -55,11 +55,11 @@ module Spectator::DSL
         # The raw block can't be used because it's not clear to the user.
         {% method_name = block.body.id.split('.').last %}
         # TODO: Maybe pass the subject in as __arg0 instead of prefixing with `subject.`.
-        ::Spectator::Expectations::ValueExpectationPartial.new({{"#" + method_name}}, subject.{{method_name.id}})
+        ::Spectator::Expectations::ValueExpectationPartial.new({{"#" + method_name}}, {{_source_file}}, {{_source_line}}, subject.{{method_name.id}})
       {% else %}
         # In this case, it looks like the short-hand method syntax wasn't used.
         # Just drop in the block as-is.
-        ::Spectator::Expectations::ValueExpectationPartial.new({{block.body.stringify}}, {{block.body}})
+        ::Spectator::Expectations::ValueExpectationPartial.new({{block.body.stringify}}, {{_source_file}}, {{_source_line}}, {{block.body}})
       {% end %}
     end
 

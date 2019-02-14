@@ -17,8 +17,14 @@ module Spectator::Expectations
     # and not the actual value of the foo.
     getter label : String
 
+    # Source file the expectation originated from.
+    getter source_file : String
+
+    # Line number in the source file the expectation originated from.
+    getter source_line : Int32
+
     # Creates the base of the partial.
-    private def initialize(@label)
+    private def initialize(@label, @source_file, @source_line)
     end
 
     # Asserts that the `#actual` value matches some criteria.
