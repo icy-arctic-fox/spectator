@@ -1338,7 +1338,7 @@ module Spectator::DSL
     # subject { 1 + 2 }
     # it is_expected.to eq(3)
     # ```
-    macro it(what, &block)
+    macro it(what, _source_file = __FILE__, _source_line = __LINE__, &block)
       # Create the wrapper class for the test code.
       {% if block.is_a?(Nop) %}
         {% if what.is_a?(Call) %}
@@ -1354,6 +1354,16 @@ module Spectator::DSL
 
       # Create a class derived from `RunnableExample` to run the test code.
       _spectator_example(Example%example, Test%example, ::Spectator::RunnableExample, {{what}}) do
+        # Source file the example originated from.
+        def source_file
+          {{_source_file}}
+        end
+
+        # Line number in the source file the example originated from.
+        def source_line
+          {{_source_line}}
+        end
+
         # Implement abstract method to run the wrapped example block.
         protected def run_instance
           @instance.%run
@@ -1392,12 +1402,22 @@ module Spectator::DSL
     # can occur in unreferenced code and won't be caught by the compiler.
     # By creating a `#pending` test, the code will be referenced.
     # Thus, forcing the compiler to at least process the code, even if it isn't run.
-    macro pending(what, &block)
+    macro pending(what, _source_file = __FILE__, _source_line = __LINE__, &block)
       # Create the wrapper class for the test code.
       _spectator_test(Test%example, %run) {{block}}
 
       # Create a class derived from `PendingExample` to skip the test code.
-      _spectator_example(Example%example, Test%example, ::Spectator::PendingExample, {{what}})
+      _spectator_example(Example%example, Test%example, ::Spectator::PendingExample, {{what}}) do
+        # Source file the example originated from.
+        def source_file
+          {{_source_file}}
+        end
+
+        # Line number in the source file the example originated from.
+        def source_line
+          {{_source_line}}
+        end
+      end
 
       # Add the example to the current group.
       ::Spectator::DSL::Builder.add_example(Example%example)
