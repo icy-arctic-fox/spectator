@@ -38,6 +38,22 @@ describe Spectator::Expectations::ValueExpectationPartial do
     end
   end
 
+  describe "#source_file" do
+    it "is the expected value" do
+      file = __FILE__
+      partial = Spectator::Expectations::ValueExpectationPartial.new(42, file, __LINE__)
+      partial.source_file.should eq(file)
+    end
+  end
+
+  describe "#source_line" do
+    it "is the expected value" do
+      line = __LINE__
+      partial = Spectator::Expectations::ValueExpectationPartial.new(42, __FILE__, line)
+      partial.source_line.should eq(line)
+    end
+  end
+
   describe "#to" do
     it "reports an expectation" do
       spy = SpyExample.create do
