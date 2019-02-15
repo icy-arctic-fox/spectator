@@ -6,7 +6,7 @@ describe Spectator::Matchers::HaveValueMatcher do
       it "is true" do
         hash = Hash{"foo" => "bar"}
         value = "bar"
-        partial = Spectator::Expectations::ValueExpectationPartial.new(hash)
+        partial = new_partial(hash)
         matcher = Spectator::Matchers::HaveValueMatcher.new(value)
         matcher.match?(partial).should be_true
       end
@@ -16,7 +16,7 @@ describe Spectator::Matchers::HaveValueMatcher do
       it "is false" do
         hash = Hash{"foo" => "bar"}
         value = "baz"
-        partial = Spectator::Expectations::ValueExpectationPartial.new(hash)
+        partial = new_partial(hash)
         matcher = Spectator::Matchers::HaveValueMatcher.new(value)
         matcher.match?(partial).should be_false
       end
@@ -28,7 +28,7 @@ describe Spectator::Matchers::HaveValueMatcher do
       hash = Hash{"foo" => "bar"}
       value = "bar"
       label = "blah"
-      partial = Spectator::Expectations::ValueExpectationPartial.new(label, hash)
+      partial = new_partial(hash, label)
       matcher = Spectator::Matchers::HaveValueMatcher.new(value)
       matcher.message(partial).should contain(label)
     end
@@ -37,7 +37,7 @@ describe Spectator::Matchers::HaveValueMatcher do
       hash = Hash{"foo" => "bar"}
       value = "bar"
       label = "blah"
-      partial = Spectator::Expectations::ValueExpectationPartial.new(hash)
+      partial = new_partial(hash)
       matcher = Spectator::Matchers::HaveValueMatcher.new(label, value)
       matcher.message(partial).should contain(label)
     end
@@ -46,7 +46,7 @@ describe Spectator::Matchers::HaveValueMatcher do
       it "contains the stringified key" do
         hash = Hash{"foo" => "bar"}
         value = "bar"
-        partial = Spectator::Expectations::ValueExpectationPartial.new(hash)
+        partial = new_partial(hash)
         matcher = Spectator::Matchers::HaveValueMatcher.new(value)
         matcher.message(partial).should contain(value.to_s)
       end
@@ -58,7 +58,7 @@ describe Spectator::Matchers::HaveValueMatcher do
       hash = Hash{"foo" => "bar"}
       value = "bar"
       label = "blah"
-      partial = Spectator::Expectations::ValueExpectationPartial.new(label, hash)
+      partial = new_partial(hash, label)
       matcher = Spectator::Matchers::HaveValueMatcher.new(value)
       matcher.negated_message(partial).should contain(label)
     end
@@ -67,7 +67,7 @@ describe Spectator::Matchers::HaveValueMatcher do
       hash = Hash{"foo" => "bar"}
       value = "bar"
       label = "blah"
-      partial = Spectator::Expectations::ValueExpectationPartial.new(hash)
+      partial = new_partial(hash)
       matcher = Spectator::Matchers::HaveValueMatcher.new(label, value)
       matcher.negated_message(partial).should contain(label)
     end
@@ -76,7 +76,7 @@ describe Spectator::Matchers::HaveValueMatcher do
       it "contains the stringified key" do
         hash = Hash{"foo" => "bar"}
         value = "bar"
-        partial = Spectator::Expectations::ValueExpectationPartial.new(hash)
+        partial = new_partial(hash)
         matcher = Spectator::Matchers::HaveValueMatcher.new(value)
         matcher.negated_message(partial).should contain(value.to_s)
       end

@@ -5,7 +5,7 @@ describe Spectator::Matchers::NilMatcher do
     context "with nil" do
       it "is true" do
         value = nil.as(Bool?)
-        partial = Spectator::Expectations::ValueExpectationPartial.new(value)
+        partial = new_partial(value)
         matcher = Spectator::Matchers::NilMatcher.new
         matcher.match?(partial).should be_true
       end
@@ -14,7 +14,7 @@ describe Spectator::Matchers::NilMatcher do
     context "with not nil" do
       it "is false" do
         value = true.as(Bool?)
-        partial = Spectator::Expectations::ValueExpectationPartial.new(value)
+        partial = new_partial(value)
         matcher = Spectator::Matchers::NilMatcher.new
         matcher.match?(partial).should be_false
       end
@@ -23,7 +23,7 @@ describe Spectator::Matchers::NilMatcher do
 
   describe "#message" do
     it "mentions nil" do
-      partial = Spectator::Expectations::ValueExpectationPartial.new(42)
+      partial = new_partial(42)
       matcher = Spectator::Matchers::NilMatcher.new
       matcher.message(partial).should contain("nil")
     end
@@ -31,7 +31,7 @@ describe Spectator::Matchers::NilMatcher do
     it "contains the actual label" do
       value = 42
       label = "everything"
-      partial = Spectator::Expectations::ValueExpectationPartial.new(label, value)
+      partial = new_partial(value, label)
       matcher = Spectator::Matchers::NilMatcher.new
       matcher.message(partial).should contain(label)
     end
@@ -39,7 +39,7 @@ describe Spectator::Matchers::NilMatcher do
 
   describe "#negated_message" do
     it "mentions nil" do
-      partial = Spectator::Expectations::ValueExpectationPartial.new(42)
+      partial = new_partial(42)
       matcher = Spectator::Matchers::NilMatcher.new
       matcher.negated_message(partial).should contain("nil")
     end
@@ -47,7 +47,7 @@ describe Spectator::Matchers::NilMatcher do
     it "contains the actual label" do
       value = 42
       label = "everything"
-      partial = Spectator::Expectations::ValueExpectationPartial.new(label, value)
+      partial = new_partial(value, label)
       matcher = Spectator::Matchers::NilMatcher.new
       matcher.negated_message(partial).should contain(label)
     end

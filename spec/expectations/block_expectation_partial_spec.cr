@@ -5,7 +5,7 @@ describe Spectator::Expectations::BlockExpectationPartial do
     context "with a label" do
       it "contains the value passed to the constructor" do
         actual = ->{ 777 }
-        partial = Spectator::Expectations::BlockExpectationPartial.new(actual.to_s, actual)
+        partial = Spectator::Expectations::BlockExpectationPartial.new(actual, actual.to_s, __FILE__, __LINE__)
         partial.actual.should eq(actual.call)
       end
     end
@@ -13,7 +13,7 @@ describe Spectator::Expectations::BlockExpectationPartial do
     context "without a label" do
       it "contains the value passed to the constructor" do
         actual = ->{ 777 }
-        partial = Spectator::Expectations::BlockExpectationPartial.new(actual)
+        partial = Spectator::Expectations::BlockExpectationPartial.new(actual, __FILE__, __LINE__)
         partial.actual.should eq(actual.call)
       end
     end
@@ -24,7 +24,7 @@ describe Spectator::Expectations::BlockExpectationPartial do
       it "contains the value passed to the constructor" do
         actual = ->{ 777 }
         label = "lucky"
-        partial = Spectator::Expectations::BlockExpectationPartial.new(label, actual)
+        partial = Spectator::Expectations::BlockExpectationPartial.new(actual, label, __FILE__, __LINE__)
         partial.label.should eq(label)
       end
     end
@@ -32,7 +32,7 @@ describe Spectator::Expectations::BlockExpectationPartial do
     context "when omitted" do
       it "contains a stringified version of #actual" do
         actual = ->{ 777 }
-        partial = Spectator::Expectations::BlockExpectationPartial.new(actual)
+        partial = Spectator::Expectations::BlockExpectationPartial.new(actual, __FILE__, __LINE__)
         partial.label.should eq(actual.to_s)
       end
     end
@@ -43,7 +43,7 @@ describe Spectator::Expectations::BlockExpectationPartial do
       spy = SpyExample.create do
         actual = ->{ 777 }
         expected = 777
-        partial = Spectator::Expectations::BlockExpectationPartial.new(actual)
+        partial = Spectator::Expectations::BlockExpectationPartial.new(actual, __FILE__, __LINE__)
         matcher = Spectator::Matchers::EqualityMatcher.new(expected)
         partial.to(matcher)
       end
@@ -55,7 +55,7 @@ describe Spectator::Expectations::BlockExpectationPartial do
       spy = SpyExample.create do
         actual = ->{ 777 }
         expected = 777
-        partial = Spectator::Expectations::BlockExpectationPartial.new(actual)
+        partial = Spectator::Expectations::BlockExpectationPartial.new(actual, __FILE__, __LINE__)
         matcher = Spectator::Matchers::EqualityMatcher.new(expected)
         5.times { partial.to(matcher) }
       end
@@ -68,7 +68,7 @@ describe Spectator::Expectations::BlockExpectationPartial do
         spy = SpyExample.create do
           actual = ->{ 777 }
           expected = 777
-          partial = Spectator::Expectations::BlockExpectationPartial.new(actual)
+          partial = Spectator::Expectations::BlockExpectationPartial.new(actual, __FILE__, __LINE__)
           matcher = Spectator::Matchers::EqualityMatcher.new(expected)
           partial.to(matcher)
         end
@@ -82,7 +82,7 @@ describe Spectator::Expectations::BlockExpectationPartial do
         spy = SpyExample.create do
           actual = ->{ 777 }
           expected = 42
-          partial = Spectator::Expectations::BlockExpectationPartial.new(actual)
+          partial = Spectator::Expectations::BlockExpectationPartial.new(actual, __FILE__, __LINE__)
           matcher = Spectator::Matchers::EqualityMatcher.new(expected)
           partial.to(matcher)
         end
@@ -98,7 +98,7 @@ describe Spectator::Expectations::BlockExpectationPartial do
         spy = SpyExample.create do
           actual = ->{ 777 }
           expected = 777
-          partial = Spectator::Expectations::BlockExpectationPartial.new(actual)
+          partial = Spectator::Expectations::BlockExpectationPartial.new(actual, __FILE__, __LINE__)
           matcher = Spectator::Matchers::EqualityMatcher.new(expected)
           partial.{{method.id}}(matcher)
         end
@@ -110,7 +110,7 @@ describe Spectator::Expectations::BlockExpectationPartial do
         spy = SpyExample.create do
           actual = ->{ 777 }
           expected = 42
-          partial = Spectator::Expectations::BlockExpectationPartial.new(actual)
+          partial = Spectator::Expectations::BlockExpectationPartial.new(actual, __FILE__, __LINE__)
           matcher = Spectator::Matchers::EqualityMatcher.new(expected)
           5.times { partial.{{method.id}}(matcher) }
         end
@@ -123,7 +123,7 @@ describe Spectator::Expectations::BlockExpectationPartial do
           spy = SpyExample.create do
             actual = ->{ 777 }
             expected = 777
-            partial = Spectator::Expectations::BlockExpectationPartial.new(actual)
+            partial = Spectator::Expectations::BlockExpectationPartial.new(actual, __FILE__, __LINE__)
             matcher = Spectator::Matchers::EqualityMatcher.new(expected)
             partial.{{method.id}}(matcher)
           end
@@ -137,7 +137,7 @@ describe Spectator::Expectations::BlockExpectationPartial do
           spy = SpyExample.create do
             actual = ->{ 777 }
             expected = 42
-            partial = Spectator::Expectations::BlockExpectationPartial.new(actual)
+            partial = Spectator::Expectations::BlockExpectationPartial.new(actual, __FILE__, __LINE__)
             matcher = Spectator::Matchers::EqualityMatcher.new(expected)
             partial.{{method.id}}(matcher)
           end

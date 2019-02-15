@@ -4,7 +4,7 @@ describe Spectator::Matchers::GreaterThanEqualMatcher do
   describe "#match?" do
     it "compares using #>=" do
       spy = SpySUT.new
-      partial = Spectator::Expectations::ValueExpectationPartial.new(spy)
+      partial = new_partial(spy)
       matcher = Spectator::Matchers::GreaterThanEqualMatcher.new(42)
       matcher.match?(partial).should be_true
       spy.ge_call_count.should be > 0
@@ -14,7 +14,7 @@ describe Spectator::Matchers::GreaterThanEqualMatcher do
       it "is false" do
         actual = 42
         expected = 777
-        partial = Spectator::Expectations::ValueExpectationPartial.new(actual)
+        partial = new_partial(actual)
         matcher = Spectator::Matchers::GreaterThanEqualMatcher.new(expected)
         matcher.match?(partial).should be_false
       end
@@ -24,7 +24,7 @@ describe Spectator::Matchers::GreaterThanEqualMatcher do
       it "is true" do
         actual = 777
         expected = 42
-        partial = Spectator::Expectations::ValueExpectationPartial.new(actual)
+        partial = new_partial(actual)
         matcher = Spectator::Matchers::GreaterThanEqualMatcher.new(expected)
         matcher.match?(partial).should be_true
       end
@@ -33,7 +33,7 @@ describe Spectator::Matchers::GreaterThanEqualMatcher do
     context "with an equal value" do
       it "is true" do
         value = 42
-        partial = Spectator::Expectations::ValueExpectationPartial.new(value)
+        partial = new_partial(value)
         matcher = Spectator::Matchers::GreaterThanEqualMatcher.new(value)
         matcher.match?(partial).should be_true
       end
@@ -43,7 +43,7 @@ describe Spectator::Matchers::GreaterThanEqualMatcher do
   describe "#message" do
     it "mentions >=" do
       value = 42
-      partial = Spectator::Expectations::ValueExpectationPartial.new(value)
+      partial = new_partial(value)
       matcher = Spectator::Matchers::GreaterThanEqualMatcher.new(value)
       matcher.message(partial).should contain(">=")
     end
@@ -51,7 +51,7 @@ describe Spectator::Matchers::GreaterThanEqualMatcher do
     it "contains the actual label" do
       value = 42
       label = "everything"
-      partial = Spectator::Expectations::ValueExpectationPartial.new(label, value)
+      partial = new_partial(value, label)
       matcher = Spectator::Matchers::GreaterThanEqualMatcher.new(value)
       matcher.message(partial).should contain(label)
     end
@@ -59,7 +59,7 @@ describe Spectator::Matchers::GreaterThanEqualMatcher do
     it "contains the expected label" do
       value = 42
       label = "everything"
-      partial = Spectator::Expectations::ValueExpectationPartial.new(value)
+      partial = new_partial(value)
       matcher = Spectator::Matchers::GreaterThanEqualMatcher.new(label, value)
       matcher.message(partial).should contain(label)
     end
@@ -68,7 +68,7 @@ describe Spectator::Matchers::GreaterThanEqualMatcher do
       it "contains stringified form of expected value" do
         value1 = 42
         value2 = 777
-        partial = Spectator::Expectations::ValueExpectationPartial.new(value1)
+        partial = new_partial(value1)
         matcher = Spectator::Matchers::GreaterThanEqualMatcher.new(value2)
         matcher.message(partial).should contain(value2.to_s)
       end
@@ -78,7 +78,7 @@ describe Spectator::Matchers::GreaterThanEqualMatcher do
   describe "#negated_message" do
     it "mentions >=" do
       value = 42
-      partial = Spectator::Expectations::ValueExpectationPartial.new(value)
+      partial = new_partial(value)
       matcher = Spectator::Matchers::GreaterThanEqualMatcher.new(value)
       matcher.negated_message(partial).should contain(">=")
     end
@@ -86,7 +86,7 @@ describe Spectator::Matchers::GreaterThanEqualMatcher do
     it "contains the actual label" do
       value = 42
       label = "everything"
-      partial = Spectator::Expectations::ValueExpectationPartial.new(label, value)
+      partial = new_partial(value, label)
       matcher = Spectator::Matchers::GreaterThanEqualMatcher.new(value)
       matcher.negated_message(partial).should contain(label)
     end
@@ -94,7 +94,7 @@ describe Spectator::Matchers::GreaterThanEqualMatcher do
     it "contains the expected label" do
       value = 42
       label = "everything"
-      partial = Spectator::Expectations::ValueExpectationPartial.new(value)
+      partial = new_partial(value)
       matcher = Spectator::Matchers::GreaterThanEqualMatcher.new(label, value)
       matcher.negated_message(partial).should contain(label)
     end
@@ -103,7 +103,7 @@ describe Spectator::Matchers::GreaterThanEqualMatcher do
       it "contains stringified form of expected value" do
         value1 = 42
         value2 = 777
-        partial = Spectator::Expectations::ValueExpectationPartial.new(value1)
+        partial = new_partial(value1)
         matcher = Spectator::Matchers::GreaterThanEqualMatcher.new(value2)
         matcher.negated_message(partial).should contain(value2.to_s)
       end

@@ -21,7 +21,7 @@ describe Spectator::Matchers::TruthyMatcher do
       context "with a truthy value" do
         it "is true" do
           value = 42
-          partial = Spectator::Expectations::ValueExpectationPartial.new(value)
+          partial = new_partial(value)
           matcher = Spectator::Matchers::TruthyMatcher.new(true)
           matcher.match?(partial).should be_true
         end
@@ -30,7 +30,7 @@ describe Spectator::Matchers::TruthyMatcher do
       context "with false" do
         it "is false" do
           value = false
-          partial = Spectator::Expectations::ValueExpectationPartial.new(value)
+          partial = new_partial(value)
           matcher = Spectator::Matchers::TruthyMatcher.new(true)
           matcher.match?(partial).should be_false
         end
@@ -39,7 +39,7 @@ describe Spectator::Matchers::TruthyMatcher do
       context "with nil" do
         it "is false" do
           value = nil
-          partial = Spectator::Expectations::ValueExpectationPartial.new(value)
+          partial = new_partial(value)
           matcher = Spectator::Matchers::TruthyMatcher.new(true)
           matcher.match?(partial).should be_false
         end
@@ -50,7 +50,7 @@ describe Spectator::Matchers::TruthyMatcher do
       it "contains the actual label" do
         value = 42
         label = "everything"
-        partial = Spectator::Expectations::ValueExpectationPartial.new(label, value)
+        partial = new_partial(value, label)
         matcher = Spectator::Matchers::TruthyMatcher.new(true)
         matcher.message(partial).should contain(label)
       end
@@ -58,7 +58,7 @@ describe Spectator::Matchers::TruthyMatcher do
       it "contains the \"truthy\"" do
         value = 42
         label = "everything"
-        partial = Spectator::Expectations::ValueExpectationPartial.new(value)
+        partial = new_partial(value)
         matcher = Spectator::Matchers::TruthyMatcher.new(true)
         matcher.message(partial).should contain("truthy")
       end
@@ -68,7 +68,7 @@ describe Spectator::Matchers::TruthyMatcher do
       it "contains the actual label" do
         value = 42
         label = "everything"
-        partial = Spectator::Expectations::ValueExpectationPartial.new(label, value)
+        partial = new_partial(value, label)
         matcher = Spectator::Matchers::TruthyMatcher.new(true)
         matcher.negated_message(partial).should contain(label)
       end
@@ -76,7 +76,7 @@ describe Spectator::Matchers::TruthyMatcher do
       it "contains the \"truthy\"" do
         value = 42
         label = "everything"
-        partial = Spectator::Expectations::ValueExpectationPartial.new(value)
+        partial = new_partial(value)
         matcher = Spectator::Matchers::TruthyMatcher.new(true)
         matcher.negated_message(partial).should contain("truthy")
       end
@@ -88,7 +88,7 @@ describe Spectator::Matchers::TruthyMatcher do
       context "with a truthy value" do
         it "is false" do
           value = 42
-          partial = Spectator::Expectations::ValueExpectationPartial.new(value)
+          partial = new_partial(value)
           matcher = Spectator::Matchers::TruthyMatcher.new(false)
           matcher.match?(partial).should be_false
         end
@@ -97,7 +97,7 @@ describe Spectator::Matchers::TruthyMatcher do
       context "with false" do
         it "is true" do
           value = false
-          partial = Spectator::Expectations::ValueExpectationPartial.new(value)
+          partial = new_partial(value)
           matcher = Spectator::Matchers::TruthyMatcher.new(false)
           matcher.match?(partial).should be_true
         end
@@ -106,7 +106,7 @@ describe Spectator::Matchers::TruthyMatcher do
       context "with nil" do
         it "is true" do
           value = nil
-          partial = Spectator::Expectations::ValueExpectationPartial.new(value)
+          partial = new_partial(value)
           matcher = Spectator::Matchers::TruthyMatcher.new(false)
           matcher.match?(partial).should be_true
         end
@@ -117,7 +117,7 @@ describe Spectator::Matchers::TruthyMatcher do
       it "contains the actual label" do
         value = 42
         label = "everything"
-        partial = Spectator::Expectations::ValueExpectationPartial.new(label, value)
+        partial = new_partial(value, label)
         matcher = Spectator::Matchers::TruthyMatcher.new(false)
         matcher.message(partial).should contain(label)
       end
@@ -125,7 +125,7 @@ describe Spectator::Matchers::TruthyMatcher do
       it "contains the \"falsey\"" do
         value = 42
         label = "everything"
-        partial = Spectator::Expectations::ValueExpectationPartial.new(value)
+        partial = new_partial(value)
         matcher = Spectator::Matchers::TruthyMatcher.new(false)
         matcher.message(partial).should contain("falsey")
       end
@@ -135,7 +135,7 @@ describe Spectator::Matchers::TruthyMatcher do
       it "contains the actual label" do
         value = 42
         label = "everything"
-        partial = Spectator::Expectations::ValueExpectationPartial.new(label, value)
+        partial = new_partial(value, label)
         matcher = Spectator::Matchers::TruthyMatcher.new(false)
         matcher.negated_message(partial).should contain(label)
       end
@@ -143,7 +143,7 @@ describe Spectator::Matchers::TruthyMatcher do
       it "contains the \"falsey\"" do
         value = 42
         label = "everything"
-        partial = Spectator::Expectations::ValueExpectationPartial.new(value)
+        partial = new_partial(value)
         matcher = Spectator::Matchers::TruthyMatcher.new(false)
         matcher.negated_message(partial).should contain("falsey")
       end

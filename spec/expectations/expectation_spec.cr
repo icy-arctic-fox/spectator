@@ -5,7 +5,7 @@ describe Spectator::Expectations::Expectation do
     context "with a successful match" do
       it "is true" do
         value = 42
-        partial = Spectator::Expectations::ValueExpectationPartial.new(value.to_s, value)
+        partial = new_partial(value)
         matcher = Spectator::Matchers::EqualityMatcher.new(value.to_s, value)
         expectation = Spectator::Expectations::Expectation.new(true, false, partial, matcher)
         matcher.match?(partial).should be_true # Sanity check.
@@ -15,7 +15,7 @@ describe Spectator::Expectations::Expectation do
       context "when negated" do
         it "is false" do
           value = 42
-          partial = Spectator::Expectations::ValueExpectationPartial.new(value.to_s, value)
+          partial = new_partial(value)
           matcher = Spectator::Matchers::EqualityMatcher.new(value.to_s, value)
           expectation = Spectator::Expectations::Expectation.new(true, true, partial, matcher)
           matcher.match?(partial).should be_true # Sanity check.
@@ -28,7 +28,7 @@ describe Spectator::Expectations::Expectation do
       it "is false" do
         value1 = 42
         value2 = 777
-        partial = Spectator::Expectations::ValueExpectationPartial.new(value1.to_s, value1)
+        partial = new_partial(value1)
         matcher = Spectator::Matchers::EqualityMatcher.new(value2.to_s, value2)
         expectation = Spectator::Expectations::Expectation.new(false, false, partial, matcher)
         matcher.match?(partial).should be_false # Sanity check.
@@ -39,7 +39,7 @@ describe Spectator::Expectations::Expectation do
         it "is true" do
           value1 = 42
           value2 = 777
-          partial = Spectator::Expectations::ValueExpectationPartial.new(value1.to_s, value1)
+          partial = new_partial(value1)
           matcher = Spectator::Matchers::EqualityMatcher.new(value2.to_s, value2)
           expectation = Spectator::Expectations::Expectation.new(false, true, partial, matcher)
           matcher.match?(partial).should be_false # Sanity check.
@@ -53,7 +53,7 @@ describe Spectator::Expectations::Expectation do
     context "with a successful match" do
       it "equals the matcher's #message" do
         value = 42
-        partial = Spectator::Expectations::ValueExpectationPartial.new(value.to_s, value)
+        partial = new_partial(value)
         matcher = Spectator::Matchers::EqualityMatcher.new(value.to_s, value)
         expectation = Spectator::Expectations::Expectation.new(true, false, partial, matcher)
         matcher.match?(partial).should be_true # Sanity check.
@@ -63,7 +63,7 @@ describe Spectator::Expectations::Expectation do
       context "when negated" do
         it "equals the matcher's #negated_message" do
           value = 42
-          partial = Spectator::Expectations::ValueExpectationPartial.new(value.to_s, value)
+          partial = new_partial(value)
           matcher = Spectator::Matchers::EqualityMatcher.new(value.to_s, value)
           expectation = Spectator::Expectations::Expectation.new(true, true, partial, matcher)
           matcher.match?(partial).should be_true # Sanity check.
@@ -76,7 +76,7 @@ describe Spectator::Expectations::Expectation do
       it "equals the matcher's #negated_message" do
         value1 = 42
         value2 = 777
-        partial = Spectator::Expectations::ValueExpectationPartial.new(value1.to_s, value1)
+        partial = new_partial(value1)
         matcher = Spectator::Matchers::EqualityMatcher.new(value2.to_s, value2)
         expectation = Spectator::Expectations::Expectation.new(false, false, partial, matcher)
         matcher.match?(partial).should be_false # Sanity check.
@@ -87,7 +87,7 @@ describe Spectator::Expectations::Expectation do
         it "equals the matcher's #message" do
           value1 = 42
           value2 = 777
-          partial = Spectator::Expectations::ValueExpectationPartial.new(value1.to_s, value1)
+          partial = new_partial(value1)
           matcher = Spectator::Matchers::EqualityMatcher.new(value2.to_s, value2)
           expectation = Spectator::Expectations::Expectation.new(false, true, partial, matcher)
           matcher.match?(partial).should be_false # Sanity check.
@@ -101,7 +101,7 @@ describe Spectator::Expectations::Expectation do
     context "with a successful match" do
       it "equals the matcher's #message" do
         value = 42
-        partial = Spectator::Expectations::ValueExpectationPartial.new(value.to_s, value)
+        partial = new_partial(value)
         matcher = Spectator::Matchers::EqualityMatcher.new(value.to_s, value)
         expectation = Spectator::Expectations::Expectation.new(true, false, partial, matcher)
         matcher.match?(partial).should be_true # Sanity check.
@@ -111,7 +111,7 @@ describe Spectator::Expectations::Expectation do
       context "when negated" do
         it "equals the matcher's #negated_message" do
           value = 42
-          partial = Spectator::Expectations::ValueExpectationPartial.new(value.to_s, value)
+          partial = new_partial(value)
           matcher = Spectator::Matchers::EqualityMatcher.new(value.to_s, value)
           expectation = Spectator::Expectations::Expectation.new(true, true, partial, matcher)
           matcher.match?(partial).should be_true # Sanity check.
@@ -124,7 +124,7 @@ describe Spectator::Expectations::Expectation do
       it "equals the matcher's #message" do
         value1 = 42
         value2 = 777
-        partial = Spectator::Expectations::ValueExpectationPartial.new(value1.to_s, value1)
+        partial = new_partial(value1)
         matcher = Spectator::Matchers::EqualityMatcher.new(value2.to_s, value2)
         expectation = Spectator::Expectations::Expectation.new(false, false, partial, matcher)
         matcher.match?(partial).should be_false # Sanity check.
@@ -135,7 +135,7 @@ describe Spectator::Expectations::Expectation do
         it "equals the matcher's #negated_message" do
           value1 = 42
           value2 = 777
-          partial = Spectator::Expectations::ValueExpectationPartial.new(value1.to_s, value1)
+          partial = new_partial(value1)
           matcher = Spectator::Matchers::EqualityMatcher.new(value2.to_s, value2)
           expectation = Spectator::Expectations::Expectation.new(false, true, partial, matcher)
           matcher.match?(partial).should be_false # Sanity check.

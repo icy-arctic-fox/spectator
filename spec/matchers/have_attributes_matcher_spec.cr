@@ -5,7 +5,7 @@ describe Spectator::Matchers::AttributesMatcher do
     it "uses ===" do
       array = %i[a b c]
       spy = SpySUT.new
-      partial = Spectator::Expectations::ValueExpectationPartial.new(array)
+      partial = new_partial(array)
       matcher = Spectator::Matchers::HaveMatcher.new({spy})
       matcher.match?(partial).should be_true
       spy.case_eq_call_count.should be > 0
@@ -16,7 +16,7 @@ describe Spectator::Matchers::AttributesMatcher do
         it "is true" do
           array = %i[a b c]
           attributes = {first: :a}
-          partial = Spectator::Expectations::ValueExpectationPartial.new(array)
+          partial = new_partial(array)
           matcher = Spectator::Matchers::AttributesMatcher.new(attributes)
           matcher.match?(partial).should be_true
         end
@@ -26,7 +26,7 @@ describe Spectator::Matchers::AttributesMatcher do
         it "is false" do
           array = %i[a b c]
           attributes = {first: :z}
-          partial = Spectator::Expectations::ValueExpectationPartial.new(array)
+          partial = new_partial(array)
           matcher = Spectator::Matchers::AttributesMatcher.new(attributes)
           matcher.match?(partial).should be_false
         end
@@ -36,7 +36,7 @@ describe Spectator::Matchers::AttributesMatcher do
         it "is true" do
           array = %i[a b c]
           attributes = {first: Symbol}
-          partial = Spectator::Expectations::ValueExpectationPartial.new(array)
+          partial = new_partial(array)
           matcher = Spectator::Matchers::AttributesMatcher.new(attributes)
           matcher.match?(partial).should be_true
         end
@@ -46,7 +46,7 @@ describe Spectator::Matchers::AttributesMatcher do
         it "is false" do
           array = %i[a b c]
           attributes = {first: Int32}
-          partial = Spectator::Expectations::ValueExpectationPartial.new(array)
+          partial = new_partial(array)
           matcher = Spectator::Matchers::AttributesMatcher.new(attributes)
           matcher.match?(partial).should be_false
         end
@@ -56,7 +56,7 @@ describe Spectator::Matchers::AttributesMatcher do
         it "is true" do
           array = %w[FOO BAR BAZ]
           attributes = {first: /foo/i}
-          partial = Spectator::Expectations::ValueExpectationPartial.new(array)
+          partial = new_partial(array)
           matcher = Spectator::Matchers::AttributesMatcher.new(attributes)
           matcher.match?(partial).should be_true
         end
@@ -66,7 +66,7 @@ describe Spectator::Matchers::AttributesMatcher do
         it "is false" do
           array = %w[FOO BAR BAZ]
           attributes = {first: /qux/i}
-          partial = Spectator::Expectations::ValueExpectationPartial.new(array)
+          partial = new_partial(array)
           matcher = Spectator::Matchers::AttributesMatcher.new(attributes)
           matcher.match?(partial).should be_false
         end
@@ -78,7 +78,7 @@ describe Spectator::Matchers::AttributesMatcher do
         it "is true" do
           array = %i[a b c]
           attributes = {first: :a, last: :c}
-          partial = Spectator::Expectations::ValueExpectationPartial.new(array)
+          partial = new_partial(array)
           matcher = Spectator::Matchers::AttributesMatcher.new(attributes)
           matcher.match?(partial).should be_true
         end
@@ -88,7 +88,7 @@ describe Spectator::Matchers::AttributesMatcher do
             it "is true" do
               array = [:a, 42, "FOO"]
               attributes = {first: Symbol, last: /foo/i}
-              partial = Spectator::Expectations::ValueExpectationPartial.new(array)
+              partial = new_partial(array)
               matcher = Spectator::Matchers::AttributesMatcher.new(attributes)
               matcher.match?(partial).should be_true
             end
@@ -98,7 +98,7 @@ describe Spectator::Matchers::AttributesMatcher do
             it "is false" do
               array = [:a, 42, "FOO"]
               attributes = {first: Symbol, last: /bar/i}
-              partial = Spectator::Expectations::ValueExpectationPartial.new(array)
+              partial = new_partial(array)
               matcher = Spectator::Matchers::AttributesMatcher.new(attributes)
               matcher.match?(partial).should be_false
             end
@@ -110,7 +110,7 @@ describe Spectator::Matchers::AttributesMatcher do
             it "is false" do
               array = [:a, 42, "FOO"]
               attributes = {first: Float32, last: /foo/i}
-              partial = Spectator::Expectations::ValueExpectationPartial.new(array)
+              partial = new_partial(array)
               matcher = Spectator::Matchers::AttributesMatcher.new(attributes)
               matcher.match?(partial).should be_false
             end
@@ -120,7 +120,7 @@ describe Spectator::Matchers::AttributesMatcher do
             it "is false" do
               array = [:a, 42, "FOO"]
               attributes = {first: Float32, last: /bar/i}
-              partial = Spectator::Expectations::ValueExpectationPartial.new(array)
+              partial = new_partial(array)
               matcher = Spectator::Matchers::AttributesMatcher.new(attributes)
               matcher.match?(partial).should be_false
             end
@@ -132,7 +132,7 @@ describe Spectator::Matchers::AttributesMatcher do
         it "is false" do
           array = %i[a b c]
           attributes = {first: :a, last: :d}
-          partial = Spectator::Expectations::ValueExpectationPartial.new(array)
+          partial = new_partial(array)
           matcher = Spectator::Matchers::AttributesMatcher.new(attributes)
           matcher.match?(partial).should be_false
         end
@@ -142,7 +142,7 @@ describe Spectator::Matchers::AttributesMatcher do
         it "is false" do
           array = %i[a b c]
           attributes = {first: :d, last: :e}
-          partial = Spectator::Expectations::ValueExpectationPartial.new(array)
+          partial = new_partial(array)
           matcher = Spectator::Matchers::AttributesMatcher.new(attributes)
           matcher.match?(partial).should be_false
         end
@@ -152,7 +152,7 @@ describe Spectator::Matchers::AttributesMatcher do
         it "is true" do
           array = [:a, 42, "FOO"]
           attributes = {first: Symbol, last: String}
-          partial = Spectator::Expectations::ValueExpectationPartial.new(array)
+          partial = new_partial(array)
           matcher = Spectator::Matchers::AttributesMatcher.new(attributes)
           matcher.match?(partial).should be_true
         end
@@ -162,7 +162,7 @@ describe Spectator::Matchers::AttributesMatcher do
         it "is false" do
           array = [:a, 42, "FOO"]
           attributes = {first: Symbol, last: Float32}
-          partial = Spectator::Expectations::ValueExpectationPartial.new(array)
+          partial = new_partial(array)
           matcher = Spectator::Matchers::AttributesMatcher.new(attributes)
           matcher.match?(partial).should be_false
         end
@@ -172,7 +172,7 @@ describe Spectator::Matchers::AttributesMatcher do
         it "is false" do
           array = [:a, 42, "FOO"]
           attributes = {first: Float32, last: Bytes}
-          partial = Spectator::Expectations::ValueExpectationPartial.new(array)
+          partial = new_partial(array)
           matcher = Spectator::Matchers::AttributesMatcher.new(attributes)
           matcher.match?(partial).should be_false
         end
@@ -182,7 +182,7 @@ describe Spectator::Matchers::AttributesMatcher do
         it "is true" do
           array = %w[FOO BAR BAZ]
           attributes = {first: /foo/i, last: /baz/i}
-          partial = Spectator::Expectations::ValueExpectationPartial.new(array)
+          partial = new_partial(array)
           matcher = Spectator::Matchers::AttributesMatcher.new(attributes)
           matcher.match?(partial).should be_true
         end
@@ -192,7 +192,7 @@ describe Spectator::Matchers::AttributesMatcher do
         it "is false" do
           array = %w[FOO BAR BAZ]
           attributes = {first: /foo/i, last: /qux/i}
-          partial = Spectator::Expectations::ValueExpectationPartial.new(array)
+          partial = new_partial(array)
           matcher = Spectator::Matchers::AttributesMatcher.new(attributes)
           matcher.match?(partial).should be_false
         end
@@ -202,7 +202,7 @@ describe Spectator::Matchers::AttributesMatcher do
         it "is false" do
           array = %w[FOO BAR]
           attributes = {first: /baz/i, last: /qux/i}
-          partial = Spectator::Expectations::ValueExpectationPartial.new(array)
+          partial = new_partial(array)
           matcher = Spectator::Matchers::AttributesMatcher.new(attributes)
           matcher.match?(partial).should be_false
         end
@@ -212,7 +212,7 @@ describe Spectator::Matchers::AttributesMatcher do
         it "is true" do
           array = [:a, 42, "FOO"]
           attributes = {first: Symbol, last: /foo/i, size: 3}
-          partial = Spectator::Expectations::ValueExpectationPartial.new(array)
+          partial = new_partial(array)
           matcher = Spectator::Matchers::AttributesMatcher.new(attributes)
           matcher.match?(partial).should be_true
         end
@@ -225,7 +225,7 @@ describe Spectator::Matchers::AttributesMatcher do
       value = "foobar"
       attributes = {size: 6}
       label = "everything"
-      partial = Spectator::Expectations::ValueExpectationPartial.new(label, value)
+      partial = new_partial(value, label)
       matcher = Spectator::Matchers::AttributesMatcher.new(attributes)
       matcher.message(partial).should contain(label)
     end
@@ -234,7 +234,7 @@ describe Spectator::Matchers::AttributesMatcher do
       value = "foobar"
       attributes = {size: 6}
       label = "everything"
-      partial = Spectator::Expectations::ValueExpectationPartial.new(value)
+      partial = new_partial(value)
       matcher = Spectator::Matchers::AttributesMatcher.new(label, attributes)
       matcher.message(partial).should contain(label)
     end
@@ -243,7 +243,7 @@ describe Spectator::Matchers::AttributesMatcher do
       it "contains stringified form of expected value" do
         value = "foobar"
         attributes = {size: 6}
-        partial = Spectator::Expectations::ValueExpectationPartial.new(value)
+        partial = new_partial(value)
         matcher = Spectator::Matchers::AttributesMatcher.new(attributes)
         matcher.message(partial).should contain(attributes.to_s)
       end
@@ -255,7 +255,7 @@ describe Spectator::Matchers::AttributesMatcher do
       value = "foobar"
       attributes = {size: 6}
       label = "everything"
-      partial = Spectator::Expectations::ValueExpectationPartial.new(label, value)
+      partial = new_partial(value, label)
       matcher = Spectator::Matchers::AttributesMatcher.new(attributes)
       matcher.negated_message(partial).should contain(label)
     end
@@ -264,7 +264,7 @@ describe Spectator::Matchers::AttributesMatcher do
       value = "foobar"
       attributes = {size: 6}
       label = "everything"
-      partial = Spectator::Expectations::ValueExpectationPartial.new(value)
+      partial = new_partial(value)
       matcher = Spectator::Matchers::AttributesMatcher.new(label, attributes)
       matcher.negated_message(partial).should contain(label)
     end
@@ -273,7 +273,7 @@ describe Spectator::Matchers::AttributesMatcher do
       it "contains stringified form of expected value" do
         value = "foobar"
         attributes = {size: 6}
-        partial = Spectator::Expectations::ValueExpectationPartial.new(value)
+        partial = new_partial(value)
         matcher = Spectator::Matchers::AttributesMatcher.new(attributes)
         matcher.negated_message(partial).should contain(attributes.to_s)
       end

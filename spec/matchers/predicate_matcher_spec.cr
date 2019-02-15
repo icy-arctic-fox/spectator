@@ -5,7 +5,7 @@ describe Spectator::Matchers::PredicateMatcher do
     context "with a true predicate" do
       it "is true" do
         value = "foobar"
-        partial = Spectator::Expectations::ValueExpectationPartial.new(value)
+        partial = new_partial(value)
         matcher = Spectator::Matchers::PredicateMatcher(NamedTuple(ascii_only: Nil)).new
         matcher.match?(partial).should be_true
       end
@@ -14,7 +14,7 @@ describe Spectator::Matchers::PredicateMatcher do
     context "with a false predicate" do
       it "is false" do
         value = "foobar"
-        partial = Spectator::Expectations::ValueExpectationPartial.new(value)
+        partial = new_partial(value)
         matcher = Spectator::Matchers::PredicateMatcher(NamedTuple(empty: Nil)).new
         matcher.match?(partial).should be_false
       end
@@ -25,14 +25,14 @@ describe Spectator::Matchers::PredicateMatcher do
     it "contains the actual label" do
       value = "foobar"
       label = "blah"
-      partial = Spectator::Expectations::ValueExpectationPartial.new(label, value)
+      partial = new_partial(value, label)
       matcher = Spectator::Matchers::PredicateMatcher(NamedTuple(ascii_only: Nil)).new
       matcher.message(partial).should contain(label)
     end
 
     it "contains stringified form of predicate" do
       value = "foobar"
-      partial = Spectator::Expectations::ValueExpectationPartial.new(value)
+      partial = new_partial(value)
       matcher = Spectator::Matchers::PredicateMatcher(NamedTuple(ascii_only: Nil)).new
       matcher.message(partial).should contain("ascii_only")
     end
@@ -42,14 +42,14 @@ describe Spectator::Matchers::PredicateMatcher do
     it "contains the actual label" do
       value = "foobar"
       label = "blah"
-      partial = Spectator::Expectations::ValueExpectationPartial.new(label, value)
+      partial = new_partial(value, label)
       matcher = Spectator::Matchers::PredicateMatcher(NamedTuple(ascii_only: Nil)).new
       matcher.negated_message(partial).should contain(label)
     end
 
     it "contains stringified form of predicate" do
       value = "foobar"
-      partial = Spectator::Expectations::ValueExpectationPartial.new(value)
+      partial = new_partial(value)
       matcher = Spectator::Matchers::PredicateMatcher(NamedTuple(ascii_only: Nil)).new
       matcher.negated_message(partial).should contain("ascii_only")
     end

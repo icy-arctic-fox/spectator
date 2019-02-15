@@ -1,11 +1,11 @@
 # Utility methods for creating expectations, partials, and matchers.
 
-def new_partial(label : String, actual : T) forall T
-  Spectator::Expectations::ValueExpectationPartial.new(label, actual)
+def new_partial(actual : T, label : String) forall T
+  Spectator::Expectations::ValueExpectationPartial.new(actual, label, __FILE__, __LINE__)
 end
 
 def new_partial(actual : T = 123) forall T
-  new_partial(actual.to_s, actual)
+  Spectator::Expectations::ValueExpectationPartial.new(actual, __FILE__, __LINE__)
 end
 
 def new_matcher(label : String, expected : T) forall T
@@ -17,7 +17,7 @@ def new_matcher(expected : T = 123) forall T
 end
 
 def new_expectation(expected : ExpectedType = 123, actual : ActualType = 123) forall ExpectedType, ActualType
-  partial = new_partial("foo", actual)
+  partial = new_partial(actual, "foo")
   matcher = new_matcher("bar", expected)
   matched = matcher.match?(partial)
   Spectator::Expectations::Expectation.new(matched, false, partial, matcher)

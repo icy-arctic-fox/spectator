@@ -5,7 +5,7 @@ describe Spectator::Matchers::TypeMatcher do
     context "with the same type" do
       it "is true" do
         value = "foobar"
-        partial = Spectator::Expectations::ValueExpectationPartial.new(value)
+        partial = new_partial(value)
         matcher = Spectator::Matchers::TypeMatcher(String).new
         matcher.match?(partial).should be_true
       end
@@ -14,7 +14,7 @@ describe Spectator::Matchers::TypeMatcher do
     context "with a different type" do
       it "is false" do
         value = "foobar"
-        partial = Spectator::Expectations::ValueExpectationPartial.new(value)
+        partial = new_partial(value)
         matcher = Spectator::Matchers::TypeMatcher(Int32).new
         matcher.match?(partial).should be_false
       end
@@ -23,7 +23,7 @@ describe Spectator::Matchers::TypeMatcher do
     context "with a parent type" do
       it "is true" do
         value = IO::Memory.new
-        partial = Spectator::Expectations::ValueExpectationPartial.new(value)
+        partial = new_partial(value)
         matcher = Spectator::Matchers::TypeMatcher(IO).new
         matcher.match?(partial).should be_true
       end
@@ -32,7 +32,7 @@ describe Spectator::Matchers::TypeMatcher do
     context "with a child type" do
       it "is false" do
         value = Exception.new("foobar")
-        partial = Spectator::Expectations::ValueExpectationPartial.new(value)
+        partial = new_partial(value)
         matcher = Spectator::Matchers::TypeMatcher(ArgumentError).new
         matcher.match?(partial).should be_false
       end
@@ -41,7 +41,7 @@ describe Spectator::Matchers::TypeMatcher do
     context "with a mix-in" do
       it "is true" do
         value = %i[a b c]
-        partial = Spectator::Expectations::ValueExpectationPartial.new(value)
+        partial = new_partial(value)
         matcher = Spectator::Matchers::TypeMatcher(Enumerable(Symbol)).new
         matcher.match?(partial).should be_true
       end
@@ -52,13 +52,13 @@ describe Spectator::Matchers::TypeMatcher do
     it "contains the actual label" do
       value = 42
       label = "everything"
-      partial = Spectator::Expectations::ValueExpectationPartial.new(label, value)
+      partial = new_partial(value, label)
       matcher = Spectator::Matchers::TypeMatcher(String).new
       matcher.message(partial).should contain(label)
     end
 
     it "contains the expected type" do
-      partial = Spectator::Expectations::ValueExpectationPartial.new(42)
+      partial = new_partial(42)
       matcher = Spectator::Matchers::TypeMatcher(String).new
       matcher.message(partial).should contain("String")
     end
@@ -68,13 +68,13 @@ describe Spectator::Matchers::TypeMatcher do
     it "contains the actual label" do
       value = 42
       label = "everything"
-      partial = Spectator::Expectations::ValueExpectationPartial.new(label, value)
+      partial = new_partial(value, label)
       matcher = Spectator::Matchers::TypeMatcher(String).new
       matcher.negated_message(partial).should contain(label)
     end
 
     it "contains the expected type" do
-      partial = Spectator::Expectations::ValueExpectationPartial.new(42)
+      partial = new_partial(42)
       matcher = Spectator::Matchers::TypeMatcher(String).new
       matcher.negated_message(partial).should contain("String")
     end

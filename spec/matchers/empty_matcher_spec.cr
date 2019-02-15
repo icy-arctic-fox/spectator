@@ -5,7 +5,7 @@ describe Spectator::Matchers::EmptyMatcher do
     context "with an empty set" do
       it "is true" do
         array = [] of Symbol
-        partial = Spectator::Expectations::ValueExpectationPartial.new(array)
+        partial = new_partial(array)
         matcher = Spectator::Matchers::EmptyMatcher.new
         matcher.match?(partial).should be_true
       end
@@ -14,7 +14,7 @@ describe Spectator::Matchers::EmptyMatcher do
     context "with a filled set" do
       it "is false" do
         array = %i[a b c]
-        partial = Spectator::Expectations::ValueExpectationPartial.new(array)
+        partial = new_partial(array)
         matcher = Spectator::Matchers::EmptyMatcher.new
         matcher.match?(partial).should be_false
       end
@@ -25,7 +25,7 @@ describe Spectator::Matchers::EmptyMatcher do
     it "contains the actual label" do
       array = %i[a b c]
       label = "everything"
-      partial = Spectator::Expectations::ValueExpectationPartial.new(label, array)
+      partial = new_partial(array, label)
       matcher = Spectator::Matchers::EmptyMatcher.new
       matcher.message(partial).should contain(label)
     end
@@ -35,7 +35,7 @@ describe Spectator::Matchers::EmptyMatcher do
     it "contains the actual label" do
       array = %i[a b c]
       label = "everything"
-      partial = Spectator::Expectations::ValueExpectationPartial.new(label, array)
+      partial = new_partial(array, label)
       matcher = Spectator::Matchers::EmptyMatcher.new
       matcher.negated_message(partial).should contain(label)
     end

@@ -4,7 +4,7 @@ describe Spectator::Matchers::RangeMatcher do
   describe "#match?" do
     it "compares using #includes?" do
       spy = SpySUT.new
-      partial = Spectator::Expectations::ValueExpectationPartial.new(5)
+      partial = new_partial(5)
       matcher = Spectator::Matchers::RangeMatcher.new(spy)
       matcher.match?(partial).should be_true
       spy.includes_call_count.should be > 0
@@ -17,7 +17,7 @@ describe Spectator::Matchers::RangeMatcher do
           upper = 9
           value = lower
           range = Range.new(lower, upper, exclusive: false)
-          partial = Spectator::Expectations::ValueExpectationPartial.new(value)
+          partial = new_partial(value)
           matcher = Spectator::Matchers::RangeMatcher.new(range)
           matcher.match?(partial).should be_true
         end
@@ -27,7 +27,7 @@ describe Spectator::Matchers::RangeMatcher do
           upper = 9
           value = lower - 1
           range = Range.new(lower, upper, exclusive: false)
-          partial = Spectator::Expectations::ValueExpectationPartial.new(value)
+          partial = new_partial(value)
           matcher = Spectator::Matchers::RangeMatcher.new(range)
           matcher.match?(partial).should be_false
         end
@@ -37,7 +37,7 @@ describe Spectator::Matchers::RangeMatcher do
           upper = 9
           value = 5
           range = Range.new(lower, upper, exclusive: false)
-          partial = Spectator::Expectations::ValueExpectationPartial.new(value)
+          partial = new_partial(value)
           matcher = Spectator::Matchers::RangeMatcher.new(range)
           matcher.match?(partial).should be_true
         end
@@ -47,7 +47,7 @@ describe Spectator::Matchers::RangeMatcher do
           upper = 9
           value = upper
           range = Range.new(lower, upper, exclusive: false)
-          partial = Spectator::Expectations::ValueExpectationPartial.new(value)
+          partial = new_partial(value)
           matcher = Spectator::Matchers::RangeMatcher.new(range)
           matcher.match?(partial).should be_true
         end
@@ -57,7 +57,7 @@ describe Spectator::Matchers::RangeMatcher do
           upper = 9
           value = upper + 1
           range = Range.new(lower, upper, exclusive: false)
-          partial = Spectator::Expectations::ValueExpectationPartial.new(value)
+          partial = new_partial(value)
           matcher = Spectator::Matchers::RangeMatcher.new(range)
           matcher.match?(partial).should be_false
         end
@@ -69,7 +69,7 @@ describe Spectator::Matchers::RangeMatcher do
           upper = 9
           value = lower
           range = Range.new(lower, upper, exclusive: true)
-          partial = Spectator::Expectations::ValueExpectationPartial.new(value)
+          partial = new_partial(value)
           matcher = Spectator::Matchers::RangeMatcher.new(range)
           matcher.match?(partial).should be_true
         end
@@ -79,7 +79,7 @@ describe Spectator::Matchers::RangeMatcher do
           upper = 9
           value = lower - 1
           range = Range.new(lower, upper, exclusive: true)
-          partial = Spectator::Expectations::ValueExpectationPartial.new(value)
+          partial = new_partial(value)
           matcher = Spectator::Matchers::RangeMatcher.new(range)
           matcher.match?(partial).should be_false
         end
@@ -89,7 +89,7 @@ describe Spectator::Matchers::RangeMatcher do
           upper = 9
           value = 5
           range = Range.new(lower, upper, exclusive: true)
-          partial = Spectator::Expectations::ValueExpectationPartial.new(value)
+          partial = new_partial(value)
           matcher = Spectator::Matchers::RangeMatcher.new(range)
           matcher.match?(partial).should be_true
         end
@@ -99,7 +99,7 @@ describe Spectator::Matchers::RangeMatcher do
           upper = 9
           value = upper
           range = Range.new(lower, upper, exclusive: true)
-          partial = Spectator::Expectations::ValueExpectationPartial.new(value)
+          partial = new_partial(value)
           matcher = Spectator::Matchers::RangeMatcher.new(range)
           matcher.match?(partial).should be_false
         end
@@ -109,7 +109,7 @@ describe Spectator::Matchers::RangeMatcher do
           upper = 9
           value = upper + 1
           range = Range.new(lower, upper, exclusive: true)
-          partial = Spectator::Expectations::ValueExpectationPartial.new(value)
+          partial = new_partial(value)
           matcher = Spectator::Matchers::RangeMatcher.new(range)
           matcher.match?(partial).should be_false
         end
@@ -120,7 +120,7 @@ describe Spectator::Matchers::RangeMatcher do
       it "is true for an existing item" do
         array = %i[a b c]
         value = :b
-        partial = Spectator::Expectations::ValueExpectationPartial.new(value)
+        partial = new_partial(value)
         matcher = Spectator::Matchers::RangeMatcher.new(array)
         matcher.match?(partial).should be_true
       end
@@ -128,7 +128,7 @@ describe Spectator::Matchers::RangeMatcher do
       it "is false for a non-existing item" do
         array = %i[a b c]
         value = :z
-        partial = Spectator::Expectations::ValueExpectationPartial.new(value)
+        partial = new_partial(value)
         matcher = Spectator::Matchers::RangeMatcher.new(array)
         matcher.match?(partial).should be_false
       end
@@ -140,7 +140,7 @@ describe Spectator::Matchers::RangeMatcher do
       range = 1..10
       value = 5
       label = "everything"
-      partial = Spectator::Expectations::ValueExpectationPartial.new(label, value)
+      partial = new_partial(value, label)
       matcher = Spectator::Matchers::RangeMatcher.new(range)
       matcher.message(partial).should contain(label)
     end
@@ -149,7 +149,7 @@ describe Spectator::Matchers::RangeMatcher do
       range = 1..10
       value = 5
       label = "everything"
-      partial = Spectator::Expectations::ValueExpectationPartial.new(value)
+      partial = new_partial(value)
       matcher = Spectator::Matchers::RangeMatcher.new(label, range)
       matcher.message(partial).should contain(label)
     end
@@ -158,7 +158,7 @@ describe Spectator::Matchers::RangeMatcher do
       it "contains stringified form of expected value" do
         range = 1..10
         value = 5
-        partial = Spectator::Expectations::ValueExpectationPartial.new(value)
+        partial = new_partial(value)
         matcher = Spectator::Matchers::RangeMatcher.new(range)
         matcher.message(partial).should contain(range.to_s)
       end
@@ -170,7 +170,7 @@ describe Spectator::Matchers::RangeMatcher do
       range = 1..10
       value = 5
       label = "everything"
-      partial = Spectator::Expectations::ValueExpectationPartial.new(label, value)
+      partial = new_partial(value, label)
       matcher = Spectator::Matchers::RangeMatcher.new(range)
       matcher.negated_message(partial).should contain(label)
     end
@@ -179,7 +179,7 @@ describe Spectator::Matchers::RangeMatcher do
       range = 1..10
       value = 5
       label = "everything"
-      partial = Spectator::Expectations::ValueExpectationPartial.new(value)
+      partial = new_partial(value)
       matcher = Spectator::Matchers::RangeMatcher.new(label, range)
       matcher.negated_message(partial).should contain(label)
     end
@@ -188,7 +188,7 @@ describe Spectator::Matchers::RangeMatcher do
       it "contains stringified form of expected value" do
         range = 1..10
         value = 5
-        partial = Spectator::Expectations::ValueExpectationPartial.new(value)
+        partial = new_partial(value)
         matcher = Spectator::Matchers::RangeMatcher.new(range)
         matcher.negated_message(partial).should contain(range.to_s)
       end
@@ -201,7 +201,7 @@ describe Spectator::Matchers::RangeMatcher do
       diff = 4
       lower = center - diff
       value = lower
-      partial = Spectator::Expectations::ValueExpectationPartial.new(value)
+      partial = new_partial(value)
       matcher = Spectator::Matchers::RangeMatcher.new(diff).of(center)
       matcher.match?(partial).should be_true
     end
@@ -211,7 +211,7 @@ describe Spectator::Matchers::RangeMatcher do
       diff = 4
       lower = center - diff
       value = lower - 1
-      partial = Spectator::Expectations::ValueExpectationPartial.new(value)
+      partial = new_partial(value)
       matcher = Spectator::Matchers::RangeMatcher.new(diff).of(center)
       matcher.match?(partial).should be_false
     end
@@ -220,7 +220,7 @@ describe Spectator::Matchers::RangeMatcher do
       center = 5
       diff = 4
       value = center
-      partial = Spectator::Expectations::ValueExpectationPartial.new(value)
+      partial = new_partial(value)
       matcher = Spectator::Matchers::RangeMatcher.new(diff).of(center)
       matcher.match?(partial).should be_true
     end
@@ -230,7 +230,7 @@ describe Spectator::Matchers::RangeMatcher do
       diff = 4
       upper = center + diff
       value = upper
-      partial = Spectator::Expectations::ValueExpectationPartial.new(value)
+      partial = new_partial(value)
       matcher = Spectator::Matchers::RangeMatcher.new(diff).of(center)
       matcher.match?(partial).should be_true
     end
@@ -240,7 +240,7 @@ describe Spectator::Matchers::RangeMatcher do
       diff = 4
       upper = center + diff
       value = upper + 1
-      partial = Spectator::Expectations::ValueExpectationPartial.new(value)
+      partial = new_partial(value)
       matcher = Spectator::Matchers::RangeMatcher.new(diff).of(center)
       matcher.match?(partial).should be_false
     end
@@ -251,7 +251,7 @@ describe Spectator::Matchers::RangeMatcher do
         diff = 4
         value = 3
         label = "foobar"
-        partial = Spectator::Expectations::ValueExpectationPartial.new(value)
+        partial = new_partial(value)
         matcher = Spectator::Matchers::RangeMatcher.new(label, diff).of(center)
         matcher.message(partial).should contain(label)
       end
@@ -260,7 +260,7 @@ describe Spectator::Matchers::RangeMatcher do
         center = 5
         diff = 4
         value = 3
-        partial = Spectator::Expectations::ValueExpectationPartial.new(value)
+        partial = new_partial(value)
         matcher = Spectator::Matchers::RangeMatcher.new(diff).of(center)
         matcher.message(partial).should contain(center.to_s)
       end
@@ -269,7 +269,7 @@ describe Spectator::Matchers::RangeMatcher do
         center = 5
         diff = 4
         value = 3
-        partial = Spectator::Expectations::ValueExpectationPartial.new(value)
+        partial = new_partial(value)
         matcher = Spectator::Matchers::RangeMatcher.new(diff).of(center)
         matcher.message(partial).should contain(diff.to_s)
       end
@@ -281,7 +281,7 @@ describe Spectator::Matchers::RangeMatcher do
         diff = 4
         value = 3
         label = "foobar"
-        partial = Spectator::Expectations::ValueExpectationPartial.new(value)
+        partial = new_partial(value)
         matcher = Spectator::Matchers::RangeMatcher.new(label, diff).of(center)
         matcher.negated_message(partial).should contain(label)
       end
@@ -290,7 +290,7 @@ describe Spectator::Matchers::RangeMatcher do
         center = 5
         diff = 4
         value = 3
-        partial = Spectator::Expectations::ValueExpectationPartial.new(value)
+        partial = new_partial(value)
         matcher = Spectator::Matchers::RangeMatcher.new(diff).of(center)
         matcher.negated_message(partial).should contain(center.to_s)
       end
@@ -299,7 +299,7 @@ describe Spectator::Matchers::RangeMatcher do
         center = 5
         diff = 4
         value = 3
-        partial = Spectator::Expectations::ValueExpectationPartial.new(value)
+        partial = new_partial(value)
         matcher = Spectator::Matchers::RangeMatcher.new(diff).of(center)
         matcher.negated_message(partial).should contain(diff.to_s)
       end
@@ -313,7 +313,7 @@ describe Spectator::Matchers::RangeMatcher do
         upper = 9
         value = lower
         range = Range.new(lower, upper, exclusive: true)
-        partial = Spectator::Expectations::ValueExpectationPartial.new(value)
+        partial = new_partial(value)
         matcher = Spectator::Matchers::RangeMatcher.new(range).inclusive
         matcher.match?(partial).should be_true
       end
@@ -323,7 +323,7 @@ describe Spectator::Matchers::RangeMatcher do
         upper = 9
         value = lower - 1
         range = Range.new(lower, upper, exclusive: true)
-        partial = Spectator::Expectations::ValueExpectationPartial.new(value)
+        partial = new_partial(value)
         matcher = Spectator::Matchers::RangeMatcher.new(range).inclusive
         matcher.match?(partial).should be_false
       end
@@ -333,7 +333,7 @@ describe Spectator::Matchers::RangeMatcher do
         upper = 9
         value = 5
         range = Range.new(lower, upper, exclusive: true)
-        partial = Spectator::Expectations::ValueExpectationPartial.new(value)
+        partial = new_partial(value)
         matcher = Spectator::Matchers::RangeMatcher.new(range).inclusive
         matcher.match?(partial).should be_true
       end
@@ -343,7 +343,7 @@ describe Spectator::Matchers::RangeMatcher do
         upper = 9
         value = upper
         range = Range.new(lower, upper, exclusive: true)
-        partial = Spectator::Expectations::ValueExpectationPartial.new(value)
+        partial = new_partial(value)
         matcher = Spectator::Matchers::RangeMatcher.new(range).inclusive
         matcher.match?(partial).should be_true
       end
@@ -353,7 +353,7 @@ describe Spectator::Matchers::RangeMatcher do
         upper = 9
         value = upper + 1
         range = Range.new(lower, upper, exclusive: true)
-        partial = Spectator::Expectations::ValueExpectationPartial.new(value)
+        partial = new_partial(value)
         matcher = Spectator::Matchers::RangeMatcher.new(range).inclusive
         matcher.match?(partial).should be_false
       end
@@ -362,7 +362,7 @@ describe Spectator::Matchers::RangeMatcher do
         it "mentions inclusive" do
           range = 1...10
           value = 5
-          partial = Spectator::Expectations::ValueExpectationPartial.new(value)
+          partial = new_partial(value)
           matcher = Spectator::Matchers::RangeMatcher.new(range).inclusive
           matcher.message(partial).should contain("inclusive")
         end
@@ -370,7 +370,7 @@ describe Spectator::Matchers::RangeMatcher do
         it "does not mention exclusive" do
           range = 1...10
           value = 5
-          partial = Spectator::Expectations::ValueExpectationPartial.new(value)
+          partial = new_partial(value)
           matcher = Spectator::Matchers::RangeMatcher.new(range).inclusive
           matcher.message(partial).should_not contain("exclusive")
         end
@@ -379,7 +379,7 @@ describe Spectator::Matchers::RangeMatcher do
           range = 1...10
           value = 5
           label = "foobar"
-          partial = Spectator::Expectations::ValueExpectationPartial.new(value)
+          partial = new_partial(value)
           matcher = Spectator::Matchers::RangeMatcher.new(label, range).inclusive
           matcher.message(partial).should contain(label)
         end
@@ -389,7 +389,7 @@ describe Spectator::Matchers::RangeMatcher do
         it "mentions inclusive" do
           range = 1...10
           value = 5
-          partial = Spectator::Expectations::ValueExpectationPartial.new(value)
+          partial = new_partial(value)
           matcher = Spectator::Matchers::RangeMatcher.new(range).inclusive
           matcher.negated_message(partial).should contain("inclusive")
         end
@@ -397,7 +397,7 @@ describe Spectator::Matchers::RangeMatcher do
         it "does not mention exclusive" do
           range = 1...10
           value = 5
-          partial = Spectator::Expectations::ValueExpectationPartial.new(value)
+          partial = new_partial(value)
           matcher = Spectator::Matchers::RangeMatcher.new(range).inclusive
           matcher.negated_message(partial).should_not contain("exclusive")
         end
@@ -406,7 +406,7 @@ describe Spectator::Matchers::RangeMatcher do
           range = 1...10
           value = 5
           label = "foobar"
-          partial = Spectator::Expectations::ValueExpectationPartial.new(value)
+          partial = new_partial(value)
           matcher = Spectator::Matchers::RangeMatcher.new(label, range).inclusive
           matcher.negated_message(partial).should contain(label)
         end
@@ -419,7 +419,7 @@ describe Spectator::Matchers::RangeMatcher do
         upper = 9
         value = lower
         range = Range.new(lower, upper, exclusive: false)
-        partial = Spectator::Expectations::ValueExpectationPartial.new(value)
+        partial = new_partial(value)
         matcher = Spectator::Matchers::RangeMatcher.new(range).inclusive
         matcher.match?(partial).should be_true
       end
@@ -429,7 +429,7 @@ describe Spectator::Matchers::RangeMatcher do
         upper = 9
         value = lower - 1
         range = Range.new(lower, upper, exclusive: false)
-        partial = Spectator::Expectations::ValueExpectationPartial.new(value)
+        partial = new_partial(value)
         matcher = Spectator::Matchers::RangeMatcher.new(range).inclusive
         matcher.match?(partial).should be_false
       end
@@ -439,7 +439,7 @@ describe Spectator::Matchers::RangeMatcher do
         upper = 9
         value = 5
         range = Range.new(lower, upper, exclusive: false)
-        partial = Spectator::Expectations::ValueExpectationPartial.new(value)
+        partial = new_partial(value)
         matcher = Spectator::Matchers::RangeMatcher.new(range).inclusive
         matcher.match?(partial).should be_true
       end
@@ -449,7 +449,7 @@ describe Spectator::Matchers::RangeMatcher do
         upper = 9
         value = upper
         range = Range.new(lower, upper, exclusive: false)
-        partial = Spectator::Expectations::ValueExpectationPartial.new(value)
+        partial = new_partial(value)
         matcher = Spectator::Matchers::RangeMatcher.new(range).inclusive
         matcher.match?(partial).should be_true
       end
@@ -459,7 +459,7 @@ describe Spectator::Matchers::RangeMatcher do
         upper = 9
         value = upper + 1
         range = Range.new(lower, upper, exclusive: false)
-        partial = Spectator::Expectations::ValueExpectationPartial.new(value)
+        partial = new_partial(value)
         matcher = Spectator::Matchers::RangeMatcher.new(range).inclusive
         matcher.match?(partial).should be_false
       end
@@ -468,7 +468,7 @@ describe Spectator::Matchers::RangeMatcher do
         it "mentions inclusive" do
           range = 1...10
           value = 5
-          partial = Spectator::Expectations::ValueExpectationPartial.new(value)
+          partial = new_partial(value)
           matcher = Spectator::Matchers::RangeMatcher.new(range).inclusive
           matcher.message(partial).should contain("inclusive")
         end
@@ -477,7 +477,7 @@ describe Spectator::Matchers::RangeMatcher do
           range = 1..10
           value = 5
           label = "foobar"
-          partial = Spectator::Expectations::ValueExpectationPartial.new(value)
+          partial = new_partial(value)
           matcher = Spectator::Matchers::RangeMatcher.new(label, range).inclusive
           matcher.message(partial).should contain(label)
         end
@@ -487,7 +487,7 @@ describe Spectator::Matchers::RangeMatcher do
         it "mentions inclusive" do
           range = 1..10
           value = 5
-          partial = Spectator::Expectations::ValueExpectationPartial.new(value)
+          partial = new_partial(value)
           matcher = Spectator::Matchers::RangeMatcher.new(range).inclusive
           matcher.negated_message(partial).should contain("inclusive")
         end
@@ -496,7 +496,7 @@ describe Spectator::Matchers::RangeMatcher do
           range = 1...10
           value = 5
           label = "foobar"
-          partial = Spectator::Expectations::ValueExpectationPartial.new(value)
+          partial = new_partial(value)
           matcher = Spectator::Matchers::RangeMatcher.new(label, range).inclusive
           matcher.negated_message(partial).should contain(label)
         end
@@ -511,7 +511,7 @@ describe Spectator::Matchers::RangeMatcher do
         upper = 9
         value = lower
         range = Range.new(lower, upper, exclusive: false)
-        partial = Spectator::Expectations::ValueExpectationPartial.new(value)
+        partial = new_partial(value)
         matcher = Spectator::Matchers::RangeMatcher.new(range).exclusive
         matcher.match?(partial).should be_true
       end
@@ -521,7 +521,7 @@ describe Spectator::Matchers::RangeMatcher do
         upper = 9
         value = lower - 1
         range = Range.new(lower, upper, exclusive: false)
-        partial = Spectator::Expectations::ValueExpectationPartial.new(value)
+        partial = new_partial(value)
         matcher = Spectator::Matchers::RangeMatcher.new(range).exclusive
         matcher.match?(partial).should be_false
       end
@@ -531,7 +531,7 @@ describe Spectator::Matchers::RangeMatcher do
         upper = 9
         value = 5
         range = Range.new(lower, upper, exclusive: false)
-        partial = Spectator::Expectations::ValueExpectationPartial.new(value)
+        partial = new_partial(value)
         matcher = Spectator::Matchers::RangeMatcher.new(range).exclusive
         matcher.match?(partial).should be_true
       end
@@ -541,7 +541,7 @@ describe Spectator::Matchers::RangeMatcher do
         upper = 9
         value = upper
         range = Range.new(lower, upper, exclusive: false)
-        partial = Spectator::Expectations::ValueExpectationPartial.new(value)
+        partial = new_partial(value)
         matcher = Spectator::Matchers::RangeMatcher.new(range).exclusive
         matcher.match?(partial).should be_false
       end
@@ -551,7 +551,7 @@ describe Spectator::Matchers::RangeMatcher do
         upper = 9
         value = upper + 1
         range = Range.new(lower, upper, exclusive: false)
-        partial = Spectator::Expectations::ValueExpectationPartial.new(value)
+        partial = new_partial(value)
         matcher = Spectator::Matchers::RangeMatcher.new(range).exclusive
         matcher.match?(partial).should be_false
       end
@@ -560,7 +560,7 @@ describe Spectator::Matchers::RangeMatcher do
         it "mentions exclusive" do
           range = 1..10
           value = 5
-          partial = Spectator::Expectations::ValueExpectationPartial.new(value)
+          partial = new_partial(value)
           matcher = Spectator::Matchers::RangeMatcher.new(range).exclusive
           matcher.message(partial).should contain("exclusive")
         end
@@ -568,7 +568,7 @@ describe Spectator::Matchers::RangeMatcher do
         it "does not mention inclusive" do
           range = 1..10
           value = 5
-          partial = Spectator::Expectations::ValueExpectationPartial.new(value)
+          partial = new_partial(value)
           matcher = Spectator::Matchers::RangeMatcher.new(range).exclusive
           matcher.message(partial).should_not contain("inclusive")
         end
@@ -577,7 +577,7 @@ describe Spectator::Matchers::RangeMatcher do
           range = 1..10
           value = 5
           label = "foobar"
-          partial = Spectator::Expectations::ValueExpectationPartial.new(value)
+          partial = new_partial(value)
           matcher = Spectator::Matchers::RangeMatcher.new(label, range).exclusive
           matcher.message(partial).should contain(label)
         end
@@ -587,7 +587,7 @@ describe Spectator::Matchers::RangeMatcher do
         it "mentions exclusive" do
           range = 1..10
           value = 5
-          partial = Spectator::Expectations::ValueExpectationPartial.new(value)
+          partial = new_partial(value)
           matcher = Spectator::Matchers::RangeMatcher.new(range).exclusive
           matcher.negated_message(partial).should contain("exclusive")
         end
@@ -595,7 +595,7 @@ describe Spectator::Matchers::RangeMatcher do
         it "does not mention inclusive" do
           range = 1..10
           value = 5
-          partial = Spectator::Expectations::ValueExpectationPartial.new(value)
+          partial = new_partial(value)
           matcher = Spectator::Matchers::RangeMatcher.new(range).exclusive
           matcher.negated_message(partial).should_not contain("inclusive")
         end
@@ -604,7 +604,7 @@ describe Spectator::Matchers::RangeMatcher do
           range = 1..10
           value = 5
           label = "foobar"
-          partial = Spectator::Expectations::ValueExpectationPartial.new(value)
+          partial = new_partial(value)
           matcher = Spectator::Matchers::RangeMatcher.new(label, range).exclusive
           matcher.negated_message(partial).should contain(label)
         end
@@ -617,7 +617,7 @@ describe Spectator::Matchers::RangeMatcher do
         upper = 9
         value = lower
         range = Range.new(lower, upper, exclusive: true)
-        partial = Spectator::Expectations::ValueExpectationPartial.new(value)
+        partial = new_partial(value)
         matcher = Spectator::Matchers::RangeMatcher.new(range).exclusive
         matcher.match?(partial).should be_true
       end
@@ -627,7 +627,7 @@ describe Spectator::Matchers::RangeMatcher do
         upper = 9
         value = lower - 1
         range = Range.new(lower, upper, exclusive: true)
-        partial = Spectator::Expectations::ValueExpectationPartial.new(value)
+        partial = new_partial(value)
         matcher = Spectator::Matchers::RangeMatcher.new(range).exclusive
         matcher.match?(partial).should be_false
       end
@@ -637,7 +637,7 @@ describe Spectator::Matchers::RangeMatcher do
         upper = 9
         value = 5
         range = Range.new(lower, upper, exclusive: true)
-        partial = Spectator::Expectations::ValueExpectationPartial.new(value)
+        partial = new_partial(value)
         matcher = Spectator::Matchers::RangeMatcher.new(range).exclusive
         matcher.match?(partial).should be_true
       end
@@ -647,7 +647,7 @@ describe Spectator::Matchers::RangeMatcher do
         upper = 9
         value = upper
         range = Range.new(lower, upper, exclusive: true)
-        partial = Spectator::Expectations::ValueExpectationPartial.new(value)
+        partial = new_partial(value)
         matcher = Spectator::Matchers::RangeMatcher.new(range).exclusive
         matcher.match?(partial).should be_false
       end
@@ -657,7 +657,7 @@ describe Spectator::Matchers::RangeMatcher do
         upper = 9
         value = upper + 1
         range = Range.new(lower, upper, exclusive: true)
-        partial = Spectator::Expectations::ValueExpectationPartial.new(value)
+        partial = new_partial(value)
         matcher = Spectator::Matchers::RangeMatcher.new(range).exclusive
         matcher.match?(partial).should be_false
       end
@@ -666,7 +666,7 @@ describe Spectator::Matchers::RangeMatcher do
         it "mentions exclusive" do
           range = 1...10
           value = 5
-          partial = Spectator::Expectations::ValueExpectationPartial.new(value)
+          partial = new_partial(value)
           matcher = Spectator::Matchers::RangeMatcher.new(range).exclusive
           matcher.message(partial).should contain("exclusive")
         end
@@ -675,7 +675,7 @@ describe Spectator::Matchers::RangeMatcher do
           range = 1...10
           value = 5
           label = "foobar"
-          partial = Spectator::Expectations::ValueExpectationPartial.new(value)
+          partial = new_partial(value)
           matcher = Spectator::Matchers::RangeMatcher.new(label, range).exclusive
           matcher.message(partial).should contain(label)
         end
@@ -685,7 +685,7 @@ describe Spectator::Matchers::RangeMatcher do
         it "mentions exclusive" do
           range = 1...10
           value = 5
-          partial = Spectator::Expectations::ValueExpectationPartial.new(value)
+          partial = new_partial(value)
           matcher = Spectator::Matchers::RangeMatcher.new(range).exclusive
           matcher.negated_message(partial).should contain("exclusive")
         end
@@ -694,7 +694,7 @@ describe Spectator::Matchers::RangeMatcher do
           range = 1...10
           value = 5
           label = "foobar"
-          partial = Spectator::Expectations::ValueExpectationPartial.new(value)
+          partial = new_partial(value)
           matcher = Spectator::Matchers::RangeMatcher.new(label, range).exclusive
           matcher.negated_message(partial).should contain(label)
         end
