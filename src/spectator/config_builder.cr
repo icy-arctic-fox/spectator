@@ -25,7 +25,7 @@ module Spectator
     # The formatter that should be used,
     # if one wasn't provided.
     private def default_formatter
-      Formatters::DefaultFormatter.new
+      Formatters::DotsFormatter.new
     end
 
     # Creates a configuration.
