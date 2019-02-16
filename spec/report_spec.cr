@@ -15,11 +15,6 @@ def new_failure_result(result_type : Spectator::Result.class = Spectator::Failed
   result_type.new(example, elapsed, expectations, error)
 end
 
-def new_pending_result
-  example = PassingExample.create # Doesn't matter what type of example is used here.
-  Spectator::PendingResult.new(example)
-end
-
 def new_report(successful_count = 5, failed_count = 5, error_count = 5, pending_count = 5, overhead_time = 1_000_000i64)
   results = [] of Spectator::Result
   successful_count.times { results << new_passing_result }
