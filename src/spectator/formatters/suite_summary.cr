@@ -11,35 +11,35 @@ module Spectator::Formatters
     # At the end, the totals and runtime are printed.
     def end_suite(report)
       failures = report.failures.map_with_index { |result, index| FailureBlock.new(index + 1, result) }
-      puts
-      puts
+      @io.puts
+      @io.puts
       display_failures(failures) if failures.any?
       display_stats(report)
       display_failure_commands(failures) if failures.any?
     end
 
     private def display_failures(failures)
-      puts "Failures:"
-      puts
+      @io.puts "Failures:"
+      @io.puts
       failures.each do |block|
-        puts block
-        puts
+        @io.puts block
+        @io.puts
       end
     end
 
     private def display_stats(report)
-      puts "Finished in #{human_time(report.runtime)}"
-      puts "#{report.example_count} examples, #{report.failed_count} failures, #{report.error_count} errors, #{report.pending_count} pending"
+      @io.puts "Finished in #{human_time(report.runtime)}"
+      @io.puts "#{report.example_count} examples, #{report.failed_count} failures, #{report.error_count} errors, #{report.pending_count} pending"
     end
 
     private def display_failure_commands(failures)
-      puts
-      puts "Failed examples:"
-      puts
+      @io.puts
+      @io.puts "Failed examples:"
+      @io.puts
       failures.each do |block|
-        print "crystal spec "
-        block.source(STDOUT)
-        puts " # TODO"
+        @io.print "crystal spec "
+        block.source(@io)
+        @io.puts " # TODO"
       end
     end
 
