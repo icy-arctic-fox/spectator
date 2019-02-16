@@ -22,6 +22,11 @@ module Spectator::Formatters
     # Character output for a pending or skipped example.
     PENDING_CHAR = '*'
 
+    # Creates the formatter.
+    # By default, output is sent to `STDOUT`.
+    def initialize(@io : IO = STDOUT)
+    end
+
     # Does nothing when an example is started.
     def start_example(example)
       # ...
@@ -31,13 +36,13 @@ module Spectator::Formatters
     def end_example(result)
       case result
       when ErroredResult
-        print error(ERROR_CHAR)
+        @io.print error(ERROR_CHAR)
       when PendingResult
-        print pending(PENDING_CHAR)
+        @io.print pending(PENDING_CHAR)
       when SuccessfulResult
-        print success(SUCCESS_CHAR)
+        @io.print success(SUCCESS_CHAR)
       else # FailedResult
-        print failure(FAILURE_CHAR)
+        @io.print failure(FAILURE_CHAR)
       end
     end
   end
