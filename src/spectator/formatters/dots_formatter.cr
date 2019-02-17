@@ -8,19 +8,6 @@ module Spectator::Formatters
   # At the end of the test suite, a summary of failures and results is displayed.
   class DotsFormatter < Formatter
     include SuiteSummary
-    include Color
-
-    # Character output for a successful example.
-    SUCCESS_CHAR = '.'
-
-    # Character output for a failed example.
-    FAILURE_CHAR = 'F'
-
-    # Character output for an errored example.
-    ERROR_CHAR = 'E'
-
-    # Character output for a pending or skipped example.
-    PENDING_CHAR = '*'
 
     # Creates the formatter.
     # By default, output is sent to `STDOUT`.
@@ -34,15 +21,31 @@ module Spectator::Formatters
 
     # Produces a single character output based on a result.
     def end_example(result)
-      case result
-      when ErroredResult
-        @io.print error(ERROR_CHAR)
-      when PendingResult
-        @io.print pending(PENDING_CHAR)
-      when SuccessfulResult
-        @io.print success(SUCCESS_CHAR)
-      else # FailedResult
-        @io.print failure(FAILURE_CHAR)
+      @io.print result.call(Character)
+    end
+
+    # Interface for `Result` to pick a character for output.
+    private module Character
+      extend self
+      
+      # Character output for a successful example.
+      def success(result)
+        Color.success('.')
+      end
+
+      # Character output for a failed example.
+      def failure(result)
+        Color.failure('F')
+      end
+
+      # Character output for an errored example.
+      def error(result)
+        Color.error('E')
+      end
+
+      # Character output for a pending or skipped example.
+      def pending(result)
+        Color.pending('*')
       end
     end
   end
