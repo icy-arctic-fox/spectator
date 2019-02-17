@@ -13,6 +13,21 @@ def new_successful_result(
 end
 
 describe Spectator::SuccessfulResult do
+  describe "#call" do
+    it "invokes #success on an instance" do
+      spy = ResultCallSpy.new
+      new_successful_result.call(spy)
+      spy.success?.should be_truthy
+    end
+
+    it "passes itself" do
+      spy = ResultCallSpy.new
+      result = new_successful_result
+      result.call(spy)
+      spy.success.should eq(result)
+    end
+  end
+
   describe "#example" do
     it "is the expected value" do
       example = PassingExample.create

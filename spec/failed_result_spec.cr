@@ -15,6 +15,21 @@ def new_failed_result(
 end
 
 describe Spectator::FailedResult do
+  describe "#call" do
+    it "invokes #failure on an instance" do
+      spy = ResultCallSpy.new
+      new_failed_result.call(spy)
+      spy.failure?.should be_truthy
+    end
+
+    it "passes itself" do
+      spy = ResultCallSpy.new
+      result = new_failed_result
+      result.call(spy)
+      spy.failure.should eq(result)
+    end
+  end
+
   describe "#example" do
     it "is the expected value" do
       example = FailingExample.create
