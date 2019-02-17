@@ -22,7 +22,7 @@ def new_report(successful_count = 5, failed_count = 5, error_count = 5, pending_
   error_count.times { results << new_failure_result(Spectator::ErroredResult) }
   pending_count.times { results << new_pending_result }
 
-  example_runtime = results.select(&.is_a?(Spectator::FinishedResult)).map(&.as(Spectator::FinishedResult)).sum(&.elapsed)
+  example_runtime = results.compact_map(&.as?(Spectator::FinishedResult)).sum(&.elapsed)
   total_runtime = example_runtime + Time::Span.new(nanoseconds: overhead_time)
   Spectator::Report.new(results, total_runtime)
 end

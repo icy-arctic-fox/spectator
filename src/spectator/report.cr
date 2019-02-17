@@ -38,25 +38,19 @@ module Spectator
 
     # Returns a set of results for all failed examples.
     def failures
-      @results.select(&.is_a?(FailedResult)).map(&.as(FailedResult))
+      @results.compact_map(&.as?(FailedResult))
     end
 
     # Returns a set of results for all errored examples.
     def errors
-      @results.select(&.is_a?(ErroredResult)).map(&.as(ErroredResult))
+      @results.compact_map(&.as?(ErroredResult))
     end
 
     # Length of time it took to run just example code.
     # This does not include hooks,
     # but it does include pre- and post-conditions.
     def example_runtime
-      @results.sum do |result|
-        if result.is_a?(FinishedResult)
-          result.elapsed
-        else
-          Time::Span.zero
-        end
-      end
+      @results.each.compact_map(&.as?(FinishedResult)).sum(&.elapsed)
     end
 
     # Length of time spent in framework processes and hooks.
