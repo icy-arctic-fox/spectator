@@ -15,7 +15,7 @@ describe Spectator::Internals::Harness do
       it "returns a passing result" do
         example = PassingExample.create
         result = Spectator::Internals::Harness.run(example)
-        result.passed?.should be_true
+        result.should be_a(Spectator::SuccessfulResult)
       end
     end
 
@@ -23,7 +23,7 @@ describe Spectator::Internals::Harness do
       it "returns a failing result" do
         example = FailingExample.create
         result = Spectator::Internals::Harness.run(example)
-        result.passed?.should be_false
+        result.should be_a(Spectator::FailedResult)
       end
     end
   end

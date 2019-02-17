@@ -15,30 +15,6 @@ def new_errored_result(
 end
 
 describe Spectator::ErroredResult do
-  describe "#errored?" do
-    it "is true" do
-      new_errored_result.errored?.should be_true
-    end
-  end
-
-  describe "#passed?" do
-    it "is false" do
-      new_errored_result.passed?.should be_false
-    end
-  end
-
-  describe "#failed?" do
-    it "is true" do
-      new_errored_result.failed?.should be_true
-    end
-  end
-
-  describe "#pending?" do
-    it "is false" do
-      new_errored_result.pending?.should be_false
-    end
-  end
-
   describe "#example" do
     it "is the expected value" do
       example = FailingExample.create

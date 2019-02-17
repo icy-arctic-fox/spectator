@@ -13,30 +13,6 @@ def new_successful_result(
 end
 
 describe Spectator::SuccessfulResult do
-  describe "#passed?" do
-    it "is true" do
-      new_successful_result.passed?.should be_true
-    end
-  end
-
-  describe "#failed?" do
-    it "is false" do
-      new_successful_result.failed?.should be_false
-    end
-  end
-
-  describe "#errored?" do
-    it "is false" do
-      new_successful_result.errored?.should be_false
-    end
-  end
-
-  describe "#pending?" do
-    it "is false" do
-      new_successful_result.pending?.should be_false
-    end
-  end
-
   describe "#example" do
     it "is the expected value" do
       example = PassingExample.create
