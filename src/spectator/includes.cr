@@ -42,4 +42,5 @@ require "./pending_result"
 require "./failed_result"
 require "./errored_result"
 
+require "./source"
 require "./example_iterator"
