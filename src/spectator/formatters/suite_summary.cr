@@ -15,7 +15,7 @@ module Spectator::Formatters
       @io.puts
       display_failures(failures) if failures.any?
       display_stats(report)
-      display_failure_commands(failures) if failures.any?
+      display_failure_commands(report.failures) if failures.any?
     end
 
     private def display_failures(failures)
@@ -36,9 +36,9 @@ module Spectator::Formatters
       @io.puts
       @io.puts "Failed examples:"
       @io.puts
-      failures.each do |block|
+      failures.each do |result|
         @io.print "crystal spec "
-        block.source(@io)
+        result.example.source.to_s(@io)
         @io.puts " # TODO"
       end
     end

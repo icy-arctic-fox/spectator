@@ -3,9 +3,6 @@ module Spectator::Formatters
     def initialize(@index : Int32, @result : FailedResult)
     end
 
-    def source(io)
-      @result.example.source.to_s(io)
-    end
 
     def to_s(io)
       to_s_title(io)
