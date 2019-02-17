@@ -14,5 +14,10 @@ module Spectator
     def initialize(example, elapsed, @expectations)
       super(example, elapsed)
     end
+
+    # Calls the `success` method on `interface` and passes `self`.
+    def call(interface)
+      interface.success(self)
+    end
   end
 end

@@ -18,5 +18,10 @@ module Spectator
     def initialize(example, elapsed, @expectations, @error)
       super(example, elapsed)
     end
+
+    # Calls the `failure` method on `interface` and passes `self`.
+    def call(interface)
+      interface.failure(self)
+    end
   end
 end
