@@ -1,8 +1,8 @@
 require "./spec_helper"
 
-def new_nested_group(hooks = Spectator::ExampleHooks.empty, conditions = Spectator::ExampleConditions.empty, parent : Spectator::ExampleGroup? = nil)
+def new_nested_group(what : Symbol | String = "what", hooks = Spectator::ExampleHooks.empty, conditions = Spectator::ExampleConditions.empty, parent : Spectator::ExampleGroup? = nil)
   parent ||= Spectator::RootExampleGroup.new(Spectator::ExampleHooks.empty, Spectator::ExampleConditions.empty)
-  Spectator::NestedExampleGroup.new("what", parent, hooks, conditions).tap do |group|
+  Spectator::NestedExampleGroup.new(what, parent, hooks, conditions).tap do |group|
     parent.children = [group.as(Spectator::ExampleComponent)]
     group.children = [] of Spectator::ExampleComponent
   end
@@ -93,7 +93,7 @@ describe Spectator::NestedExampleGroup do
     it "runs a single before_all hook" do
       called = false
       hooks = new_hooks(before_all: ->{ called = true; nil })
-      group = new_nested_group(hooks)
+      group = new_nested_group(hooks: hooks)
       group.run_before_hooks
       called.should be_true
     end
@@ -101,7 +101,7 @@ describe Spectator::NestedExampleGroup do
     it "runs a single before_each hook" do
       called = false
       hooks = new_hooks(before_each: ->{ called = true; nil })
-      group = new_nested_group(hooks)
+      group = new_nested_group(hooks: hooks)
       group.run_before_hooks
       called.should be_true
     end
@@ -113,7 +113,7 @@ describe Spectator::NestedExampleGroup do
         ->{ call_count += 2; nil },
         ->{ call_count += 3; nil },
       ])
-      group = new_nested_group(hooks)
+      group = new_nested_group(hooks: hooks)
       group.run_before_hooks
       call_count.should eq(6)
     end
@@ -125,7 +125,7 @@ describe Spectator::NestedExampleGroup do
         ->{ call_count += 2; nil },
         ->{ call_count += 3; nil },
       ])
-      group = new_nested_group(hooks)
+      group = new_nested_group(hooks: hooks)
       group.run_before_hooks
       call_count.should eq(6)
     end
@@ -142,7 +142,7 @@ describe Spectator::NestedExampleGroup do
           ->{ calls << :e; nil },
           ->{ calls << :f; nil },
         ])
-      group = new_nested_group(hooks)
+      group = new_nested_group(hooks: hooks)
       group.run_before_hooks
       calls.should eq(%i[a b c d e f])
     end
@@ -443,7 +443,7 @@ describe Spectator::NestedExampleGroup do
     it "wraps a proc" do
       called = false
       hooks = new_hooks(around_each: ->(proc : ->) { called = true; proc.call })
-      wrapper = new_nested_group(hooks).wrap_around_each_hooks { }
+      wrapper = new_nested_group(hooks: hooks).wrap_around_each_hooks { }
       wrapper.call
       called.should be_true
     end
@@ -455,7 +455,7 @@ describe Spectator::NestedExampleGroup do
         ->(proc : ->) { call_count += 2; proc.call },
         ->(proc : ->) { call_count += 3; proc.call },
       ])
-      wrapper = new_nested_group(hooks).wrap_around_each_hooks { }
+      wrapper = new_nested_group(hooks: hooks).wrap_around_each_hooks { }
       wrapper.call
       call_count.should eq(6)
     end
@@ -467,7 +467,7 @@ describe Spectator::NestedExampleGroup do
         ->(proc : ->) { calls << :b; proc.call },
         ->(proc : ->) { calls << :c; proc.call },
       ])
-      wrapper = new_nested_group(hooks).wrap_around_each_hooks { }
+      wrapper = new_nested_group(hooks: hooks).wrap_around_each_hooks { }
       wrapper.call
       calls.should eq(%i[a b c])
     end
@@ -618,7 +618,7 @@ describe Spectator::NestedExampleGroup do
   describe "#to_s" do
     it "contains #what" do
       group = new_nested_group
-      group.to_s.should contain(group.what)
+      group.to_s.should contain(group.what.to_s)
     end
 
     it "contains the parent's #to_s" do
@@ -1040,6 +1040,20 @@ describe Spectator::NestedExampleGroup do
           end
           group.finished?.should be_true
         end
+      end
+    end
+  end
+
+  describe "#symbolic?" do
+    context "when 'what' is a Symbol" do
+      it "is true" do
+        new_nested_group(:What).symbolic?.should be_true
+      end
+    end
+
+    context "when 'what' is a String" do
+      it "is false" do
+        new_nested_group("what").symbolic?.should be_false
       end
     end
   end

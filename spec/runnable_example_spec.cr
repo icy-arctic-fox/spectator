@@ -1510,7 +1510,7 @@ describe Spectator::RunnableExample do
       group = Spectator::NestedExampleGroup.new("the parent", root, Spectator::ExampleHooks.empty, Spectator::ExampleConditions.empty)
       root.children = [group.as(Spectator::ExampleComponent)]
       example = new_runnable_example(group)
-      example.to_s.should contain(group.what)
+      example.to_s.should contain(group.what.to_s)
     end
   end
 end

@@ -9,6 +9,10 @@ class ConcretePendingExample < Spectator::PendingExample
     ::Spectator::Source.new(__FILE__, __LINE__)
   end
 
+  def symbolic?
+    false
+  end
+
   def instance
     nil
   end
@@ -112,7 +116,7 @@ describe Spectator::PendingExample do
     it "contains the group's #what" do
       group = new_nested_group
       example = new_pending_example(group)
-      example.to_s.should contain(group.what)
+      example.to_s.should contain(group.what.to_s)
     end
   end
 end

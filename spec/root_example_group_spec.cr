@@ -801,4 +801,10 @@ describe Spectator::RootExampleGroup do
       end
     end
   end
+
+  describe "#symbolic?" do
+    it "is true" do
+      new_root_group.symbolic?.should be_true
+    end
+  end
 end

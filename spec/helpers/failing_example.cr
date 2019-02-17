@@ -10,6 +10,11 @@ class FailingExample < Spectator::RunnableExample
     ::Spectator::Source.new(__FILE__, __LINE__)
   end
 
+  # Dummy symbolic flag.
+  def symbolic?
+    false
+  end
+
   # Dummy instance.
   def instance
     nil
