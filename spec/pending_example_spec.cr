@@ -5,12 +5,8 @@ class ConcretePendingExample < Spectator::PendingExample
     "PENDING_TEST_EXAMPLE"
   end
 
-  def source_file
-    __FILE__
-  end
-
-  def source_line
-    __LINE__
+  def source
+    ::Spectator::Source.new(__FILE__, __LINE__)
   end
 
   def instance

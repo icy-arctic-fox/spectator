@@ -14,14 +14,9 @@ module Spectator
       "DUMMY"
     end
 
-    # Dummy source file.
-    def source_file
-      __FILE__
-    end
-
-    # Dummy source line number.
-    def source_line
-      __LINE__
+    # Dummy source.
+    def source
+      Source.new(__FILE__, __LINE__)
     end
 
     # Dummy instance.

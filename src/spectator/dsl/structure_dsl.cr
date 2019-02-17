@@ -1354,14 +1354,9 @@ module Spectator::DSL
 
       # Create a class derived from `RunnableExample` to run the test code.
       _spectator_example(Example%example, Test%example, ::Spectator::RunnableExample, {{what}}) do
-        # Source file the example originated from.
-        def source_file
-          {{_source_file}}
-        end
-
-        # Line number in the source file the example originated from.
-        def source_line
-          {{_source_line}}
+        # Source where the example originated from.
+        def source
+          ::Spectator::Source.new({{_source_file}}, {{_source_line}})
         end
 
         # Implement abstract method to run the wrapped example block.
@@ -1408,14 +1403,9 @@ module Spectator::DSL
 
       # Create a class derived from `PendingExample` to skip the test code.
       _spectator_example(Example%example, Test%example, ::Spectator::PendingExample, {{what}}) do
-        # Source file the example originated from.
-        def source_file
-          {{_source_file}}
-        end
-
-        # Line number in the source file the example originated from.
-        def source_line
-          {{_source_line}}
+        # Source where the example originated from.
+        def source
+          ::Spectator::Source.new({{_source_file}}, {{_source_line}})
         end
       end
 

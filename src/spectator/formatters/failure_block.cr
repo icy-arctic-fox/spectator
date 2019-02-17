@@ -4,9 +4,7 @@ module Spectator::Formatters
     end
 
     def source(io)
-      io << @result.example.source_file
-      io << ':'
-      io << @result.example.source_line
+      @result.example.source.to_s(io)
     end
 
     def to_s(io)

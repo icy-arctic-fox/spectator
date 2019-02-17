@@ -13,11 +13,8 @@ module Spectator
     # Retrieves the internal wrapped instance.
     abstract def instance
 
-    # Source file the example originated from.
-    abstract def source_file : String
-
-    # Line number in the source file the example originated from.
-    abstract def source_line : Int64
+    # Source where the example originated from.
+    abstract def source : Source
 
     # Runs the example code.
     # A result is returned, which represents the outcome of the test.
