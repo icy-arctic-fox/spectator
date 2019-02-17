@@ -5,7 +5,8 @@ module Spectator
   # This group can be nested under other groups.
   class NestedExampleGroup < ExampleGroup
     # Description from the user of the group's contents.
-    getter what : String
+    # This is a symbol when referencing a type.
+    getter what : Symbol | String
 
     # Group that this is nested in.
     getter parent : ExampleGroup
@@ -19,6 +20,11 @@ module Spectator
     # The `hooks` are stored to be triggered later.
     def initialize(@what, @parent, hooks : ExampleHooks, conditions : ExampleConditions)
       super(hooks, conditions)
+    end
+
+    # Indicates wheter the group references a type.
+    def symbolic?
+      @what.is_a?(Symbol)
     end
 
     # Runs all of the `before_all` hooks.

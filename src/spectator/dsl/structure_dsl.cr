@@ -271,7 +271,15 @@ module Spectator::DSL
 
         # Start a new group.
         ::Spectator::DSL::Builder.start_group(
-          {{what.is_a?(StringLiteral) ? what : what.stringify}}
+          {% if what.is_a?(StringLiteral) %}
+            {% if what.starts_with?("#") || what.starts_with?(".") %}
+              {{what.id.symbolize}}
+            {% else %}
+              {{what}}
+            {% end %}
+          {% else %}
+            {{what.symbolize}}
+          {% end %}
         )
 
         # Nest the block's content in the module.
@@ -1486,6 +1494,11 @@ module Spectator::DSL
 
         # Retrieves the underlying, wrapped test code.
         getter instance
+
+        # Indicates whether the example references a method.
+        def symbolic?
+          {{what.starts_with?('#') ? true : false}}
+        end
 
         # Add the block's content if one was provided.
         {% if block.is_a?(Block) %}

@@ -13,5 +13,8 @@ module Spectator
 
     # Lookup the example with the specified index.
     abstract def [](index : Int) : Example
+
+    # Indicates that the component references a type or method.
+    abstract def symbolic? : Bool
   end
 end

@@ -9,6 +9,11 @@ module Spectator
       "ROOT"
     end
 
+    # Indicates that the group is symbolic.
+    def symbolic?
+      true
+    end
+
     # Does nothing.
     # This prevents the root group
     # from showing up in output.

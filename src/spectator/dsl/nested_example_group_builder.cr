@@ -16,7 +16,8 @@ module Spectator::DSL
     # ```
     # The value would be "String" for the describe block
     # and "with an empty string" for the context block.
-    def initialize(@what : String)
+    # Use a `Symbol` when referencing a type name.
+    def initialize(@what : Symbol | String)
     end
 
     # Builds the example group.

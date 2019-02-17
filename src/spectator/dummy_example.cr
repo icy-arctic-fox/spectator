@@ -14,6 +14,11 @@ module Spectator
       "DUMMY"
     end
 
+    # Dummy symbolic flag.
+    def symbolic?
+      false
+    end
+
     # Dummy source.
     def source
       Source.new(__FILE__, __LINE__)
