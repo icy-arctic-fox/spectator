@@ -10,29 +10,37 @@ module Spectator::Formatters
     # A block describing each failure is displayed.
     # At the end, the totals and runtime are printed.
     def end_suite(report)
-      failures = report.failures.map_with_index { |result, index| FailureBlock.new(index + 1, result) }
+      failed = report.failed_count > 0
       @io.puts
       @io.puts
-      display_failures(failures) if failures.any?
-      display_stats(report)
-      display_failure_commands(report.failures) if failures.any?
+      failures(report.failures) if failed
+      stats(report)
+      failure_commands(report.failures) if failed
     end
 
-    private def display_failures(failures)
+    # Produces the failure section of the summary.
+    # This has a "Failures" title followed by a block for each failure.
+    private def failures(failures)
       @io.puts "Failures:"
       @io.puts
-      failures.each do |block|
-        @io.puts block
+      failures.each_with_index do |result, index|
+        @io.puts FailureBlock.new(index + 1, result)
         @io.puts
       end
     end
 
-    private def display_stats(report)
+    # Produces the statistical section of the summary.
+    # This contains how long the suite took to run
+    # and the counts for the results (total, failures, errors, and pending).
+    private def stats(report)
       @io.puts "Finished in #{human_time(report.runtime)}"
       @io.puts "#{report.example_count} examples, #{report.failed_count} failures, #{report.error_count} errors, #{report.pending_count} pending"
     end
 
-    private def display_failure_commands(failures)
+    # Produces the failure commands section of the summary.
+    # This provides a set of commands the user can run
+    # to test just the examples that failed.
+    private def failure_commands(failures)
       @io.puts
       @io.puts "Failed examples:"
       @io.puts
@@ -43,6 +51,7 @@ module Spectator::Formatters
       end
     end
 
+    # Provides a more human-friendly formatting for a time span.
     private def human_time(span)
       millis = span.total_milliseconds
       return "#{(millis * 1000).round.to_i} microseconds" if millis < 1
