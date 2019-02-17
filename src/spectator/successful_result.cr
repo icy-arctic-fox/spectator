@@ -14,25 +14,5 @@ module Spectator
     def initialize(example, elapsed, @expectations)
       super(example, elapsed)
     end
-
-    # Indicates that an example was run and it was successful.
-    # NOTE: Examples with warnings count as successful.
-    # This will always be true for this type of result.
-    def passed?
-      true
-    end
-
-    # Indicates that an example was run, but it failed.
-    # Errors count as failures.
-    # This will always be false for this type of result.
-    def failed?
-      false
-    end
-
-    # Indicates whether an error was encountered while running the example.
-    # This will always be false for this type of result.
-    def errored?
-      false
-    end
   end
 end

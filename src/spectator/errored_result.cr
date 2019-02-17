@@ -6,10 +6,5 @@ module Spectator
   # This is different from a "failed" result
   # in that the error was not from a failed expectation.
   class ErroredResult < FailedResult
-    # Indicates whether an error was encountered while running the example.
-    # This will always be true for this type of result.
-    def errored?
-      true
-    end
   end
 end

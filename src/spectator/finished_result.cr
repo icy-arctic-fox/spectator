@@ -11,11 +11,5 @@ module Spectator
     def initialize(example, @elapsed)
       super(example)
     end
-
-    # Indicates that an example was marked as pending.
-    # This will always be false for this type of result.
-    def pending?
-      false
-    end
   end
 end
