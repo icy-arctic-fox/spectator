@@ -50,7 +50,7 @@ module Spectator
     # The string can be given to end-users to identify the example.
     def to_s(io)
       @group.to_s(io)
-      io << ' '
+      io << ' ' unless symbolic? && @group.symbolic?
       io << what
     end
   end
