@@ -630,6 +630,76 @@ describe Spectator::NestedExampleGroup do
       group.children = [] of Spectator::ExampleComponent
       group.to_s.should contain(parent.to_s)
     end
+
+    context "when #symbolic? is true" do
+      context "and the parent group is symbolic" do
+        it "omits the space" do
+          root = Spectator::RootExampleGroup.new(Spectator::ExampleHooks.empty, Spectator::ExampleConditions.empty)
+          parent = Spectator::NestedExampleGroup.new(:Parent, root, Spectator::ExampleHooks.empty, Spectator::ExampleConditions.empty)
+          group = Spectator::NestedExampleGroup.new(:"#foo", parent, Spectator::ExampleHooks.empty, Spectator::ExampleConditions.empty)
+          root.children = [parent.as(Spectator::ExampleComponent)]
+          parent.children = [group.as(Spectator::ExampleComponent)]
+          group.children = [] of Spectator::ExampleComponent
+          parent.symbolic?.should be_true
+          group.symbolic?.should be_true
+          group.to_s.should_not contain(' ')
+        end
+      end
+
+      context "and the parent group isn't symbolic" do
+        it "inserts a space" do
+          root = Spectator::RootExampleGroup.new(Spectator::ExampleHooks.empty, Spectator::ExampleConditions.empty)
+          parent = Spectator::NestedExampleGroup.new("PARENT", root, Spectator::ExampleHooks.empty, Spectator::ExampleConditions.empty)
+          group = Spectator::NestedExampleGroup.new(:"#foo", parent, Spectator::ExampleHooks.empty, Spectator::ExampleConditions.empty)
+          root.children = [parent.as(Spectator::ExampleComponent)]
+          parent.children = [group.as(Spectator::ExampleComponent)]
+          group.children = [] of Spectator::ExampleComponent
+          parent.symbolic?.should be_false
+          group.symbolic?.should be_true
+          group.to_s.should contain(' ')
+        end
+      end
+    end
+
+    context "when #symbolic? is false" do
+      context "and the parent group is symbolic" do
+        it "inserts a space" do
+          root = Spectator::RootExampleGroup.new(Spectator::ExampleHooks.empty, Spectator::ExampleConditions.empty)
+          parent = Spectator::NestedExampleGroup.new(:Parent, root, Spectator::ExampleHooks.empty, Spectator::ExampleConditions.empty)
+          group = Spectator::NestedExampleGroup.new("GROUP", parent, Spectator::ExampleHooks.empty, Spectator::ExampleConditions.empty)
+          root.children = [parent.as(Spectator::ExampleComponent)]
+          parent.children = [group.as(Spectator::ExampleComponent)]
+          group.children = [] of Spectator::ExampleComponent
+          parent.symbolic?.should be_true
+          group.symbolic?.should be_false
+          group.to_s.should contain(' ')
+        end
+      end
+
+      context "and the parent group isn't symbolic" do
+        it "inserts a space" do
+          root = Spectator::RootExampleGroup.new(Spectator::ExampleHooks.empty, Spectator::ExampleConditions.empty)
+          parent = Spectator::NestedExampleGroup.new("PARENT", root, Spectator::ExampleHooks.empty, Spectator::ExampleConditions.empty)
+          group = Spectator::NestedExampleGroup.new("GROUP", parent, Spectator::ExampleHooks.empty, Spectator::ExampleConditions.empty)
+          root.children = [parent.as(Spectator::ExampleComponent)]
+          parent.children = [group.as(Spectator::ExampleComponent)]
+          group.children = [] of Spectator::ExampleComponent
+          parent.symbolic?.should be_false
+          group.symbolic?.should be_false
+          group.to_s.should contain(' ')
+        end
+      end
+    end
+
+    context "when the parent group is root" do
+      it "omits the space" do
+        root = Spectator::RootExampleGroup.new(Spectator::ExampleHooks.empty, Spectator::ExampleConditions.empty)
+        group = Spectator::NestedExampleGroup.new("GROUP", root, Spectator::ExampleHooks.empty, Spectator::ExampleConditions.empty)
+        root.children = [group.as(Spectator::ExampleComponent)]
+        group.children = [] of Spectator::ExampleComponent
+        group.to_s.should_not contain(' ')
+      end
+    end
   end
 
   describe "#children" do

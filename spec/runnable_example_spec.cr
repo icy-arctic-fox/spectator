@@ -1,8 +1,8 @@
 require "./spec_helper"
 
-def new_runnable_example(group : Spectator::ExampleGroup? = nil)
+def new_runnable_example(group : Spectator::ExampleGroup? = nil, symbolic = false)
   actual_group = group || Spectator::RootExampleGroup.new(Spectator::ExampleHooks.empty, Spectator::ExampleConditions.empty)
-  PassingExample.new(actual_group, Spectator::Internals::SampleValues.empty).tap do |example|
+  PassingExample.new(actual_group, Spectator::Internals::SampleValues.empty, symbolic).tap do |example|
     actual_group.children = [example.as(Spectator::ExampleComponent)]
   end
 end
@@ -1507,10 +1507,62 @@ describe Spectator::RunnableExample do
 
     it "contains the group's #what" do
       root = Spectator::RootExampleGroup.new(Spectator::ExampleHooks.empty, Spectator::ExampleConditions.empty)
-      group = Spectator::NestedExampleGroup.new("the parent", root, Spectator::ExampleHooks.empty, Spectator::ExampleConditions.empty)
+      group = Spectator::NestedExampleGroup.new("GROUP", root, Spectator::ExampleHooks.empty, Spectator::ExampleConditions.empty)
       root.children = [group.as(Spectator::ExampleComponent)]
       example = new_runnable_example(group)
       example.to_s.should contain(group.what.to_s)
+    end
+
+    context "when #symbolic? is true" do
+      context "and the group is symbolic" do
+        it "omits the space" do
+          root = Spectator::RootExampleGroup.new(Spectator::ExampleHooks.empty, Spectator::ExampleConditions.empty)
+          group = Spectator::NestedExampleGroup.new(:Group, root, Spectator::ExampleHooks.empty, Spectator::ExampleConditions.empty)
+          root.children = [group.as(Spectator::ExampleComponent)]
+          example = new_runnable_example(group, true)
+          group.symbolic?.should be_true
+          example.symbolic?.should be_true
+          example.to_s.should_not contain(' ')
+        end
+      end
+
+      context "and the group isn't symbolic" do
+        it "inserts a space" do
+          root = Spectator::RootExampleGroup.new(Spectator::ExampleHooks.empty, Spectator::ExampleConditions.empty)
+          group = Spectator::NestedExampleGroup.new("GROUP", root, Spectator::ExampleHooks.empty, Spectator::ExampleConditions.empty)
+          root.children = [group.as(Spectator::ExampleComponent)]
+          example = new_runnable_example(group, true)
+          group.symbolic?.should be_false
+          example.symbolic?.should be_true
+          example.to_s.should contain(' ')
+        end
+      end
+    end
+
+    context "when #symbolic? is false" do
+      context "and the group is symbolic" do
+        it "inserts a space" do
+          root = Spectator::RootExampleGroup.new(Spectator::ExampleHooks.empty, Spectator::ExampleConditions.empty)
+          group = Spectator::NestedExampleGroup.new(:Group, root, Spectator::ExampleHooks.empty, Spectator::ExampleConditions.empty)
+          root.children = [group.as(Spectator::ExampleComponent)]
+          example = new_runnable_example(group, false)
+          group.symbolic?.should be_true
+          example.symbolic?.should be_false
+          example.to_s.should contain(' ')
+        end
+      end
+
+      context "and the group isn't symbolic" do
+        it "inserts a space" do
+          root = Spectator::RootExampleGroup.new(Spectator::ExampleHooks.empty, Spectator::ExampleConditions.empty)
+          group = Spectator::NestedExampleGroup.new("GROUP", root, Spectator::ExampleHooks.empty, Spectator::ExampleConditions.empty)
+          root.children = [group.as(Spectator::ExampleComponent)]
+          example = new_runnable_example(group, false)
+          group.symbolic?.should be_false
+          example.symbolic?.should be_false
+          example.to_s.should contain(' ')
+        end
+      end
     end
   end
 end

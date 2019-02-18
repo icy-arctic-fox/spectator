@@ -1,5 +1,10 @@
 # Example that always succeeds.
 class PassingExample < Spectator::RunnableExample
+  # Creates the example.
+  def initialize(group, values, @symbolic = false)
+    super(group, values)
+  end
+
   # Dummy description.
   def what
     "PASS"
@@ -12,7 +17,7 @@ class PassingExample < Spectator::RunnableExample
 
   # Dummy symbolic flag.
   def symbolic?
-    false
+    @symbolic
   end
 
   # Dummy instance.
