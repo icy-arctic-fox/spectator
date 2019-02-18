@@ -5,44 +5,38 @@ module Spectator::Formatters
   module Color
     extend self
 
-    # Symbol in `Colorize` representing success.
-    SUCCESS_COLOR = :green
-
-    # Symbol in `Colorize` representing failure.
-    FAILURE_COLOR = :red
-
-    # Symbol in `Colorize` representing an error.
-    ERROR_COLOR = :magenta
-
-    # Symbol in `Colorize` representing pending or skipped.
-    PENDING_COLOR = :yellow
-
-    # Symbol in `Colorize` representing a comment in output.
-    COMMENT_COLOR = :cyan
+    # Symbols in `Colorize` representing result types and formatting types.
+    private COLORS = {
+      success: :green,
+      failure: :red,
+      error:   :magenta,
+      pending: :yellow,
+      comment: :cyan,
+    }
 
     # Colorizes some text with the success color.
     def success(text)
-      text.colorize(SUCCESS_COLOR)
+      text.colorize(COLORS[:success])
     end
 
     # Colorizes some text with the failure color.
     def failure(text)
-      text.colorize(FAILURE_COLOR)
+      text.colorize(COLORS[:failure])
     end
 
     # Colorizes some text with the error color.
     def error(text)
-      text.colorize(ERROR_COLOR)
+      text.colorize(COLORS[:error])
     end
 
     # Colorizes some text with the pending/skipped color.
     def pending(text)
-      text.colorize(PENDING_COLOR)
+      text.colorize(COLORS[:pending])
     end
 
     # Colorizes some text with the comment color.
     def comment(text)
-      text.colorize(COMMENT_COLOR)
+      text.colorize(COLORS[:comment])
     end
   end
 end
