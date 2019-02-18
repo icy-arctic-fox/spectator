@@ -106,7 +106,7 @@ module Spectator
     # ```
     def to_s(io)
       parent.to_s(io)
-      io << ' ' unless symbolic? && parent.symbolic?
+      io << ' ' unless (symbolic? || parent.is_a?(RootExampleGroup)) && parent.symbolic?
       io << what
     end
   end
