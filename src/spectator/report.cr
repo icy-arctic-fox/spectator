@@ -38,12 +38,12 @@ module Spectator
 
     # Returns a set of results for all failed examples.
     def failures
-      @results.compact_map(&.as?(FailedResult))
+      @results.each.compact_map(&.as?(FailedResult))
     end
 
     # Returns a set of results for all errored examples.
     def errors
-      @results.compact_map(&.as?(ErroredResult))
+      @results.each.compact_map(&.as?(ErroredResult))
     end
 
     # Length of time it took to run just example code.

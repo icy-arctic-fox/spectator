@@ -75,7 +75,7 @@ describe Spectator::Report do
     it "returns the expected results" do
       results = Array.new(5) { new_failure_result.as(Spectator::Result) }
       report = Spectator::Report.new(results, Time::Span.zero)
-      report.failures.should eq(results)
+      report.failures.to_a.should eq(results)
     end
 
     it "includes errors" do
@@ -87,7 +87,7 @@ describe Spectator::Report do
         end
       end
       report = Spectator::Report.new(results, Time::Span.zero)
-      report.failures.should eq(results)
+      report.failures.to_a.should eq(results)
     end
   end
 
@@ -95,7 +95,7 @@ describe Spectator::Report do
     it "returns the expected results" do
       results = Array.new(5) { new_failure_result(Spectator::ErroredResult).as(Spectator::Result) }
       report = Spectator::Report.new(results, Time::Span.zero)
-      report.errors.should eq(results)
+      report.errors.to_a.should eq(results)
     end
 
     it "does not include failures" do
@@ -108,7 +108,7 @@ describe Spectator::Report do
       end
       report = Spectator::Report.new(results, Time::Span.zero)
       errors_only = results.select(&.is_a?(Spectator::ErroredResult))
-      report.errors.should eq(errors_only)
+      report.errors.to_a.should eq(errors_only)
     end
   end
 
