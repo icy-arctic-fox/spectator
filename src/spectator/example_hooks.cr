@@ -52,7 +52,7 @@ module Spectator
     # in addition to a block passed to this method.
     # To call the block and all "around-each" hooks,
     # just invoke `Proc#call` on the returned proc.
-    def wrap_around_each(&block : ->)
+    def wrap_around_each(&block : ->) : ->
       wrapper = block
       # Must wrap in reverse order,
       # otherwise hooks will run in the wrong order.

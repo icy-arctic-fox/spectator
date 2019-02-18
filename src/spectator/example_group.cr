@@ -118,7 +118,7 @@ module Spectator
     end
 
     # Checks whether all examples in the group have been run.
-    def finished? : Bool
+    def finished?
       children.all?(&.finished?)
     end
 

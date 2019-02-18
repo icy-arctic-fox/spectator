@@ -5,7 +5,7 @@ module Spectator
   # This class will not run example code.
   abstract class PendingExample < Example
     # Returns a pending result.
-    private def run_impl : Result
+    private def run_impl
       PendingResult.new(self)
     end
   end

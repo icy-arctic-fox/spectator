@@ -28,7 +28,7 @@ module Spectator
 
     # Runs a single example and returns the result.
     # The formatter is given the example and result information.
-    private def run_example(example) : Result
+    private def run_example(example)
       @config.formatter.start_example(example)
       Internals::Harness.run(example).tap do |result|
         @config.formatter.end_example(result)
