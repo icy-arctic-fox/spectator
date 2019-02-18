@@ -17,6 +17,9 @@ module Spectator::Formatters
     # Symbol in `Colorize` representing pending or skipped.
     PENDING_COLOR = :yellow
 
+    # Symbol in `Colorize` representing a comment in output.
+    COMMENT_COLOR = :cyan
+
     # Colorizes some text with the success color.
     def success(text)
       text.colorize(SUCCESS_COLOR)
@@ -35,6 +38,11 @@ module Spectator::Formatters
     # Colorizes some text with the pending/skipped color.
     def pending(text)
       text.colorize(PENDING_COLOR)
+    end
+
+    # Colorizes some text with the comment color.
+    def comment(text)
+      text.colorize(COMMENT_COLOR)
     end
   end
 end
