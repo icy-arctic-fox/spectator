@@ -1,12 +1,14 @@
 require "./matcher_dsl"
 
 module Spectator::DSL
-  # Methods that are available inside test code (an `it` block).
+  # Methods that are available inside test code.
+  # Basically, inside an `StructureDSL#it` block.
   module ExampleDSL
     include MatcherDSL
 
     # Starts an expectation.
-    # This should be followed up with `to` or `to_not`.
+    # This should be followed up with `Spectator::Expectations::ExpectationPartial#to`
+    # or `Spectator::Expectations::ExpectationPartial#to_not`.
     # The value passed in will be checked
     # to see if it satisfies the conditions specified.
     #
@@ -21,7 +23,8 @@ module Spectator::DSL
     end
 
     # Starts an expectation on a block of code.
-    # This should be followed up with `to` or `to_not`.
+    # This should be followed up with `Spectator::Expectations::ExpectationPartial#to`
+    # or `Spectator::Expectations::ExpectationPartial#to_not`.
     # The block passed in, or its return value, will be checked
     # to see if it satisfies the conditions specified.
     #
@@ -40,7 +43,7 @@ module Spectator::DSL
     # ```
     # expect(&.size).to eq(5)
     # ```
-    # The method passed will always be evaluated on `#subject`.
+    # The method passed will always be evaluated on the subject.
     macro expect(_source_file = __FILE__, _source_line = __LINE__, &block)
       {% if block.is_a?(Nop) %}
         {% raise "Argument or block must be provided to expect" %}
@@ -48,13 +51,20 @@ module Spectator::DSL
 
       # Check if the short-hand method syntax is used.
       # This is a hack, since macros don't get this as a "literal" or something similar.
-      # The Crystal compiler will translate `&.foo` to `{ |__arg0| __arg0.foo }`.
+      # The Crystal compiler will translate:
+      # ```
+      # &.foo
+      # ```
+      # to:
+      # ```
+      # { |__arg0| __arg0.foo }
+      # ```
       # The hack used here is to check if it looks like a compiler-generated block.
       {% if block.args == ["__arg0".id] && block.body.is_a?(Call) && block.body.id =~ /^__arg0\./ %}
         # Extract the method name to make it clear to the user what is tested.
         # The raw block can't be used because it's not clear to the user.
         {% method_name = block.body.id.split('.').last %}
-        # TODO: Maybe pass the subject in as __arg0 instead of prefixing with `subject.`.
+        # TODO: Maybe pass the subject in as __arg0 instead of prefixing the method name.
         ::Spectator::Expectations::ValueExpectationPartial.new(subject.{{method_name}}, {{"#" + method_name}}, {{_source_file}}, {{_source_line}})
       {% else %}
         # In this case, it looks like the short-hand method syntax wasn't used.
@@ -64,7 +74,8 @@ module Spectator::DSL
     end
 
     # Starts an expectation.
-    # This should be followed up with `to` or `to_not`.
+    # This should be followed up with `Spectator::Expectations::ExpectationPartial#to`
+    # or `Spectator::Expectations::ExpectationPartial#to_not`.
     # The value passed in will be checked
     # to see if it satisfies the conditions specified.
     #
@@ -81,7 +92,8 @@ module Spectator::DSL
     end
 
     # Starts an expectation on a block of code.
-    # This should be followed up with `to` or `to_not`.
+    # This should be followed up with `Spectator::Expectations::ExpectationPartial#to`
+    # or `Spectator::Expectations::ExpectationPartial#to_not`.
     # The block passed in, or its return value, will be checked
     # to see if it satisfies the conditions specified.
     #
@@ -102,7 +114,7 @@ module Spectator::DSL
     # ```
     # it expects(&.size).to eq(5)
     # ```
-    # The method passed will always be evaluated on `#subject`.
+    # The method passed will always be evaluated on the subject.
     macro expects(&block)
       expect {{block}}
     end

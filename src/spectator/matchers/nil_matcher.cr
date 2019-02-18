@@ -2,7 +2,7 @@ require "./matcher"
 
 module Spectator::Matchers
   # Common matcher that tests whether a value is nil.
-  # The values are compared with the `#nil?` method.
+  # The `Object#nil?` method is used for this.
   struct NilMatcher < Matcher
     # Creates the matcher.
     def initialize

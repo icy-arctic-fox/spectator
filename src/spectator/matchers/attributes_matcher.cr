@@ -2,7 +2,7 @@ require "./value_matcher"
 
 module Spectator::Matchers
   # Matcher that tests that multiple attributes match specified conditions.
-  # The attributes are tested with the `===` operator.
+  # The attributes are tested with the === operator.
   # The `ExpectedType` type param should be a `NamedTuple`.
   struct AttributesMatcher(ExpectedType) < ValueMatcher(ExpectedType)
     # Determines whether the matcher is satisfied with the value given to it.

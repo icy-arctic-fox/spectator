@@ -4,7 +4,7 @@ module Spectator::DSL
   # and it should be at the top of the spec "tree".
   class RootExampleGroupBuilder < ExampleGroupBuilder
     # Creates a `RootExampleGroup` which can have instances of `Example` and `ExampleGroup` nested in it.
-    # The `sample_values` will be given to all of the examples (and groups) nested in this group.
+    # The *sample_values* will be given to all of the examples (and groups) nested in this group.
     def build(sample_values : Internals::SampleValues) : RootExampleGroup
       RootExampleGroup.new(hooks, conditions).tap do |group|
         # Set the group's children to built versions of the children from this instance.

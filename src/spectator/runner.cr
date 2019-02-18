@@ -2,7 +2,7 @@ module Spectator
   # Main driver for executing tests and feeding results to formatters.
   class Runner
     # Creates the test suite runner.
-    # Specify the test `suite` to run and any additonal configuration.
+    # Specify the test *suite* to run and any additonal configuration.
     def initialize(@suite : TestSuite, @config : Config)
     end
 

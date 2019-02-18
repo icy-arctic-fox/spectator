@@ -24,33 +24,33 @@ module Spectator
     )
     end
 
-    # Runs all `before_all` hooks.
+    # Runs all "before-all" hooks.
     # These hooks should be run once before all examples in the group start.
     def run_before_all
       @before_all.each &.call
     end
 
-    # Runs all `before_each` hooks.
+    # Runs all "before-each" hooks.
     # These hooks should be run every time before each example in a group.
     def run_before_each
       @before_each.each &.call
     end
 
-    # Runs all `after_all` hooks.
+    # Runs all "after-all" hooks.
     # These hooks should be run once after all examples in group finish.
     def run_after_all
       @after_all.each &.call
     end
 
-    # Runs all `after_each` hooks.
+    # Runs all "after-all" hooks.
     # These hooks should be run every time after each example in a group.
     def run_after_each
       @after_each.each &.call
     end
 
-    # Creates a proc that runs the `around_each` hooks
+    # Creates a proc that runs the "around-each" hooks
     # in addition to a block passed to this method.
-    # To call the block and all `around_each` hooks,
+    # To call the block and all "around-each" hooks,
     # just invoke `Proc#call` on the returned proc.
     def wrap_around_each(&block : ->)
       wrapper = block

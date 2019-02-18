@@ -2,7 +2,7 @@ require "./example_component"
 
 module Spectator
   # Base class for all types of examples.
-  # Concrete types must implement the `#run_inner`, `#what`, and `#instance` methods.
+  # Concrete types must implement the `#run_impl, `#what`, `#instance`, and `#source` methods.
   abstract class Example < ExampleComponent
     # Indicates whether the example has already been run.
     getter? finished = false
@@ -31,7 +31,7 @@ module Spectator
 
     # Creates the base of the example.
     # The group should be the example group the example belongs to.
-    # The `sample_values` are passed to the example code.
+    # The *sample_values* are passed to the example code.
     def initialize(@group, sample_values : Internals::SampleValues)
     end
 

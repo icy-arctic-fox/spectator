@@ -1,11 +1,12 @@
 module Spectator::Expectations
+  # Ties together a partial, matcher, and their outcome.
   class Expectation
     # Populates the base portiion of the expectation with values.
-    # The `matched` flag should be true if the matcher is satisfied with the partial.
-    # The `negated` flag should be true if the expectation is inverted.
+    # The *matched* flag should be true if the matcher is satisfied with the partial.
+    # The *negated* flag should be true if the expectation is inverted.
     # These options are mutually-exclusive in this context.
-    # Don't flip the value of `matched` because `negated` is true.
-    # The `partial` and the `matcher` arguments should reference
+    # Don't flip the value of *matched* because *negated* is true.
+    # The *partial* and the *matcher* arguments should reference
     # the actual and expected result respectively.
     def initialize(@matched : Bool, @negated : Bool,
                    @partial : ExpectationPartial, @matcher : Matchers::Matcher)

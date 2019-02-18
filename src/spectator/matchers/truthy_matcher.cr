@@ -3,14 +3,14 @@ require "./value_matcher"
 module Spectator::Matchers
   # Matcher that tests whether a value is truthy or falsey.
   # Falsey means a value is considered false by an if-statement,
-  # which are `false` and `nil` in Crystal.
+  # which are false and nil in Crystal.
   # Truthy is the opposite of falsey.
   #
   # Additionally, different matchers can be created
   # by using the `#<`, `#<=`, `#>`, `#>=`, `#==`, and `#!=` operators.
   struct TruthyMatcher < ValueMatcher(Bool)
     # Creates the truthy matcher.
-    # The `truthy` argument should be true to match "truthy" values,
+    # The *truthy* argument should be true to match "truthy" values,
     # and false to match "falsey" values.
     def initialize(truthy : Bool)
       super(truthy ? "truthy" : "falsey", truthy)

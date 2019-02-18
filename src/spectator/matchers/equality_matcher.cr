@@ -2,7 +2,7 @@ require "./value_matcher"
 
 module Spectator::Matchers
   # Common matcher that tests whether two values equal each other.
-  # The values are compared with the `==` operator.
+  # The values are compared with the == operator.
   struct EqualityMatcher(ExpectedType) < ValueMatcher(ExpectedType)
     # Determines whether the matcher is satisfied with the value given to it.
     # True is returned if the match was successful, false otherwise.

@@ -38,7 +38,7 @@ module Spectator::DSL
     end
 
     # Begins a new sample group in the spec -
-    # that is, a group defined by the `sample` keyword in the DSL.
+    # that is, a group defined by the `StructureDSL#sample` macro in the DSL.
     # A corresponding `#end_group` call must be made
     # when the group being started is finished.
     # See `SampleExampleGroupBuilder#initialize` for the arguments
@@ -91,10 +91,12 @@ module Spectator::DSL
       current_group.add_around_each_hook(block)
     end
 
+    # Adds a pre-condition to run at the start of every example in the current group.
     def add_pre_condition(&block : ->) : Nil
       current_group.add_pre_condition(block)
     end
 
+    # Adds a post-condition to run at the end of every example in the current group.
     def add_post_condition(&block : ->) : Nil
       current_group.add_post_condition(block)
     end

@@ -3,7 +3,7 @@ require "./value_matcher"
 module Spectator::Matchers
   # Matcher that tests whether a value, such as a `String` or `Array`, matches one or more values.
   # For a `String`, the `includes?` method is used.
-  # Otherwise, it expects an `Enumerable` and iterates over each item until `===` is true.
+  # Otherwise, it expects an `Enumerable` and iterates over each item until === is true.
   struct HaveMatcher(ExpectedType) < ValueMatcher(ExpectedType)
     # Determines whether the matcher is satisfied with the value given to it.
     # True is returned if the match was successful, false otherwise.

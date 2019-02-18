@@ -2,7 +2,7 @@ require "./value_matcher"
 
 module Spectator::Matchers
   # Matcher that tests whether one value is less than or equal to another.
-  # The values are compared with the `<=` operator.
+  # The values are compared with the <= operator.
   struct LessThanEqualMatcher(ExpectedType) < ValueMatcher(ExpectedType)
     # Determines whether the matcher is satisfied with the value given to it.
     # True is returned if the match was successful, false otherwise.

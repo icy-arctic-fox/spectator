@@ -2,7 +2,7 @@ require "./matcher"
 
 module Spectator::Matchers
   # Matcher that tests whether a collection is empty.
-  # The values are checked with the `#empty?` method.
+  # The values are checked with the `empty?` method.
   struct EmptyMatcher < Matcher
     # Creates the matcher.
     def initialize

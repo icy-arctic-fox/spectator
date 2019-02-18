@@ -2,9 +2,9 @@ require "./value_matcher"
 
 module Spectator::Matchers
   # Matcher that tests whether a value is in a given range or set of values.
-  # The `#includes?` method is used for this check.
+  # The `includes?` method is used for this check.
   # Typically this matcher uses a `Range`,
-  # but any type that implements the `#includes?` method is supported.
+  # but any type that implements the `includes?` method is supported.
   struct RangeMatcher(ExpectedType) < ValueMatcher(ExpectedType)
     # Determines whether the matcher is satisfied with the value given to it.
     # True is returned if the match was successful, false otherwise.
@@ -24,18 +24,17 @@ module Spectator::Matchers
       "Expected #{partial.label} to not be in #{label}"
     end
 
-    # Creates a new range matcher with bounds based off of `center`.
+    # Creates a new range matcher with bounds based off of *center*.
     #
     # This method expects that the original matcher was created with a "difference" value.
     # That is:
     # ```
     # RangeMatcher.new(diff).of(center)
     # ```
-    # This implies that `#match?` would not work on the original matcher.
+    # This implies that the `match?` method would not work on the original matcher.
     #
-    # The new range will be centered at `center`
-    # and have lower and upper bounds
-    # equal to `center - diff` and `center + diff` respectively.
+    # The new range will be centered at *center*
+    # and have upper and lower bounds equal to *center* plus and minux diff.
     # The range will be inclusive.
     def of(center)
       diff = @expected

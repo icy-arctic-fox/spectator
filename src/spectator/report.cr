@@ -6,8 +6,8 @@ module Spectator
     getter runtime : Time::Span
 
     # Creates the report.
-    # The `results` are from running the examples in the test suite.
-    # The `runtime` is the total time it took to execute the suite.
+    # The *results* are from running the examples in the test suite.
+    # The *runtime* is the total time it took to execute the suite.
     def initialize(@results : Array(Result), @runtime)
     end
 

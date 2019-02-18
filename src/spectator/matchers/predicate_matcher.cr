@@ -1,9 +1,9 @@
 require "./value_matcher"
 
 module Spectator::Matchers
-  # Matcher that tests one or more predicates (methods ending in `?`).
+  # Matcher that tests one or more predicates (methods ending in '?').
   # The `ExpectedType` type param should be a `NamedTuple`.
-  # Each key in the tuple is a predicate (without the `?`) to test.
+  # Each key in the tuple is a predicate (without the '?') to test.
   struct PredicateMatcher(ExpectedType) < Matcher
     # Creates the matcher.
     # Constructs the label from the type parameters.

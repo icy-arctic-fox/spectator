@@ -8,7 +8,7 @@ module Spectator
     @stack : Array(Iterator(ExampleComponent))
 
     # Creates a new iterator.
-    # The `group` is the example group to iterate through.
+    # The *group* is the example group to iterate through.
     def initialize(@group : Iterable(ExampleComponent))
       iter = @group.each.as(Iterator(ExampleComponent))
       @stack = [iter]

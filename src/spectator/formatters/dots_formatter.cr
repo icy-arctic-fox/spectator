@@ -18,7 +18,7 @@ module Spectator::Formatters
     }
 
     # Creates the formatter.
-    # By default, output is sent to `STDOUT`.
+    # By default, output is sent to STDOUT.
     def initialize(@io : IO = STDOUT)
     end
 

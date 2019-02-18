@@ -50,7 +50,7 @@ module Spectator
       wrapper.call
     rescue ex
       # If an error occurs calling the wrapper,
-      # it means it came from the `around_each` hooks.
+      # it means it came from the "around-each" hooks.
       # This is because the test code is completely wrapped with a begin/rescue block.
       raise Exception.new("Error encountered while running around hooks", ex)
     end

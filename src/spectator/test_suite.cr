@@ -5,7 +5,7 @@ module Spectator
     include Enumerable(Example)
 
     # Creates the test suite.
-    # The example `group` provided will be run.
+    # The example *group* provided will be run.
     def initialize(@group : ExampleGroup)
     end
 

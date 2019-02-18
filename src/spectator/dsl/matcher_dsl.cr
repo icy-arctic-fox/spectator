@@ -4,7 +4,7 @@ module Spectator::DSL
   # Methods for defining matchers for expectations.
   module MatcherDSL
     # Indicates that some value should equal another.
-    # The `==` operator is used for this check.
+    # The == operator is used for this check.
     # The value passed to this method is the expected value.
     #
     # Example:
@@ -16,7 +16,7 @@ module Spectator::DSL
     end
 
     # Indicates that some value should not equal another.
-    # The `!=` operator is used for this check.
+    # The != operator is used for this check.
     # The value passed to this method is the unexpected value.
     #
     # Example:
@@ -28,7 +28,8 @@ module Spectator::DSL
     end
 
     # Indicates that some value when compared to another satisfies an operator.
-    # An operator can follow, such as: `<`, `<=`, `>`, or `>=`.
+    # An operator can follow, such as: <, <=, >, or >=.
+    # See `Spectator::Matchers::TruthyMatcher` for a full list of operators.
     #
     # Examples:
     # ```
@@ -47,8 +48,8 @@ module Spectator::DSL
     end
 
     # Indicates that some value should semantically equal another.
-    # The `===` operator is used for this check.
-    # This has identical behavior as a `when` condition in a `case` block.
+    # The === operator is used for this check.
+    # This has identical behavior as a "when" condition in a case block.
     #
     # Examples:
     # ```
@@ -61,8 +62,8 @@ module Spectator::DSL
     end
 
     # Indicates that some value should be of a specified type.
-    # The `#is_a?` method is used for this check.
-    # A type name or type union should be used for `expected`.
+    # The `Object#is_a?` method is used for this check.
+    # A type name or type union should be used for *expected*.
     #
     # Examples:
     # ```
@@ -76,8 +77,8 @@ module Spectator::DSL
     end
 
     # Indicates that some value should be of a specified type.
-    # The `#is_a?` method is used for this check.
-    # A type name or type union should be used for `expected`.
+    # The `Object#is_a?` method is used for this check.
+    # A type name or type union should be used for *expected*.
     # This method is identical to `#be_a`,
     # and exists just to improve grammar.
     #
@@ -90,7 +91,7 @@ module Spectator::DSL
     end
 
     # Indicates that some value should be less than another.
-    # The `<` operator is used for this check.
+    # The < operator is used for this check.
     # The value passed to this method is the value expected to be larger.
     #
     # Example:
@@ -102,7 +103,7 @@ module Spectator::DSL
     end
 
     # Indicates that some value should be less than or equal to another.
-    # The `<=` operator is used for this check.
+    # The <= operator is used for this check.
     # The value passed to this method is the value expected to be larger or equal.
     #
     # Example:
@@ -114,7 +115,7 @@ module Spectator::DSL
     end
 
     # Indicates that some value should be greater than another.
-    # The `>` operator is used for this check.
+    # The > operator is used for this check.
     # The value passed to this method is the value expected to be smaller.
     #
     # Example:
@@ -126,7 +127,7 @@ module Spectator::DSL
     end
 
     # Indicates that some value should be greater than or equal to another.
-    # The `>=` operator is used for this check.
+    # The >= operator is used for this check.
     # The value passed to this method is the value expected to be smaller or equal.
     #
     # Example:
@@ -138,9 +139,9 @@ module Spectator::DSL
     end
 
     # Indicates that some value should match another.
-    # The `=~` operator is used for this check.
+    # The =~ operator is used for this check.
     # Typically a regular expression is used,
-    # but any type that has the `=~` operator will work.
+    # but any type that has the =~ operator will work.
     #
     # Examples:
     # ```
@@ -174,7 +175,7 @@ module Spectator::DSL
     end
 
     # Indicates that some value should be truthy.
-    # This means that the value is not `false` and not `nil`.
+    # This means that the value is not false and not nil.
     #
     # Examples:
     # ```
@@ -186,7 +187,7 @@ module Spectator::DSL
     end
 
     # Indicates that some value should be falsey.
-    # This means that the value is either `false` or `nil`.
+    # This means that the value is either false or nil.
     #
     # Examples:
     # ```
@@ -200,7 +201,8 @@ module Spectator::DSL
     # Indicates that some value should be contained within another.
     # This checker can be used in one of two ways.
     #
-    # The first: the `expected` argument can be anything that implements `#includes?`.
+    # The first: the *expected* argument can be anything
+    # that implements the `includes?` method.
     # This is typically a `Range`, but can also be `Enumerable`.
     #
     # Examples:
@@ -209,9 +211,9 @@ module Spectator::DSL
     # expect(7).to be_within(1..10)
     # ```
     #
-    # The other way is to use this in conjunction with `of`.
+    # The other way is to use this is with the "of" keyword.
     # This creates a lower and upper bound
-    # centered around the value of the `expected` argument.
+    # centered around the value of the *expected* argument.
     # This usage is helpful for comparisons on floating-point numbers.
     #
     # Examples:
@@ -220,13 +222,13 @@ module Spectator::DSL
     # expect(speed).to be_within(5).of(speed_limit)
     # ```
     #
-    # NOTE: The `of` suffix must be used
-    # if the `expected` argument does not implement `#includes?`
+    # NOTE: The of suffix must be used
+    # if the *expected* argument does not implement an includes? method.
     #
     # Additionally, for this second usage,
-    # an `inclusive` or `exclusive` suffix can be added.
+    # an "inclusive" or "exclusive" suffix can be added.
     # These modify the upper-bound on the range being checked against.
-    # By default, the range is *inclusive*.
+    # By default, the range is inclusive.
     #
     # Examples:
     # ```
@@ -247,9 +249,9 @@ module Spectator::DSL
     # expect(7).to be_within(1, 10)
     # ```
     #
-    # Additionally, an `inclusive` or `exclusive` suffix can be added.
+    # Additionally, an "inclusive" or "exclusive" suffix can be added.
     # These modify the upper-bound on the range being checked against.
-    # By default, the range is *inclusive*.
+    # By default, the range is inclusive.
     #
     # Examples:
     # ```
@@ -301,10 +303,10 @@ module Spectator::DSL
 
     # Indicates that some value or set should start with another value.
     # This is typically used on a `String` or `Array` (any `Enumerable` works).
-    # The `expected` argument can be a `String`, `Char`, or `Regex`
+    # The *expected* argument can be a `String`, `Char`, or `Regex`
     # when the actual type (being comapred against) is a `String`.
     # For `Enumerable` types, only the first item is inspected.
-    # It is compared with the `===` operator,
+    # It is compared with the === operator,
     # so that values, types, regular expressions, and others can be tested.
     #
     # Examples:
@@ -323,10 +325,10 @@ module Spectator::DSL
 
     # Indicates that some value or set should end with another value.
     # This is typically used on a `String` or `Array` (any `Indexable` works).
-    # The `expected` argument can be a `String`, `Char`, or `Regex`
+    # The *expected* argument can be a `String`, `Char`, or `Regex`
     # when the actual type (being comapred against) is a `String`.
     # For `Indexable` types, only the last item is inspected.
-    # It is compared with the `===` operator,
+    # It is compared with the === operator,
     # so that values, types, regular expressions, and others can be tested.
     #
     # Examples:
@@ -345,7 +347,7 @@ module Spectator::DSL
 
     # Indicates that some value or set should contain another value.
     # This is typically used on a `String` or `Array` (any `Enumerable` works).
-    # The `expected` argument can be a `String` or `Char`
+    # The *expected* argument can be a `String` or `Char`
     # when the actual type (being comapred against) is a `String`.
     # For `Enumerable` types, items are compared using the underying implementation.
     # In both cases, the `includes?` method is used.
@@ -369,11 +371,11 @@ module Spectator::DSL
     # Indicates that some value or set should contain another value.
     # This is similar to `#contain`, but uses a different method for matching.
     # Typically a `String` or `Array` (any `Enumerable` works) is checked against.
-    # The `expected` argument can be a `String` or `Char`
+    # The *expected* argument can be a `String` or `Char`
     # when the actual type (being comapred against) is a `String`.
     # The `includes?` method is used for this case.
     # For `Enumerable` types, each item is inspected until one matches.
-    # The `===` operator is used for this case, which allows for equality, type, regex, and other matches.
+    # The === operator is used for this case, which allows for equality, type, regex, and other matches.
     #
     # Examples:
     # ```
@@ -432,7 +434,7 @@ module Spectator::DSL
     # Indicates that some value should have a set of attributes matching some conditions.
     # A list of named arguments are expected.
     # The names correspond to the attributes in the instance to check.
-    # The values are conditions to check with the `===` operator against the attribute's value.
+    # The values are conditions to check with the === operator against the attribute's value.
     #
     # Examples:
     # ```
@@ -444,10 +446,10 @@ module Spectator::DSL
     end
 
     # Used to create predicate matchers.
-    # Any missing method that starts with `be_` will be handled.
+    # Any missing method that starts with 'be_' will be handled.
     # All other method names will be ignored and raise a compile-time error.
     #
-    # This can be used to simply check a predicate method that ends in `?`.
+    # This can be used to simply check a predicate method that ends in '?'.
     # For instance:
     # ```
     # expect("foobar").to be_ascii_only
@@ -456,7 +458,7 @@ module Spectator::DSL
     # ```
     macro method_missing(call)
       {% if call.name.starts_with?("be_") %}
-      {% method_name = call.name[3..-1] %} # Remove `be_` prefix.
+      {% method_name = call.name[3..-1] %} # Remove be_ prefix.
       ::Spectator::Matchers::PredicateMatcher(NamedTuple({{method_name}}: Nil)).new
       {% else %}
       {% raise "Undefined local variable or method '#{call}'" %}

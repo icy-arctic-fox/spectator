@@ -53,16 +53,18 @@ module Spectator::DSL
       @around_each_hooks << block
     end
 
+    # Adds a pre-condition to run at the start of every example in this group.
     def add_pre_condition(block : ->) : Nil
       @pre_conditions << block
     end
 
+    # Adds a post-condition to run at the end of every example in this group.
     def add_post_condition(block : ->) : Nil
       @post_conditions << block
     end
 
     # Constructs an `ExampleHooks` instance with all the hooks defined for this group.
-    # This method should be only when the group is being built,
+    # This method should be called only when the group is being built,
     # otherwise some hooks may be missing.
     private def hooks
       ExampleHooks.new(
@@ -74,6 +76,10 @@ module Spectator::DSL
       )
     end
 
+    # Constructs an `ExampleConditions` instance
+    # with all the pre- and post-conditions defined for this group.
+    # This method should be called only when the group is being built,
+    # otherwise some conditions may be missing.
     private def conditions
       ExampleConditions.new(@pre_conditions, @post_conditions)
     end

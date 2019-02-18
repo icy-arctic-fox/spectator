@@ -14,8 +14,8 @@ module Spectator::Formatters
   # ```
   class FailureBlock
     # Creates the failure block.
-    # The `index` uniquely identifies the failure in the output.
-    # The `result` is the outcome of the failed example.
+    # The *index* uniquely identifies the failure in the output.
+    # The *result* is the outcome of the failed example.
     def initialize(@index : Int32, @result : FailedResult)
     end
 
@@ -28,6 +28,10 @@ module Spectator::Formatters
     end
 
     # Produces the title of the failure block.
+    # The line takes the form:
+    # ```text
+    #   1) Example name
+    # ```
     private def title(io)
       io << "  "
       io << @index
@@ -37,6 +41,12 @@ module Spectator::Formatters
     end
 
     # Produces the message line of the failure block.
+    # The line takes the form:
+    # ```text
+    #      Failure: Error message
+    # ```
+    # The indentation of this line starts directly under
+    # the example name from the title line.
     private def message(io)
       io << "     Failure: "
       io << @result.error

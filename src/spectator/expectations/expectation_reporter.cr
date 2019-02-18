@@ -9,7 +9,7 @@ module Spectator::Expectations
     @expectations = Array(Expectation).new(1)
 
     # Creates the reporter.
-    # When the `raise_on_failure` flag is set to true,
+    # When the *raise_on_failure* flag is set to true,
     # which is the default, an exception will be raised
     # on the first failure that is reported.
     # To store failures and continue, set the flag to false.

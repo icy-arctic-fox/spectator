@@ -2,7 +2,7 @@ require "./value_matcher"
 
 module Spectator::Matchers
   # Matcher that tests whether two values do not equal each other.
-  # The values are compared with the `!=` operator.
+  # The values are compared with the != operator.
   struct InequalityMatcher(ExpectedType) < ValueMatcher(ExpectedType)
     # Determines whether the matcher is satisfied with the value given to it.
     # True is returned if the match was successful, false otherwise.

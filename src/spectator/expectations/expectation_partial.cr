@@ -4,8 +4,6 @@ module Spectator::Expectations
   # The part of the expectation this class covers is the actual value.
   # This can also cover a block's behavior.
   # Sub-types of this class are returned by the `DSL::ExampleDSL.expect` call.
-  # Sub-types are expected to implement `#eval`,
-  # which returns a corresponding sub-type of `Expectation`.
   abstract struct ExpectationPartial
     # User-friendly string displayed for the actual expression being tested.
     # For instance, in the expectation:
@@ -27,13 +25,12 @@ module Spectator::Expectations
     private def initialize(@label, @source_file, @source_line)
     end
 
-    # Asserts that the `#actual` value matches some criteria.
-    # The criteria is defined by the matcher passed to this method.
+    # Asserts that some criteria defined by the matcher is satisfied.
     def to(matcher) : Nil
       report(eval(matcher))
     end
 
-    # Asserts that the `#actual` value *does not* match some criteria.
+    # Asserts that some criteria defined by the matcher is not satisfied.
     # This is effectively the opposite of `#to`.
     def to_not(matcher) : Nil
       report(eval(matcher, true))

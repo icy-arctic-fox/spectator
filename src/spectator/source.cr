@@ -32,7 +32,10 @@ module Spectator
     end
 
     # String representation of the source.
-    # This is formatted as `FILE:LINE`.
+    # This is formatted as:
+    # ```text
+    # FILE:LINE
+    # ```
     def to_s(io)
       io << path
       io << ':'

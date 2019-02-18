@@ -20,9 +20,11 @@ module Spectator::DSL
   # it "does something" do
   #   # Test code goes here...
   # end
+  # ```
   #
-  # # becomes...
+  # becomes...
   #
+  # ```
   # # Class describing the example
   # # and provides a means of running the test.
   # # Typically every class, module, and method
@@ -85,9 +87,11 @@ module Spectator::DSL
   #     end
   #   end
   # end
+  # ```
   #
-  # # becomes...
+  # becomes...
   #
+  # ```
   # # describe "#foo"
   # module Context123
   #   # Start a new group.
@@ -148,13 +152,13 @@ module Spectator::DSL
   # For more information, see `Internals::SampleValues`.
   module StructureDSL
     # Placeholder initializer.
-    # This is needed because examples and groups call `super` in their initializer.
+    # This is needed because examples and groups call super in their initializer.
     # Those initializers pass the sample values upward through their hierarchy.
     def initialize(sample_values : Internals::SampleValues)
     end
 
     # Creates a new example group to describe a component.
-    # The `what` argument describes "what" is being tested.
+    # The *what* argument describes "what" is being tested.
     # Additional example groups and DSL may be nested in the block.
     #
     # Typically when testing a method,
@@ -168,7 +172,7 @@ module Spectator::DSL
     # ```
     #
     # When describing a class (or any other type),
-    # the `what` parameter doesn't need to be quoted.
+    # the *what* parameter doesn't need to be quoted.
     # ```
     # describe String do
     #   it "does something" do
@@ -196,7 +200,7 @@ module Spectator::DSL
     end
 
     # Creates a new example group to describe a situation.
-    # The `what` argument describes the scenario or case being tested.
+    # The *what* argument describes the scenario or case being tested.
     # Additional example groups and DSL may be nested in the block.
     #
     # The `#describe` and `#context` are identical in terms of functionality.
@@ -352,12 +356,12 @@ module Spectator::DSL
     #
     #   given value = 5 do
     #     expect(&.odd?).to be_true
-    #     expect(&.event?).to be_false
+    #     expect(&.even?).to be_false
     #   end
     #
     #   given value = 42 do
     #     expect(&.odd?).to be_false
-    #     expect(&.event?).to be_true
+    #     expect(&.even?).to be_true
     #   end
     # end
     # ```
@@ -438,18 +442,18 @@ module Spectator::DSL
     # Creates a new example group to test multiple values with.
     # This method takes a collection of values
     # and repeats the contents of the block with each value.
-    # The `collection` argument should be a literal collection,
+    # The *collection* argument should be a literal collection,
     # such as an array, or a function that returns an enumerable.
     # Additionally, a count may be specified to limit the number of values tested.
     #
     # NOTE: If an infinite enumerable is provided for the collection,
     # then a count must be specified.
-    # Only the first `count` items will be used.
+    # Only the first *count* items will be used.
     #
     # The block can accept an argument.
     # If it does, then the argument's name is used to reference
     # the current item in the collection.
-    # If an argument isn't provided, then `#value` can be used instead.
+    # If an argument isn't provided, then *value* can be used instead.
     #
     # Example with a block argument:
     # ```
@@ -472,8 +476,8 @@ module Spectator::DSL
     # ```
     #
     # In the examples above, the test case (`#it` block)
-    # is repeated for each element in `some_integers`.
-    # `some_integers` is a ficticous collection.
+    # is repeated for each element in *some_integers*.
+    # *some_integers* is a ficticous collection.
     # The collection will be iterated once.
     # `#sample` and `#random_sample` blocks can be nested,
     # and work similarly to loops.
@@ -521,7 +525,7 @@ module Spectator::DSL
         #    Iterating multiple times would generate inconsistent values at runtime.
         def %to_a
           # If a count was provided,
-          # only select the first `count` items from the collection.
+          # only select the first *count* items from the collection.
           # Otherwise, select all of them.
           {% if count %}
             %sample.first({{count}})
@@ -535,7 +539,7 @@ module Spectator::DSL
       # The module uses a generated unique name.
       module Context%sample
         # Include the parent module.
-        # Since `@type` resolves immediately,
+        # Since @type resolves immediately,
         # this will reference the parent type.
         include {{@type.id}}
 
@@ -545,7 +549,7 @@ module Spectator::DSL
         # Retrieves the current element from the collection.
         def {{name}}
           # Unwrap the value and return it.
-          # The `#first` method has a return type that matches the element type.
+          # The `Enumerable#first` method has a return type that matches the element type.
           # So it is used on the collection method proxy to resolve the type at compile-time.
           @%wrapper.as(::Spectator::Internals::TypedValueWrapper(typeof(%sample.first))).value
         end
@@ -576,8 +580,8 @@ module Spectator::DSL
     # Creates a new example group to test multiple random values with.
     # This method takes a collection of values and count
     # and repeats the contents of the block with each value.
-    # This method randomly selects `count` items from the collection.
-    # The `collection` argument should be a literal collection,
+    # This method randomly selects *count* items from the collection.
+    # The *collection* argument should be a literal collection,
     # such as an array, or a function that returns an enumerable.
     #
     # NOTE: If an enumerable is used, it must be finite.
@@ -585,7 +589,7 @@ module Spectator::DSL
     # The block can accept an argument.
     # If it does, then the argument's name is used to reference
     # the current item in the collection.
-    # If an argument isn't provided, then `#value` can be used instead.
+    # If an argument isn't provided, then *value* can be used instead.
     #
     # Example with a block argument:
     # ```
@@ -608,8 +612,8 @@ module Spectator::DSL
     # ```
     #
     # In the examples above, the test case (`#it` block)
-    # is repeated for 5 random elements in `some_integers`.
-    # `some_integers` is a ficticous collection.
+    # is repeated for 5 random elements in *some_integers*.
+    # *some_integers* is a ficticous collection.
     # The collection will be iterated once.
     # `#sample` and `#random_sample` blocks can be nested,
     # and work similarly to loops.
@@ -655,7 +659,7 @@ module Spectator::DSL
       # The module uses a generated unique name.
       module Context%sample
         # Include the parent module.
-        # Since `@type` resolves immediately,
+        # Since @type resolves immediately,
         # this will reference the parent type.
         include {{@type.id}}
 
@@ -665,7 +669,7 @@ module Spectator::DSL
         # Retrieves the current element from the collection.
         def {{name}}
           # Unwrap the value and return it.
-          # The `#first` method has a return type that matches the element type.
+          # The `Enumerable#first` method has a return type that matches the element type.
           # So it is used on the collection method proxy to resolve the type at compile-time.
           @%wrapper.as(::Spectator::Internals::TypedValueWrapper(typeof(%sample.first))).value
         end
@@ -714,13 +718,13 @@ module Spectator::DSL
     # ```
     #
     # By using a subject, some of the DSL becomes simpler.
-    # For example, `ExampleDSL#is_expected` can be used
-    # as short-hand for `expect(subject)`.
+    # For example, `ExampleDSL#is_expected` can be used.
     # ```
     # subject { "foobar" }
     #
     # it "isn't empty" do
-    #   is_expected.to_not be_empty
+    #   is_expected.to_not be_empty # is the same as:
+    #   expect(subject).to_not be_empty
     # end
     # ```
     #
@@ -807,18 +811,18 @@ module Spectator::DSL
       let!(%value) {{block}}
 
       # Wrapper to hold the value.
-      # This will be `nil` if the value hasn't been referenced yet.
+      # This will be nil if the value hasn't been referenced yet.
       # After being referenced, the cached value will be stored in a wrapper.
       @%wrapper : ::Spectator::Internals::ValueWrapper?
 
       # Method for returning the value.
       def {{name.id}}
         # Check if the value is cached.
-        # The wrapper will be `nil` if it isn't.
+        # The wrapper will be nil if it isn't.
         if (wrapper = @%wrapper)
           # It is cached, return that value.
           # Unwrap it from the wrapper variable.
-          # Here we use `typeof(METHOD)` to get around the issue
+          # Here we use typeof to get around the issue
           # that the macro has no idea what type the value is.
           wrapper.unsafe_as(::Spectator::Internals::TypedValueWrapper(typeof(%value))).value
         else
@@ -1326,7 +1330,7 @@ module Spectator::DSL
     end
 
     # Creates an example, or a test case.
-    # The `what` argument describes "what" is being tested or asserted.
+    # The *what* argument describes "what" is being tested or asserted.
     # The block contains the code to run the test.
     # One or more expectations should be in the block.
     #
@@ -1386,7 +1390,7 @@ module Spectator::DSL
 
     # Creates an example, or a test case, that does not run.
     # This can be used to prototype functionality that isn't ready.
-    # The `what` argument describes "what" is being tested or asserted.
+    # The *what* argument describes "what" is being tested or asserted.
     # The block contains the code to run the test.
     # One or more expectations should be in the block.
     #
@@ -1422,7 +1426,7 @@ module Spectator::DSL
     end
 
     # Same as `#pending`.
-    # Include for compatibility with RSpec.
+    # Included for compatibility with RSpec.
     macro xit(what, &block)
       pending({{what}}) {{block}}
     end
@@ -1435,8 +1439,8 @@ module Spectator::DSL
     #
     # Since the names are generated, and macros can't return values,
     # the names for everything must be passed in as arguments.
-    # The `class_name` argument is the name of the class to define.
-    # The `run_method_name` argument is the name of the method in the wrapper class
+    # The *class_name* argument is the name of the class to define.
+    # The *run_method_name* argument is the name of the method in the wrapper class
     # that will actually run the test code.
     # The block passed to this macro is the actual test code.
     private macro _spectator_test(class_name, run_method_name, &block)
@@ -1465,12 +1469,12 @@ module Spectator::DSL
     # Creates an example class.
     # Since the names are generated, and macros can't return values,
     # the names for everything must be passed in as arguments.
-    # The `example_class_name` argument is the name of the class to define.
-    # The `test_class_name` argument is the name of the wrapper class to reference.
+    # The *example_class_name* argument is the name of the class to define.
+    # The *test_class_name* argument is the name of the wrapper class to reference.
     # This must be the same as `class_name` for `#_spectator_example_wrapper`.
-    # The `base_class` argument specifies which type of example class the new class should derive from.
+    # The *base_class* argument specifies which type of example class the new class should derive from.
     # This should typically be `RunnableExample` or `PendingExample`.
-    # The `what` argument is the description passed to the `#it` or `#pending` block.
+    # The *what* argument is the description passed to the `#it` or `#pending` block.
     # And lastly, the block specified is any additional content to put in the class.
     # For instance, to define a method in the class, do it in the block.
     # ```

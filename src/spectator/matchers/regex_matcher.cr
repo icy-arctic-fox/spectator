@@ -2,7 +2,7 @@ require "./value_matcher"
 
 module Spectator::Matchers
   # Matcher that tests whether a value matches a regular expression.
-  # The value is compared with the `=~` operator.
+  # The value is compared with the =~ operator.
   struct RegexMatcher(ExpectedType) < ValueMatcher(ExpectedType)
     # Determines whether the matcher is satisfied with the value given to it.
     # True is returned if the match was successful, false otherwise.

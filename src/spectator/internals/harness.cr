@@ -1,6 +1,6 @@
 module Spectator::Internals
   # Helper class that acts as a gateway between example code and the test framework.
-  # Every example run must be called with `#run`.
+  # Every example must be invoked by passing it to `#run`.
   # This sets up the harness so that the example code can use it.
   # The test framework does the following:
   # ```
@@ -22,7 +22,7 @@ module Spectator::Internals
     # Wraps an example with a harness and runs the example.
     # The `#current` harness will be set
     # prior to running the example, and reset after.
-    # The `example` argument will be the example to run.
+    # The *example* argument will be the example to run.
     # The result returned from `Example#run` will be returned.
     def self.run(example : Example) : Result
       @@current = new(example)

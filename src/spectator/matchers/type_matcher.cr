@@ -2,7 +2,7 @@ require "./matcher"
 
 module Spectator::Matchers
   # Matcher that tests a value is of a specified type.
-  # The values are compared with the `#is_a?` method.
+  # The values are compared with the `Object#is_a?` method.
   struct TypeMatcher(Expected) < Matcher
     # Creates the type matcher.
     # The `Expected` type param will be used to populate the underlying label.
