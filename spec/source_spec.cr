@@ -17,12 +17,41 @@ describe Spectator::Source do
     end
   end
 
+  describe "#path" do
+    context "with a relative file" do
+      it "is shortened" do
+        file = "test.cr"
+        absolute = File.join(Dir.current, file)
+        source = Spectator::Source.new(absolute, __LINE__)
+        source.path.should eq(file)
+      end
+    end
+
+    context "with a different directory" do
+      it "is the absolute path" do
+        file = "/foo/bar/baz.cr"
+        source = Spectator::Source.new(file, __LINE__)
+        source.path.should eq(file)
+      end
+    end
+  end
+
   describe "#to_s" do
-    it "is formatted correctly" do
+    it "contains #path" do
       file = __FILE__
+      source = Spectator::Source.new(file, __LINE__)
+      source.to_s.should contain(source.path)
+    end
+
+    it "contains #line" do
       line = __LINE__
-      source = Spectator::Source.new(file, line)
-      source.to_s.should eq("#{file}:#{line}")
+      source = Spectator::Source.new(__FILE__, line)
+      source.to_s.should contain(line.to_s)
+    end
+
+    it "is formatted correctly" do
+      source = Spectator::Source.new(__FILE__, __LINE__)
+      source.to_s.should match(/^(.+?)\:(\d+)$/)
     end
   end
 end
