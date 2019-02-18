@@ -27,7 +27,7 @@ module Spectator::Formatters
     # Interface for `Result` to pick a character for output.
     private module Character
       extend self
-      
+
       # Character output for a successful example.
       def success(result)
         Color.success('.')
