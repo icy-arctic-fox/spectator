@@ -1,3 +1,5 @@
+require "colorize"
+
 module Spectator::Formatters
   # Method for colorizing output.
   module Color
