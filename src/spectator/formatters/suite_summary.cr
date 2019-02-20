@@ -47,7 +47,8 @@ module Spectator::Formatters
       failures.each do |result|
         @io.print "crystal spec "
         result.example.source.to_s(@io)
-        @io.puts " # TODO"
+        @io << ' '
+        @io.puts Comment.color("TODO")
       end
     end
 

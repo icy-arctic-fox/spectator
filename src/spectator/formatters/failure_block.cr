@@ -77,9 +77,7 @@ module Spectator::Formatters
     private def source(io)
       INITIAL_INDENT.times { io << ' ' }
       (@index_length + 2).times { io << ' ' } # +2 for ) and space.
-      io << '#'
-      io << ' '
-      io << Color.comment(@result.example.source)
+      io << Comment.color(@result.example.source)
     end
 
     # Gets the number of characters a positive integer spans in base 10.
