@@ -16,17 +16,40 @@ end
 
 describe Spectator::ErroredResult do
   describe "#call" do
-    it "invokes #error on an instance" do
-      spy = ResultCallSpy.new
-      new_errored_result.call(spy)
-      spy.error?.should be_truthy
+    context "without a block" do
+      it "invokes #error on an instance" do
+        spy = ResultCallSpy.new
+        new_errored_result.call(spy)
+        spy.error?.should be_true
+      end
+
+      it "returns the value of #failure" do
+        result = new_errored_result
+        returned = result.call(ResultCallSpy.new)
+        returned.should eq(:error)
+      end
     end
 
-    it "passes itself" do
-      spy = ResultCallSpy.new
-      result = new_errored_result
-      result.call(spy)
-      spy.error.should eq(result)
+    context "with a block" do
+      it "invokes #error on an instance" do
+        spy = ResultCallSpy.new
+        new_errored_result.call(spy) { nil }
+        spy.error?.should be_true
+      end
+
+      it "yields itself" do
+        result = new_errored_result
+        value = nil.as(Spectator::Result?)
+        result.call(ResultCallSpy.new) { |r| value = r }
+        value.should eq(result)
+      end
+
+      it "returns the value of #failure" do
+        result = new_errored_result
+        value = 42
+        returned = result.call(ResultCallSpy.new) { value }
+        returned.should eq(value)
+      end
     end
   end
 

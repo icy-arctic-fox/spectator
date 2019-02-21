@@ -16,17 +16,40 @@ end
 
 describe Spectator::FailedResult do
   describe "#call" do
-    it "invokes #failure on an instance" do
-      spy = ResultCallSpy.new
-      new_failed_result.call(spy)
-      spy.failure?.should be_truthy
+    context "without a block" do
+      it "invokes #failure on an instance" do
+        spy = ResultCallSpy.new
+        new_failed_result.call(spy)
+        spy.failure?.should be_true
+      end
+
+      it "returns the value of #failure" do
+        result = new_failed_result
+        returned = result.call(ResultCallSpy.new)
+        returned.should eq(:failure)
+      end
     end
 
-    it "passes itself" do
-      spy = ResultCallSpy.new
-      result = new_failed_result
-      result.call(spy)
-      spy.failure.should eq(result)
+    context "with a block" do
+      it "invokes #failure on an instance" do
+        spy = ResultCallSpy.new
+        new_failed_result.call(spy) { nil }
+        spy.failure?.should be_true
+      end
+
+      it "yields itself" do
+        result = new_failed_result
+        value = nil.as(Spectator::Result?)
+        result.call(ResultCallSpy.new) { |r| value = r }
+        value.should eq(result)
+      end
+
+      it "returns the value of #failure" do
+        result = new_failed_result
+        value = 42
+        returned = result.call(ResultCallSpy.new) { value }
+        returned.should eq(value)
+      end
     end
   end
 

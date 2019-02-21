@@ -14,17 +14,40 @@ end
 
 describe Spectator::SuccessfulResult do
   describe "#call" do
-    it "invokes #success on an instance" do
-      spy = ResultCallSpy.new
-      new_successful_result.call(spy)
-      spy.success?.should be_truthy
+    context "without a block" do
+      it "invokes #success on an instance" do
+        spy = ResultCallSpy.new
+        new_successful_result.call(spy)
+        spy.success?.should be_true
+      end
+
+      it "returns the value of #success" do
+        result = new_successful_result
+        returned = result.call(ResultCallSpy.new)
+        returned.should eq(:success)
+      end
     end
 
-    it "passes itself" do
-      spy = ResultCallSpy.new
-      result = new_successful_result
-      result.call(spy)
-      spy.success.should eq(result)
+    context "with a block" do
+      it "invokes #success on an instance" do
+        spy = ResultCallSpy.new
+        new_successful_result.call(spy) { nil }
+        spy.success?.should be_true
+      end
+
+      it "yields itself" do
+        result = new_successful_result
+        value = nil.as(Spectator::Result?)
+        result.call(ResultCallSpy.new) { |r| value = r }
+        value.should eq(result)
+      end
+
+      it "returns the value of #success" do
+        result = new_successful_result
+        value = 42
+        returned = result.call(ResultCallSpy.new) { value }
+        returned.should eq(value)
+      end
     end
   end
 
