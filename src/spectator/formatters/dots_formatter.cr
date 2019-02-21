@@ -9,14 +9,6 @@ module Spectator::Formatters
   class DotsFormatter < Formatter
     include SuiteSummary
 
-    # Characters for each of the result types.
-    private CHARACTERS = {
-      success: '.',
-      failure: 'F',
-      error:   'E',
-      pending: '*',
-    }
-
     # Creates the formatter.
     # By default, output is sent to STDOUT.
     def initialize(@io : IO = STDOUT)
@@ -35,6 +27,14 @@ module Spectator::Formatters
     # Interface for `Result` to pick a character for output.
     private module Character
       extend self
+
+      # Characters for each of the result types.
+      private CHARACTERS = {
+        success: '.',
+        failure: 'F',
+        error:   'E',
+        pending: '*',
+      }
 
       # Character output for a successful example.
       def success
