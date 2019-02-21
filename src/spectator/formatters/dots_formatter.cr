@@ -37,22 +37,22 @@ module Spectator::Formatters
       extend self
 
       # Character output for a successful example.
-      def success(result)
+      def success
         Color.success(CHARACTERS[:success])
       end
 
       # Character output for a failed example.
-      def failure(result)
+      def failure
         Color.failure(CHARACTERS[:failure])
       end
 
       # Character output for an errored example.
-      def error(result)
+      def error
         Color.error(CHARACTERS[:error])
       end
 
       # Character output for a pending or skipped example.
-      def pending(result)
+      def pending
         Color.pending(CHARACTERS[:pending])
       end
     end
