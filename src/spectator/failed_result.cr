@@ -16,9 +16,16 @@ module Spectator
       super(example, elapsed, expectations)
     end
 
-    # Calls the `failure` method on *interface* and passes self.
+    # Calls the `failure` method on *interface*.
     def call(interface)
-      interface.failure(self)
+      interface.failure
+    end
+
+    # Calls the `failure` method on *interface*
+    # and passes the yielded value.
+    def call(interface)
+      value = yield self
+      interface.failure(value)
     end
   end
 end

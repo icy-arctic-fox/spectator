@@ -3,9 +3,16 @@ require "./finished_result"
 module Spectator
   # Outcome that indicates running an example was successful.
   class SuccessfulResult < FinishedResult
-    # Calls the `success` method on *interface* and passes self.
+    # Calls the `success` method on *interface*.
     def call(interface)
-      interface.success(self)
+      interface.success
+    end
+
+    # Calls the `success` method on *interface*
+    # and passes the yielded value.
+    def call(interface)
+      value = yield self
+      interface.success(value)
     end
   end
 end

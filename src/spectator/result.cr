@@ -15,5 +15,12 @@ module Spectator
     # This is used to avoid placing if or case-statements everywhere based on type.
     # Each sub-class implements this method by calling the correct method on *interface*.
     abstract def call(interface)
+
+    # Calls the corresponding method for the type of result.
+    # This is used to avoid placing if or case-statements everywhere based on type.
+    # Each sub-class implements this method by calling the correct method on *interface*.
+    # This variation takes a block, which is passed the result.
+    # The value returned from the block will be returned by this method.
+    abstract def call(interface, &block : Result -> _)
   end
 end
