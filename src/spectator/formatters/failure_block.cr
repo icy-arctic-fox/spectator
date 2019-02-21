@@ -13,27 +13,27 @@ module Spectator::Formatters
   #  # spec/source_spec.cr:42
   # ```
   class FailureBlock
-    # Number of spaces to indent the block by.
-    INITIAL_INDENT = 2
-
-    # Number of spaces to add for each level of indentation.
-    INTENT_SIZE = 2
-
-    @index_length : Int32
+    # Default number of spaces to add for each level of indentation.
+    INDENT_SIZE = 2
 
     # Creates the failure block.
     # The *index* uniquely identifies the failure in the output.
     # The *result* is the outcome of the failed example.
     def initialize(@index : Int32, @result : FailedResult)
-      @index_length = integer_length(@index)
+      @indent = 0
     end
 
     # Creates the block of text describing the failure.
     def to_s(io)
-      title(io)
-      message(io)
-      values(io)
-      source(io)
+      inner_indent = integer_length(@index) + 2 # +2 for ) and space after number.
+      indent do
+        title(io)
+        indent(inner_indent) do
+          message(io)
+          values(io)
+          source(io)
+        end
+      end
     end
 
     # Produces the title of the failure block.
@@ -42,12 +42,7 @@ module Spectator::Formatters
     #   1) Example name
     # ```
     private def title(io)
-      INITIAL_INDENT.times { io << ' ' }
-      io << @index
-      io << ')'
-      io << ' '
-      io << @result.example
-      io.puts
+      line(io, "#{@index}) #{@result.example}")
     end
 
     # Produces the message line of the failure block.
@@ -58,26 +53,36 @@ module Spectator::Formatters
     # The indentation of this line starts directly under
     # the example name from the title line.
     private def message(io)
-      INITIAL_INDENT.times { io << ' ' }
-      (@index_length + 2).times { io << ' ' } # +2 for ) and space.
-      io << Color.failure("Failure: ")
-      io << Color.failure(@result.error)
-      io.puts
+      line(io, Color.failure("Failure: #{@result.error}"))
     end
 
     # Produces the values list of the failure block.
     private def values(io)
       io.puts
-      io.puts "       Expected: TODO"
-      io.puts "            got: TODO"
+      indent do
+        line(io, "Expected: TODO")
+        line(io, "     got: TODO")
+      end
       io.puts
     end
 
     # Produces the source line of the failure block.
     private def source(io)
-      INITIAL_INDENT.times { io << ' ' }
-      (@index_length + 2).times { io << ' ' } # +2 for ) and space.
-      io << Comment.color(@result.example.source)
+      line(io, Comment.color(@result.example.source))
+    end
+
+    # Increases the indentation for a block of text.
+    private def indent(amount = INDENT_SIZE)
+      @indent += amount
+      yield
+    ensure
+      @indent -= amount
+    end
+
+    # Produces a line of text with a leading indent.
+    private def line(io, text)
+      @indent.times { io << ' ' }
+      io.puts text
     end
 
     # Gets the number of characters a positive integer spans in base 10.

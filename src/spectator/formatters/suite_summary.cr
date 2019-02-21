@@ -25,7 +25,6 @@ module Spectator::Formatters
       @io.puts
       failures.each_with_index do |result, index|
         @io.puts FailureBlock.new(index + 1, result)
-        @io.puts
       end
     end
 
