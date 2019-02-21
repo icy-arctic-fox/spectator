@@ -12,7 +12,7 @@ module Spectator::Formatters
   #
   #      # spec/source_spec.cr:42
   # ```
-  class FailureBlock
+  private struct FailureBlock
     # Default number of spaces to add for each level of indentation.
     INDENT_SIZE = 2
 
