@@ -7,10 +7,10 @@ module Spectator::Formatters
   #   1) Example name
   #      Failure: Reason or message
   #
-  #      Expected: value
-  #           got: value
+  #        Expected: value
+  #             got: value
   #
-  #  # spec/source_spec.cr:42
+  #      # spec/source_spec.cr:42
   # ```
   class FailureBlock
     # Default number of spaces to add for each level of indentation.
@@ -26,6 +26,7 @@ module Spectator::Formatters
     # Creates the block of text describing the failure.
     def to_s(io)
       inner_indent = integer_length(@index) + 2 # +2 for ) and space after number.
+
       indent do
         title(io)
         indent(inner_indent) do
@@ -39,21 +40,21 @@ module Spectator::Formatters
     # Produces the title of the failure block.
     # The line takes the form:
     # ```text
-    #   1) Example name
+    # 1) Example name
     # ```
     private def title(io)
-      line(io, "#{@index}) #{@result.example}")
+      line(io, NumberedItem.new(@index, @result.example))
     end
 
     # Produces the message line of the failure block.
     # The line takes the form:
     # ```text
-    #      Failure: Error message
+    # Failure: Error message
     # ```
     # The indentation of this line starts directly under
     # the example name from the title line.
     private def message(io)
-      line(io, Color.failure("Failure: #{@result.error}"))
+      line(io, FailureMessage.color(@result))
     end
 
     # Produces the values list of the failure block.
