@@ -41,6 +41,11 @@ module Spectator
       @results.size
     end
 
+    # Indicates whether the test suite failed.
+    def failed?
+      failed_count > 0
+    end
+
     # Returns a set of results for all failed examples.
     def failures
       @results.each.compact_map(&.as?(FailedResult))

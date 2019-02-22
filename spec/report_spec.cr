@@ -71,6 +71,22 @@ describe Spectator::Report do
     end
   end
 
+  describe "#failed?" do
+    context "with a failed test suite" do
+      it "is true" do
+        report = new_report(5, 4, 3, 2)
+        report.failed?.should be_true
+      end
+    end
+
+    context "with a passing test suite" do
+      it "is false" do
+        report = new_report(5, 0, 0, 0)
+        report.failed?.should be_false
+      end
+    end
+  end
+
   describe "#failures" do
     it "returns the expected results" do
       results = Array.new(5) { new_failure_result.as(Spectator::Result) }
