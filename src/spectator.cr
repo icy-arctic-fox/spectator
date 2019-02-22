@@ -69,7 +69,9 @@ module Spectator
   # Crystal doesn't display much information about what happened.
   # That issue is handled by putting a begin/rescue block to show a custom error message.
   at_exit do
-    run if autorun?
+    # Run only if `#autorun?` is true.
+    # Return 1 on failure.
+    exit(1) if autorun? && !run
   end
 
   @@config_builder = ConfigBuilder.new
@@ -94,7 +96,7 @@ module Spectator
     # it's likely the fault of the test framework (Spectator).
     # So we display a helpful error that could be reported and return non-zero.
     display_error_stack(ex)
-    exit(1)
+    false
   end
 
   # Processes and builds up a configuration to use for running tests.

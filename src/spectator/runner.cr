@@ -9,7 +9,9 @@ module Spectator
     # Runs the test suite.
     # This will run the selected examples
     # and invoke the formatter to output results.
-    def run : Nil
+    # True will be returned if the test suite ran successfully,
+    # or false if there was at least one failure.
+    def run : Bool
       # Indicate the suite is starting.
       @config.formatter.start_suite(@suite)
 
@@ -24,6 +26,8 @@ module Spectator
       # Generate a report and pass it along to the formatter.
       report = Report.new(results, elapsed)
       @config.formatter.end_suite(report)
+
+      !report.failed?
     end
 
     # Runs a single example and returns the result.
