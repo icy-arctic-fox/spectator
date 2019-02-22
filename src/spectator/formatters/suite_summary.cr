@@ -32,8 +32,8 @@ module Spectator::Formatters
     # This contains how long the suite took to run
     # and the counts for the results (total, failures, errors, and pending).
     private def stats(report)
-      @io.puts "Finished in #{human_time(report.runtime)}"
-      @io.puts "#{report.example_count} examples, #{report.failed_count} failures, #{report.error_count} errors, #{report.pending_count} pending"
+      @io.puts Runtime.new(report.runtime)
+      @io.puts StatsCounter.new(report).color
     end
 
     # Produces the failure commands section of the summary.
@@ -49,29 +49,6 @@ module Spectator::Formatters
         @io << ' '
         @io.puts Comment.color("TODO")
       end
-    end
-
-    # Provides a more human-friendly formatting for a time span.
-    private def human_time(span)
-      millis = span.total_milliseconds
-      return "#{(millis * 1000).round.to_i} microseconds" if millis < 1
-
-      seconds = span.total_seconds
-      return "#{millis.round(2)} milliseconds" if seconds < 1
-      return "#{seconds.round(2)} seconds" if seconds < 60
-
-      int_seconds = seconds.to_i
-      minutes = int_seconds / 60
-      int_seconds %= 60
-      return sprintf("%i:%02i", minutes, int_seconds) if minutes < 60
-
-      hours = minutes / 60
-      minutes %= 60
-      return sprintf("%i:%02i:%02i", hours, minutes, int_seconds) if hours < 24
-
-      days = hours / 24
-      hours %= 24
-      return sprintf("%i days %i:%02i:%02i", days, hours, minutes, int_seconds)
     end
   end
 end
