@@ -5,35 +5,40 @@ module Spectator
     # This includes examples, hooks, and framework processes.
     getter runtime : Time::Span
 
+    # Number of passing examples.
+    getter successful_count = 0
+
+    # Number of failing examples (includes errors).
+    getter failed_count = 0
+
+    # Number of examples that had errors.
+    getter error_count = 0
+
+    # Number of pending examples.
+    getter pending_count = 0
+
     # Creates the report.
     # The *results* are from running the examples in the test suite.
     # The *runtime* is the total time it took to execute the suite.
     def initialize(@results : Array(Result), @runtime)
+      @results.each do |result|
+        case result
+        when SuccessfulResult
+          @successful_count += 1
+        when ErroredResult
+          @error_count += 1
+          @failed_count += 1
+        when FailedResult
+          @failed_count += 1
+        when PendingResult
+          @pending_count += 1
+        end
+      end
     end
 
     # Number of examples.
     def example_count
       @results.size
-    end
-
-    # Number of passing examples.
-    def successful_count
-      @results.count(&.is_a?(SuccessfulResult))
-    end
-
-    # Number of failing examples (includes errors).
-    def failed_count
-      @results.count(&.is_a?(FailedResult))
-    end
-
-    # Number of examples that had errors.
-    def error_count
-      @results.count(&.is_a?(ErroredResult))
-    end
-
-    # Number of pending examples.
-    def pending_count
-      @results.count(&.is_a?(PendingResult))
     end
 
     # Returns a set of results for all failed examples.
