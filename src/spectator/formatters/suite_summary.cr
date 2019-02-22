@@ -10,12 +10,11 @@ module Spectator::Formatters
     # A block describing each failure is displayed.
     # At the end, the totals and runtime are printed.
     def end_suite(report)
-      failed = report.failed_count > 0
       @io.puts
       @io.puts
-      failures(report.failures) if failed
+      failures(report.failures) if report.failed?
       stats(report)
-      failure_commands(report.failures) if failed
+      failure_commands(report.failures) if report.failed?
     end
 
     # Produces the failure section of the summary.
@@ -44,10 +43,9 @@ module Spectator::Formatters
       @io.puts "Failed examples:"
       @io.puts
       failures.each do |result|
-        @io.print "crystal spec "
-        result.example.source.to_s(@io)
+        @io << FailureCommand.color(result)
         @io << ' '
-        @io.puts Comment.color("TODO")
+        @io.puts Comment.color(result.example)
       end
     end
   end
