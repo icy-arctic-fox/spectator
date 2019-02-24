@@ -2,13 +2,12 @@ module Spectator::Expectations
   # Ties together a partial, matcher, and their outcome.
   class Expectation
     # Populates the base portiion of the expectation with values.
-    # The *matched* flag should be true if the matcher is satisfied with the partial.
     # The *negated* flag should be true if the expectation is inverted.
-    # These options are mutually-exclusive in this context.
-    # Don't flip the value of *matched* because *negated* is true.
     # The *match_data* is the value returned by `Spectator::Matcher#match`
     # when the expectation was evaluated.
-    def initialize(@matched : Bool, @negated : Bool, @match_data : MatchData)
+    # The *negated* flag and `MatchData#matched?` flag
+    # are mutually-exclusive in this context.
+    def initialize(@match_data : MatchData, @negated : Bool)
     end
 
     # Indicates whether the expectation was satisifed.
@@ -16,7 +15,7 @@ module Spectator::Expectations
     # - The matcher was satisified and the expectation is not negated.
     # - The matcher wasn't satisfied and the expectation is negated.
     def satisfied?
-      @matched ^ @negated
+      @match_data.matched? ^ @negated
     end
 
     # Text that indicates the condition that must be met for the expectation to be satisifed.
