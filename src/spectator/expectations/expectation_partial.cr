@@ -44,8 +44,8 @@ module Spectator::Expectations
 
     # Evaluates the expectation and returns it.
     private def eval(matcher, negated = false)
-      matched = matcher.match?(self)
-      Expectation.new(matched, negated, self, matcher)
+      match_data = matcher.match(self)
+      Expectation.new(matched, negated, match_data)
     end
 
     # Reports an expectation to the current harness.

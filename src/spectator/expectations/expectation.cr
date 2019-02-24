@@ -6,10 +6,9 @@ module Spectator::Expectations
     # The *negated* flag should be true if the expectation is inverted.
     # These options are mutually-exclusive in this context.
     # Don't flip the value of *matched* because *negated* is true.
-    # The *partial* and the *matcher* arguments should reference
-    # the actual and expected result respectively.
-    def initialize(@matched : Bool, @negated : Bool,
-                   @partial : ExpectationPartial, @matcher : Matchers::Matcher)
+    # The *match_data* is the value returned by `Spectator::Matcher#match`
+    # when the expectation was evaluated.
+    def initialize(@matched : Bool, @negated : Bool, @match_data : MatchData)
     end
 
     # Indicates whether the expectation was satisifed.
@@ -22,22 +21,12 @@ module Spectator::Expectations
 
     # Text that indicates the condition that must be met for the expectation to be satisifed.
     def expected_message
-      @negated ? negated_message : message
+      @negated ? @match_data.negated_message : @match_data.message
     end
 
     # Text that indicates what the outcome was.
     def actual_message
-      satisfied? ? message : negated_message
-    end
-
-    # Describes the condition that must be met for the expectation to be satisifed.
-    private def message
-      @matcher.message(@partial)
-    end
-
-    # Describes the condition under which the expectation won't be satisifed.
-    private def negated_message
-      @matcher.negated_message(@partial)
+      satisfied? ? @match_data.message : @match_data.negated_message
     end
   end
 end

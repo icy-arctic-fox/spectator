@@ -14,14 +14,6 @@ module Spectator::Matchers
 
     # Determines whether the matcher is satisfied with the value given to it.
     # True is returned if the match was successful, false otherwise.
-    abstract def match?(partial) : Bool
-
-    # Describes the condition that satisfies the matcher.
-    # This is informational and displayed to the end-user.
-    abstract def message(partial) : String
-
-    # Describes the condition that won't satsify the matcher.
-    # This is informational and displayed to the end-user.
-    abstract def negated_message(partial) : String
+    abstract def match(partial) : MatchData
   end
 end
