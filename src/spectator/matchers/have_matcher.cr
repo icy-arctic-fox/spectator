@@ -16,6 +16,12 @@ module Spectator::Matchers
       end
     end
 
+    # Determines whether the matcher is satisfied with the partial given to it.
+    # `MatchData` is returned that contains information about the match.
+    def match(partial) : MatchData
+      raise NotImplementedError.new("#match")
+    end
+
     # Checks if a `String` matches the expected values.
     # The `includes?` method is used for this check.
     private def match_string?(actual)

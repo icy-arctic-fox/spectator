@@ -9,6 +9,12 @@ module Spectator::Matchers
       super("empty?")
     end
 
+    # Determines whether the matcher is satisfied with the partial given to it.
+    # `MatchData` is returned that contains information about the match.
+    def match(partial) : MatchData
+      raise NotImplementedError.new("#match")
+    end
+
     # Determines whether the matcher is satisfied with the value given to it.
     # True is returned if the match was successful, false otherwise.
     def match?(partial)
