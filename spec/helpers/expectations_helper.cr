@@ -19,8 +19,8 @@ end
 def new_expectation(expected : ExpectedType = 123, actual : ActualType = 123) forall ExpectedType, ActualType
   partial = new_partial(actual, "foo")
   matcher = new_matcher("bar", expected)
-  matched = matcher.match?(partial)
-  Spectator::Expectations::Expectation.new(matched, false, partial, matcher)
+  match_data = matcher.match(partial)
+  Spectator::Expectations::Expectation.new(match_data, false)
 end
 
 def new_satisfied_expectation(value : T = 123) forall T

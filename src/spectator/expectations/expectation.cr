@@ -7,7 +7,7 @@ module Spectator::Expectations
     # when the expectation was evaluated.
     # The *negated* flag and `MatchData#matched?` flag
     # are mutually-exclusive in this context.
-    def initialize(@match_data : MatchData, @negated : Bool)
+    def initialize(@match_data : Spectator::Matchers::MatchData, @negated : Bool)
     end
 
     # Indicates whether the expectation was satisifed.
