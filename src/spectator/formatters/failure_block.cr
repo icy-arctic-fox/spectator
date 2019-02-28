@@ -63,11 +63,7 @@ module Spectator::Formatters
       indent do
         @result.expectations.each_unsatisfied do |expectation|
           expectation.values.each do |key, value|
-            line(io) do
-              io << key
-              io << ": "
-              io << value
-            end
+            line(io) { io << MatchDataValuePair.new(key, value) }
           end
         end
       end
