@@ -4,9 +4,9 @@ module Spectator::Matchers
   # Matcher that tests whether a collection is empty.
   # The values are checked with the `empty?` method.
   struct EmptyMatcher < Matcher
-    # Creates the matcher.
-    def initialize
-      super("empty?")
+    # Textual representation of what the matcher expects.
+    def label
+      "empty?"
     end
 
     # Determines whether the matcher is satisfied with the partial given to it.

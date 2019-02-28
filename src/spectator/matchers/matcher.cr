@@ -8,11 +8,7 @@ module Spectator::Matchers
     # Textual representation of what the matcher expects.
     # This shouldn't be used in the conditional logic,
     # but for verbose output to help the end-user.
-    getter label : String
-
-    # Creates the base of the matcher.
-    def initialize(@label)
-    end
+    abstract def label : String
 
     # Determines whether the matcher is satisfied with the value given to it.
     # True is returned if the match was successful, false otherwise.

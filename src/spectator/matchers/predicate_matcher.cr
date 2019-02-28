@@ -5,10 +5,10 @@ module Spectator::Matchers
   # The `ExpectedType` type param should be a `NamedTuple`.
   # Each key in the tuple is a predicate (without the '?') to test.
   struct PredicateMatcher(ExpectedType) < Matcher
-    # Creates the matcher.
+    # Textual representation of what the matcher expects.
     # Constructs the label from the type parameters.
-    def initialize
-      super({{ExpectedType.keys.splat.stringify}})
+    def label
+      {{ExpectedType.keys.splat.stringify}}
     end
 
     # Determines whether the matcher is satisfied with the value given to it.

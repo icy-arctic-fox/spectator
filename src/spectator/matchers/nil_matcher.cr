@@ -4,9 +4,9 @@ module Spectator::Matchers
   # Common matcher that tests whether a value is nil.
   # The `Object#nil?` method is used for this.
   struct NilMatcher < Matcher
-    # Creates the matcher.
-    def initialize
-      super("nil?")
+    # Textual representation of what the matcher expects.
+    def label
+      "nil?"
     end
 
     # Determines whether the matcher is satisfied with the partial given to it.
