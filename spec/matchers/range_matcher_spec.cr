@@ -150,7 +150,7 @@ describe Spectator::Matchers::RangeMatcher do
       value = 5
       label = "everything"
       partial = new_partial(value)
-      matcher = Spectator::Matchers::RangeMatcher.new(label, range)
+      matcher = Spectator::Matchers::RangeMatcher.new(range, label)
       matcher.message(partial).should contain(label)
     end
 
@@ -180,7 +180,7 @@ describe Spectator::Matchers::RangeMatcher do
       value = 5
       label = "everything"
       partial = new_partial(value)
-      matcher = Spectator::Matchers::RangeMatcher.new(label, range)
+      matcher = Spectator::Matchers::RangeMatcher.new(range, label)
       matcher.negated_message(partial).should contain(label)
     end
 
@@ -252,7 +252,7 @@ describe Spectator::Matchers::RangeMatcher do
         value = 3
         label = "foobar"
         partial = new_partial(value)
-        matcher = Spectator::Matchers::RangeMatcher.new(label, diff).of(center)
+        matcher = Spectator::Matchers::RangeMatcher.new(diff, label).of(center)
         matcher.message(partial).should contain(label)
       end
 
@@ -282,7 +282,7 @@ describe Spectator::Matchers::RangeMatcher do
         value = 3
         label = "foobar"
         partial = new_partial(value)
-        matcher = Spectator::Matchers::RangeMatcher.new(label, diff).of(center)
+        matcher = Spectator::Matchers::RangeMatcher.new(diff, label).of(center)
         matcher.negated_message(partial).should contain(label)
       end
 
@@ -380,7 +380,7 @@ describe Spectator::Matchers::RangeMatcher do
           value = 5
           label = "foobar"
           partial = new_partial(value)
-          matcher = Spectator::Matchers::RangeMatcher.new(label, range).inclusive
+          matcher = Spectator::Matchers::RangeMatcher.new(range, label).inclusive
           matcher.message(partial).should contain(label)
         end
       end
@@ -407,7 +407,7 @@ describe Spectator::Matchers::RangeMatcher do
           value = 5
           label = "foobar"
           partial = new_partial(value)
-          matcher = Spectator::Matchers::RangeMatcher.new(label, range).inclusive
+          matcher = Spectator::Matchers::RangeMatcher.new(range, label).inclusive
           matcher.negated_message(partial).should contain(label)
         end
       end
@@ -478,7 +478,7 @@ describe Spectator::Matchers::RangeMatcher do
           value = 5
           label = "foobar"
           partial = new_partial(value)
-          matcher = Spectator::Matchers::RangeMatcher.new(label, range).inclusive
+          matcher = Spectator::Matchers::RangeMatcher.new(range, label).inclusive
           matcher.message(partial).should contain(label)
         end
       end
@@ -497,7 +497,7 @@ describe Spectator::Matchers::RangeMatcher do
           value = 5
           label = "foobar"
           partial = new_partial(value)
-          matcher = Spectator::Matchers::RangeMatcher.new(label, range).inclusive
+          matcher = Spectator::Matchers::RangeMatcher.new(range, label).inclusive
           matcher.negated_message(partial).should contain(label)
         end
       end
@@ -578,7 +578,7 @@ describe Spectator::Matchers::RangeMatcher do
           value = 5
           label = "foobar"
           partial = new_partial(value)
-          matcher = Spectator::Matchers::RangeMatcher.new(label, range).exclusive
+          matcher = Spectator::Matchers::RangeMatcher.new(range, label).exclusive
           matcher.message(partial).should contain(label)
         end
       end
@@ -605,7 +605,7 @@ describe Spectator::Matchers::RangeMatcher do
           value = 5
           label = "foobar"
           partial = new_partial(value)
-          matcher = Spectator::Matchers::RangeMatcher.new(label, range).exclusive
+          matcher = Spectator::Matchers::RangeMatcher.new(range, label).exclusive
           matcher.negated_message(partial).should contain(label)
         end
       end
@@ -676,7 +676,7 @@ describe Spectator::Matchers::RangeMatcher do
           value = 5
           label = "foobar"
           partial = new_partial(value)
-          matcher = Spectator::Matchers::RangeMatcher.new(label, range).exclusive
+          matcher = Spectator::Matchers::RangeMatcher.new(range, label).exclusive
           matcher.message(partial).should contain(label)
         end
       end
@@ -695,7 +695,7 @@ describe Spectator::Matchers::RangeMatcher do
           value = 5
           label = "foobar"
           partial = new_partial(value)
-          matcher = Spectator::Matchers::RangeMatcher.new(label, range).exclusive
+          matcher = Spectator::Matchers::RangeMatcher.new(range, label).exclusive
           matcher.negated_message(partial).should contain(label)
         end
       end

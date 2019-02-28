@@ -91,7 +91,7 @@ describe Spectator::Matchers::EqualityMatcher do
           value = 42
           label = "everything"
           partial = new_partial(value)
-          matcher = Spectator::Matchers::EqualityMatcher.new(label, value)
+          matcher = Spectator::Matchers::EqualityMatcher.new(value, label)
           match_data = matcher.match(partial)
           match_data.message.should contain(label)
         end
@@ -130,7 +130,7 @@ describe Spectator::Matchers::EqualityMatcher do
           value = 42
           label = "everything"
           partial = new_partial(value)
-          matcher = Spectator::Matchers::EqualityMatcher.new(label, value)
+          matcher = Spectator::Matchers::EqualityMatcher.new(value, label)
           match_data = matcher.match(partial)
           match_data.negated_message.should contain(label)
         end

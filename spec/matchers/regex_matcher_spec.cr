@@ -54,7 +54,7 @@ describe Spectator::Matchers::RegexMatcher do
       label = "different"
       pattern = /foo/
       partial = new_partial(value)
-      matcher = Spectator::Matchers::RegexMatcher.new(label, pattern)
+      matcher = Spectator::Matchers::RegexMatcher.new(pattern, label)
       matcher.message(partial).should contain(label)
     end
 
@@ -92,7 +92,7 @@ describe Spectator::Matchers::RegexMatcher do
       label = "different"
       pattern = /foo/
       partial = new_partial(value)
-      matcher = Spectator::Matchers::RegexMatcher.new(label, pattern)
+      matcher = Spectator::Matchers::RegexMatcher.new(pattern, label)
       matcher.negated_message(partial).should contain(label)
     end
 

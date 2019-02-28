@@ -62,7 +62,7 @@ describe Spectator::Matchers::HaveKeyMatcher do
       key = :foo
       label = "blah"
       partial = new_partial(tuple)
-      matcher = Spectator::Matchers::HaveKeyMatcher.new(label, key)
+      matcher = Spectator::Matchers::HaveKeyMatcher.new(key, label)
       matcher.message(partial).should contain(label)
     end
 
@@ -92,7 +92,7 @@ describe Spectator::Matchers::HaveKeyMatcher do
       key = :foo
       label = "blah"
       partial = new_partial(tuple)
-      matcher = Spectator::Matchers::HaveKeyMatcher.new(label, key)
+      matcher = Spectator::Matchers::HaveKeyMatcher.new(key, label)
       matcher.negated_message(partial).should contain(label)
     end
 

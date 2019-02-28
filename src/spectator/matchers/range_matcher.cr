@@ -47,19 +47,19 @@ module Spectator::Matchers
       lower = center - diff
       upper = center + diff
       range = Range.new(lower, upper)
-      RangeMatcher.new("#{center} +/- #{label}", range)
+      RangeMatcher.new(range, "#{center} +/- #{label}")
     end
 
     # Returns a new matcher, with the same bounds, but uses an inclusive range.
     def inclusive
       range = Range.new(@expected.begin, @expected.end, exclusive: false)
-      RangeMatcher.new(label + " (inclusive)", range)
+      RangeMatcher.new(range, label + " (inclusive)")
     end
 
     # Returns a new matcher, with the same bounds, but uses an exclusive range.
     def exclusive
       range = Range.new(@expected.begin, @expected.end, exclusive: true)
-      RangeMatcher.new(label + " (exclusive)", range)
+      RangeMatcher.new(range, label + " (exclusive)")
     end
   end
 end

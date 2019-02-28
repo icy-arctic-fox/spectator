@@ -8,17 +8,17 @@ def new_partial(actual : T = 123) forall T
   Spectator::Expectations::ValueExpectationPartial.new(actual, __FILE__, __LINE__)
 end
 
-def new_matcher(label : String, expected : T) forall T
-  Spectator::Matchers::EqualityMatcher.new(label, expected)
+def new_matcher(expected : T, label : String) forall T
+  Spectator::Matchers::EqualityMatcher.new(expected, label)
 end
 
 def new_matcher(expected : T = 123) forall T
-  new_matcher(expected.to_s, expected)
+  Spectator::Matchers::EqualityMatcher.new(expected)
 end
 
 def new_expectation(expected : ExpectedType = 123, actual : ActualType = 123) forall ExpectedType, ActualType
   partial = new_partial(actual, "foo")
-  matcher = new_matcher("bar", expected)
+  matcher = new_matcher(expected, "bar")
   match_data = matcher.match(partial)
   Spectator::Expectations::Expectation.new(match_data, false)
 end

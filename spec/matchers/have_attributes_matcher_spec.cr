@@ -235,7 +235,7 @@ describe Spectator::Matchers::AttributesMatcher do
       attributes = {size: 6}
       label = "everything"
       partial = new_partial(value)
-      matcher = Spectator::Matchers::AttributesMatcher.new(label, attributes)
+      matcher = Spectator::Matchers::AttributesMatcher.new(attributes, label)
       matcher.message(partial).should contain(label)
     end
 
@@ -265,7 +265,7 @@ describe Spectator::Matchers::AttributesMatcher do
       attributes = {size: 6}
       label = "everything"
       partial = new_partial(value)
-      matcher = Spectator::Matchers::AttributesMatcher.new(label, attributes)
+      matcher = Spectator::Matchers::AttributesMatcher.new(attributes, label)
       matcher.negated_message(partial).should contain(label)
     end
 

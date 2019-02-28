@@ -38,7 +38,7 @@ describe Spectator::Matchers::HaveValueMatcher do
       value = "bar"
       label = "blah"
       partial = new_partial(hash)
-      matcher = Spectator::Matchers::HaveValueMatcher.new(label, value)
+      matcher = Spectator::Matchers::HaveValueMatcher.new(value, label)
       matcher.message(partial).should contain(label)
     end
 
@@ -68,7 +68,7 @@ describe Spectator::Matchers::HaveValueMatcher do
       value = "bar"
       label = "blah"
       partial = new_partial(hash)
-      matcher = Spectator::Matchers::HaveValueMatcher.new(label, value)
+      matcher = Spectator::Matchers::HaveValueMatcher.new(value, label)
       matcher.negated_message(partial).should contain(label)
     end
 

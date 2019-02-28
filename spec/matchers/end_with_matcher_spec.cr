@@ -225,7 +225,7 @@ describe Spectator::Matchers::EndWithMatcher do
       last = "baz"
       label = "everything"
       partial = new_partial(value)
-      matcher = Spectator::Matchers::EndWithMatcher.new(label, last)
+      matcher = Spectator::Matchers::EndWithMatcher.new(last, label)
       matcher.message(partial).should contain(label)
     end
 
@@ -281,7 +281,7 @@ describe Spectator::Matchers::EndWithMatcher do
       last = "baz"
       label = "everything"
       partial = new_partial(value)
-      matcher = Spectator::Matchers::EndWithMatcher.new(label, last)
+      matcher = Spectator::Matchers::EndWithMatcher.new(last, label)
       matcher.negated_message(partial).should contain(label)
     end
 

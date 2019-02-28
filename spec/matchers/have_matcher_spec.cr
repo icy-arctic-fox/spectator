@@ -479,7 +479,7 @@ describe Spectator::Matchers::HaveMatcher do
       search = "baz"
       label = "everything"
       partial = new_partial(value)
-      matcher = Spectator::Matchers::HaveMatcher.new(label, {search})
+      matcher = Spectator::Matchers::HaveMatcher.new({search}, label)
       matcher.message(partial).should contain(label)
     end
 
@@ -509,7 +509,7 @@ describe Spectator::Matchers::HaveMatcher do
       search = "baz"
       label = "everything"
       partial = new_partial(value)
-      matcher = Spectator::Matchers::HaveMatcher.new(label, {search})
+      matcher = Spectator::Matchers::HaveMatcher.new({search}, label)
       matcher.negated_message(partial).should contain(label)
     end
 

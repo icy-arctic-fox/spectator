@@ -82,7 +82,7 @@ describe Spectator::Matchers::InequalityMatcher do
       value = 42
       label = "everything"
       partial = new_partial(value)
-      matcher = Spectator::Matchers::InequalityMatcher.new(label, value)
+      matcher = Spectator::Matchers::InequalityMatcher.new(value, label)
       matcher.message(partial).should contain(label)
     end
 
@@ -117,7 +117,7 @@ describe Spectator::Matchers::InequalityMatcher do
       value = 42
       label = "everything"
       partial = new_partial(value)
-      matcher = Spectator::Matchers::InequalityMatcher.new(label, value)
+      matcher = Spectator::Matchers::InequalityMatcher.new(value, label)
       matcher.negated_message(partial).should contain(label)
     end
 

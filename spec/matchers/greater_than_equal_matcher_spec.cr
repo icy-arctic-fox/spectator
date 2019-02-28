@@ -60,7 +60,7 @@ describe Spectator::Matchers::GreaterThanEqualMatcher do
       value = 42
       label = "everything"
       partial = new_partial(value)
-      matcher = Spectator::Matchers::GreaterThanEqualMatcher.new(label, value)
+      matcher = Spectator::Matchers::GreaterThanEqualMatcher.new(value, label)
       matcher.message(partial).should contain(label)
     end
 
@@ -95,7 +95,7 @@ describe Spectator::Matchers::GreaterThanEqualMatcher do
       value = 42
       label = "everything"
       partial = new_partial(value)
-      matcher = Spectator::Matchers::GreaterThanEqualMatcher.new(label, value)
+      matcher = Spectator::Matchers::GreaterThanEqualMatcher.new(value, label)
       matcher.negated_message(partial).should contain(label)
     end
 

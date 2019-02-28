@@ -225,7 +225,7 @@ describe Spectator::Matchers::StartWithMatcher do
       start = "baz"
       label = "everything"
       partial = new_partial(value)
-      matcher = Spectator::Matchers::StartWithMatcher.new(label, start)
+      matcher = Spectator::Matchers::StartWithMatcher.new(start, label)
       matcher.message(partial).should contain(label)
     end
 
@@ -281,7 +281,7 @@ describe Spectator::Matchers::StartWithMatcher do
       start = "baz"
       label = "everything"
       partial = new_partial(value)
-      matcher = Spectator::Matchers::StartWithMatcher.new(label, start)
+      matcher = Spectator::Matchers::StartWithMatcher.new(start, label)
       matcher.negated_message(partial).should contain(label)
     end
 
