@@ -63,9 +63,9 @@ module Spectator::DSL
       {% if block.args == ["__arg0".id] && block.body.is_a?(Call) && block.body.id =~ /^__arg0\./ %}
         # Extract the method name to make it clear to the user what is tested.
         # The raw block can't be used because it's not clear to the user.
-        {% method_name = block.body.id.split('.').last %}
+        {% method_name = block.body.id.split('.')[1..-1].join('.') %}
         # TODO: Maybe pass the subject in as __arg0 instead of prefixing the method name.
-        ::Spectator::Expectations::ValueExpectationPartial.new(subject.{{method_name}}, {{"#" + method_name}}, {{_source_file}}, {{_source_line}})
+        ::Spectator::Expectations::ValueExpectationPartial.new(subject.{{method_name.id}}, {{"#" + method_name}}, {{_source_file}}, {{_source_line}})
       {% else %}
         # In this case, it looks like the short-hand method syntax wasn't used.
         # Just drop in the block as-is.
