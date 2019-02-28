@@ -35,9 +35,15 @@ def new_unsatisfied_expectation(expected : ExpectedType = 123, actual : ActualTy
   end
 end
 
+def create_expectations(success_count = 1, failure_count = 0)
+  satisfied = Array(Spectator::Expectations::Expectation).new(success_count) { new_satisfied_expectation }
+  unsatisfied = Array(Spectator::Expectations::Expectation).new(failure_count) { new_unsatisfied_expectation }
+  (satisfied + unsatisfied).shuffle
+end
+
 def generate_expectations(success_count = 1, failure_count = 0)
-  satisfied = Array.new(success_count) { new_satisfied_expectation }
-  unsatisfied = Array.new(failure_count) { new_unsatisfied_expectation }
+  satisfied = Array(Spectator::Expectations::Expectation).new(success_count) { new_satisfied_expectation }
+  unsatisfied = Array(Spectator::Expectations::Expectation).new(failure_count) { new_unsatisfied_expectation }
   expectations = (satisfied + unsatisfied).shuffle
   reporter = Spectator::Expectations::ExpectationReporter.new(false)
   expectations.each do |expectation|

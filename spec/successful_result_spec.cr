@@ -8,7 +8,7 @@ def new_successful_result(
   Spectator::SuccessfulResult.new(
     example || PassingExample.create,
     elapsed || Time::Span.zero,
-    expectations || Spectator::Expectations::ExampleExpectations.new(generate_expectations(1, 0)[:expectations])
+    expectations || Spectator::Expectations::ExampleExpectations.new([new_satisfied_expectation])
   )
 end
 
@@ -69,7 +69,7 @@ describe Spectator::SuccessfulResult do
 
   describe "#expectations" do
     it "is the expected value" do
-      expectations = Spectator::Expectations::ExampleExpectations.new(generate_expectations(5, 0)[:expectations])
+      expectations = Spectator::Expectations::ExampleExpectations.new(create_expectations(5, 0))
       result = new_successful_result(expectations: expectations)
       result.expectations.should eq(expectations)
     end
