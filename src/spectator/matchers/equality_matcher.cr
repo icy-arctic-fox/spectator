@@ -13,7 +13,9 @@ module Spectator::Matchers
     # Determines whether the matcher is satisfied with the partial given to it.
     # `MatchData` is returned that contains information about the match.
     def match(partial) : MatchData
-      raise NotImplementedError.new("#match")
+      actual = partial.actual
+      matched = actual == expected
+      MatchData.new(matched, expected, actual, partial.label, label)
     end
 
     # Describes the condition that satisfies the matcher.
@@ -26,6 +28,34 @@ module Spectator::Matchers
     # This is informational and displayed to the end-user.
     def negated_message(partial)
       "Expected #{partial.label} to not equal #{label} (using ==)"
+    end
+
+    # Match data specific to this matcher.
+    private struct MatchData(ExpectedType, ActualType) < MatchData
+      # Creates the match data.
+      def initialize(matched, @expected : ExpectedType, @actual : ActualType, @expected_label : String, @actual_label : String)
+        super(matched)
+      end
+
+      # Information about the match.
+      def values
+        {
+          expected: @expected,
+          actual:   @actual,
+        }
+      end
+
+      # Describes the condition that satisfies the matcher.
+      # This is informational and displayed to the end-user.
+      def message
+        "#{@expected_label} is #{@actual_label} (using ==)"
+      end
+
+      # Describes the condition that won't satsify the matcher.
+      # This is informational and displayed to the end-user.
+      def negated_message
+        "#{@expected_label} is not #{@actual_label} (using ==)"
+      end
     end
   end
 end
