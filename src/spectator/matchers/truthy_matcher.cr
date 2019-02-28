@@ -8,19 +8,23 @@ module Spectator::Matchers
   #
   # Additionally, different matchers can be created
   # by using the `#<`, `#<=`, `#>`, `#>=`, `#==`, and `#!=` operators.
-  struct TruthyMatcher < ValueMatcher(Bool)
+  struct TruthyMatcher < Matcher
     # Creates the truthy matcher.
     # The *truthy* argument should be true to match "truthy" values,
     # and false to match "falsey" values.
-    def initialize(truthy : Bool)
-      super(truthy ? "truthy" : "falsey", truthy)
+    def initialize(@truthy : Bool)
+    end
+
+    # Textual representation of what the matcher expects.
+    def label
+      @truthy ? "truthy" : "falsey"
     end
 
     # Determines whether the matcher is satisfied with the value given to it.
     # True is returned if the match was successful, false otherwise.
     def match?(partial)
       # Cast value to truthy value and compare.
-      @expected == !!partial.actual
+      @truthy == !!partial.actual
     end
 
     # Determines whether the matcher is satisfied with the partial given to it.
