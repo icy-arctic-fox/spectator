@@ -9,34 +9,35 @@ module Spectator::Matchers
     def match(partial) : MatchData
       actual = partial.actual
       matched = actual == expected
-      MatchData.new(matched, expected, actual, partial.label, label)
+      values = ExpectedActual.new(expected, label, actual, partial.label)
+      MatchData.new(matched, values)
     end
 
     # Match data specific to this matcher.
     private struct MatchData(ExpectedType, ActualType) < MatchData
       # Creates the match data.
-      def initialize(matched, @expected : ExpectedType, @actual : ActualType, @expected_label : String, @actual_label : String)
+      def initialize(matched, @values : ExpectedActual(ExpectedType, ActualType))
         super(matched)
       end
 
       # Information about the match.
       def values
         {
-          expected: @expected,
-          actual:   @actual,
+          expected: @values.expected,
+          actual:   @values.actual,
         }
       end
 
       # Describes the condition that satisfies the matcher.
       # This is informational and displayed to the end-user.
       def message
-        "#{@expected_label} is #{@actual_label} (using ==)"
+        "#{@values.expected_label} is #{@values.actual_label} (using ==)"
       end
 
       # Describes the condition that won't satsify the matcher.
       # This is informational and displayed to the end-user.
       def negated_message
-        "#{@expected_label} is not #{@actual_label} (using ==)"
+        "#{@values.expected_label} is not #{@values.actual_label} (using ==)"
       end
     end
   end
