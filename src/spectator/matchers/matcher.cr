@@ -1,3 +1,5 @@
+require "./match_data"
+
 module Spectator::Matchers
   # Common base class for all expectation conditions.
   # A matcher looks at something produced by the SUT
