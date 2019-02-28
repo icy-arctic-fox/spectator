@@ -4,13 +4,16 @@ module Spectator::Matchers
   # Common matcher that tests whether two values equal each other.
   # The values are compared with the == operator.
   struct EqualityMatcher(ExpectedType) < ValueMatcher(ExpectedType)
+    # Determines whether the matcher is satisfied with the value given to it.
+    private def match?(actual)
+      actual == expected
+    end
+
     # Determines whether the matcher is satisfied with the partial given to it.
     # `MatchData` is returned that contains information about the match.
     def match(partial) : MatchData
-      actual = partial.actual
-      matched = actual == expected
-      values = ExpectedActual.new(expected, label, actual, partial.label)
-      MatchData.new(matched, values)
+      values = ExpectedActual.new(partial, self)
+      MatchData.new(match?(values.actual), values)
     end
 
     # Match data specific to this matcher.

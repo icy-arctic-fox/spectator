@@ -7,7 +7,7 @@ module Spectator::Matchers
   abstract struct ValueMatcher(ExpectedType) < Matcher
     # Expected value.
     # Sub-types may use this value to test the expectation and generate message strings.
-    private getter expected
+    getter expected
 
     # Creates the value matcher.
     # The label should be a string representation of the expectation.

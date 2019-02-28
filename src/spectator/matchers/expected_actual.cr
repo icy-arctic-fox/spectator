@@ -16,5 +16,15 @@ module Spectator::Matchers
     # Creates the value and label store.
     def initialize(@expected : ExpectedType, @expected_label, @actual : ActualType, @actual_label)
     end
+
+    # Creates the value and label store.
+    # Attributes are pulled from an expectation partial and matcher.
+    def initialize(
+      partial : Spectator::Expectations::ValueExpectationPartial(ActualType) |
+                Spectator::Expectations::BlockExpectationPartial(ActualType),
+      matcher : ValueMatcher(ExpectedType)
+    )
+      initialize(matcher.expected, matcher.label, partial.actual, partial.label)
+    end
   end
 end
