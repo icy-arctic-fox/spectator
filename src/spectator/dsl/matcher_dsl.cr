@@ -12,7 +12,7 @@ module Spectator::DSL
     # expect(1 + 2).to eq(3)
     # ```
     macro eq(expected)
-      ::Spectator::Matchers::EqualityMatcher.new({{expected.stringify}}, {{expected}})
+      ::Spectator::Matchers::EqualityMatcher.new({{expected}}, {{expected.stringify}})
     end
 
     # Indicates that some value should not equal another.
@@ -24,7 +24,7 @@ module Spectator::DSL
     # expect(1 + 2).to ne(5)
     # ```
     macro ne(expected)
-      ::Spectator::Matchers::InequalityMatcher.new({{expected.stringify}}, {{expected}})
+      ::Spectator::Matchers::InequalityMatcher.new({{expected}}, {{expected.stringify}})
     end
 
     # Indicates that some value when compared to another satisfies an operator.
@@ -58,7 +58,7 @@ module Spectator::DSL
     # expect(tuple).to be({1, 2})
     # ```
     macro be(expected)
-      ::Spectator::Matchers::CaseMatcher.new({{expected.stringify}}, {{expected}})
+      ::Spectator::Matchers::CaseMatcher.new({{expected}}, {{expected.stringify}})
     end
 
     # Indicates that some value should be of a specified type.
@@ -99,7 +99,7 @@ module Spectator::DSL
     # expect(3 - 1).to be_lt(3)
     # ```
     macro be_lt(expected)
-      ::Spectator::Matchers::LessThanMatcher.new({{expected.stringify}}, {{expected}})
+      ::Spectator::Matchers::LessThanMatcher.new({{expected}}, {{expected.stringify}})
     end
 
     # Indicates that some value should be less than or equal to another.
@@ -111,7 +111,7 @@ module Spectator::DSL
     # expect(3 - 1).to be_le(3)
     # ```
     macro be_le(expected)
-      ::Spectator::Matchers::LessThanEqualMatcher.new({{expected.stringify}}, {{expected}})
+      ::Spectator::Matchers::LessThanEqualMatcher.new({{expected}}, {{expected.stringify}})
     end
 
     # Indicates that some value should be greater than another.
@@ -123,7 +123,7 @@ module Spectator::DSL
     # expect(3 + 1).to be_gt(3)
     # ```
     macro be_gt(expected)
-      ::Spectator::Matchers::GreaterThanMatcher.new({{expected.stringify}}, {{expected}})
+      ::Spectator::Matchers::GreaterThanMatcher.new({{expected}}, {{expected.stringify}})
     end
 
     # Indicates that some value should be greater than or equal to another.
@@ -135,7 +135,7 @@ module Spectator::DSL
     # expect(3 + 1).to be_ge(3)
     # ```
     macro be_ge(expected)
-      ::Spectator::Matchers::GreaterThanEqualMatcher.new({{expected.stringify}}, {{expected}})
+      ::Spectator::Matchers::GreaterThanEqualMatcher.new({{expected}}, {{expected.stringify}})
     end
 
     # Indicates that some value should match another.
@@ -149,7 +149,7 @@ module Spectator::DSL
     # expect("BAR").to match(/foo|bar/i)
     # ```
     macro match(expected)
-      ::Spectator::Matchers::RegexMatcher.new({{expected.stringify}}, {{expected}})
+      ::Spectator::Matchers::RegexMatcher.new({{expected}}, {{expected.stringify}})
     end
 
     # Indicates that some value should be true.
@@ -239,7 +239,7 @@ module Spectator::DSL
     # NOTE: Do not attempt to mix the two use cases.
     # It likely won't work and will result in a compilation error.
     macro be_within(expected)
-      ::Spectator::Matchers::RangeMatcher.new({{expected.stringify}}, {{expected}})
+      ::Spectator::Matchers::RangeMatcher.new({{expected}}, {{expected.stringify}})
     end
 
     # Indicates that some value should be between a lower and upper-bound.
@@ -260,8 +260,8 @@ module Spectator::DSL
     # ```
     macro be_within(min, max)
       :Spectator::Matchers::RangeMatcher.new(
-        [{{min.stringify}}, {{max.stringify}}].join(" to "),
-        Range.new({{min}}, {{max}})
+        Range.new({{min}}, {{max}}),
+        [{{min.stringify}}, {{max.stringify}}].join(" to ")
       )
     end
 
@@ -320,7 +320,7 @@ module Spectator::DSL
     # expect(%w[foo bar]).to start_with(/foo/)
     # ```
     macro start_with(expected)
-      ::Spectator::Matchers::StartWithMatcher.new({{expected.stringify}}, {{expected}})
+      ::Spectator::Matchers::StartWithMatcher.new({{expected}}, {{expected.stringify}})
     end
 
     # Indicates that some value or set should end with another value.
@@ -342,7 +342,7 @@ module Spectator::DSL
     # expect(%w[foo bar]).to end_with(/bar/)
     # ```
     macro end_with(expected)
-      ::Spectator::Matchers::EndWithMatcher.new({{expected.stringify}}, {{expected}})
+      ::Spectator::Matchers::EndWithMatcher.new({{expected}}, {{expected.stringify}})
     end
 
     # Indicates that some value or set should contain another value.
@@ -365,7 +365,7 @@ module Spectator::DSL
     # expect(%i[a b c]).to contain(:a, :b)
     # ```
     macro contain(*expected)
-      ::Spectator::Matchers::ContainMatcher.new({{expected.splat.stringify}}, {{expected}})
+      ::Spectator::Matchers::ContainMatcher.new({{expected}}, {{expected.splat.stringify}})
     end
 
     # Indicates that some value or set should contain another value.
@@ -394,7 +394,7 @@ module Spectator::DSL
     # expect(%w[FOO BAR BAZ]).to have(/foo/i, String)
     # ```
     macro have(*expected)
-      ::Spectator::Matchers::HaveMatcher.new({{expected.splat.stringify}}, {{expected}})
+      ::Spectator::Matchers::HaveMatcher.new({{expected}}, {{expected.splat.stringify}})
     end
 
     # Indicates that some set, such as a `Hash`, has a given key.
@@ -406,7 +406,7 @@ module Spectator::DSL
     # expect({"lucky" => 7}).to have_key("lucky")
     # ```
     macro have_key(expected)
-      ::Spectator::Matchers::HaveKeyMatcher.new({{expected.stringify}}, {{expected}})
+      ::Spectator::Matchers::HaveKeyMatcher.new({{expected}}, {{expected.stringify}})
     end
 
     # ditto
@@ -423,7 +423,7 @@ module Spectator::DSL
     # expect({"lucky" => 7}).to have_value(7)
     # ```
     macro have_value(expected)
-      ::Spectator::Matchers::HaveValueMatcher.new({{expected.stringify}}, {{expected}})
+      ::Spectator::Matchers::HaveValueMatcher.new({{expected}}, {{expected.stringify}})
     end
 
     # ditto
@@ -442,7 +442,7 @@ module Spectator::DSL
     # expect(%i[a b c]).to have_attributes(size: 1..5, first: Symbol)
     # ```
     macro have_attributes(**expected)
-      ::Spectator::Matchers::AttributesMatcher.new({{expected.double_splat.stringify}}, {{expected}})
+      ::Spectator::Matchers::AttributesMatcher.new({{expected}}, {{expected.double_splat.stringify}})
     end
 
     # Used to create predicate matchers.
