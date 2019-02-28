@@ -43,7 +43,7 @@ module Spectator::Formatters
     # 1) Example name
     # ```
     private def title(io)
-      line(io) { io << NumberedItem.new(@index, @result.example) }
+      line(io, NumberedItem.new(@index, @result.example))
     end
 
     # Produces the message line of the failure block.
@@ -54,7 +54,7 @@ module Spectator::Formatters
     # The indentation of this line starts directly under
     # the example name from the title line.
     private def message(io)
-      line(io) { io << FailureMessage.color(@result) }
+      line(io, FailureMessage.color(@result))
     end
 
     # Produces the values list of the failure block.
@@ -63,7 +63,7 @@ module Spectator::Formatters
       indent do
         @result.expectations.each_unsatisfied do |expectation|
           expectation.values.each do |key, value|
-            line(io) { io << MatchDataValuePair.new(key, value) }
+            line(io, MatchDataValuePair.new(key, value))
           end
         end
       end
@@ -72,7 +72,7 @@ module Spectator::Formatters
 
     # Produces the source line of the failure block.
     private def source(io)
-      line(io) { io << Comment.color(@result.example.source) }
+      line(io, Comment.color(@result.example.source))
     end
 
     # Increases the indentation for a block of text.
@@ -84,10 +84,9 @@ module Spectator::Formatters
     end
 
     # Produces a line of text with a leading indent.
-    private def line(io)
+    private def line(io, text)
       @indent.times { io << ' ' }
-      yield
-      io.puts
+      io.puts text
     end
 
     # Gets the number of characters a positive integer spans in base 10.
