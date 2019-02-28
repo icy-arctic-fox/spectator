@@ -18,6 +18,12 @@ module Spectator::Expectations
       @match_data.matched? ^ @negated
     end
 
+    # Information about the match.
+    # Returned value and type will something that has key-value pairs (like a `NamedTuple`).
+    def values
+      @match_data.values
+    end
+
     # Text that indicates the condition that must be met for the expectation to be satisifed.
     def expected_message
       @negated ? @match_data.negated_message : @match_data.message

@@ -41,6 +41,15 @@ describe Spectator::Expectations::Expectation do
     end
   end
 
+  describe "#values" do
+    it "is the same as the match data values" do
+      value = 42
+      match_data = new_matcher(value).match(new_partial(value))
+      expectation = Spectator::Expectations::Expectation.new(match_data, false)
+      expectation.values.should eq(match_data.values)
+    end
+  end
+
   describe "#actual_message" do
     context "with a successful match" do
       it "equals the matcher's #message" do

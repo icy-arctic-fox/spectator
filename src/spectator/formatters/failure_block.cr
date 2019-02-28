@@ -61,8 +61,15 @@ module Spectator::Formatters
     private def values(io)
       io.puts
       indent do
-        line(io) { io << "Expected: TODO" }
-        line(io) { io << "     got: TODO" }
+        @result.expectations.each_unsatisfied do |expectation|
+          expectation.values.each do |key, value|
+            line(io) do
+              io << key
+              io << ": "
+              io << value
+            end
+          end
+        end
       end
       io.puts
     end
