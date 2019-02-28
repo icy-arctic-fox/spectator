@@ -34,13 +34,13 @@ module Spectator::Matchers
       # Describes the condition that satisfies the matcher.
       # This is informational and displayed to the end-user.
       def message
-        "#{@values.expected_label} is #{@values.actual_label} (using ==)"
+        "#{@values.actual_label} is #{@values.expected_label} (using ==)"
       end
 
       # Describes the condition that won't satsify the matcher.
       # This is informational and displayed to the end-user.
       def negated_message
-        "#{@values.expected_label} is not #{@values.actual_label} (using ==)"
+        "#{@values.actual_label} is not #{@values.expected_label} (using ==)"
       end
     end
   end

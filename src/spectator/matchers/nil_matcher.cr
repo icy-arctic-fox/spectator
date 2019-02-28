@@ -20,7 +20,7 @@ module Spectator::Matchers
     # Match data specific to this matcher.
     private struct MatchData(T) < MatchData
       # Creates the match data.
-      def initialize(matched, @actual : T, @expected_label : String)
+      def initialize(matched, @actual : T, @actual_label : String)
         super(matched)
       end
 
@@ -35,13 +35,13 @@ module Spectator::Matchers
       # Describes the condition that satisfies the matcher.
       # This is informational and displayed to the end-user.
       def message
-        "#{@expected_label} is nil"
+        "#{@actual_label} is nil"
       end
 
       # Describes the condition that won't satsify the matcher.
       # This is informational and displayed to the end-user.
       def negated_message
-        "#{@expected_label} is not nil"
+        "#{@actual_label} is not nil"
       end
     end
   end
