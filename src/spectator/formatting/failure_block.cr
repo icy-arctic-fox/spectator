@@ -31,7 +31,7 @@ module Spectator::Formatting
         title(io)
         indent(inner_indent) do
           message(io)
-          values(io)
+          content(io)
           source(io)
         end
       end
@@ -57,9 +57,19 @@ module Spectator::Formatting
       line(io, FailureMessage.color(@result))
     end
 
+    # Produces the main content of the failure block.
+    private def content(io)
+      io.puts
+      if(@result.is_a?(ErroredResult))
+        stack_trace(io)
+      else
+        values(io)
+      end
+      io.puts
+    end
+
     # Produces the values list of the failure block.
     private def values(io)
-      io.puts
       indent do
         @result.expectations.each_unsatisfied do |expectation|
           MatchDataValues.new(expectation.values).each do |pair|
@@ -67,7 +77,31 @@ module Spectator::Formatting
           end
         end
       end
-      io.puts
+    end
+
+    # Produces the stack trace for an errored result.
+    private def stack_trace(io)
+      error = @result.error
+      indent do
+        loop do
+          display_error(io, error)
+          if (next_error = error.cause)
+            error = next_error
+          else
+            break
+          end
+        end
+      end
+    end
+
+    # Display a single error and its stacktrace.
+    private def display_error(io, error) : Nil
+      line(io, Color.error("Caused by: #{error.message} (#{error.class})"))
+      indent do
+        error.backtrace.each do |frame|
+          line(io, Color.error(frame))
+        end
+      end
     end
 
     # Produces the source line of the failure block.
