@@ -9,7 +9,7 @@ require "./internals"
 require "./dsl"
 require "./expectations"
 require "./matchers"
-require "./formatters"
+require "./formatting"
 
 # Then all of the top-level types.
 require "./example_component"

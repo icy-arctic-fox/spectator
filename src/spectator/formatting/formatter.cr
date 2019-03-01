@@ -1,4 +1,4 @@
-module Spectator::Formatters
+module Spectator::Formatting
   # Interface for reporting test progress and results.
   #
   # The methods should be called in this order:

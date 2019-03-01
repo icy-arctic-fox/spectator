@@ -1,7 +1,7 @@
 require "./formatter"
 require "./suite_summary"
 
-module Spectator::Formatters
+module Spectator::Formatting
   # Produces a single character for each example.
   # A dot is output for each successful example (hence the name).
   # Other characters are output for non-successful results.

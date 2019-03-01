@@ -1,6 +1,6 @@
 require "colorize"
 
-module Spectator::Formatters
+module Spectator::Formatting
   # Method for colorizing output.
   module Color
     extend self

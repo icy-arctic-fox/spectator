@@ -1,4 +1,4 @@
-module Spectator::Formatters
+module Spectator::Formatting
   # Produces a stringified comment for output.
   private struct Comment(T)
     # Creates the comment.

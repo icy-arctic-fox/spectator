@@ -1,4 +1,4 @@
-module Spectator::Formatters
+module Spectator::Formatting
   # Produces a stringified stats counter from result totals.
   private struct StatsCounter
     # Creates the instance with each of the counters.

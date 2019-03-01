@@ -1,4 +1,4 @@
-module Spectator::Formatters
+module Spectator::Formatting
   # Formatter that outputs nothing.
   # Useful for testing and larger automated processes.
   class SilentFormatter < Formatter

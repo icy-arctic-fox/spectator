@@ -1,4 +1,4 @@
-module Spectator::Formatters
+module Spectator::Formatting
   # Produces a stringified time span for the runtime.
   private struct Runtime
     # Creates the runtime instance.

@@ -1,4 +1,4 @@
-module Spectator::Formatters
+module Spectator::Formatting
   # Mix-in for producing a human-readable summary of a test suite.
   module SuiteSummary
     # Does nothing when starting a test suite.

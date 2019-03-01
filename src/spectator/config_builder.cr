@@ -8,10 +8,10 @@ module Spectator
       new.build
     end
 
-    @formatter : Formatters::Formatter? = nil
+    @formatter : Formatting::Formatter? = nil
 
     # Sets the formatter to use for reporting test progress and results.
-    def formatter=(formatter : Formatters::Formatter)
+    def formatter=(formatter : Formatting::Formatter)
       @formatter = formatter
     end
 
@@ -25,7 +25,7 @@ module Spectator
     # The formatter that should be used,
     # if one wasn't provided.
     private def default_formatter
-      Formatters::DotsFormatter.new
+      Formatting::DotsFormatter.new
     end
 
     # Creates a configuration.

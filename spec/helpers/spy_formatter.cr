@@ -1,6 +1,6 @@
 # Formatter that doubles as a spy.
 # This class tracks calls made to it.
-class SpyFormatter < Spectator::Formatters::Formatter
+class SpyFormatter < Spectator::Formatting::Formatter
   {% for item in [
                    {"start_suite", "Spectator::TestSuite"},
                    {"end_suite", "Spectator::Report"},

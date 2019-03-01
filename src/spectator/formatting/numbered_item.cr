@@ -1,4 +1,4 @@
-module Spectator::Formatters
+module Spectator::Formatting
   # Produces a stringified value with a numerical prefix.
   private struct NumberedItem(T)
     # Creates the numbered item.

@@ -1,4 +1,4 @@
-module Spectator::Formatters
+module Spectator::Formatting
   # Produces a stringified command to run a failed test.
   private struct FailureCommand
     # Creates the failure command.

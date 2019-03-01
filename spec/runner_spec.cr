@@ -1,8 +1,8 @@
 require "./spec_helper"
 
 # Creates a `Config` for Spectator that is suited for testing it.
-def spectator_test_config(formatter : Spectator::Formatters::Formatter? = nil)
-  Spectator::Config.new(formatter || Spectator::Formatters::SilentFormatter.new)
+def spectator_test_config(formatter : Spectator::Formatting::Formatter? = nil)
+  Spectator::Config.new(formatter || Spectator::Formatting::SilentFormatter.new)
 end
 
 def new_test_suite

@@ -1,4 +1,4 @@
-module Spectator::Formatters
+module Spectator::Formatting
   # A single key-value pair from the `Spectator::Matchers::MatchData#value` method.
   private struct MatchDataValuePair(T)
     # Creates the pair formatter.

@@ -1,4 +1,4 @@
-module Spectator::Formatters
+module Spectator::Formatting
   # Produces a stringified failure or error message.
   private struct FailureMessage
     # Creates the failure message.

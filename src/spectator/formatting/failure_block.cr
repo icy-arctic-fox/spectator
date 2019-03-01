@@ -1,4 +1,4 @@
-module Spectator::Formatters
+module Spectator::Formatting
   # Constructs a block of text containing information about a failed example.
   #
   # A failure block takes the form:
