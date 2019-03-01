@@ -9,7 +9,7 @@ module Spectator::Formatting
     def to_s(io)
       io << @key
       io << ": "
-      io << @value
+      @value.inspect(io)
     end
   end
 end
