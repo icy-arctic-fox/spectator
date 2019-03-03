@@ -58,38 +58,42 @@ module Spectator::Formatting
     end
 
     # Produces the main content of the failure block.
+    # Any failed expectations are displayed,
+    # then an error stacktrace if an error occurred.
     private def content(io)
       io.puts
-      if(@result.is_a?(ErroredResult))
-        stack_trace(io)
-      else
-        values(io)
+      indent do
+        unsatisfied_expectations(io)
+        error_stacktrace(io) if @result.is_a?(ErroredResult)
       end
       io.puts
     end
 
-    # Produces the values list of the failure block.
-    private def values(io)
-      indent do
-        @result.expectations.each_unsatisfied do |expectation|
-          MatchDataValues.new(expectation.values).each do |pair|
-            line(io, Color.failure(pair))
-          end
-        end
+    # Produces a list of unsatisfied expectations and their values.
+    private def unsatisfied_expectations(io)
+      @result.expectations.each_unsatisfied do |expectation|
+        # TODO: Failure message for this expectation.
+        matcher_values(io, expectation)
+      end
+    end
+
+    # Produces the values list for an expectation
+    private def matcher_values(io, expectation)
+      MatchDataValues.new(expectation.values).each do |pair|
+        # TODO: Not all expectations will be failures (color green and red).
+        line(io, Color.failure(pair))
       end
     end
 
     # Produces the stack trace for an errored result.
-    private def stack_trace(io)
+    private def error_stacktrace(io)
       error = @result.error
-      indent do
-        loop do
-          display_error(io, error)
-          if (next_error = error.cause)
-            error = next_error
-          else
-            break
-          end
+      loop do
+        display_error(io, error)
+        if (next_error = error.cause)
+          error = next_error
+        else
+          break
         end
       end
     end
