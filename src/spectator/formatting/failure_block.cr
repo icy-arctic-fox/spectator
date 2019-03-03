@@ -66,10 +66,10 @@ module Spectator::Formatting
     private def matcher_values(indent, expectation)
       MatchDataValues.new(expectation.values).each do |pair|
         colored_pair = if expectation.satisfied?
-          Color.success(pair)
-        else
-          Color.failure(pair)
-        end
+                         Color.success(pair)
+                       else
+                         Color.failure(pair)
+                       end
         indent.line(colored_pair)
       end
     end
