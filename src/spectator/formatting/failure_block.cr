@@ -53,7 +53,7 @@ module Spectator::Formatting
     # Produces a list of unsatisfied expectations and their values.
     private def unsatisfied_expectations(indent)
       @result.expectations.each_unsatisfied do |expectation|
-        indent.line(FailureMessage.color(@result))
+        indent.line(Color.failure(LabeledText.new("Failure", expectation.actual_message)))
         indent.line
         indent.increase do
           matcher_values(indent, expectation)
@@ -72,9 +72,9 @@ module Spectator::Formatting
 
     # Produces the stack trace for an errored result.
     private def error_stacktrace(indent)
-      indent.line(FailureMessage.color(@result))
-      indent.line
       error = @result.error
+      indent.line(Color.error(LabeledText.new("Error", error)))
+      indent.line
       indent.increase do
         loop do
           display_error(indent, error)
