@@ -94,7 +94,7 @@ module Spectator::Formatting
 
     # Display a single error and its stacktrace.
     private def display_error(indent, error) : Nil
-      indent.line(Color.error("Caused by: #{error.message} (#{error.class})"))
+      indent.line(Color.error(LabeledText.new(error.class.to_s, error)))
       indent.increase do
         error.backtrace.each do |frame|
           indent.line(Color.error(frame))
