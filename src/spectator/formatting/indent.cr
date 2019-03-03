@@ -15,12 +15,12 @@ module Spectator::Formatting
   private struct Indent
     # Default number of spaces to indent by.
     INDENT_SIZE = 2
-    
+
     # Creates the identation tracker.
     # The *io* is the stream to output to.
     # The *indent_size* is how much (number of spaces) to indent at each level.
     # The *initial_indent* is what the ident should be set to.
-    def initialize(@io : IO, @indent_size = INDENT_SIZE, @inital_indent = 0)
+    def initialize(@io : IO, @indent_size = INDENT_SIZE, inital_indent @indent = 0)
     end
 
     # Indents the text and yields.
@@ -30,15 +30,20 @@ module Spectator::Formatting
 
     # Indents the text by a specified amount and yields.
     def increase(amount) : Nil
-      @indent_size += amount
+      @indent += amount
       yield
     ensure
-      @indent_size -= amount
+      @indent -= amount
+    end
+
+    # Produces an empty line.
+    def line
+      @io.puts
     end
 
     # Produces a line of indented text.
     def line(text)
-      @indent_size.times { io << ' ' }
+      @indent.times { @io << ' ' }
       @io.puts text
     end
   end
