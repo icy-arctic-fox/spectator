@@ -69,6 +69,28 @@ describe Spectator::Matchers::EqualityMatcher do
         end
       end
 
+      describe "#values" do
+        context "expected" do
+          it "is the expected value" do
+            expected, actual = 42, 777
+            partial = new_partial(actual)
+            matcher = Spectator::Matchers::EqualityMatcher.new(expected)
+            match_data = matcher.match(partial)
+            match_data.values[:expected].should eq(expected)
+          end
+        end
+
+        context "actual" do
+          it "is the actual value" do
+            expected, actual = 42, 777
+            partial = new_partial(actual)
+            matcher = Spectator::Matchers::EqualityMatcher.new(expected)
+            match_data = matcher.match(partial)
+            match_data.values[:actual].should eq(actual)
+          end
+        end
+      end
+
       describe "#message" do
         it "mentions ==" do
           value = 42

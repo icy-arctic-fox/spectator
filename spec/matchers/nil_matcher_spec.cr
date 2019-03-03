@@ -25,6 +25,27 @@ describe Spectator::Matchers::NilMatcher do
         end
       end
 
+      describe "#values" do
+        context "expected" do
+          it "is nil" do
+            partial = new_partial(42)
+            matcher = Spectator::Matchers::NilMatcher.new
+            match_data = matcher.match(partial)
+            match_data.values[:expected].should eq(nil)
+          end
+        end
+
+        context "actual" do
+          it "is the actual value" do
+            value = 42
+            partial = new_partial(value)
+            matcher = Spectator::Matchers::NilMatcher.new
+            match_data = matcher.match(partial)
+            match_data.values[:actual].should eq(value)
+          end
+        end
+      end
+
       describe "#message" do
         it "mentions nil" do
           partial = new_partial(42)
