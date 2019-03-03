@@ -130,9 +130,10 @@ In no particular order, features that have been implemented and are planned:
     - [ ] Config block in `spec_helper.cr`
     - [ ] Config file - `.rspec`
 - [ ] Reporter and formatting
-    - [ ] RSpec/Crystal Spec default
+    - [X] RSpec/Crystal Spec default
     - [ ] JSON
     - [ ] JUnit
+    - [ ] TAP
 
 ### How it Works
 
