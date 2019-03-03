@@ -1,15 +1,15 @@
 require "../spec_helper"
 
 describe Spectator::Matchers::EqualityMatcher do
-  it "compares using #==" do
-    spy = SpySUT.new
-    partial = new_partial(spy)
-    matcher = Spectator::Matchers::EqualityMatcher.new(42)
-    matcher.match(partial)
-    spy.eq_call_count.should be > 0
-  end
-
   describe "#match" do
+    it "compares using #==" do
+      spy = SpySUT.new
+      partial = new_partial(spy)
+      matcher = Spectator::Matchers::EqualityMatcher.new(42)
+      matcher.match(partial)
+      spy.eq_call_count.should be > 0
+    end
+
     context "returned MatchData" do
       describe "#matched?" do
         context "with identical values" do
