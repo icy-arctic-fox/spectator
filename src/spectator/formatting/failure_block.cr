@@ -27,7 +27,6 @@ module Spectator::Formatting
       indent.increase do
         title(indent)
         indent.increase(inner_indent) do
-          message(indent)
           content(indent)
           source(indent)
         end
@@ -43,34 +42,23 @@ module Spectator::Formatting
       indent.line(NumberedItem.new(@index, @result.example))
     end
 
-    # Produces the message line of the failure block.
-    # The line takes the form:
-    # ```text
-    # Failure: Error message
-    # ```
-    # The indentation of this line starts directly under
-    # the example name from the title line.
-    private def message(indent)
-      indent.line(FailureMessage.color(@result))
-    end
-
     # Produces the main content of the failure block.
     # Any failed expectations are displayed,
     # then an error stacktrace if an error occurred.
     private def content(indent)
-      indent.line
-      indent.increase do
-        unsatisfied_expectations(indent)
-        error_stacktrace(indent) if @result.is_a?(ErroredResult)
-      end
-      indent.line
+      unsatisfied_expectations(indent)
+      error_stacktrace(indent) if @result.is_a?(ErroredResult)
     end
 
     # Produces a list of unsatisfied expectations and their values.
     private def unsatisfied_expectations(indent)
       @result.expectations.each_unsatisfied do |expectation|
-        # TODO: Failure message for this expectation.
-        matcher_values(indent, expectation)
+        indent.line(FailureMessage.color(@result))
+        indent.line
+        indent.increase do
+          matcher_values(indent, expectation)
+        end
+        indent.line
       end
     end
 
@@ -84,15 +72,20 @@ module Spectator::Formatting
 
     # Produces the stack trace for an errored result.
     private def error_stacktrace(indent)
+      indent.line(FailureMessage.color(@result))
+      indent.line
       error = @result.error
-      loop do
-        display_error(indent, error)
-        if (next_error = error.cause)
-          error = next_error
-        else
-          break
+      indent.increase do
+        loop do
+          display_error(indent, error)
+          if (next_error = error.cause)
+            error = next_error
+          else
+            break
+          end
         end
       end
+      indent.line
     end
 
     # Display a single error and its stacktrace.
