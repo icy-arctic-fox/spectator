@@ -1,3 +1,5 @@
+require "option_parser"
+
 module Spectator
   # Generates configuration from the command-line arguments.
   class CommandLineArgumentsConfigSource < ConfigSource
@@ -10,7 +12,9 @@ module Spectator
     # Applies the specified configuration to a builder.
     # Calling this method from multiple sources builds up the final configuration.
     def apply_to(builder : ConfigBuilder) : Nil
-      # ...
+      OptionParser.parse(@args) do |parser|
+        parser.on("-v", "--verbose", "Verbose output using document formatter") { builder.formatter = Formatting::DocumentFormatter.new }
+      end
     end
   end
 end
