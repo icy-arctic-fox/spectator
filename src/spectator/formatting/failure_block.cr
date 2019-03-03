@@ -65,8 +65,12 @@ module Spectator::Formatting
     # Produces the values list for an expectation
     private def matcher_values(indent, expectation)
       MatchDataValues.new(expectation.values).each do |pair|
-        # TODO: Not all expectations will be failures (color green and red).
-        indent.line(Color.failure(pair))
+        colored_pair = if expectation.satisfied?
+          Color.success(pair)
+        else
+          Color.failure(pair)
+        end
+        indent.line(colored_pair)
       end
     end
 
