@@ -8,6 +8,10 @@ module Spectator::Formatting
   class DocumentFormatter < Formatter
     include SuiteSummary
 
+    private INDENT = "  "
+
+    @previous_hierarchy = [] of NestedExampleGroup
+
     # Creates the formatter.
     # By default, output is sent to STDOUT.
     def initialize(@io : IO = STDOUT)
@@ -15,25 +19,46 @@ module Spectator::Formatting
 
     # Does nothing when an example is started.
     def start_example(example)
-      # TODO: Condense similar parents.
-      current_group = example.group
-      group_list = [] of NestedExampleGroup
-      while current_group.is_a?(NestedExampleGroup)
-        group_list << current_group
-        current_group = current_group.parent
-      end
-      indent = 0
-      group_list.reverse_each do |group|
-        indent.times { @io.print ' ' }
-        @io.puts group.what
-        indent += 2
-      end
+      hierarchy = group_hierarchy(example)
+      tuple = hierarchy_diff(@previous_hierarchy, hierarchy)
+      print_sub_hierarchy(*tuple)
+      @previous_hierarchy = hierarchy
     end
 
     # Produces a single character output based on a result.
     def end_example(result)
-      # TODO: Indent.
+      @previous_hierarchy.size.times { @io.print INDENT }
       @io.puts result.call(Color) { result.example.what }
+    end
+
+    # Produces a list of groups making up the hierarchy for an example.
+    private def group_hierarchy(example)
+      hierarchy = [] of NestedExampleGroup
+      group = example.group
+      while group.is_a?(NestedExampleGroup)
+        hierarchy << group
+        group = group.parent
+      end
+      hierarchy.reverse
+    end
+
+    # Generates a difference between two hierarchies.
+    private def hierarchy_diff(first, second)
+      index = -1
+      diff = second.skip_while do |group|
+        index += 1
+        first.size > index && first[index] == group
+      end
+      {index, diff}
+    end
+
+    # Displays an indented hierarchy starting partially into the whole hierarchy.
+    private def print_sub_hierarchy(index, sub_hierarchy)
+      sub_hierarchy.each do |group|
+        index.times { @io.print INDENT }
+        @io.puts group.what
+        index += 1
+      end
     end
   end
 end
