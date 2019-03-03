@@ -2,6 +2,8 @@ require "./spectator/includes"
 
 # Module that contains all functionality related to Spectator.
 module Spectator
+  extend self
+
   # Current version of the Spectator library.
   VERSION = "0.1.0"
 
@@ -85,7 +87,7 @@ module Spectator
   end
 
   # Builds the tests and runs the framework.
-  private def self.run
+  private def run
     # Build the test suite and run it.
     suite = ::Spectator::DSL::Builder.build
     Runner.new(suite, config).run
@@ -100,7 +102,7 @@ module Spectator
   end
 
   # Processes and builds up a configuration to use for running tests.
-  private def self.config
+  private def config
     # Build up the configuration from various sources.
     # The sources that take priority are later in the list.
     apply_config_file
@@ -120,21 +122,21 @@ module Spectator
   # one argument per line.
   # The arguments are identical to those
   # that would be passed on the command-line.
-  private def self.apply_config_file(file_path = CONFIG_FILE_PATH) : Nil
+  private def apply_config_file(file_path = CONFIG_FILE_PATH) : Nil
     return unless File.exists?(file_path)
     args = File.read(file_path).lines
     CommandLineArgumentsConfigSource.new(args).apply_to(@@config_builder)
   end
 
   # Applies configuration options from the command-line arguments
-  private def self.apply_command_line_args : Nil
+  private def apply_command_line_args : Nil
     CommandLineArgumentsConfigSource.new.apply_to(@@config_builder)
   end
 
   # Displays a complete error stack.
   # Prints an error and everything that caused it.
   # Stacktrace is included.
-  private def self.display_error_stack(error) : Nil
+  private def display_error_stack(error) : Nil
     puts
     puts "Encountered an unexpected error in framework"
     # Loop while there's a cause for the error.
@@ -147,7 +149,7 @@ module Spectator
   end
 
   # Display a single error and its stacktrace.
-  private def self.display_error(error) : Nil
+  private def display_error(error) : Nil
     puts
     puts "Caused by: #{error.message}"
     puts error.backtrace.join("\n")
