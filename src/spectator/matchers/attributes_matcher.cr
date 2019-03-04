@@ -6,13 +6,10 @@ module Spectator::Matchers
   # The `ExpectedType` type param should be a `NamedTuple`.
   struct AttributesMatcher(ExpectedType) < ValueMatcher(ExpectedType)
     # Determines whether the matcher is satisfied with the value given to it.
-    # True is returned if the match was successful, false otherwise.
-    def match?(partial)
-      actual = partial.actual
-
+    private def match?(actual)
       # Test each attribute and immediately return false if a comparison fails.
       {% for attribute in ExpectedType.keys %}
-      return false unless expected[{{attribute.symbolize}}] === actual.{{attribute}}
+      return false unless expected[{{attribute.symbolize}}] === actual[{{attribute.symbolize}}]
       {% end %}
 
       # All checks passed if this point is reached.
@@ -21,20 +18,55 @@ module Spectator::Matchers
 
     # Determines whether the matcher is satisfied with the partial given to it.
     # `MatchData` is returned that contains information about the match.
-    def match(partial) : MatchData
-      raise NotImplementedError.new("#match")
+    def match(partial)
+      actual_values = snapshot_values(partial.actual)
+      values = ExpectedActual.new(expected, label, actual_values, partial.label)
+      MatchData.new(match?(actual_values), values)
     end
 
-    # Describes the condition that satisfies the matcher.
-    # This is informational and displayed to the end-user.
-    def message(partial)
-      "Expected #{partial.label} to have #{label}"
+    # Captures all of the actual values.
+    # A `NamedTuple` is returned,
+    # with each key being the attribute.
+    private def snapshot_values(actual)
+      {% begin %}
+      {
+        {% for attribute in ExpectedType.keys %}
+        {{attribute}}: actual.{{attribute}},
+        {% end %}
+      }
+      {% end %}
     end
 
-    # Describes the condition that won't satsify the matcher.
-    # This is informational and displayed to the end-user.
-    def negated_message(partial)
-      "Expected #{partial.label} to not have #{label}"
+    # Match data specific to this matcher.
+    private struct MatchData(ExpectedType, ActualType) < MatchData
+      # Creates the match data.
+      def initialize(matched, @values : ExpectedActual(ExpectedType, ActualType))
+        super(matched)
+      end
+
+      # Information about the match.
+      def values
+        {% begin %}
+        {
+          {% for attribute in ExpectedType.keys %}
+          {{"expected " + attribute.stringify}}: @values.expected[{{attribute.symbolize}}],
+          {{"actual " + attribute.stringify}}:   @values.actual[{{attribute.symbolize}}],
+          {% end %}
+        }
+        {% end %}
+      end
+
+      # Describes the condition that satisfies the matcher.
+      # This is informational and displayed to the end-user.
+      def message
+        "#{@values.actual_label} has attributes #{@values.expected_label}"
+      end
+
+      # Describes the condition that won't satsify the matcher.
+      # This is informational and displayed to the end-user.
+      def negated_message
+        "#{@values.actual_label} does not have attributes #{@values.expected_label}"
+      end
     end
   end
 end
