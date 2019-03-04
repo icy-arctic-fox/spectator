@@ -91,6 +91,30 @@ describe Spectator::Matchers::CaseMatcher do
         end
       end
 
+      describe "#values" do
+        context "expected" do
+          it "is the expected value" do
+            actual = "foobar"
+            expected = /foo/
+            partial = new_partial(actual)
+            matcher = Spectator::Matchers::CaseMatcher.new(expected)
+            match_data = matcher.match(partial)
+            match_data.values[:expected].should eq(expected)
+          end
+        end
+
+        context "actual" do
+          it "is the actual value" do
+            actual = "foobar"
+            expected = /foo/
+            partial = new_partial(actual)
+            matcher = Spectator::Matchers::CaseMatcher.new(expected)
+            match_data = matcher.match(partial)
+            match_data.values[:actual].should eq(actual)
+          end
+        end
+      end
+
       describe "#message" do
         it "mentions ===" do
           value = 42
