@@ -243,7 +243,7 @@ module Spectator::DSL
     # While this is a somewhat contrived example,
     # it demonstrates how contexts can reuse code.
     # Contexts also make it clearer how a scenario is setup.
-    macro context(what, &block)
+    macro context(what)
       # Module for the context.
       # The module uses a generated unique name.
       module Context%context
@@ -287,7 +287,7 @@ module Spectator::DSL
         )
 
         # Nest the block's content in the module.
-        {{block.body}}
+        {{yield}}
 
         # End the current group.
         ::Spectator::DSL::Builder.end_group
@@ -570,7 +570,7 @@ module Spectator::DSL
         )
 
         # Nest the block's content in the module.
-        {{block.body}}
+        {{yield}}
 
         # End the current group.
         ::Spectator::DSL::Builder.end_group
@@ -690,7 +690,7 @@ module Spectator::DSL
         )
 
         # Nest the block's content in the module.
-        {{block.body}}
+        {{yield}}
 
         # End the current group.
         ::Spectator::DSL::Builder.end_group
@@ -870,9 +870,9 @@ module Spectator::DSL
     #   expect(current_time).to_not eq(now)
     # end
     # ```
-    macro let!(name, &block)
+    macro let!(name)
       def {{name.id}}
-        {{block.body}}
+        {{yield}}
       end
     end
 
@@ -982,11 +982,11 @@ module Spectator::DSL
     # Use `#pre_condition` instead for pre-test checks.
     #
     # See also: `#before_all`, `#after_all`, `#after_each`, and `#around_each`.
-    macro before_each(&block)
+    macro before_each
       # Before each hook.
       # Defined as a method so that it can access the same scope as the example code.
       def %hook : Nil
-        {{block.body}}
+        {{yield}}
       end
 
       ::Spectator::DSL::Builder.add_before_each_hook do
@@ -1101,11 +1101,11 @@ module Spectator::DSL
     # Use `#post_condition` instead for post-test checks.
     #
     # See also: `#before_all`, `#before_each`, `#after_all`, and `#around_each`.
-    macro after_each(&block)
+    macro after_each
       # After each hook.
       # Defined as a method so that it can access the same scope as the example code.
       def %hook : Nil
-        {{block.body}}
+        {{yield}}
       end
 
       ::Spectator::DSL::Builder.add_after_each_hook do
@@ -1257,10 +1257,10 @@ module Spectator::DSL
     # ```
     #
     # See also: `#post_condition`.
-    macro pre_condition(&block)
+    macro pre_condition
       # Pre-condition check.
       def %condition : Nil
-        {{block.body}}
+        {{yield}}
       end
 
       ::Spectator::DSL::Builder.add_pre_condition do
@@ -1319,7 +1319,7 @@ module Spectator::DSL
     macro post_condition
       # Post-condition check.
       def %condition : Nil
-        {{block.body}}
+        {{yield}}
       end
 
       ::Spectator::DSL::Builder.add_post_condition do
@@ -1443,7 +1443,7 @@ module Spectator::DSL
     # The *run_method_name* argument is the name of the method in the wrapper class
     # that will actually run the test code.
     # The block passed to this macro is the actual test code.
-    private macro _spectator_test(class_name, run_method_name, &block)
+    private macro _spectator_test(class_name, run_method_name)
       # Wrapper class for isolating the test code.
       struct {{class_name.id}}
         # Mix in methods and macros specifically for example DSL.
@@ -1461,7 +1461,7 @@ module Spectator::DSL
 
         # Generated method for actually running the test code.
         def {{run_method_name.id}}
-          {{block.body}}
+          {{yield}}
         end
       end
     end
@@ -1475,7 +1475,7 @@ module Spectator::DSL
     # The *base_class* argument specifies which type of example class the new class should derive from.
     # This should typically be `RunnableExample` or `PendingExample`.
     # The *what* argument is the description passed to the `#it` or `#pending` block.
-    # And lastly, the block specified is any additional content to put in the class.
+    # And lastly, the block specified is additional content to put in the class.
     # For instance, to define a method in the class, do it in the block.
     # ```
     # _spectator_example(Example123, Test123, RunnableExample, "does something") do
@@ -1484,8 +1484,7 @@ module Spectator::DSL
     #   end
     # end
     # ```
-    # If nothing is needed, omit the block.
-    private macro _spectator_example(example_class_name, test_class_name, base_class, what, &block)
+    private macro _spectator_example(example_class_name, test_class_name, base_class, what)
       # Example class containing meta information and instructions for running the test.
       class {{example_class_name.id}} < {{base_class.id}}
         # Stores the group the example belongs to
@@ -1504,10 +1503,8 @@ module Spectator::DSL
           {{what.starts_with?('#') ? true : false}}
         end
 
-        # Add the block's content if one was provided.
-        {% if block.is_a?(Block) %}
-          {{block.body}}
-        {% end %}
+        # Add the block's content.
+        {{yield}}
 
         # Description for the test.
         def what
