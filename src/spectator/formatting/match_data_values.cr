@@ -8,7 +8,7 @@ module Spectator::Formatting
 
     # Creates the values mapper.
     def initialize(@values : T)
-      @max_key_length = T.types.keys.map(&.to_s.size).max
+      @max_key_length = @values.keys.map(&.to_s.size).max
     end
 
     # Yields pairs that can be printed to output.
