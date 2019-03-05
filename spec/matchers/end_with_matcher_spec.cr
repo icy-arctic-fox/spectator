@@ -191,7 +191,7 @@ describe Spectator::Matchers::EndWithMatcher do
         last = "baz"
         partial = new_partial(value)
         matcher = Spectator::Matchers::EndWithMatcher.new(last)
-        matcher.message(partial).should contain("#starts_with?")
+        matcher.message(partial).should contain("#ends_with?")
       end
     end
 
@@ -247,7 +247,7 @@ describe Spectator::Matchers::EndWithMatcher do
         last = "baz"
         partial = new_partial(value)
         matcher = Spectator::Matchers::EndWithMatcher.new(last)
-        matcher.negated_message(partial).should contain("#starts_with?")
+        matcher.negated_message(partial).should contain("#ends_with?")
       end
     end
 

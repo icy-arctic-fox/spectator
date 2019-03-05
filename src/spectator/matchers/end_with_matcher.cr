@@ -40,7 +40,7 @@ module Spectator::Matchers
       # Otherwise, treat the actual type as an `Indexable`,
       # and retrieve the last value to compare with.
       # FIXME: Is there a better way to do this?
-      if {{actual}}.responds_to?(:starts_with?)
+      if {{actual}}.responds_to?(:ends_with?)
         {{block.args.first}} = EndsWithCompareMethod.new
         {{block.body}}
       else
@@ -58,7 +58,7 @@ module Spectator::Matchers
 
       # String representation for end-user output.
       def to_s
-        "#starts_with?"
+        "#ends_with?"
       end
     end
 
