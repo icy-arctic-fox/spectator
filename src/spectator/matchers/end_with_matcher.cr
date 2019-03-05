@@ -6,30 +6,15 @@ module Spectator::Matchers
   # Otherwise, it is treated as an `Indexable` and the `last` value is compared against.
   struct EndWithMatcher(ExpectedType) < ValueMatcher(ExpectedType)
     # Determines whether the matcher is satisfied with the value given to it.
-    # True is returned if the match was successful, false otherwise.
-    def match?(partial)
-      actual = partial.actual
+    private def match?(actual)
       compare_method(actual, &.eval(actual, expected))
     end
 
     # Determines whether the matcher is satisfied with the partial given to it.
     # `MatchData` is returned that contains information about the match.
-    def match(partial) : MatchData
-      raise NotImplementedError.new("#match")
-    end
-
-    # Describes the condition that satisfies the matcher.
-    # This is informational and displayed to the end-user.
-    def message(partial)
-      method_string = compare_method(partial.actual, &.to_s)
-      "Expected #{partial.label} to end with #{label} (using #{method_string})"
-    end
-
-    # Describes the condition that won't satsify the matcher.
-    # This is informational and displayed to the end-user.
-    def negated_message(partial)
-      method_string = compare_method(partial.actual, &.to_s)
-      "Expected #{partial.label} to not end with #{label} (using #{method_string})"
+    def match(partial)
+      values = ExpectedActual.new(partial, self)
+      MatchData.new(match?(values.actual), values)
     end
 
     # Returns the method that should be used for comparison.
@@ -46,6 +31,36 @@ module Spectator::Matchers
       else
         {{block.args.first}} = IndexableCompareMethod.new
         {{block.body}}
+      end
+    end
+
+    # Match data specific to this matcher.
+    private struct MatchData(ExpectedType, ActualType) < MatchData
+      # Creates the match data.
+      def initialize(matched, @values : ExpectedActual(ExpectedType, ActualType))
+        super(matched)
+      end
+
+      # Information about the match.
+      def values
+        {
+          expected: @values.expected,
+          actual:   @values.actual,
+        }
+      end
+
+      # Describes the condition that satisfies the matcher.
+      # This is informational and displayed to the end-user.
+      def message
+        method_string = compare_method(partial.actual, &.to_s)
+        "#{values.actual_label} ends with #{values.expected_label} (using #{method_string})"
+      end
+
+      # Describes the condition that won't satsify the matcher.
+      # This is informational and displayed to the end-user.
+      def negated_message
+        method_string = compare_method(partial.actual, &.to_s)
+        "#{values.actual_label} does not end with #{values.expected_label} (using #{method_string})"
       end
     end
 
