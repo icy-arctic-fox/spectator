@@ -205,7 +205,64 @@ describe Spectator::Matchers::EndWithMatcher do
       end
 
       describe "#values" do
+        context "with a String" do
+          context "expected" do
+            it "is the expected value" do
+              value = "FOOBAR"
+              last = /baz/i
+              partial = new_partial(value)
+              matcher = Spectator::Matchers::EndWithMatcher.new(last)
+              match_data = matcher.match(partial)
+              match_data.values[:expected].should eq(last)
+            end
+          end
 
+          context "actual" do
+            it "is the actual value" do
+              value = "FOOBAR"
+              last = /baz/i
+              partial = new_partial(value)
+              matcher = Spectator::Matchers::EndWithMatcher.new(last)
+              match_data = matcher.match(partial)
+              match_data.values[:actual].should eq(value)
+            end
+          end
+        end
+
+        context "with an Indexable" do
+          context "expected" do
+            it "is the expected value" do
+              array = %w[FOO BAR BAZ]
+              last = /qux/i
+              partial = new_partial(array)
+              matcher = Spectator::Matchers::EndWithMatcher.new(last)
+              match_data = matcher.match(partial)
+              match_data.values[:expected].should eq(last)
+            end
+          end
+
+          context "actual" do
+            it "is the last element" do
+              array = %w[FOO BAR BAZ]
+              last = /qux/i
+              partial = new_partial(array)
+              matcher = Spectator::Matchers::EndWithMatcher.new(last)
+              match_data = matcher.match(partial)
+              match_data.values[:actual].should eq(array.last)
+            end
+          end
+
+          context "list" do
+            it "is the full actual list" do
+              array = %w[FOO BAR BAZ]
+              last = /qux/i
+              partial = new_partial(array)
+              matcher = Spectator::Matchers::EndWithMatcher.new(last)
+              match_data = matcher.match(partial)
+              match_data.values[:list].should eq(array)
+            end
+          end
+        end
       end
 
       describe "#message" do
@@ -220,7 +277,7 @@ describe Spectator::Matchers::EndWithMatcher do
           end
         end
 
-        context "with an Enumerable" do
+        context "with an Indexable" do
           it "mentions ===" do
             array = %i[a b c]
             partial = new_partial(array)
@@ -282,7 +339,7 @@ describe Spectator::Matchers::EndWithMatcher do
           end
         end
 
-        context "with an Enumerable" do
+        context "with an Indexable" do
           it "mentions ===" do
             array = %i[a b c]
             partial = new_partial(array)
