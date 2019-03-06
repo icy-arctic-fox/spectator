@@ -61,12 +61,12 @@ describe Spectator::Expectations::Expectation do
       end
 
       context "when negated" do
-        it "equals the matcher's #negated_message" do
+        it "equals the matcher's #message" do
           value = 42
           match_data = new_matcher(value).match(new_partial(value))
           match_data.matched?.should be_true # Sanity check.
           expectation = Spectator::Expectations::Expectation.new(match_data, true)
-          expectation.actual_message.should eq(match_data.negated_message)
+          expectation.actual_message.should eq(match_data.message)
         end
       end
     end
@@ -80,11 +80,11 @@ describe Spectator::Expectations::Expectation do
       end
 
       context "when negated" do
-        it "equals the matcher's #message" do
+        it "equals the matcher's #negated_message" do
           match_data = new_matcher(42).match(new_partial(777))
           match_data.matched?.should be_false # Sanity check.
           expectation = Spectator::Expectations::Expectation.new(match_data, true)
-          expectation.actual_message.should eq(match_data.message)
+          expectation.actual_message.should eq(match_data.negated_message)
         end
       end
     end

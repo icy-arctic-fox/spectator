@@ -31,7 +31,7 @@ module Spectator::Expectations
 
     # Text that indicates what the outcome was.
     def actual_message
-      satisfied? ? @match_data.message : @match_data.negated_message
+      @match_data.matched? ? @match_data.message : @match_data.negated_message
     end
   end
 end
