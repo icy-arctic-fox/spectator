@@ -16,136 +16,278 @@ def be_comparison
 end
 
 describe Spectator::Matchers::TruthyMatcher do
-  context "truthy" do
-    describe "#match?" do
-      context "with a truthy value" do
-        it "is true" do
-          value = 42
-          partial = new_partial(value)
-          matcher = Spectator::Matchers::TruthyMatcher.new(true)
-          matcher.match?(partial).should be_true
+  describe "#match" do
+    context "returned MatchData" do
+      context "truthy" do
+        describe "#matched?" do
+          context "with a truthy value" do
+            it "is true" do
+              value = 42
+              partial = new_partial(value)
+              matcher = Spectator::Matchers::TruthyMatcher.new(true)
+              match_data = matcher.match(partial)
+              match_data.matched?.should be_true
+            end
+          end
+
+          context "with false" do
+            it "is false" do
+              value = false
+              partial = new_partial(value)
+              matcher = Spectator::Matchers::TruthyMatcher.new(true)
+              match_data = matcher.match(partial)
+              match_data.matched?.should be_false
+            end
+          end
+
+          context "with nil" do
+            it "is false" do
+              value = nil
+              partial = new_partial(value)
+              matcher = Spectator::Matchers::TruthyMatcher.new(true)
+              match_data = matcher.match(partial)
+              match_data.matched?.should be_false
+            end
+          end
+        end
+
+        describe "#values" do
+          context "expected" do
+            it "contains the definition of falsey" do
+              value = 42
+              partial = new_partial(value)
+              matcher = Spectator::Matchers::TruthyMatcher.new(true)
+              match_data = matcher.match(partial)
+              match_data.values[:expected].should match(/false or nil/i)
+            end
+
+            it "is prefixed with \"Not\"" do
+              value = 42
+              partial = new_partial(value)
+              matcher = Spectator::Matchers::TruthyMatcher.new(true)
+              match_data = matcher.match(partial)
+              match_data.values[:expected].should start_with(/not/i)
+            end
+          end
+
+          context "actual" do
+            it "is the actual value" do
+              value = 42
+              partial = new_partial(value)
+              matcher = Spectator::Matchers::TruthyMatcher.new(true)
+              match_data = matcher.match(partial)
+              match_data.values[:actual].should eq(value)
+            end
+          end
+
+          context "truthy" do
+            context "when the actual value is truthy" do
+              it "is true" do
+                value = 42
+                partial = new_partial(value)
+                matcher = Spectator::Matchers::TruthyMatcher.new(true)
+                match_data = matcher.match(partial)
+                match_data.values[:truthy].should be_true
+              end
+            end
+
+            context "when the actual value is false" do
+              it "is false" do
+                value = false
+                partial = new_partial(value)
+                matcher = Spectator::Matchers::TruthyMatcher.new(true)
+                match_data = matcher.match(partial)
+                match_data.values[:truthy].should be_false
+              end
+            end
+
+            context "when the actual value is nil" do
+              it "is false" do
+                value = nil
+                partial = new_partial(value)
+                matcher = Spectator::Matchers::TruthyMatcher.new(true)
+                match_data = matcher.match(partial)
+                match_data.values[:truthy].should be_false
+              end
+            end
+          end
+        end
+
+        describe "#message" do
+          it "contains the actual label" do
+            value = 42
+            label = "everything"
+            partial = new_partial(value, label)
+            matcher = Spectator::Matchers::TruthyMatcher.new(true)
+            match_data = matcher.match(partial)
+            match_data.message.should contain(label)
+          end
+
+          it "contains the \"truthy\"" do
+            value = 42
+            label = "everything"
+            partial = new_partial(value)
+            matcher = Spectator::Matchers::TruthyMatcher.new(true)
+            match_data = matcher.match(partial)
+            match_data.message.should contain("truthy")
+          end
+        end
+
+        describe "#negated_message" do
+          it "contains the actual label" do
+            value = 42
+            label = "everything"
+            partial = new_partial(value, label)
+            matcher = Spectator::Matchers::TruthyMatcher.new(true)
+            match_data = matcher.match(partial)
+            match_data.negated_message.should contain(label)
+          end
+
+          it "contains the \"truthy\"" do
+            value = 42
+            label = "everything"
+            partial = new_partial(value)
+            matcher = Spectator::Matchers::TruthyMatcher.new(true)
+            match_data = matcher.match(partial)
+            match_data.negated_message.should contain("truthy")
+          end
         end
       end
 
-      context "with false" do
-        it "is false" do
-          value = false
-          partial = new_partial(value)
-          matcher = Spectator::Matchers::TruthyMatcher.new(true)
-          matcher.match?(partial).should be_false
+      context "falsey" do
+        describe "#matched?" do
+          context "with a truthy value" do
+            it "is false" do
+              value = 42
+              partial = new_partial(value)
+              matcher = Spectator::Matchers::TruthyMatcher.new(false)
+              match_data = matcher.match(partial)
+              match_data.matched?.should be_false
+            end
+          end
+
+          context "with false" do
+            it "is true" do
+              value = false
+              partial = new_partial(value)
+              matcher = Spectator::Matchers::TruthyMatcher.new(false)
+              match_data = matcher.match(partial)
+              match_data.matched?.should be_true
+            end
+          end
+
+          context "with nil" do
+            it "is true" do
+              value = nil
+              partial = new_partial(value)
+              matcher = Spectator::Matchers::TruthyMatcher.new(false)
+              match_data = matcher.match(partial)
+              match_data.matched?.should be_true
+            end
+          end
         end
-      end
 
-      context "with nil" do
-        it "is false" do
-          value = nil
-          partial = new_partial(value)
-          matcher = Spectator::Matchers::TruthyMatcher.new(true)
-          matcher.match?(partial).should be_false
+        describe "#values" do
+          context "expected" do
+            it "contains the definition of falsey" do
+              value = 42
+              partial = new_partial(value)
+              matcher = Spectator::Matchers::TruthyMatcher.new(false)
+              match_data = matcher.match(partial)
+              match_data.values[:expected].should match(/false or nil/i)
+            end
+
+            it "is not prefixed with \"Not\"" do
+              value = 42
+              partial = new_partial(value)
+              matcher = Spectator::Matchers::TruthyMatcher.new(false)
+              match_data = matcher.match(partial)
+              match_data.values[:expected].should_not start_with(/not/i)
+            end
+          end
+
+          context "actual" do
+            it "is the actual value" do
+              value = 42
+              partial = new_partial(value)
+              matcher = Spectator::Matchers::TruthyMatcher.new(false)
+              match_data = matcher.match(partial)
+              match_data.values[:actual].should eq(value)
+            end
+          end
+
+          context "truthy" do
+            context "when the actual value is truthy" do
+              it "is true" do
+                value = 42
+                partial = new_partial(value)
+                matcher = Spectator::Matchers::TruthyMatcher.new(false)
+                match_data = matcher.match(partial)
+                match_data.values[:truthy].should be_true
+              end
+            end
+
+            context "when the actual value is false" do
+              it "is false" do
+                value = false
+                partial = new_partial(value)
+                matcher = Spectator::Matchers::TruthyMatcher.new(false)
+                match_data = matcher.match(partial)
+                match_data.values[:truthy].should be_false
+              end
+            end
+
+            context "when the actual value is nil" do
+              it "is false" do
+                value = nil
+                partial = new_partial(value)
+                matcher = Spectator::Matchers::TruthyMatcher.new(false)
+                match_data = matcher.match(partial)
+                match_data.values[:truthy].should be_false
+              end
+            end
+          end
         end
-      end
-    end
 
-    describe "#message" do
-      it "contains the actual label" do
-        value = 42
-        label = "everything"
-        partial = new_partial(value, label)
-        matcher = Spectator::Matchers::TruthyMatcher.new(true)
-        matcher.message(partial).should contain(label)
-      end
+        describe "#message" do
+          it "contains the actual label" do
+            value = 42
+            label = "everything"
+            partial = new_partial(value, label)
+            matcher = Spectator::Matchers::TruthyMatcher.new(false)
+            match_data = matcher.match(partial)
+            match_data.message.should contain(label)
+          end
 
-      it "contains the \"truthy\"" do
-        value = 42
-        label = "everything"
-        partial = new_partial(value)
-        matcher = Spectator::Matchers::TruthyMatcher.new(true)
-        matcher.message(partial).should contain("truthy")
-      end
-    end
-
-    describe "#negated_message" do
-      it "contains the actual label" do
-        value = 42
-        label = "everything"
-        partial = new_partial(value, label)
-        matcher = Spectator::Matchers::TruthyMatcher.new(true)
-        matcher.negated_message(partial).should contain(label)
-      end
-
-      it "contains the \"truthy\"" do
-        value = 42
-        label = "everything"
-        partial = new_partial(value)
-        matcher = Spectator::Matchers::TruthyMatcher.new(true)
-        matcher.negated_message(partial).should contain("truthy")
-      end
-    end
-  end
-
-  context "falsey" do
-    describe "#match?" do
-      context "with a truthy value" do
-        it "is false" do
-          value = 42
-          partial = new_partial(value)
-          matcher = Spectator::Matchers::TruthyMatcher.new(false)
-          matcher.match?(partial).should be_false
+          it "contains the \"falsey\"" do
+            value = 42
+            label = "everything"
+            partial = new_partial(value)
+            matcher = Spectator::Matchers::TruthyMatcher.new(false)
+            match_data = matcher.match(partial)
+            match_data.message.should contain("falsey")
+          end
         end
-      end
 
-      context "with false" do
-        it "is true" do
-          value = false
-          partial = new_partial(value)
-          matcher = Spectator::Matchers::TruthyMatcher.new(false)
-          matcher.match?(partial).should be_true
+        describe "#negated_message" do
+          it "contains the actual label" do
+            value = 42
+            label = "everything"
+            partial = new_partial(value, label)
+            matcher = Spectator::Matchers::TruthyMatcher.new(false)
+            match_data = matcher.match(partial)
+            match_data.negated_message.should contain(label)
+          end
+
+          it "contains the \"falsey\"" do
+            value = 42
+            label = "everything"
+            partial = new_partial(value)
+            matcher = Spectator::Matchers::TruthyMatcher.new(false)
+            match_data = matcher.match(partial)
+            match_data.negated_message.should contain("falsey")
+          end
         end
-      end
-
-      context "with nil" do
-        it "is true" do
-          value = nil
-          partial = new_partial(value)
-          matcher = Spectator::Matchers::TruthyMatcher.new(false)
-          matcher.match?(partial).should be_true
-        end
-      end
-    end
-
-    describe "#message" do
-      it "contains the actual label" do
-        value = 42
-        label = "everything"
-        partial = new_partial(value, label)
-        matcher = Spectator::Matchers::TruthyMatcher.new(false)
-        matcher.message(partial).should contain(label)
-      end
-
-      it "contains the \"falsey\"" do
-        value = 42
-        label = "everything"
-        partial = new_partial(value)
-        matcher = Spectator::Matchers::TruthyMatcher.new(false)
-        matcher.message(partial).should contain("falsey")
-      end
-    end
-
-    describe "#negated_message" do
-      it "contains the actual label" do
-        value = 42
-        label = "everything"
-        partial = new_partial(value, label)
-        matcher = Spectator::Matchers::TruthyMatcher.new(false)
-        matcher.negated_message(partial).should contain(label)
-      end
-
-      it "contains the \"falsey\"" do
-        value = 42
-        label = "everything"
-        partial = new_partial(value)
-        matcher = Spectator::Matchers::TruthyMatcher.new(false)
-        matcher.negated_message(partial).should contain("falsey")
       end
     end
   end

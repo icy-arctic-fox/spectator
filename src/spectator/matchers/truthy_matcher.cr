@@ -21,28 +21,16 @@ module Spectator::Matchers
     end
 
     # Determines whether the matcher is satisfied with the value given to it.
-    # True is returned if the match was successful, false otherwise.
-    def match?(partial)
+    private def match?(actual)
       # Cast value to truthy value and compare.
-      @truthy == !!partial.actual
+      @truthy == !!actual
     end
 
     # Determines whether the matcher is satisfied with the partial given to it.
     # `MatchData` is returned that contains information about the match.
-    def match(partial) : MatchData
-      raise NotImplementedError.new("#match")
-    end
-
-    # Describes the condition that satisfies the matcher.
-    # This is informational and displayed to the end-user.
-    def message(partial)
-      "Expected #{partial.label} to be #{label}"
-    end
-
-    # Describes the condition that won't satsify the matcher.
-    # This is informational and displayed to the end-user.
-    def negated_message(partial)
-      "Expected #{partial.label} to not be #{label}"
+    def match(partial)
+      actual = partial.actual
+      MatchData.new(match?(actual), @truthy, actual, partial.label)
     end
 
     # Creates a matcher that checks if a value is less than an expected value.
@@ -97,6 +85,40 @@ module Spectator::Matchers
     # ```
     def !=(expected : ExpectedType) forall ExpectedType
       InequalityMatcher.new(expected)
+    end
+
+    # Match data specific to this matcher.
+    private struct MatchData(ActualType) < MatchData
+      # Creates the match data.
+      def initialize(matched, @truthy : Bool, @actual : ActualType, @actual_label : String)
+        super(matched)
+      end
+
+      # Information about the match.
+      def values
+        {
+          expected: @truthy ? "Not false or nil" : "false or nil",
+          actual:   @actual,
+          truthy:   !!@actual,
+        }
+      end
+
+      # Describes the condition that satisfies the matcher.
+      # This is informational and displayed to the end-user.
+      def message
+        "#{@actual_label} is #{expected_label}"
+      end
+
+      # Describes the condition that won't satsify the matcher.
+      # This is informational and displayed to the end-user.
+      def negated_message
+        "#{@actual_label} is not #{expected_label}"
+      end
+
+      # Textual representation of what the matcher expects.
+      private def expected_label
+        @truthy ? "truthy" : "falsey"
+      end
     end
   end
 end
