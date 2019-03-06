@@ -11,27 +11,43 @@ module Spectator::Matchers
     end
 
     # Determines whether the matcher is satisfied with the value given to it.
-    # True is returned if the match was successful, false otherwise.
-    def match?(partial)
-      partial.actual.is_a?(Expected)
+    private def match?(actual)
+      actual.is_a?(Expected)
     end
 
     # Determines whether the matcher is satisfied with the partial given to it.
     # `MatchData` is returned that contains information about the match.
-    def match(partial) : MatchData
-      raise NotImplementedError.new("#match")
+    def match(partial)
+      actual = partial.actual
+      MatchData(Expected, typeof(actual)).new(match?(actual), partial.label)
     end
 
-    # Describes the condition that satisfies the matcher.
-    # This is informational and displayed to the end-user.
-    def message(partial)
-      "Expected #{partial.label} to be a #{label}"
-    end
+    # Match data specific to this matcher.
+    private struct MatchData(ExpectedType, ActualType) < MatchData
+      # Creates the match data.
+      def initialize(matched, @actual_label : String)
+        super(matched)
+      end
 
-    # Describes the condition that won't satsify the matcher.
-    # This is informational and displayed to the end-user.
-    def negated_message(partial)
-      "Expected #{partial.label} to not be a #{label}"
+      # Information about the match.
+      def values
+        {
+          expected: ExpectedType,
+          actual:   ActualType,
+        }
+      end
+
+      # Describes the condition that satisfies the matcher.
+      # This is informational and displayed to the end-user.
+      def message
+        "#{@actual_label} is a #{ExpectedType}"
+      end
+
+      # Describes the condition that won't satsify the matcher.
+      # This is informational and displayed to the end-user.
+      def negated_message
+        "#{@actual_label} is not a #{ExpectedType}"
+      end
     end
   end
 end
