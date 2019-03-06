@@ -14,5 +14,12 @@ module Spectator::Matchers
       io << ' '
       io << @value
     end
+
+    # Outputs details of the formatted value with a prefix.
+    def inspect(io)
+      io << @prefix
+      io << ' '
+      @prefix.inspect(io)
+    end
   end
 end
