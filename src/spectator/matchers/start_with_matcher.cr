@@ -6,72 +6,84 @@ module Spectator::Matchers
   # Otherwise, it is treated as an `Enumerable` and the `first` value is compared against.
   struct StartWithMatcher(ExpectedType) < ValueMatcher(ExpectedType)
     # Determines whether the matcher is satisfied with the value given to it.
-    # True is returned if the match was successful, false otherwise.
-    def match?(partial)
-      actual = partial.actual
-      compare_method(actual, &.eval(actual, expected))
+    private def match_starts_with?(actual)
+      actual.starts_with?(expected)
+    end
+
+    # Determines whether the matcher is satisfied with the value given to it.
+    private def match_first?(actual)
+      expected === actual
     end
 
     # Determines whether the matcher is satisfied with the partial given to it.
     # `MatchData` is returned that contains information about the match.
-    def match(partial) : MatchData
-      raise NotImplementedError.new("#match")
-    end
-
-    # Describes the condition that satisfies the matcher.
-    # This is informational and displayed to the end-user.
-    def message(partial)
-      method_string = compare_method(partial.actual, &.to_s)
-      "Expected #{partial.label} to start with #{label} (using #{method_string})"
-    end
-
-    # Describes the condition that won't satsify the matcher.
-    # This is informational and displayed to the end-user.
-    def negated_message(partial)
-      method_string = compare_method(partial.actual, &.to_s)
-      "Expected #{partial.label} to not start with #{label} (using #{method_string})"
-    end
-
-    # Returns the method that should be used for comparison.
-    # Call `eval(actual, expected)` on the returned value.
-    private macro compare_method(actual, &block)
-      # If the actual type defines `starts_with?`,
-      # then use that for the comparison.
-      # Otherwise, treat the actual type as an `Enumerable`,
-      # and retrieve the first value to compare with.
-      # FIXME: Is there a better way to do this?
-      if {{actual}}.responds_to?(:starts_with?)
-        {{block.args.first}} = StartsWithCompareMethod.new
-        {{block.body}}
+    def match(partial)
+      values = ExpectedActual.new(partial, self)
+      actual = values.actual
+      if actual.responds_to?(:starts_with?)
+        StartsWithMatchData.new(match_starts_with?(actual), values)
       else
-        {{block.args.first}} = EnumerableCompareMethod.new
-        {{block.body}}
+        first = actual.first
+        FirstMatchData.new(match_first?(first), values, first)
       end
     end
 
-    # Comparison method for types that define the `starts_with?` method.
-    private struct StartsWithCompareMethod
-      # Evaluates the condition to determine whether the matcher is satisfied.
-      def eval(actual, expected)
-        actual.starts_with?(expected)
+    # Match data specific to this matcher.
+    # This type is used when the actual value responds to `starts_with?`.
+    private struct StartsWithMatchData(ExpectedType, ActualType) < MatchData
+      # Creates the match data.
+      def initialize(matched, @values : ExpectedActual(ExpectedType, ActualType))
+        super(matched)
       end
 
-      # String representation for end-user output.
-      def to_s
-        "#starts_with?"
+      # Information about the match.
+      def values
+        {
+          expected: @values.expected,
+          actual:   @values.actual,
+        }
+      end
+
+      # Describes the condition that satisfies the matcher.
+      # This is informational and displayed to the end-user.
+      def message
+        "#{@values.actual_label} starts with #{@values.expected_label} (using #starts_with?)"
+      end
+
+      # Describes the condition that won't satsify the matcher.
+      # This is informational and displayed to the end-user.
+      def negated_message
+        "#{@values.actual_label} does not start with #{@values.expected_label} (using #starts_with?)"
       end
     end
 
-    # Comparison method for `Enumerable` types.
-    private struct EnumerableCompareMethod
-      # Evaluates the condition to determine whether the matcher is satisfied.
-      def eval(actual, expected)
-        expected === actual.first
+    # Match data specific to this matcher.
+    # This type is used when the actual value does not respond to `ends_with?`.
+    private struct FirstMatchData(ExpectedType, ActualType, FirstType) < MatchData
+      # Creates the match data.
+      def initialize(matched, @values : ExpectedActual(ExpectedType, ActualType), @first : FirstType)
+        super(matched)
       end
 
-      # String representation for end-user output.
-      def to_s
-        "expected === actual.first"
+      # Information about the match.
+      def values
+        {
+          expected: @values.expected,
+          actual:   @first,
+          list:     @values.actual,
+        }
+      end
+
+      # Describes the condition that satisfies the matcher.
+      # This is informational and displayed to the end-user.
+      def message
+        "#{@values.actual_label} starts with #{@values.expected_label} (using expected === actual.first)"
+      end
+
+      # Describes the condition that won't satsify the matcher.
+      # This is informational and displayed to the end-user.
+      def negated_message
+        "#{@values.actual_label} does not start with #{@values.expected_label} (using expected === actual.first)"
       end
     end
   end
