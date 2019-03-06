@@ -7,19 +7,12 @@ module Spectator::Matchers
   struct HaveMatcher(ExpectedType) < ValueMatcher(ExpectedType)
     # Determines whether the matcher is satisfied with the value given to it.
     # True is returned if the match was successful, false otherwise.
-    def match?(partial)
-      actual = partial.actual
+    private def match?(actual)
       if actual.is_a?(String)
         match_string?(actual)
       else
         match_enumerable?(actual)
       end
-    end
-
-    # Determines whether the matcher is satisfied with the partial given to it.
-    # `MatchData` is returned that contains information about the match.
-    def match(partial) : MatchData
-      raise NotImplementedError.new("#match")
     end
 
     # Checks if a `String` matches the expected values.
@@ -41,16 +34,39 @@ module Spectator::Matchers
       end
     end
 
-    # Describes the condition that satisfies the matcher.
-    # This is informational and displayed to the end-user.
-    def message(partial)
-      "Expected #{partial.label} to include #{label}"
+    # Determines whether the matcher is satisfied with the partial given to it.
+    # `MatchData` is returned that contains information about the match.
+    def match(partial)
+      values = ExpectedActual.new(partial, self)
+      MatchData.new(match?(values.actual), values)
     end
 
-    # Describes the condition that won't satsify the matcher.
-    # This is informational and displayed to the end-user.
-    def negated_message(partial)
-      "Expected #{partial.label} to not include #{label}"
+    # Match data specific to this matcher.
+    private struct MatchData(ExpectedType, ActualType) < MatchData
+      # Creates the match data.
+      def initialize(matched, @values : ExpectedActual(ExpectedType, ActualType))
+        super(matched)
+      end
+
+      # Information about the match.
+      def values
+        {
+          subset:   @values.expected,
+          superset: @values.actual,
+        }
+      end
+
+      # Describes the condition that satisfies the matcher.
+      # This is informational and displayed to the end-user.
+      def message
+        "#{@values.actual_label} includes #{@values.expected_label}"
+      end
+
+      # Describes the condition that won't satsify the matcher.
+      # This is informational and displayed to the end-user.
+      def negated_message
+        "#{@values.actual_label} does not include #{@values.expected_label}"
+      end
     end
   end
 end
