@@ -26,7 +26,7 @@ module Spectator::Matchers
       # Information about the match.
       def values
         {
-          expected: PrefixedValue.new("Not", @values.expected),
+          expected: NegatablePrefixedValue.new("Not", "", @values.expected),
           actual:   @values.actual,
         }
       end

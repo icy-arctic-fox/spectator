@@ -27,7 +27,7 @@ module Spectator::Matchers
       # Information about the match.
       def values
         {
-          expected: nil,
+          expected: NegatableValue.new(nil),
           actual:   @actual,
         }
       end

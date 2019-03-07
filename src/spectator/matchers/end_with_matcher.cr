@@ -39,7 +39,7 @@ module Spectator::Matchers
       # Information about the match.
       def values
         {
-          expected: @values.expected,
+          expected: NegatableValue.new(@values.expected),
           actual:   @values.actual,
         }
       end

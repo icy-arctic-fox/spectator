@@ -27,7 +27,7 @@ module Spectator::Matchers
       def values
         actual = @values.actual
         {
-          key:    @values.expected,
+          key:    NegatableValue.new(@values.expected),
           actual: actual.responds_to?(:keys) ? actual.keys : actual,
         }
       end

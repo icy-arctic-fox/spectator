@@ -28,7 +28,7 @@ module Spectator::Matchers
       # Information about the match.
       def values
         {
-          subset:   @values.expected,
+          subset:   NegatableValue.new(@values.expected),
           superset: @values.actual,
         }
       end

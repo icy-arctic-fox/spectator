@@ -32,7 +32,7 @@ module Spectator::Matchers
       # Information about the match.
       def values
         {
-          expected: ExpectedType,
+          expected: NegatableValue.new(ExpectedType),
           actual:   ActualType,
         }
       end

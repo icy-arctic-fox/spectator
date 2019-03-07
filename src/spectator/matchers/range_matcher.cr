@@ -67,8 +67,8 @@ module Spectator::Matchers
       # Information about the match.
       def values
         {
-          lower:  PrefixedValue.new(">=", range.begin),
-          upper:  PrefixedValue.new(exclusive? ? "<" : "<=", range.end),
+          lower:  NegatablePrefixedValue.new(">=", "<", range.begin),
+          upper:  NegatablePrefixedValue.new(exclusive? ? "<" : "<=", exclusive? ? ">=" : ">", range.end),
           actual: @values.actual,
         }
       end
@@ -112,7 +112,7 @@ module Spectator::Matchers
       # Information about the match.
       def values
         {
-          set:    @values.expected,
+          set:    NegatableValue.new(@values.expected),
           actual: @values.actual,
         }
       end

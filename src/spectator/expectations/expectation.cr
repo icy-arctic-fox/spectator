@@ -21,7 +21,13 @@ module Spectator::Expectations
     # Information about the match.
     # Returned value and type will something that has key-value pairs (like a `NamedTuple`).
     def values
-      @match_data.values
+      @match_data.values.tap do |values|
+        if @negated
+          values.each_value do |value|
+            value.negate if value.responds_to?(:negate)
+          end
+        end
+      end
     end
 
     # Text that indicates the condition that must be met for the expectation to be satisifed.

@@ -96,8 +96,10 @@ module Spectator::Matchers
 
       # Information about the match.
       def values
+        truthy = "Not false or nil"
+        falsey = "false or nil"
         {
-          expected: @truthy ? "Not false or nil" : "false or nil",
+          expected: AlternativeValue.new(@truthy ? truthy : falsey, @truthy ? falsey : truthy),
           actual:   @actual,
           truthy:   !!@actual,
         }
