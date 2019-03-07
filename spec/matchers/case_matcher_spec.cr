@@ -99,7 +99,7 @@ describe Spectator::Matchers::CaseMatcher do
             partial = new_partial(actual)
             matcher = Spectator::Matchers::CaseMatcher.new(expected)
             match_data = matcher.match(partial)
-            match_data.values[:expected].should eq(expected)
+            match_data.values[:expected].value.should eq(expected)
           end
         end
 

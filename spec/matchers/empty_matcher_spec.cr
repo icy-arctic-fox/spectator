@@ -32,7 +32,7 @@ describe Spectator::Matchers::EmptyMatcher do
             partial = new_partial(array)
             matcher = Spectator::Matchers::EmptyMatcher.new
             match_data = matcher.match(partial)
-            match_data.values[:expected].size.should eq(0)
+            match_data.values[:expected].value.size.should eq(0)
           end
         end
 

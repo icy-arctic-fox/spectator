@@ -274,9 +274,9 @@ describe Spectator::Matchers::AttributesMatcher do
           matcher = Spectator::Matchers::AttributesMatcher.new(attributes)
           match_data = matcher.match(partial)
           values = match_data.values
-          values[:"expected first"].should eq(attributes[:first])
-          values[:"expected last"].should eq(attributes[:last])
-          values[:"expected size"].should eq(attributes[:size])
+          values[:"expected first"].value.should eq(attributes[:first])
+          values[:"expected last"].value.should eq(attributes[:last])
+          values[:"expected size"].value.should eq(attributes[:size])
         end
 
         it "has the actual values" do

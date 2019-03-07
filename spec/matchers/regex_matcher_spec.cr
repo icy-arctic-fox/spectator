@@ -43,7 +43,7 @@ describe Spectator::Matchers::RegexMatcher do
             partial = new_partial(value)
             matcher = Spectator::Matchers::RegexMatcher.new(pattern)
             match_data = matcher.match(partial)
-            match_data.values[:expected].should eq(pattern)
+            match_data.values[:expected].value.should eq(pattern)
           end
         end
 

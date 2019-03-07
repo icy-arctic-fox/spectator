@@ -300,7 +300,7 @@ describe Spectator::Matchers::ContainMatcher do
             partial = new_partial(array)
             matcher = Spectator::Matchers::ContainMatcher.new(search)
             match_data = matcher.match(partial)
-            match_data.values[:subset].should eq(search)
+            match_data.values[:subset].value.should eq(search)
           end
         end
 

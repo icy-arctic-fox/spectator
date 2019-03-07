@@ -157,7 +157,7 @@ describe Spectator::Matchers::RangeMatcher do
               partial = new_partial(5)
               matcher = Spectator::Matchers::RangeMatcher.new(range)
               match_data = matcher.match(partial)
-              match_data_prefix(match_data, :lower, Int32)[:value].should eq(range.begin)
+              match_data_prefix(match_data, :lower)[:value].should eq(range.begin)
             end
 
             it "is prefixed with >=" do
@@ -165,7 +165,7 @@ describe Spectator::Matchers::RangeMatcher do
               partial = new_partial(5)
               matcher = Spectator::Matchers::RangeMatcher.new(range)
               match_data = matcher.match(partial)
-              match_data_prefix(match_data, :lower, Int32)[:to_s].should start_with(">=")
+              match_data_prefix(match_data, :lower)[:to_s].should start_with(">=")
             end
           end
 
@@ -175,7 +175,7 @@ describe Spectator::Matchers::RangeMatcher do
               partial = new_partial(5)
               matcher = Spectator::Matchers::RangeMatcher.new(range)
               match_data = matcher.match(partial)
-              match_data_prefix(match_data, :upper, Int32)[:value].should eq(range.end)
+              match_data_prefix(match_data, :upper)[:value].should eq(range.end)
             end
 
             context "when inclusive" do
@@ -184,7 +184,7 @@ describe Spectator::Matchers::RangeMatcher do
                 partial = new_partial(5)
                 matcher = Spectator::Matchers::RangeMatcher.new(range)
                 match_data = matcher.match(partial)
-                match_data_prefix(match_data, :upper, Int32)[:to_s].should start_with("<=")
+                match_data_prefix(match_data, :upper)[:to_s].should start_with("<=")
               end
             end
 
@@ -194,7 +194,7 @@ describe Spectator::Matchers::RangeMatcher do
                 partial = new_partial(5)
                 matcher = Spectator::Matchers::RangeMatcher.new(range)
                 match_data = matcher.match(partial)
-                match_data_prefix(match_data, :upper, Int32)[:to_s].should start_with("<")
+                match_data_prefix(match_data, :upper)[:to_s].should start_with("<")
               end
             end
           end
@@ -206,7 +206,7 @@ describe Spectator::Matchers::RangeMatcher do
               partial = new_partial(value)
               matcher = Spectator::Matchers::RangeMatcher.new(range)
               match_data = matcher.match(partial)
-              match_data_value(match_data, :actual, Int32).should eq(value)
+              match_data_value(match_data, :actual).should eq(value)
             end
           end
         end
@@ -219,7 +219,7 @@ describe Spectator::Matchers::RangeMatcher do
               partial = new_partial(value)
               matcher = Spectator::Matchers::RangeMatcher.new(array)
               match_data = matcher.match(partial)
-              match_data_value(match_data, :set, typeof(array)).should eq(array)
+              match_data_prefix(match_data, :set)[:value].should eq(array)
             end
           end
 
@@ -230,7 +230,7 @@ describe Spectator::Matchers::RangeMatcher do
               partial = new_partial(value)
               matcher = Spectator::Matchers::RangeMatcher.new(array)
               match_data = matcher.match(partial)
-              match_data_value(match_data, :actual, typeof(value)).should eq(value)
+              match_data_value(match_data, :actual).should eq(value)
             end
           end
         end

@@ -41,7 +41,7 @@ describe Spectator::Matchers::HaveValueMatcher do
             partial = new_partial(hash)
             matcher = Spectator::Matchers::HaveValueMatcher.new(value)
             match_data = matcher.match(partial)
-            match_data.values[:value].should eq(value)
+            match_data.values[:value].value.should eq(value)
           end
         end
 

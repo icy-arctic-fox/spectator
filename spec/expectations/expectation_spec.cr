@@ -46,7 +46,22 @@ describe Spectator::Expectations::Expectation do
       value = 42
       match_data = new_matcher(value).match(new_partial(value))
       expectation = Spectator::Expectations::Expectation.new(match_data, false)
-      expectation.values.should eq(match_data.values)
+      expectation_values = expectation.values
+      match_data.values.each do |k, v|
+        expectation_values.has_key?(k).should be_true
+        expectation_values[k].to_s.should eq(v.to_s)
+      end
+    end
+
+    context "when negated" do
+      it "negates all negatable values" do
+        value = 42
+        match_data = new_matcher(value).match(new_partial(value))
+        expectation = Spectator::Expectations::Expectation.new(match_data, true)
+        expectation.values.each_value do |value|
+          value.to_s.should start_with(/not/i) if value.responds_to?(:negate)
+        end
+      end
     end
   end
 

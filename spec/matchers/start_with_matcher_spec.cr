@@ -213,7 +213,7 @@ describe Spectator::Matchers::StartWithMatcher do
               partial = new_partial(value)
               matcher = Spectator::Matchers::StartWithMatcher.new(first)
               match_data = matcher.match(partial)
-              match_data.values[:expected].should eq(first)
+              match_data.values[:expected].value.should eq(first)
             end
           end
 

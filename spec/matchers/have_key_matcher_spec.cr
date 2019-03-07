@@ -67,7 +67,7 @@ describe Spectator::Matchers::HaveKeyMatcher do
             partial = new_partial(tuple)
             matcher = Spectator::Matchers::HaveKeyMatcher.new(key)
             match_data = matcher.match(partial)
-            match_data.values[:key].should eq(key)
+            match_data.values[:key].value.should eq(key)
           end
         end
 

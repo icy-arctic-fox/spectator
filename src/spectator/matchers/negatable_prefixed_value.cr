@@ -4,7 +4,7 @@ module Spectator::Matchers
   private class NegatablePrefixedValue(T)
     # Negatable value.
     getter value
-    
+
     # Creates the wrapper.
     def initialize(@positive_prefix : String, @negative_prefix : String, @value : T)
       @negated = false

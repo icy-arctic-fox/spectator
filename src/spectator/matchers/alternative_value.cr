@@ -14,7 +14,7 @@ module Spectator::Matchers
 
     # Returns the correct value based on the negated status.
     def value
-      @negated ? @value1 : @value2
+      @negated ? @value2 : @value1
     end
 
     # Produces a stringified value.

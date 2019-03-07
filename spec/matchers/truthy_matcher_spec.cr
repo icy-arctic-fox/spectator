@@ -58,7 +58,7 @@ describe Spectator::Matchers::TruthyMatcher do
               partial = new_partial(value)
               matcher = Spectator::Matchers::TruthyMatcher.new(true)
               match_data = matcher.match(partial)
-              match_data.values[:expected].should match(/false or nil/i)
+              match_data.values[:expected].to_s.should match(/false or nil/i)
             end
 
             it "is prefixed with \"Not\"" do
@@ -66,7 +66,7 @@ describe Spectator::Matchers::TruthyMatcher do
               partial = new_partial(value)
               matcher = Spectator::Matchers::TruthyMatcher.new(true)
               match_data = matcher.match(partial)
-              match_data.values[:expected].should start_with(/not/i)
+              match_data.values[:expected].to_s.should start_with(/not/i)
             end
           end
 
@@ -194,7 +194,7 @@ describe Spectator::Matchers::TruthyMatcher do
               partial = new_partial(value)
               matcher = Spectator::Matchers::TruthyMatcher.new(false)
               match_data = matcher.match(partial)
-              match_data.values[:expected].should match(/false or nil/i)
+              match_data.values[:expected].to_s.should match(/false or nil/i)
             end
 
             it "is not prefixed with \"Not\"" do
@@ -202,7 +202,7 @@ describe Spectator::Matchers::TruthyMatcher do
               partial = new_partial(value)
               matcher = Spectator::Matchers::TruthyMatcher.new(false)
               match_data = matcher.match(partial)
-              match_data.values[:expected].should_not start_with(/not/i)
+              match_data.values[:expected].to_s.should_not start_with(/not/i)
             end
           end
 

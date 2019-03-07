@@ -213,7 +213,7 @@ describe Spectator::Matchers::EndWithMatcher do
               partial = new_partial(value)
               matcher = Spectator::Matchers::EndWithMatcher.new(last)
               match_data = matcher.match(partial)
-              match_data.values[:expected].should eq(last)
+              match_data.values[:expected].value.should eq(last)
             end
           end
 
