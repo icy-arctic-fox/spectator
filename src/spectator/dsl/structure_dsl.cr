@@ -243,7 +243,7 @@ module Spectator::DSL
     # While this is a somewhat contrived example,
     # it demonstrates how contexts can reuse code.
     # Contexts also make it clearer how a scenario is setup.
-    macro context(what)
+    macro context(what, &block)
       # Module for the context.
       # The module uses a generated unique name.
       module Context%context
@@ -287,7 +287,7 @@ module Spectator::DSL
         )
 
         # Nest the block's content in the module.
-        {{yield}}
+        {{block.body}}
 
         # End the current group.
         ::Spectator::DSL::Builder.end_group
@@ -570,7 +570,7 @@ module Spectator::DSL
         )
 
         # Nest the block's content in the module.
-        {{yield}}
+        {{block.body}}
 
         # End the current group.
         ::Spectator::DSL::Builder.end_group
@@ -690,7 +690,7 @@ module Spectator::DSL
         )
 
         # Nest the block's content in the module.
-        {{yield}}
+        {{block.body}}
 
         # End the current group.
         ::Spectator::DSL::Builder.end_group
@@ -1201,7 +1201,7 @@ module Spectator::DSL
       # Around each hook.
       # Defined as a method so that it can access the same scope as the example code.
       def %hook({{block.args.splat}}) : Nil
-        {{block.body}}
+        {{yield}}
       end
 
       ::Spectator::DSL::Builder.add_around_each_hook do |proc|
@@ -1484,7 +1484,7 @@ module Spectator::DSL
     #   end
     # end
     # ```
-    private macro _spectator_example(example_class_name, test_class_name, base_class, what)
+    private macro _spectator_example(example_class_name, test_class_name, base_class, what, &block)
       # Example class containing meta information and instructions for running the test.
       class {{example_class_name.id}} < {{base_class.id}}
         # Stores the group the example belongs to
@@ -1504,7 +1504,7 @@ module Spectator::DSL
         end
 
         # Add the block's content.
-        {{yield}}
+        {{block.body}}
 
         # Description for the test.
         def what
