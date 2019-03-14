@@ -69,7 +69,8 @@ module Spectator::DSL
       {% else %}
         # In this case, it looks like the short-hand method syntax wasn't used.
         # Just drop in the block as-is.
-        ::Spectator::Expectations::ValueExpectationPartial.new({{block.body}}, {{block.body.stringify}}, {{_source_file}}, {{_source_line}})
+        %proc = ->({{block.args.splat}}) {{block}}
+        ::Spectator::Expectations::BlockExpectationPartial.new(%proc, {{block.body.stringify}}, {{_source_file}}, {{_source_line}})
       {% end %}
     end
 
