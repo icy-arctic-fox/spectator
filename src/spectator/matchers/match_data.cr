@@ -12,9 +12,9 @@ module Spectator::Matchers
     end
 
     # Information about the match.
-    # Returned value and type will differ by sub-type,
-    # but all will return a set of key-value pairs.
-    abstract def values
+    # Returned elments will differ by matcher,
+    # but all will return a set of labeled values.
+    abstract def values : Array(MatchDataLabeledValue)
 
     # Describes the condition that satisfies the matcher.
     # This is informational and displayed to the end-user.
