@@ -15,7 +15,7 @@ module Spectator::Matchers
     # Dummy values.
     def named_tuple
       {
-        you: "shouldn't be calling this."
+        you: "shouldn't be calling this.",
       }
     end
 
