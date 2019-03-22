@@ -25,7 +25,8 @@ module Spectator
     # The *results* are from running the examples in the test suite.
     # The *runtime* is the total time it took to execute the suite.
     # The *remaining_count* is the number of tests skipped due to fail-fast.
-    def initialize(@results : Array(Result), @runtime, @remaining_count = 0)
+    # The *fail_blank* flag indicates whether it is a failure if there were no tests run.
+    def initialize(@results : Array(Result), @runtime, @remaining_count = 0, @fail_blank = false)
       @results.each do |result|
         case result
         when SuccessfulResult
@@ -46,9 +47,14 @@ module Spectator
       @results.size
     end
 
+    # Number of examples run (not skipped or pending).
+    def examples_ran
+      @successful_count + @failed_count
+    end
+
     # Indicates whether the test suite failed.
     def failed?
-      failed_count > 0
+      failed_count > 0 || (@fail_blank && examples_ran == 0)
     end
 
     # Indicates whether there were skipped tests

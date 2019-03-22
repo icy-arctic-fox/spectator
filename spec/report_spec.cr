@@ -15,7 +15,7 @@ def new_failure_result(result_type : Spectator::Result.class = Spectator::Failed
   result_type.new(example, elapsed, expectations, error)
 end
 
-def new_report(successful_count = 5, failed_count = 5, error_count = 5, pending_count = 5, overhead_time = 1_000_000i64)
+def new_report(successful_count = 5, failed_count = 5, error_count = 5, pending_count = 5, overhead_time = 1_000_000i64, fail_blank = false)
   results = [] of Spectator::Result
   successful_count.times { results << new_passing_result }
   failed_count.times { results << new_failure_result }
@@ -24,7 +24,7 @@ def new_report(successful_count = 5, failed_count = 5, error_count = 5, pending_
 
   example_runtime = results.compact_map(&.as?(Spectator::FinishedResult)).sum(&.elapsed)
   total_runtime = example_runtime + Time::Span.new(nanoseconds: overhead_time)
-  Spectator::Report.new(results, total_runtime)
+  Spectator::Report.new(results, total_runtime, fail_blank: fail_blank)
 end
 
 describe Spectator::Report do
@@ -40,6 +40,13 @@ describe Spectator::Report do
     it "is the expected value" do
       report = new_report(5, 4, 3, 2)
       report.example_count.should eq(14)
+    end
+  end
+
+  describe "#examples_ran" do
+    it "is the number of non-skipped examples" do
+      report = new_report(5, 4, 3, 2)
+      report.examples_ran.should eq(12)
     end
   end
 
@@ -92,6 +99,31 @@ describe Spectator::Report do
       it "is false" do
         report = new_report(5, 0, 0, 0)
         report.failed?.should be_false
+      end
+    end
+
+    context "with fail-blank enabled" do
+      context "when no tests run" do
+        it "is true" do
+          report = new_report(0, 0, 0, 5, fail_blank: true)
+          report.failed?.should be_true
+        end
+      end
+
+      context "when tests run" do
+        context "and there are failures" do
+          it "is true" do
+            report = new_report(5, 4, 3, 2, fail_blank: true)
+            report.failed?.should be_true
+          end
+        end
+
+        context "and there are no failures" do
+          it "is false" do
+            report = new_report(5, 0, 0, 2, fail_blank: true)
+            report.failed?.should be_false
+          end
+        end
       end
     end
   end
