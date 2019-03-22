@@ -7,10 +7,14 @@ module Spectator
     # Indicates whether the test should abort on first failure.
     getter? fail_fast : Bool
 
+    # Indicates whether the test should fail if there are no examples.
+    getter? fail_blank : Bool
+
     # Creates a new configuration.
     def initialize(builder)
       @formatter = builder.formatter
       @fail_fast = builder.fail_fast?
+      @fail_blank = builder.fail_blank?
     end
   end
 end

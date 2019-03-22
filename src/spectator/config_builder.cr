@@ -10,6 +10,7 @@ module Spectator
 
     @formatter : Formatting::Formatter? = nil
     @fail_fast = false
+    @fail_blank = false
 
     # Sets the formatter to use for reporting test progress and results.
     def formatter=(formatter : Formatting::Formatter)
@@ -42,6 +43,22 @@ module Spectator
     # Indicates whether fail-fast mode is enabled.
     def fail_fast?
       @fail_fast
+    end
+
+    # Enables fail-blank mode (fail on no tests).
+    def fail_blank
+      self.fail_blank = true
+    end
+
+    # Sets teh fail-blank mode.
+    def fail_blank=(flag)
+      @fail_blank = flag
+    end
+
+    # Indicates whether fail-fast mode is enabled.
+    # That is, it is a failure if there are no tests.
+    def fail_blank?
+      @fail_blank
     end
 
     # Creates a configuration.

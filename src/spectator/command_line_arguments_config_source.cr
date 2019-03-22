@@ -15,6 +15,7 @@ module Spectator
       OptionParser.parse(@args) do |parser|
         parser.on("-v", "--verbose", "Verbose output using document formatter") { builder.formatter = Formatting::DocumentFormatter.new }
         parser.on("-f", "--fail-fast", "Stop testing on first failure") { builder.fail_fast }
+        parser.on("-b", "--fail-blank", "Fail if there are no examples") { builder.fail_blank }
         parser.on("-h", "--help", "Show this help") { puts parser; exit }
         parser.on("-e", "--example STRING", "Run examples whose full nested names include STRING") { |pattern| raise NotImplementedError.new("-e") }
         parser.on("-l", "--line LINE", "Run examples whose line matches LINE") { |line| raise NotImplementedError.new("-l") }
