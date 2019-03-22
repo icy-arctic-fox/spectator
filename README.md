@@ -122,7 +122,7 @@ In no particular order, features that have been implemented and are planned:
     - [ ] Misc. matchers - `exist`, `match`, `satisfy`, `change[.by|.from[.to]|.to|.by_at_least|.by_at_most]`, `have_attributes`
     - [ ] Expectation combining - `and`, `or`
 - [ ] Runner
-    - [ ] Fail fast
+    - [X] Fail fast
     - [ ] Test filtering - by name, context, and tags
     - [ ] Fail on no tests
     - [ ] Randomize test order

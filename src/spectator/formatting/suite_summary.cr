@@ -14,6 +14,7 @@ module Spectator::Formatting
       @io.puts
       failures(report.failures) if report.failed?
       stats(report)
+      remaining(report) if report.remaining?
       failure_commands(report.failures) if report.failed?
     end
 
@@ -33,6 +34,12 @@ module Spectator::Formatting
     private def stats(report)
       @io.puts Runtime.new(report.runtime)
       @io.puts StatsCounter.new(report).color
+    end
+
+    # Produces the skipped tests text if fail-fast is enabled and tests were omitted.
+    private def remaining(report)
+      text = RemainingText.new(report.remaining_count)
+      @io.puts Color.failure(text)
     end
 
     # Produces the failure commands section of the summary.
