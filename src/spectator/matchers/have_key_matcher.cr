@@ -27,7 +27,7 @@ module Spectator::Matchers
       def named_tuple
         actual = @values.actual
         {
-          key:    NegatableValue.new(@values.expected),
+          key:    NegatableMatchDataValue.new(@values.expected),
           actual: actual.responds_to?(:keys) ? actual.keys : actual,
         }
       end

@@ -49,7 +49,7 @@ module Spectator::Matchers
         {% begin %}
         {
           {% for attribute in ExpectedType.keys %}
-          {{"expected " + attribute.stringify}}: NegatableValue.new(@values.expected[{{attribute.symbolize}}]),
+          {{"expected " + attribute.stringify}}: NegatableMatchDataValue.new(@values.expected[{{attribute.symbolize}}]),
           {{"actual " + attribute.stringify}}:   @values.actual[{{attribute.symbolize}}],
           {% end %}
         }

@@ -1,6 +1,6 @@
 require "./match_data_labeled_value"
 require "./match_data_value"
-require "./generic_match-data_value"
+require "./generic_match_data_value"
 
 module Spectator::Matchers
   # Information regarding a expectation parial and matcher.

@@ -26,8 +26,8 @@ module Spectator::Matchers
       # Information about the match.
       def named_tuple
         {
-          expected: NegatablePrefixedValue.new("<", ">=", @values.expected),
-          actual:   PrefixedValue.new(actual_operator, @values.actual),
+          expected: NegatablePrefixedMatchDataValue.new("<", ">=", @values.expected),
+          actual:   PrefixedMatchDataValue.new(actual_operator, @values.actual),
         }
       end
 

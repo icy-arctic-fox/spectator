@@ -1,12 +1,14 @@
+require "./match_data_value"
+
 module Spectator::Matchers
-  # Wraps a prefixed value that can be negated.
+  # Wraps an expected value that can be negated.
   # This is used when a matcher is negated.
-  private class NegatablePrefixedValue(T)
+  private class NegatableMatchDataValue(T) < MatchDataValue
     # Negatable value.
     getter value
 
     # Creates the wrapper.
-    def initialize(@positive_prefix : String, @negative_prefix : String, @value : T)
+    def initialize(@value : T)
       @negated = false
     end
 
@@ -15,20 +17,17 @@ module Spectator::Matchers
       @negated = !@negated
     end
 
-    # Returns the correct prefix based on the negated status.
-    private def prefix
-      @negated ? @negative_prefix : @positive_prefix
-    end
-
     # Produces a stringified value.
+    # The string will be prefixed with "Not" when negated.
     def to_s(io)
-      io << prefix
+      io << "Not " if @negated
       io << @value
     end
 
     # Produces a stringified value with additional information.
+    # The string will be prefixed with "Not" when negated.
     def inspect(io)
-      io << prefix
+      io << "Not " if @negated
       @value.inspect(io)
     end
   end

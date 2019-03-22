@@ -32,7 +32,7 @@ module Spectator::Matchers
       # Information about the match.
       def named_tuple
         {
-          expected: NegatableValue.new(ExpectedType),
+          expected: NegatableMatchDataValue.new(ExpectedType),
           actual:   ActualType,
         }
       end

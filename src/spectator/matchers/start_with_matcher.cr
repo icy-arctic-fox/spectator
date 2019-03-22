@@ -39,7 +39,7 @@ module Spectator::Matchers
       # Information about the match.
       def named_tuple
         {
-          expected: NegatableValue.new(@values.expected),
+          expected: NegatableMatchDataValue.new(@values.expected),
           actual:   @values.actual,
         }
       end

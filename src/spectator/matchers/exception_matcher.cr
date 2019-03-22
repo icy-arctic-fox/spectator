@@ -67,7 +67,7 @@ module Spectator::Matchers
       # Information about the match.
       def named_tuple
         {
-          "expected type": NegatableValue.new(ExceptionType),
+          "expected type": NegatableMatchDataValue.new(ExceptionType),
           "actual type":   @values.actual.class,
         }
       end
@@ -95,9 +95,9 @@ module Spectator::Matchers
       # Information about the match.
       def named_tuple
         {
-          "expected type":    NegatableValue.new(ExceptionType),
+          "expected type":    NegatableMatchDataValue.new(ExceptionType),
           "actual type":      @values.actual.class,
-          "expected message": NegatableValue.new(@values.expected),
+          "expected message": NegatableMatchDataValue.new(@values.expected),
           "actual message":   @values.actual.message,
         }
       end

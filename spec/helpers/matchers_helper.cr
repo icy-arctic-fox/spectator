@@ -4,7 +4,7 @@ def match_data_value(match_data, key)
 end
 
 # Retrieves the string representation and base value
-# from a `Spectator::Matchers::PrefixedValue`
+# from a `Spectator::Matchers::PrefixedMatchDataValue`
 # in a `NamedTuple` returned by `Spectator::Matchers::MatchData#values`.
 def match_data_prefix(match_data, key)
   prefix = match_data.values.fetch(key) { raise "#{key} is missing" }

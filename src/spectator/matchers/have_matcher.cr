@@ -51,7 +51,7 @@ module Spectator::Matchers
       # Information about the match.
       def named_tuple
         {
-          subset:   NegatableValue.new(@values.expected),
+          subset:   NegatableMatchDataValue.new(@values.expected),
           superset: @values.actual,
         }
       end

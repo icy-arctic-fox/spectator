@@ -99,7 +99,7 @@ module Spectator::Matchers
         truthy = "Not false or nil"
         falsey = "false or nil"
         {
-          expected: AlternativeValue.new(@truthy ? truthy : falsey, @truthy ? falsey : truthy),
+          expected: AlternativeMatchDataValue.new(@truthy ? truthy : falsey, @truthy ? falsey : truthy),
           actual:   @actual,
           truthy:   !!@actual,
         }
