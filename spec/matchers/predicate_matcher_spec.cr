@@ -31,9 +31,8 @@ describe Spectator::Matchers::PredicateMatcher do
           partial = new_partial(value)
           matcher = Spectator::Matchers::PredicateMatcher(NamedTuple(empty: Nil, ascii_only: Nil)).new
           match_data = matcher.match(partial)
-          values = match_data.values
-          values.has_key?(:empty).should be_true
-          values.has_key?(:ascii_only).should be_true
+          match_data_has_key?(match_data, :empty).should be_true
+          match_data_has_key?(match_data, :ascii_only).should be_true
         end
 
         it "has the actual values" do
@@ -41,9 +40,8 @@ describe Spectator::Matchers::PredicateMatcher do
           partial = new_partial(value)
           matcher = Spectator::Matchers::PredicateMatcher(NamedTuple(empty: Nil, ascii_only: Nil)).new
           match_data = matcher.match(partial)
-          values = match_data.values
-          values.[:empty].should eq(value.empty?)
-          values.[:ascii_only].should eq(value.ascii_only?)
+          match_data_value_sans_prefix(match_data, :empty)[:value].should eq(value.empty?)
+          match_data_value_sans_prefix(match_data, :ascii_only)[:value].should eq(value.ascii_only?)
         end
       end
 

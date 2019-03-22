@@ -9,7 +9,7 @@ module Spectator::Matchers
 
     # Stringifies the value.
     def to_s(io)
-      io << value
+      io << @value
     end
 
     # Inspects the value.

@@ -76,7 +76,7 @@ describe Spectator::Matchers::InequalityMatcher do
             partial = new_partial(actual)
             matcher = Spectator::Matchers::InequalityMatcher.new(expected)
             match_data = matcher.match(partial)
-            match_data.values[:expected].value.should eq(expected)
+            match_data_value_sans_prefix(match_data, :expected)[:value].should eq(expected)
           end
 
           it "is prefixed with 'Not'" do
@@ -84,7 +84,7 @@ describe Spectator::Matchers::InequalityMatcher do
             partial = new_partial(actual)
             matcher = Spectator::Matchers::InequalityMatcher.new(expected)
             match_data = matcher.match(partial)
-            match_data.values[:expected].to_s.should start_with("Not")
+            match_data_value_sans_prefix(match_data, :expected)[:to_s].should start_with("Not")
           end
         end
 
@@ -94,7 +94,7 @@ describe Spectator::Matchers::InequalityMatcher do
             partial = new_partial(actual)
             matcher = Spectator::Matchers::InequalityMatcher.new(expected)
             match_data = matcher.match(partial)
-            match_data.values[:actual].should eq(actual)
+            match_data_value_sans_prefix(match_data, :actual)[:value].should eq(actual)
           end
         end
       end

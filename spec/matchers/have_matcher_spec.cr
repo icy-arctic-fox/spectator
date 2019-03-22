@@ -518,7 +518,7 @@ describe Spectator::Matchers::HaveMatcher do
             partial = new_partial(array)
             matcher = Spectator::Matchers::HaveMatcher.new(search)
             match_data = matcher.match(partial)
-            match_data.values[:subset].value.should eq(search)
+            match_data_value_sans_prefix(match_data, :subset)[:value].should eq(search)
           end
         end
 
@@ -529,7 +529,7 @@ describe Spectator::Matchers::HaveMatcher do
             partial = new_partial(array)
             matcher = Spectator::Matchers::HaveMatcher.new(search)
             match_data = matcher.match(partial)
-            match_data.values[:superset].should eq(array)
+            match_data_value_sans_prefix(match_data, :superset)[:value].should eq(array)
           end
         end
       end

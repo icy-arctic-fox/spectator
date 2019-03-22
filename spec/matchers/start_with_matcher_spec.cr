@@ -213,7 +213,7 @@ describe Spectator::Matchers::StartWithMatcher do
               partial = new_partial(value)
               matcher = Spectator::Matchers::StartWithMatcher.new(first)
               match_data = matcher.match(partial)
-              match_data.values[:expected].value.should eq(first)
+              match_data_value_sans_prefix(match_data, :expected)[:value].should eq(first)
             end
           end
 
@@ -224,7 +224,7 @@ describe Spectator::Matchers::StartWithMatcher do
               partial = new_partial(value)
               matcher = Spectator::Matchers::StartWithMatcher.new(first)
               match_data = matcher.match(partial)
-              match_data.values[:actual].should eq(value)
+              match_data_value_sans_prefix(match_data, :actual)[:value].should eq(value)
             end
           end
         end
@@ -237,7 +237,7 @@ describe Spectator::Matchers::StartWithMatcher do
               partial = new_partial(array)
               matcher = Spectator::Matchers::StartWithMatcher.new(first)
               match_data = matcher.match(partial)
-              match_data.values[:expected].should eq(first)
+              match_data_value_sans_prefix(match_data, :expected)[:value].should eq(first)
             end
           end
 
@@ -248,7 +248,7 @@ describe Spectator::Matchers::StartWithMatcher do
               partial = new_partial(array)
               matcher = Spectator::Matchers::StartWithMatcher.new(first)
               match_data = matcher.match(partial)
-              match_data.values[:actual].should eq(array.first)
+              match_data_value_sans_prefix(match_data, :actual)[:value].should eq(array.first)
             end
           end
 
@@ -259,7 +259,7 @@ describe Spectator::Matchers::StartWithMatcher do
               partial = new_partial(array)
               matcher = Spectator::Matchers::StartWithMatcher.new(first)
               match_data = matcher.match(partial)
-              match_data.values[:list].should eq(array)
+              match_data_value_sans_prefix(match_data, :list)[:value].should eq(array)
             end
           end
         end

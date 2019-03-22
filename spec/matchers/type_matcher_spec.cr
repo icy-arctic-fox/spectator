@@ -62,7 +62,7 @@ describe Spectator::Matchers::TypeMatcher do
             partial = new_partial(value)
             matcher = Spectator::Matchers::TypeMatcher(String).new
             match_data = matcher.match(partial)
-            match_data.values[:expected].value.should eq(String)
+            match_data_value_sans_prefix(match_data, :expected)[:value].should eq(String)
           end
         end
 
@@ -72,7 +72,7 @@ describe Spectator::Matchers::TypeMatcher do
             partial = new_partial(value)
             matcher = Spectator::Matchers::TypeMatcher(String).new
             match_data = matcher.match(partial)
-            match_data.values[:actual].should eq(typeof(value))
+            match_data_value_sans_prefix(match_data, :actual)[:value].should eq(typeof(value))
           end
         end
       end
