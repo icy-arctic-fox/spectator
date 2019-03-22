@@ -25,12 +25,14 @@ module Spectator::Matchers
     # Produces a stringified value.
     def to_s(io)
       io << prefix
+      io << ' '
       io << @value
     end
 
     # Produces a stringified value with additional information.
     def inspect(io)
       io << prefix
+      io << ' '
       @value.inspect(io)
     end
   end
