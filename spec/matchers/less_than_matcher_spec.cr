@@ -75,30 +75,6 @@ describe Spectator::Matchers::LessThanMatcher do
             match_data = matcher.match(partial)
             match_data_value_sans_prefix(match_data.values, :actual)[:value].should eq(actual)
           end
-
-          context "when #matched? is true" do
-            it "is prefixed with <" do
-              actual = 42
-              expected = 777
-              partial = new_partial(actual)
-              matcher = Spectator::Matchers::LessThanMatcher.new(expected)
-              match_data = matcher.match(partial)
-              match_data.matched?.should be_true # Sanity check.
-              match_data_value_sans_prefix(match_data.values, :actual)[:to_s].should start_with("<")
-            end
-          end
-
-          context "when #matched? is false" do
-            it "is prefixed with >=" do
-              actual = 777
-              expected = 42
-              partial = new_partial(actual)
-              matcher = Spectator::Matchers::LessThanMatcher.new(expected)
-              match_data = matcher.match(partial)
-              match_data.matched?.should be_false # Sanity check.
-              match_data_value_sans_prefix(match_data.values, :actual)[:to_s].should start_with(">=")
-            end
-          end
         end
       end
 
