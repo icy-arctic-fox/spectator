@@ -49,7 +49,7 @@ describe Spectator::Expectations::Expectation do
       expectation_values = expectation.values
       match_data.values.zip(expectation_values).each do |m, e|
         m.label.should eq(e.label)
-        m.value.should eq(e.value)
+        m.value.value.should eq(e.value.value)
       end
     end
 
