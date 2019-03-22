@@ -72,7 +72,7 @@ module Spectator::DSL
       {% else %}
         # In this case, it looks like the short-hand method syntax wasn't used.
         # Just drop in the proc as-is.
-        ::Spectator::Expectations::BlockExpectationPartial.new(%proc, {{block.body.stringify}}, {{_source_file}}, {{_source_line}})
+        ::Spectator::Expectations::BlockExpectationPartial.new(%proc, "`" + {{block.body.stringify}} + "`", {{_source_file}}, {{_source_line}})
       {% end %}
     end
 
