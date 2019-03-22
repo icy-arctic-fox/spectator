@@ -47,9 +47,9 @@ describe Spectator::Expectations::Expectation do
       match_data = new_matcher(value).match(new_partial(value))
       expectation = Spectator::Expectations::Expectation.new(match_data, false)
       expectation_values = expectation.values
-      match_data.values.each do |k, v|
-        expectation_values.has_key?(k).should be_true
-        expectation_values[k].to_s.should eq(v.to_s)
+      match_data.values.zip(expectation_values).each do |m, e|
+        m.label.should eq(e.label)
+        m.value.should eq(e.value)
       end
     end
 
@@ -58,7 +58,8 @@ describe Spectator::Expectations::Expectation do
         value = 42
         match_data = new_matcher(value).match(new_partial(value))
         expectation = Spectator::Expectations::Expectation.new(match_data, true)
-        expectation.values.each_value do |value|
+        expectation.values.each do |labeled_value|
+          value = labeled_value.value
           value.to_s.should start_with(/not/i) if value.responds_to?(:negate)
         end
       end
