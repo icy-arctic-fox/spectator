@@ -4,9 +4,13 @@ module Spectator
     # Used to report test progress and results.
     getter formatter : Formatting::Formatter
 
+    # Indicates whether the test should abort on first failure.
+    getter? fail_fast : Bool
+
     # Creates a new configuration.
     def initialize(builder)
       @formatter = builder.formatter
+      @fail_fast = builder.fail_fast?
     end
   end
 end

@@ -9,6 +9,7 @@ module Spectator
     end
 
     @formatter : Formatting::Formatter? = nil
+    @fail_fast = false
 
     # Sets the formatter to use for reporting test progress and results.
     def formatter=(formatter : Formatting::Formatter)
@@ -26,6 +27,21 @@ module Spectator
     # if one wasn't provided.
     private def default_formatter
       Formatting::DotsFormatter.new
+    end
+
+    # Enables fail-fast mode.
+    def fail_fast
+      self.fail_fast = true
+    end
+
+    # Sets the fail-fast flag.
+    def fail_fast=(flag)
+      @fail_fast = flag
+    end
+
+    # Indicates whether fail-fast mode is enabled.
+    def fail_fast?
+      @fail_fast
     end
 
     # Creates a configuration.
