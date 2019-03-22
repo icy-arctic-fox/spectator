@@ -11,8 +11,10 @@ module Spectator::Formatting
     # At the end, the totals and runtime are printed.
     def end_suite(report)
       ran_anything = report.examples_ran > 0
-      @io.puts
-      @io.puts
+      if ran_anything
+        @io.puts if is_a?(DotsFormatter)
+        @io.puts
+      end
       failures(report.failures) if report.failed? && ran_anything
       stats(report)
       remaining(report) if report.remaining?
