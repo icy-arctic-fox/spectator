@@ -3,7 +3,7 @@ require "./match_data_value"
 module Spectator::Matchers
   # Wraps an expected value that can be negated.
   # This is used when a matcher is negated.
-  private class NegatableMatchDataValue(T) < MatchDataValue
+  private struct NegatableMatchDataValue(T) < MatchDataValue
     # Negatable value.
     getter value
 

@@ -1,5 +1,5 @@
 module Spectator::Formatting
-  # A single key-value pair from the `Spectator::Matchers::MatchData#value` method.
+  # A single labeled value from the `Spectator::Matchers::MatchData#value` method.
   private struct MatchDataValuePair(T)
     # Creates the pair formatter.
     def initialize(@key : Symbol, @value : T, @padding : Int32)
