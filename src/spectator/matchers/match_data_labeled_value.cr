@@ -3,7 +3,7 @@ module Spectator::Matchers
   private struct MatchDataLabeledValue
     # Label tied to the value.
     # This annotates what the value is.
-    getter label : String
+    getter label : Symbol
 
     # The actual value from the match data.
     getter value : MatchDataValue
