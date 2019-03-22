@@ -11,6 +11,7 @@ module Spectator
     @formatter : Formatting::Formatter? = nil
     @fail_fast = false
     @fail_blank = false
+    @dry_run = false
 
     # Sets the formatter to use for reporting test progress and results.
     def formatter=(formatter : Formatting::Formatter)
@@ -50,7 +51,7 @@ module Spectator
       self.fail_blank = true
     end
 
-    # Sets teh fail-blank mode.
+    # Enables or disables fail-blank mode.
     def fail_blank=(flag)
       @fail_blank = flag
     end
@@ -59,6 +60,22 @@ module Spectator
     # That is, it is a failure if there are no tests.
     def fail_blank?
       @fail_blank
+    end
+
+    # Enables dry-run mode.
+    def dry_run
+      self.dry_run = true
+    end
+
+    # Enables or disables dry-run mode.
+    def dry_run=(flag)
+      @dry_run = flag
+    end
+
+    # Indicates whether dry-run mode is enabled.
+    # In this mode, no tests are run, but output acts like they were.
+    def dry_run?
+      @dry_run
     end
 
     # Creates a configuration.
