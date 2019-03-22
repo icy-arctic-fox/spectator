@@ -445,6 +445,45 @@ module Spectator::DSL
       ::Spectator::Matchers::AttributesMatcher.new({{expected}}, {{expected.double_splat.stringify}})
     end
 
+    # Indicates that some block should raise an error.
+    #
+    # Examples:
+    # ```
+    # expect { raise "foobar" }.to raise_error
+    # ```
+    macro raise_error
+      ::Spectator::Matchers::ExceptionMatcher(Exception, Nil).new
+    end
+
+    # Indicates that some block should raise an error with a given message or type.
+    # The *type_or_message* parameter should be an exception type
+    # or a string or regex to match the exception's message against.
+    #
+    # Examples:
+    # ```
+    # hash = {"foo" => "bar"}
+    # expect { hash["baz"] }.to raise_error(KeyError)
+    # expect { hash["baz"] }.to raise_error(/baz/)
+    # expect { raise "foobar" }.to raise_error("foobar")
+    # ```
+    macro raise_error(type_or_message)
+      ::Spectator::Matchers::ExceptionMatcher.create({{type_or_message}}, {{type_or_message.stringify}})
+    end
+
+    # Indicates that some block should raise an error with a given message and type.
+    # The *type* is the exception type expected to be raised.
+    # The *message* is a string or regex to match to exception message against.
+    #
+    # Examples:
+    # ```
+    # hash = {"foo" => "bar"}
+    # expect { hash["baz"] }.to raise_error(KeyError, /baz/)
+    # expect { raise ArgumentError.new("foobar") }.to raise_error(ArgumentError, "foobar")
+    # ```
+    macro raise_error(type, message)
+      ::Spectator::Matchers::ExceptionMatcher.new({{type}}, {{message}}, {{message.stringify}})
+    end
+
     # Used to create predicate matchers.
     # Any missing method that starts with 'be_' will be handled.
     # All other method names will be ignored and raise a compile-time error.
