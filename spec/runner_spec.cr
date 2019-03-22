@@ -1,9 +1,10 @@
 require "./spec_helper"
 
 # Creates a `Config` for Spectator that is suited for testing it.
-def spectator_test_config(formatter : Spectator::Formatting::Formatter? = nil)
+def spectator_test_config(formatter : Spectator::Formatting::Formatter? = nil, fail_fast = false)
   builder = Spectator::ConfigBuilder.new
   builder.formatter = formatter || Spectator::Formatting::SilentFormatter.new
+  builder.fail_fast = fail_fast
   builder.build
 end
 
@@ -24,6 +25,34 @@ describe Spectator::Runner do
       runner = Spectator::Runner.new(suite, spectator_test_config)
       runner.run
       called.should eq([0, 1, 2, 3, 4])
+    end
+
+    context "with fail-fast enabled" do
+      it "stops on the first failure" do
+        called = [] of Int32
+        group = SpyExample.create_group(10) do |index|
+          called << index
+          raise "Failure" if index > 5
+        end
+        suite = Spectator::TestSuite.new(group)
+        runner = Spectator::Runner.new(suite, spectator_test_config(fail_fast: true))
+        runner.run
+        called.should eq([0, 1, 2, 3, 4, 5, 6])
+      end
+
+      context "the report" do
+        it "has the remaining tests" do
+          spy = SpyFormatter.new
+          group = SpyExample.create_group(10) do |index|
+            raise "Failure" if index > 5
+          end
+          suite = Spectator::TestSuite.new(group)
+          runner = Spectator::Runner.new(suite, spectator_test_config(spy, true))
+          runner.run
+          report = spy.end_suite_calls.first
+          report.remaining_count.should eq(3)
+        end
+      end
     end
 
     context "the formatter" do

@@ -16,18 +16,26 @@ module Spectator
       @config.formatter.start_suite(@suite)
 
       # Run all examples and capture the results.
-      results = [] of Result
+      results = Array(Result).new(@suite.size)
       elapsed = Time.measure do
-        results = @suite.map do |example|
-          run_example(example).as(Result)
-        end
+        collect_results(results)
       end
 
       # Generate a report and pass it along to the formatter.
-      report = Report.new(results, elapsed)
+      remaining = @suite.size - results.size
+      report = Report.new(results, elapsed, remaining)
       @config.formatter.end_suite(report)
 
       !report.failed?
+    end
+
+    # Runs all examples and adds results to a list.
+    private def collect_results(results)
+      @suite.each do |example|
+        result = run_example(example).as(Result)
+        results << result
+        break if @config.fail_fast? && result.is_a?(FailedResult)
+      end
     end
 
     # Runs a single example and returns the result.

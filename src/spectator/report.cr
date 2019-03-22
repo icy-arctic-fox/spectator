@@ -17,10 +17,15 @@ module Spectator
     # Number of pending examples.
     getter pending_count = 0
 
+    # Number of remaining tests.
+    # This will be greater than zero only in fail-fast mode.
+    getter remaining_count
+
     # Creates the report.
     # The *results* are from running the examples in the test suite.
     # The *runtime* is the total time it took to execute the suite.
-    def initialize(@results : Array(Result), @runtime)
+    # The *remaining_count* is the number of tests skipped due to fail-fast.
+    def initialize(@results : Array(Result), @runtime, @remaining_count = 0)
       @results.each do |result|
         case result
         when SuccessfulResult
@@ -44,6 +49,12 @@ module Spectator
     # Indicates whether the test suite failed.
     def failed?
       failed_count > 0
+    end
+
+    # Indicates whether there were skipped tests
+    # because of a failure causing the test to abort.
+    def remaining?
+      remaining_count > 0
     end
 
     # Returns a set of results for all failed examples.

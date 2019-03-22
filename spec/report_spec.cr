@@ -71,6 +71,15 @@ describe Spectator::Report do
     end
   end
 
+  describe "#remaining_count" do
+    it "is the expected value" do
+      results = [] of Spectator::Result
+      remaining = 5
+      report = Spectator::Report.new(results, Time::Span.zero, remaining)
+      report.remaining_count.should eq(remaining)
+    end
+  end
+
   describe "#failed?" do
     context "with a failed test suite" do
       it "is true" do
@@ -83,6 +92,24 @@ describe Spectator::Report do
       it "is false" do
         report = new_report(5, 0, 0, 0)
         report.failed?.should be_false
+      end
+    end
+  end
+
+  describe "#remaining?" do
+    context "with remaining tests" do
+      it "is true" do
+        results = [] of Spectator::Result
+        report = Spectator::Report.new(results, Time::Span.zero, 5)
+        report.remaining?.should be_true
+      end
+    end
+
+    context "without remaining tests" do
+      it "is false" do
+        results = [] of Spectator::Result
+        report = Spectator::Report.new(results, Time::Span.zero, 0)
+        report.remaining?.should be_false
       end
     end
   end
