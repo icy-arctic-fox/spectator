@@ -2,12 +2,12 @@ module Spectator::Formatting
   # Produces a stringified stats counter from result totals.
   private struct StatsCounter
     # Creates the instance with each of the counters.
-    private def initialize(@examples : Int32, @failures : Int32, @errors : Int32, @pending : Int32)
+    private def initialize(@examples : Int32, @failures : Int32, @errors : Int32, @pending : Int32, @failed : Bool)
     end
 
     # Creates the instance from the counters in a report.
     def initialize(report)
-      initialize(report.example_count, report.failed_count, report.error_count, report.pending_count)
+      initialize(report.example_count, report.failed_count, report.error_count, report.pending_count, report.failed?)
     end
 
     # Produces a colorized formatting for the stats,
@@ -15,7 +15,7 @@ module Spectator::Formatting
     def color
       if @errors > 0
         Color.error(self)
-      elsif @failures > 0
+      elsif @failed || @failures > 0
         Color.failure(self)
       elsif @pending > 0
         Color.pending(self)

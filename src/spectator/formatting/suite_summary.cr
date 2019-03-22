@@ -10,12 +10,19 @@ module Spectator::Formatting
     # A block describing each failure is displayed.
     # At the end, the totals and runtime are printed.
     def end_suite(report)
+      ran_anything = report.examples_ran > 0
       @io.puts
       @io.puts
-      failures(report.failures) if report.failed?
+      failures(report.failures) if report.failed? && ran_anything
       stats(report)
       remaining(report) if report.remaining?
-      failure_commands(report.failures) if report.failed?
+      if report.failed?
+        if ran_anything
+          failure_commands(report.failures)
+        else # fail-blank mode.
+          @io.puts Color.failure("Failing because no tests were run (fail-blank)")
+        end
+      end
     end
 
     # Produces the failure section of the summary.

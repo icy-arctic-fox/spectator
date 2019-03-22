@@ -124,7 +124,7 @@ In no particular order, features that have been implemented and are planned:
 - [ ] Runner
     - [X] Fail fast
     - [ ] Test filtering - by name, context, and tags
-    - [ ] Fail on no tests
+    - [X] Fail on no tests
     - [ ] Randomize test order
     - [ ] Dry run - for validation and checking formatted output
     - [X] Config block in `spec_helper.cr`
