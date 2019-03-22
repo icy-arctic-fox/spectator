@@ -484,6 +484,43 @@ module Spectator::DSL
       ::Spectator::Matchers::ExceptionMatcher.new({{type}}, {{message}}, {{message.stringify}})
     end
 
+    # Indicates that some block should raise an error.
+    #
+    # Examples:
+    # ```
+    # expect_raises { raise "foobar" }
+    # ```
+    macro expect_raises
+      expect {{yield}}.to raise_error
+    end
+
+    # Indicates that some block should raise an error with a given type.
+    # The *type* parameter should be an exception type.
+    #
+    # Examples:
+    # ```
+    # hash = {"foo" => "bar"}
+    # expect_raises(KeyError) { hash["baz"] }.to raise_error(KeyError)
+    # ```
+    macro expect_raises(type)
+      expect {{yield}}.to raise_error(type)
+    end
+
+    # Indicates that some block should raise an error with a given message and type.
+    # The *type* is the exception type expected to be raised.
+    # The *message* is a string or regex to match to exception message against.
+    # This method is included for compatibility with Crystal's default spec.
+    #
+    # Examples:
+    # ```
+    # hash = {"foo" => "bar"}
+    # expect_raises(KeyError, /baz/) { hash["baz"] }
+    # expect_raises(ArgumentError, "foobar") { raise ArgumentError.new("foobar") }
+    # ```
+    macro expect_raises(type, message)
+      expect {{yield}}.to raise_error(type, message)
+    end
+
     # Used to create predicate matchers.
     # Any missing method that starts with 'be_' will be handled.
     # All other method names will be ignored and raise a compile-time error.
