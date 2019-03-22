@@ -9,6 +9,11 @@ module Spectator::Matchers
 
     # Stringifies the value.
     def to_s(io)
+      io << value
+    end
+
+    # Inspects the value.
+    def inspect(io)
       @value.inspect(io)
     end
   end
