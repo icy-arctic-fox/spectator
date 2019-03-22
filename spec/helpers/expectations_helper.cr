@@ -8,6 +8,10 @@ def new_partial(actual : T = 123) forall T
   Spectator::Expectations::ValueExpectationPartial.new(actual, __FILE__, __LINE__)
 end
 
+def new_block_partial(label = "BLOCK", &block)
+  Spectator::Expectations::BlockExpectationPartial.new(block, label, __FILE__, __LINE__)
+end
+
 def new_matcher(expected : T, label : String) forall T
   Spectator::Matchers::EqualityMatcher.new(expected, label)
 end

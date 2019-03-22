@@ -116,7 +116,7 @@ In no particular order, features that have been implemented and are planned:
     - [X] Type matchers - `be_a`
     - [ ] Collection matchers - `contain`, `have`, `contain_exactly[.in_order|.in_any_order]`, `match_array[.in_order|.in_any_order]`, `start_with`, `end_with`, `be_empty`, `have_key`, `have_value`, `all`, `all_satisfy`
     - [X] Truthy matchers - `be`, `be_true`, `be_truthy`, `be_false`, `be_falsey`, `be_nil`
-    - [ ] Error matchers - `raise_error`
+    - [X] Error matchers - `raise_error`
     - [ ] Yield matchers - `yield_control[.times]`, `yield_with_args[.times]`, `yield_with_no_args[.times]`, `yield_successive_args`
     - [ ] Output matchers - `output[.to_stdout|.to_stderr]`
     - [ ] Misc. matchers - `exist`, `match`, `satisfy`, `change[.by|.from[.to]|.to|.by_at_least|.by_at_most]`, `have_attributes`
