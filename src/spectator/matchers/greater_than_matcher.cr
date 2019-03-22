@@ -27,13 +27,8 @@ module Spectator::Matchers
       def named_tuple
         {
           expected: NegatablePrefixedMatchDataValue.new(">", "<=", @values.expected),
-          actual:   PrefixedMatchDataValue.new(actual_operator, @values.actual),
+          actual:   @values.actual,
         }
-      end
-
-      # Textual operator for the actual value.
-      private def actual_operator
-        matched? ? ">" : "<="
       end
 
       # Describes the condition that satisfies the matcher.
