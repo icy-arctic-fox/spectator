@@ -127,7 +127,7 @@ In no particular order, features that have been implemented and are planned:
     - [ ] Fail on no tests
     - [ ] Randomize test order
     - [ ] Dry run - for validation and checking formatted output
-    - [ ] Config block in `spec_helper.cr`
+    - [X] Config block in `spec_helper.cr`
     - [X] Config file - `.spectator`
 - [ ] Reporter and formatting
     - [X] RSpec/Crystal Spec default
