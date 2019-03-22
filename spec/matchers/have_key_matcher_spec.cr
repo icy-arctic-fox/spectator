@@ -67,7 +67,7 @@ describe Spectator::Matchers::HaveKeyMatcher do
             partial = new_partial(tuple)
             matcher = Spectator::Matchers::HaveKeyMatcher.new(key)
             match_data = matcher.match(partial)
-            match_data_value_sans_prefix(match_data, :key)[:value].should eq(key)
+            match_data_value_sans_prefix(match_data.values, :key)[:value].should eq(key)
           end
         end
 
@@ -79,7 +79,7 @@ describe Spectator::Matchers::HaveKeyMatcher do
               partial = new_partial(tuple)
               matcher = Spectator::Matchers::HaveKeyMatcher.new(key)
               match_data = matcher.match(partial)
-              match_data_value_sans_prefix(match_data, :actual)[:value].should eq(tuple.keys)
+              match_data_value_sans_prefix(match_data.values, :actual)[:value].should eq(tuple.keys)
             end
           end
 
@@ -90,7 +90,7 @@ describe Spectator::Matchers::HaveKeyMatcher do
               partial = new_partial(actual)
               matcher = Spectator::Matchers::HaveKeyMatcher.new(key)
               match_data = matcher.match(partial)
-              match_data_value_sans_prefix(match_data, :actual)[:value].should eq(actual)
+              match_data_value_sans_prefix(match_data.values, :actual)[:value].should eq(actual)
             end
           end
         end

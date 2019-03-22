@@ -41,7 +41,7 @@ describe Spectator::Matchers::HaveValueMatcher do
             partial = new_partial(hash)
             matcher = Spectator::Matchers::HaveValueMatcher.new(value)
             match_data = matcher.match(partial)
-            match_data_value_sans_prefix(match_data, :value)[:value].should eq(value)
+            match_data_value_sans_prefix(match_data.values, :value)[:value].should eq(value)
           end
         end
 
@@ -53,7 +53,7 @@ describe Spectator::Matchers::HaveValueMatcher do
               partial = new_partial(hash)
               matcher = Spectator::Matchers::HaveValueMatcher.new(value)
               match_data = matcher.match(partial)
-              match_data_value_sans_prefix(match_data, :actual)[:value].should eq(hash.values)
+              match_data_value_sans_prefix(match_data.values, :actual)[:value].should eq(hash.values)
             end
           end
 
@@ -64,7 +64,7 @@ describe Spectator::Matchers::HaveValueMatcher do
               partial = new_partial(actual)
               matcher = Spectator::Matchers::HaveValueMatcher.new(value)
               match_data = matcher.match(partial)
-              match_data_value_sans_prefix(match_data, :actual)[:value].should eq(actual)
+              match_data_value_sans_prefix(match_data.values, :actual)[:value].should eq(actual)
             end
           end
         end

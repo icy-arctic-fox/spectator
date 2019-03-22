@@ -32,7 +32,7 @@ describe Spectator::Matchers::EmptyMatcher do
             partial = new_partial(array)
             matcher = Spectator::Matchers::EmptyMatcher.new
             match_data = matcher.match(partial)
-            match_data_value_sans_prefix(match_data, :expected)[:to_s].should eq("[]")
+            match_data_value_sans_prefix(match_data.values, :expected)[:to_s].should eq("[]")
           end
         end
 
@@ -42,7 +42,7 @@ describe Spectator::Matchers::EmptyMatcher do
             partial = new_partial(array)
             matcher = Spectator::Matchers::EmptyMatcher.new
             match_data = matcher.match(partial)
-            match_data_value_sans_prefix(match_data, :actual)[:value].should eq(array)
+            match_data_value_sans_prefix(match_data.values, :actual)[:value].should eq(array)
           end
         end
       end

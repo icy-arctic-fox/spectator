@@ -94,7 +94,7 @@ describe Spectator::Matchers::ExceptionMatcher do
             partial = new_block_partial { raise ArgumentError.new }
             matcher = Spectator::Matchers::ExceptionMatcher(KeyError, Nil).new
             match_data = matcher.match(partial)
-            match_data_value_sans_prefix(match_data, :"expected type")[:value].should eq(KeyError)
+            match_data_value_sans_prefix(match_data.values, :"expected type")[:value].should eq(KeyError)
           end
         end
 
@@ -103,7 +103,7 @@ describe Spectator::Matchers::ExceptionMatcher do
             partial = new_block_partial { raise ArgumentError.new }
             matcher = Spectator::Matchers::ExceptionMatcher(KeyError, Nil).new
             match_data = matcher.match(partial)
-            match_data_value_sans_prefix(match_data, :"actual type")[:value].should eq(ArgumentError)
+            match_data_value_sans_prefix(match_data.values, :"actual type")[:value].should eq(ArgumentError)
           end
 
           context "when nothing is raised" do
@@ -111,7 +111,7 @@ describe Spectator::Matchers::ExceptionMatcher do
               partial = new_block_partial { 42 }
               matcher = Spectator::Matchers::ExceptionMatcher(KeyError, Nil).new
               match_data = matcher.match(partial)
-              match_data_value_sans_prefix(match_data, :"actual type")[:value].should eq(Nil)
+              match_data_value_sans_prefix(match_data.values, :"actual type")[:value].should eq(Nil)
             end
           end
         end
@@ -122,7 +122,7 @@ describe Spectator::Matchers::ExceptionMatcher do
             partial = new_block_partial { raise ArgumentError.new("foobar") }
             matcher = Spectator::Matchers::ExceptionMatcher(KeyError, Regex).new(regex, "label")
             match_data = matcher.match(partial)
-            match_data_value_sans_prefix(match_data, :"expected message")[:value].should eq(regex)
+            match_data_value_sans_prefix(match_data.values, :"expected message")[:value].should eq(regex)
           end
         end
 
@@ -132,7 +132,7 @@ describe Spectator::Matchers::ExceptionMatcher do
             partial = new_block_partial { raise ArgumentError.new(message) }
             matcher = Spectator::Matchers::ExceptionMatcher(KeyError, Regex).new(/baz/, "label")
             match_data = matcher.match(partial)
-            match_data_value_sans_prefix(match_data, :"actual message")[:value].should eq(message)
+            match_data_value_sans_prefix(match_data.values, :"actual message")[:value].should eq(message)
           end
         end
       end

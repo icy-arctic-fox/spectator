@@ -31,7 +31,7 @@ describe Spectator::Matchers::NilMatcher do
             partial = new_partial(42)
             matcher = Spectator::Matchers::NilMatcher.new
             match_data = matcher.match(partial)
-            match_data_value_sans_prefix(match_data, :expected)[:value].should eq(nil)
+            match_data_value_sans_prefix(match_data.values, :expected)[:value].should eq(nil)
           end
         end
 
@@ -41,7 +41,7 @@ describe Spectator::Matchers::NilMatcher do
             partial = new_partial(value)
             matcher = Spectator::Matchers::NilMatcher.new
             match_data = matcher.match(partial)
-            match_data_value_sans_prefix(match_data, :actual)[:value].should eq(value)
+            match_data_value_sans_prefix(match_data.values, :actual)[:value].should eq(value)
           end
         end
       end

@@ -249,9 +249,9 @@ describe Spectator::Matchers::AttributesMatcher do
           partial = new_partial(array)
           matcher = Spectator::Matchers::AttributesMatcher.new(attributes)
           match_data = matcher.match(partial)
-          match_data_has_key?(match_data, :"expected first").should be_true
-          match_data_has_key?(match_data, :"expected last").should be_true
-          match_data_has_key?(match_data, :"expected size").should be_true
+          match_data_has_key?(match_data.values, :"expected first").should be_true
+          match_data_has_key?(match_data.values, :"expected last").should be_true
+          match_data_has_key?(match_data.values, :"expected size").should be_true
         end
 
         it "contains a key for each actual value" do
@@ -260,9 +260,9 @@ describe Spectator::Matchers::AttributesMatcher do
           partial = new_partial(array)
           matcher = Spectator::Matchers::AttributesMatcher.new(attributes)
           match_data = matcher.match(partial)
-          match_data_has_key?(match_data, :"actual first").should be_true
-          match_data_has_key?(match_data, :"actual last").should be_true
-          match_data_has_key?(match_data, :"actual size").should be_true
+          match_data_has_key?(match_data.values, :"actual first").should be_true
+          match_data_has_key?(match_data.values, :"actual last").should be_true
+          match_data_has_key?(match_data.values, :"actual size").should be_true
         end
 
         it "has the expected values" do
@@ -271,9 +271,9 @@ describe Spectator::Matchers::AttributesMatcher do
           partial = new_partial(array)
           matcher = Spectator::Matchers::AttributesMatcher.new(attributes)
           match_data = matcher.match(partial)
-          match_data_value_sans_prefix(match_data, :"expected first")[:value].should eq(attributes[:first])
-          match_data_value_sans_prefix(match_data, :"expected last")[:value].should eq(attributes[:last])
-          match_data_value_sans_prefix(match_data, :"expected size")[:value].should eq(attributes[:size])
+          match_data_value_sans_prefix(match_data.values, :"expected first")[:value].should eq(attributes[:first])
+          match_data_value_sans_prefix(match_data.values, :"expected last")[:value].should eq(attributes[:last])
+          match_data_value_sans_prefix(match_data.values, :"expected size")[:value].should eq(attributes[:size])
         end
 
         it "has the actual values" do
@@ -282,9 +282,9 @@ describe Spectator::Matchers::AttributesMatcher do
           partial = new_partial(array)
           matcher = Spectator::Matchers::AttributesMatcher.new(attributes)
           match_data = matcher.match(partial)
-          match_data_value_sans_prefix(match_data, :"actual first")[:value].should eq(array.first)
-          match_data_value_sans_prefix(match_data, :"actual last")[:value].should eq(array.last)
-          match_data_value_sans_prefix(match_data, :"actual size")[:value].should eq(array.size)
+          match_data_value_sans_prefix(match_data.values, :"actual first")[:value].should eq(array.first)
+          match_data_value_sans_prefix(match_data.values, :"actual last")[:value].should eq(array.last)
+          match_data_value_sans_prefix(match_data.values, :"actual size")[:value].should eq(array.size)
         end
       end
 

@@ -213,7 +213,7 @@ describe Spectator::Matchers::EndWithMatcher do
               partial = new_partial(value)
               matcher = Spectator::Matchers::EndWithMatcher.new(last)
               match_data = matcher.match(partial)
-              match_data_value_sans_prefix(match_data, :expected)[:value].should eq(last)
+              match_data_value_sans_prefix(match_data.values, :expected)[:value].should eq(last)
             end
           end
 
@@ -224,7 +224,7 @@ describe Spectator::Matchers::EndWithMatcher do
               partial = new_partial(value)
               matcher = Spectator::Matchers::EndWithMatcher.new(last)
               match_data = matcher.match(partial)
-              match_data_value_sans_prefix(match_data, :actual)[:value].should eq(value)
+              match_data_value_sans_prefix(match_data.values, :actual)[:value].should eq(value)
             end
           end
         end
@@ -237,7 +237,7 @@ describe Spectator::Matchers::EndWithMatcher do
               partial = new_partial(array)
               matcher = Spectator::Matchers::EndWithMatcher.new(last)
               match_data = matcher.match(partial)
-              match_data_value_sans_prefix(match_data, :expected)[:value].should eq(last)
+              match_data_value_sans_prefix(match_data.values, :expected)[:value].should eq(last)
             end
           end
 
@@ -248,7 +248,7 @@ describe Spectator::Matchers::EndWithMatcher do
               partial = new_partial(array)
               matcher = Spectator::Matchers::EndWithMatcher.new(last)
               match_data = matcher.match(partial)
-              match_data_value_sans_prefix(match_data, :actual)[:value].should eq(array.last)
+              match_data_value_sans_prefix(match_data.values, :actual)[:value].should eq(array.last)
             end
           end
 
@@ -259,7 +259,7 @@ describe Spectator::Matchers::EndWithMatcher do
               partial = new_partial(array)
               matcher = Spectator::Matchers::EndWithMatcher.new(last)
               match_data = matcher.match(partial)
-              match_data_value_sans_prefix(match_data, :list)[:value].should eq(array)
+              match_data_value_sans_prefix(match_data.values, :list)[:value].should eq(array)
             end
           end
         end

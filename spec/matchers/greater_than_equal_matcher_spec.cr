@@ -53,7 +53,7 @@ describe Spectator::Matchers::GreaterThanEqualMatcher do
             partial = new_partial(actual)
             matcher = Spectator::Matchers::GreaterThanEqualMatcher.new(expected)
             match_data = matcher.match(partial)
-            match_data_value_sans_prefix(match_data, :expected)[:value].should eq(expected)
+            match_data_value_sans_prefix(match_data.values, :expected)[:value].should eq(expected)
           end
 
           it "is prefixed with >=" do
@@ -62,7 +62,7 @@ describe Spectator::Matchers::GreaterThanEqualMatcher do
             partial = new_partial(actual)
             matcher = Spectator::Matchers::GreaterThanEqualMatcher.new(expected)
             match_data = matcher.match(partial)
-            match_data_value_sans_prefix(match_data, :expected)[:to_s].should start_with(">=")
+            match_data_value_sans_prefix(match_data.values, :expected)[:to_s].should start_with(">=")
           end
         end
 
@@ -73,7 +73,7 @@ describe Spectator::Matchers::GreaterThanEqualMatcher do
             partial = new_partial(actual)
             matcher = Spectator::Matchers::GreaterThanEqualMatcher.new(expected)
             match_data = matcher.match(partial)
-            match_data_value_sans_prefix(match_data, :actual)[:value].should eq(actual)
+            match_data_value_sans_prefix(match_data.values, :actual)[:value].should eq(actual)
           end
 
           context "when #matched? is true" do
@@ -84,7 +84,7 @@ describe Spectator::Matchers::GreaterThanEqualMatcher do
               matcher = Spectator::Matchers::GreaterThanEqualMatcher.new(expected)
               match_data = matcher.match(partial)
               match_data.matched?.should be_true # Sanity check.
-              match_data_value_sans_prefix(match_data, :actual)[:to_s].should start_with(">=")
+              match_data_value_sans_prefix(match_data.values, :actual)[:to_s].should start_with(">=")
             end
           end
 
@@ -96,7 +96,7 @@ describe Spectator::Matchers::GreaterThanEqualMatcher do
               matcher = Spectator::Matchers::GreaterThanEqualMatcher.new(expected)
               match_data = matcher.match(partial)
               match_data.matched?.should be_false # Sanity check.
-              match_data_value_sans_prefix(match_data, :actual)[:to_s].should start_with("<")
+              match_data_value_sans_prefix(match_data.values, :actual)[:to_s].should start_with("<")
             end
           end
         end
