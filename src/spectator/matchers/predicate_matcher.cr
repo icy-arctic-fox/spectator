@@ -45,12 +45,12 @@ module Spectator::Matchers
     # Match data specific to this matcher.
     private struct MatchData(ActualType) < MatchData
       # Creates the match data.
-      def initialize(matched, @values : ActualType, @actual_label : String)
+      def initialize(matched, @named_tuple : ActualType, @actual_label : String)
         super(matched)
       end
 
       # Information about the match.
-      getter values
+      getter named_tuple
 
       # Describes the condition that satisfies the matcher.
       # This is informational and displayed to the end-user.

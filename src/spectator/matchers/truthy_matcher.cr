@@ -95,7 +95,7 @@ module Spectator::Matchers
       end
 
       # Information about the match.
-      def values
+      def named_tuple
         truthy = "Not false or nil"
         falsey = "false or nil"
         {

@@ -45,7 +45,7 @@ module Spectator::Matchers
       end
 
       # Information about the match.
-      def values
+      def named_tuple
         {% begin %}
         {
           {% for attribute in ExpectedType.keys %}

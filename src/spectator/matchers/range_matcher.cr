@@ -65,7 +65,7 @@ module Spectator::Matchers
       end
 
       # Information about the match.
-      def values
+      def named_tuple
         {
           lower:  NegatablePrefixedValue.new(">=", "<", range.begin),
           upper:  NegatablePrefixedValue.new(exclusive? ? "<" : "<=", exclusive? ? ">=" : ">", range.end),
@@ -110,7 +110,7 @@ module Spectator::Matchers
       end
 
       # Information about the match.
-      def values
+      def named_tuple
         {
           set:    NegatableValue.new(@values.expected),
           actual: @values.actual,
