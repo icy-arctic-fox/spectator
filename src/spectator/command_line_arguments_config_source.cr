@@ -15,6 +15,7 @@ module Spectator
       OptionParser.parse(@args) do |parser|
         parser.on("-v", "--verbose", "Verbose output using document formatter") { builder.formatter = Formatting::DocumentFormatter.new }
         parser.on("-f", "--fail-fast", "Stop testing on first failure") { builder.fail_fast }
+        parser.on("-h", "--help", "Show this help") { puts parser; exit }
       end
     end
   end
