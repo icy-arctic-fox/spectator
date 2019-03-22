@@ -2,7 +2,7 @@ require "./match_data_value"
 
 module Spectator::Matchers
   # Prefixes (for output formatting) an actual or expected value.
-  private struct PrefixedMatchDataValue(T) < MatchDataValue
+  private class PrefixedMatchDataValue(T) < MatchDataValue
     # Value being prefixed.
     getter value : T
 

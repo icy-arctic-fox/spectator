@@ -3,7 +3,7 @@ require "./match_data_value"
 module Spectator::Matchers
   # Selects a value based on whether the value is negated.
   # This is used when a matcher is negated.
-  private struct AlternativeMatchDataValue(T1, T2) < MatchDataValue
+  private class AlternativeMatchDataValue(T1, T2) < MatchDataValue
     # Creates the wrapper.
     def initialize(@value1 : T1, @value2 : T2)
       @negated = false

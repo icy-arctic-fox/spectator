@@ -3,7 +3,7 @@ require "./match_data_value"
 module Spectator::Matchers
   # Wraps a prefixed value that can be negated.
   # This is used when a matcher is negated.
-  private struct NegatablePrefixedMatchDataValue(T) < MatchDataValue
+  private class NegatablePrefixedMatchDataValue(T) < MatchDataValue
     # Negatable value.
     getter value
 
