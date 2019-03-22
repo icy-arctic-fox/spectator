@@ -18,7 +18,7 @@ module Spectator
     # Retrieves the formatter to use.
     # If one wasn't specified by the user,
     # then `#default_formatter` is returned.
-    private def formatter
+    def formatter
       @formatter || default_formatter
     end
 
@@ -30,7 +30,7 @@ module Spectator
 
     # Creates a configuration.
     def build : Config
-      Config.new(formatter)
+      Config.new(self)
     end
   end
 end

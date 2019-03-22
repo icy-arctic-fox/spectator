@@ -5,7 +5,8 @@ module Spectator
     getter formatter : Formatting::Formatter
 
     # Creates a new configuration.
-    def initialize(@formatter)
+    def initialize(builder)
+      @formatter = builder.formatter
     end
   end
 end
