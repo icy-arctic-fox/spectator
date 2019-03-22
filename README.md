@@ -126,7 +126,7 @@ In no particular order, features that have been implemented and are planned:
     - [ ] Test filtering - by name, context, and tags
     - [X] Fail on no tests
     - [ ] Randomize test order
-    - [ ] Dry run - for validation and checking formatted output
+    - [X] Dry run - for validation and checking formatted output
     - [X] Config block in `spec_helper.cr`
     - [X] Config file - `.spectator`
 - [ ] Reporter and formatting

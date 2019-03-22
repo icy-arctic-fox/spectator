@@ -42,9 +42,20 @@ module Spectator
     # The formatter is given the example and result information.
     private def run_example(example)
       @config.formatter.start_example(example)
-      Internals::Harness.run(example).tap do |result|
-        @config.formatter.end_example(result)
-      end
+      result = if @config.dry_run? && example.is_a?(RunnableExample)
+                 dry_run_result(example)
+               else
+                 Internals::Harness.run(example)
+               end
+      @config.formatter.end_example(result)
+      result
+    end
+
+    # Creates a fake result for an example.
+    private def dry_run_result(example)
+      expectations = [] of Expectations::Expectation
+      example_expectations = Expectations::ExampleExpectations.new(expectations)
+      SuccessfulResult.new(example, Time::Span.zero, example_expectations)
     end
   end
 end
