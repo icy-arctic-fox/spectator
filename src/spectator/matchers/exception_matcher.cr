@@ -98,7 +98,7 @@ module Spectator::Matchers
           "expected type":    NegatableValue.new(ExceptionType),
           "actual type":      @values.actual.class,
           "expected message": NegatableValue.new(@values.expected),
-          "actual message":   @values.actual.message
+          "actual message":   @values.actual.message,
         }
       end
 
