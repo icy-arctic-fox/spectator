@@ -51,5 +51,12 @@ module Spectator::Expectations
     def failed?
       !successful?
     end
+
+    # Creates the JSON representation of the expectations.
+    def to_json(json : ::JSON::Builder)
+      json.array do
+        each &.to_json(json)
+      end
+    end
   end
 end

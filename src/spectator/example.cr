@@ -53,5 +53,11 @@ module Spectator
       io << ' ' unless symbolic? && @group.symbolic?
       io << what
     end
+
+    # Creates the JSON representation of the example,
+    # which is just its name.
+    def to_json(json : ::JSON::Builder)
+      json.string(to_s)
+    end
   end
 end

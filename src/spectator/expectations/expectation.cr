@@ -40,5 +40,21 @@ module Spectator::Expectations
     def actual_message
       @match_data.matched? ? @match_data.message : @match_data.negated_message
     end
+
+    # Creates the JSON representation of the expectation.
+    def to_json(json : ::JSON::Builder)
+      json.object do
+        json.field("satisfied") { satisfied?.to_json(json) }
+        json.field("expected") { expected_message.to_json(json) }
+        json.field("actual") { actual_message.to_json(json) }
+        json.field("values") do
+          json.object do
+            values.each do |labeled_value|
+              json.field(labeled_value.label, labeled_value.value.to_s)
+            end
+          end
+        end
+      end
+    end
   end
 end

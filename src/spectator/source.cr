@@ -41,5 +41,10 @@ module Spectator
       io << ':'
       io << line
     end
+
+    # Creates the JSON representation of the source.
+    def to_json(json : ::JSON::Builder)
+      json.string(to_s)
+    end
   end
 end
