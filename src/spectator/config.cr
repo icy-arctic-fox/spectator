@@ -1,8 +1,7 @@
 module Spectator
   # Provides customization and describes specifics for how Spectator will run and report tests.
   class Config
-    # Used to report test progress and results.
-    getter formatter : Formatting::Formatter
+    @formatters : Array(Formatting::Formatter)
 
     # Indicates whether the test should abort on first failure.
     getter? fail_fast : Bool
@@ -16,10 +15,17 @@ module Spectator
 
     # Creates a new configuration.
     def initialize(builder)
-      @formatter = builder.formatter
+      @formatters = builder.formatters
       @fail_fast = builder.fail_fast?
       @fail_blank = builder.fail_blank?
       @dry_run = builder.dry_run?
+    end
+
+    # Yields each formatter that should be reported to.
+    def each_formatter
+      @formatters.each do |formatter|
+        yield formatter
+      end
     end
   end
 end

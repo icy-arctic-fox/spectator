@@ -13,7 +13,7 @@ module Spectator
     # or false if there was at least one failure.
     def run : Bool
       # Indicate the suite is starting.
-      @config.formatter.start_suite(@suite)
+      @config.each_formatter(&.start_suite(@suite))
 
       # Run all examples and capture the results.
       results = Array(Result).new(@suite.size)
@@ -24,7 +24,7 @@ module Spectator
       # Generate a report and pass it along to the formatter.
       remaining = @suite.size - results.size
       report = Report.new(results, elapsed, remaining, @config.fail_blank?)
-      @config.formatter.end_suite(report)
+      @config.each_formatter(&.end_suite(report))
 
       !report.failed?
     end
@@ -41,13 +41,13 @@ module Spectator
     # Runs a single example and returns the result.
     # The formatter is given the example and result information.
     private def run_example(example)
-      @config.formatter.start_example(example)
+      @config.each_formatter(&.start_example(example))
       result = if @config.dry_run? && example.is_a?(RunnableExample)
                  dry_run_result(example)
                else
                  Internals::Harness.run(example)
                end
-      @config.formatter.end_example(result)
+      @config.each_formatter(&.end_example(result))
       result
     end
 

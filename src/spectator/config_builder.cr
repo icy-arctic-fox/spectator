@@ -8,21 +8,27 @@ module Spectator
       new.build
     end
 
-    @formatter : Formatting::Formatter? = nil
+    @primary_formatter : Formatting::Formatter?
+    @additional_formatters = [] of Formatting::Formatter
     @fail_fast = false
     @fail_blank = false
     @dry_run = false
 
-    # Sets the formatter to use for reporting test progress and results.
+    # Sets the primary formatter to use for reporting test progress and results.
     def formatter=(formatter : Formatting::Formatter)
-      @formatter = formatter
+      @primary_formatter = formatter
     end
 
-    # Retrieves the formatter to use.
+    # Adds an extra formater to use for reporting test progress and results.
+    def add_formatter(formatter : Formatting::Formatter)
+      @additional_formatters << formatter
+    end
+
+    # Retrieves the formatters to use.
     # If one wasn't specified by the user,
     # then `#default_formatter` is returned.
-    def formatter
-      @formatter || default_formatter
+    def formatters
+      @additional_formatters + [(@primary_formatter || default_formatter)]
     end
 
     # The formatter that should be used,
