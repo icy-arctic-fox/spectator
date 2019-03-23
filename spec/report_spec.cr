@@ -44,6 +44,15 @@ describe Spectator::Report do
     end
   end
 
+  describe "#each" do
+    it "yields all results" do
+      results = new_results
+      report = Spectator::Report.new(results)
+      # The `#each` method is tested through `Enumerable#to_a`.
+      report.to_a.should eq(results)
+    end
+  end
+
   describe "#runtime" do
     it "is the expected value" do
       span = Time::Span.new(10, 10, 10)

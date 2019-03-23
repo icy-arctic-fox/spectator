@@ -1,6 +1,10 @@
+require "./result"
+
 module Spectator
   # Outcome of all tests in a suite.
   class Report
+    include Enumerable(Result)
+
     # Total length of time it took to execute the test suite.
     # This includes examples, hooks, and framework processes.
     getter runtime : Time::Span
@@ -49,6 +53,13 @@ module Spectator
     def initialize(results : Array(Result))
       runtime = results.each.compact_map(&.as?(FinishedResult)).sum(&.elapsed)
       initialize(results, runtime)
+    end
+
+    # Yields each result in turn.
+    def each
+      @results.each do |result|
+        yield result
+      end
     end
 
     # Number of examples.
