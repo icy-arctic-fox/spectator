@@ -22,6 +22,9 @@ module Spectator::Formatting
     # The results from the entire suite are provided.
     def end_suite(report : Report)
       @json.end_array # examples
+      totals(report)
+      timing(report)
+      @json.field("result", report.failed? ? "fail" : "success")
       @json.end_object
     end
 
@@ -33,6 +36,31 @@ module Spectator::Formatting
     # The result of the test is provided.
     def end_example(result : Result)
       result.to_json(@json)
+    end
+
+    # Adds the totals section of the document.
+    private def totals(report)
+      @json.field("totals") do
+        @json.object do
+          @json.field("examples", report.example_count)
+          @json.field("success", report.successful_count)
+          @json.field("fail", report.failed_count)
+          @json.field("error", report.error_count)
+          @json.field("pending", report.pending_count)
+          @json.field("remaining", report.remaining_count)
+        end
+      end
+    end
+
+    # Adds the timings section of the document.
+    private def timing(report)
+      @json.field("timing") do
+        @json.object do
+          @json.field("runtime", report.runtime.to_s)
+          @json.field("examples", report.example_runtime.to_s)
+          @json.field("overhead", report.overhead_time.to_s)
+        end
+      end
     end
   end
 end
