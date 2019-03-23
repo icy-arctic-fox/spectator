@@ -43,7 +43,7 @@ module Spectator
       json.object do
         json.field("type", error.class.to_s)
         json.field("message", error.message)
-        json.field("backtrace") { error.backtrace.to_json(json) }
+        json.field("backtrace", error.backtrace)
       end
     end
   end

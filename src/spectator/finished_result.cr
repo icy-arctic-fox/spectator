@@ -21,7 +21,7 @@ module Spectator
     private def add_json_fields(json : ::JSON::Builder)
       super
       json.field("time", elapsed.to_s)
-      json.field("expectations") { expectations.to_json(json) }
+      json.field("expectations", expectations)
     end
   end
 end

@@ -44,9 +44,9 @@ module Spectator::Expectations
     # Creates the JSON representation of the expectation.
     def to_json(json : ::JSON::Builder)
       json.object do
-        json.field("satisfied") { satisfied?.to_json(json) }
-        json.field("expected") { expected_message.to_json(json) }
-        json.field("actual") { actual_message.to_json(json) }
+        json.field("satisfied", satisfied?)
+        json.field("expected", expected_message)
+        json.field("actual", actual_message)
         json.field("values") do
           json.object do
             values.each do |labeled_value|
