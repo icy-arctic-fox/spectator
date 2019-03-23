@@ -133,7 +133,7 @@ In no particular order, features that have been implemented and are planned:
     - [X] RSpec/Crystal Spec default
     - [X] JSON
     - [ ] JUnit
-    - [ ] TAP
+    - [X] TAP
 
 ### How it Works
 

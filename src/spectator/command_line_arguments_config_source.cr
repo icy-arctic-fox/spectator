@@ -24,7 +24,7 @@ module Spectator
         parser.on("--location FILE:LINE", "Run the example at line 'LINE' in the file 'FILE', multiple allowed") { |location| raise NotImplementedError.new("--location") }
         parser.on("--json", "Generate JSON output") { builder.formatter = Formatting::JsonFormatter.new }
         parser.on("--junit_output OUTPUT_DIR", "Generate JUnit XML output") { |output_dir| raise NotImplementedError.new("--juni_output") }
-        parser.on("--tap", "Generate TAP output (Test Anything Protocol)") { raise NotImplementedError.new("--tap") }
+        parser.on("--tap", "Generate TAP output (Test Anything Protocol)") { builder.formatter = Formatting::TAPFormatter.new }
         parser.on("--no-color", "Disable colored output") { raise NotImplementedError.new("--no-color") }
       end
     end
