@@ -7,5 +7,10 @@ module Spectator::Formatting
     # Creates the JUnit test case.
     def initialize(@result : SuccessfulResult)
     end
+
+    # Status string specific to the result type.
+    private def status
+      "PASS"
+    end
   end
 end

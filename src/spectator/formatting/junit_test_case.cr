@@ -12,13 +12,16 @@ module Spectator::Formatting
     private def attributes
       {
         name:      result.example,
-        status:    result,
+        status:    status,
         classname: classname,
       }
     end
 
     # Result to pull values from.
     private abstract def result
+
+    # Status string specific to the result type.
+    private abstract def status : String
 
     # Adds additional content to the "testcase" XML block.
     # Override this to add more content.

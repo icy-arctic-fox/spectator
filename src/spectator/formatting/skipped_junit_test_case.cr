@@ -10,6 +10,11 @@ module Spectator::Formatting
     def initialize(@result : PendingResult)
     end
 
+    # Status string specific to the result type.
+    private def status
+      "TODO"
+    end
+
     # Adds the skipped tag to the XML block.
     private def content(xml)
       super

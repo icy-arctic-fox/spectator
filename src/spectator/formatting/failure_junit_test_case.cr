@@ -10,6 +10,11 @@ module Spectator::Formatting
     def initialize(@result : FailedResult)
     end
 
+    # Status string specific to the result type.
+    private def status
+      "FAIL"
+    end
+
     # Adds the failed expectations to the XML block.
     private def content(xml)
       super
