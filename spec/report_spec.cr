@@ -15,19 +15,35 @@ def new_failure_result(result_type : Spectator::Result.class = Spectator::Failed
   result_type.new(example, elapsed, expectations, error)
 end
 
-def new_report(successful_count = 5, failed_count = 5, error_count = 5, pending_count = 5, overhead_time = 1_000_000i64, fail_blank = false)
-  results = [] of Spectator::Result
+def new_results(successful_count = 5, failed_count = 5, error_count = 5, pending_count = 5)
+  total = successful_count + failed_count + error_count + pending_count
+  results = Array(Spectator::Result).new(total)
   successful_count.times { results << new_passing_result }
   failed_count.times { results << new_failure_result }
   error_count.times { results << new_failure_result(Spectator::ErroredResult) }
   pending_count.times { results << new_pending_result }
+  results
+end
 
+def new_report(successful_count = 5, failed_count = 5, error_count = 5, pending_count = 5, overhead_time = 1_000_000i64, fail_blank = false)
+  results = new_results(successful_count, failed_count, error_count, pending_count)
   example_runtime = results.compact_map(&.as?(Spectator::FinishedResult)).sum(&.elapsed)
   total_runtime = example_runtime + Time::Span.new(nanoseconds: overhead_time)
   Spectator::Report.new(results, total_runtime, fail_blank: fail_blank)
 end
 
 describe Spectator::Report do
+  describe "#initialize(results)" do
+    describe "#runtime" do
+      it "is the sum of all results' runtimes" do
+        results = new_results
+        runtime = results.compact_map(&.as?(Spectator::FinishedResult)).sum(&.elapsed)
+        report = Spectator::Report.new(results)
+        report.runtime.should eq(runtime)
+      end
+    end
+  end
+
   describe "#runtime" do
     it "is the expected value" do
       span = Time::Span.new(10, 10, 10)

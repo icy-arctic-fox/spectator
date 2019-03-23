@@ -42,6 +42,15 @@ module Spectator
       end
     end
 
+    # Creates the report.
+    # This constructor is intended for reports of subsets of results.
+    # The *results* are from running the examples in the test suite.
+    # The runtime is calculated from the *results*.
+    def initialize(results : Array(Result))
+      runtime = results.each.compact_map(&.as?(FinishedResult)).sum(&.elapsed)
+      initialize(results, runtime)
+    end
+
     # Number of examples.
     def example_count
       @results.size
