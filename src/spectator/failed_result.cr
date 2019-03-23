@@ -32,5 +32,11 @@ module Spectator
     def to_s(io)
       io << "fail"
     end
+
+    # Adds all of the JSON fields for finished results and failed results.
+    private def add_json_fields(json : ::JSON::Builder)
+      super
+      json.field("error", error.message)
+    end
   end
 end

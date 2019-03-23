@@ -15,5 +15,13 @@ module Spectator
     def initialize(example, @elapsed, @expectations)
       super(example)
     end
+
+    # Adds the common JSON fields for all result types
+    # and fields specific to finished results.
+    private def add_json_fields(json : ::JSON::Builder)
+      super
+      json.field("time", elapsed.to_s)
+      json.field("expectations") { expectations.to_json(json) }
+    end
   end
 end

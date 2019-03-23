@@ -38,34 +38,6 @@ module Spectator::Formatting
 end
 
 module Spectator
-  abstract class Result
-    def to_json(json : ::JSON::Builder)
-      json.object do
-        common_json_fields(json)
-      end
-    end
-
-    private def common_json_fields(json : ::JSON::Builder)
-      json.field("name") { example.to_json(json) }
-      json.field("location") { example.source.to_json(json) }
-      json.field("result", to_s)
-    end
-  end
-
-  abstract class FinishedResult < Result
-    def to_json(json : ::JSON::Builder)
-      json.object do
-        finished_json_fields(json)
-      end
-    end
-
-    private def finished_json_fields(json)
-      common_json_fields(json)
-      json.field("time", elapsed.to_s)
-      json.field("expectations") { expectations.to_json(json) }
-    end
-  end
-
   abstract class Example < ExampleComponent
     def to_json(json : ::JSON::Builder)
       json.string(to_s)

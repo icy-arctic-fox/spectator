@@ -22,5 +22,19 @@ module Spectator
     # This variation takes a block, which is passed the result.
     # The value returned from the block will be returned by this method.
     abstract def call(interface, &block : Result -> _)
+
+    # Creates a JSON object from the result information.
+    def to_json(json : ::JSON::Builder)
+      json.object do
+        add_json_fields(json)
+      end
+    end
+
+    # Adds the common fields for a result to a JSON builder.
+    private def add_json_fields(json : ::JSON::Builder)
+      json.field("name") { example.to_json(json) }
+      json.field("location") { example.source.to_json(json) }
+      json.field("result", to_s)
+    end
   end
 end
