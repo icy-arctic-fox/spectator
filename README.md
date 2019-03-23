@@ -129,10 +129,10 @@ In no particular order, features that have been implemented and are planned:
     - [X] Dry run - for validation and checking formatted output
     - [X] Config block in `spec_helper.cr`
     - [X] Config file - `.spectator`
-- [ ] Reporter and formatting
+- [X] Reporter and formatting
     - [X] RSpec/Crystal Spec default
     - [X] JSON
-    - [ ] JUnit
+    - [X] JUnit
     - [X] TAP
 
 ### How it Works
