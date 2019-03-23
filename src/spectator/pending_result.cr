@@ -16,5 +16,10 @@ module Spectator
       value = yield self
       interface.pending(value)
     end
+
+    # One-word descriptor of the result.
+    def to_s(io)
+      io << "pending"
+    end
   end
 end

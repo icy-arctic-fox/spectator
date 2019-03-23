@@ -17,5 +17,10 @@ module Spectator
       value = yield self
       interface.error(value)
     end
+
+    # One-word descriptor of the result.
+    def to_s(io)
+      io << "error"
+    end
   end
 end
