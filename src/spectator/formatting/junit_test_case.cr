@@ -28,7 +28,12 @@ module Spectator::Formatting
 
     # Java-ified class name created from the spec.
     private def classname
-      "TODO"
+      path = result.example.source.path
+      file = File.basename(path)
+      ext = File.extname(file)
+      name = file[0...-(ext.size)]
+      dir = path[0...-(file.size + 1)]
+      {dir.gsub('/', '.').underscore, name.camelcase}.join('.')
     end
   end
 end

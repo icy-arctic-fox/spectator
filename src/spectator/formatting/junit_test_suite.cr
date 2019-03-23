@@ -32,12 +32,17 @@ module Spectator::Formatting
 
     # Java-ified name of the test suite.
     private def name
-      "TODO"
+      file = File.basename(@path)
+      ext = File.extname(file)
+      name = file[0...-(ext.size)]
+      name.camelcase
     end
 
     # Java-ified package (path) of the test suite.
     private def package
-      "TODO"
+      file = File.basename(@path)
+      dir = @path[0...-(file.size + 1)]
+      dir.gsub('/', '.').underscore
     end
 
     # Selector for creating a JUnit test case based on a result.
