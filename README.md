@@ -131,7 +131,7 @@ In no particular order, features that have been implemented and are planned:
     - [X] Config file - `.spectator`
 - [ ] Reporter and formatting
     - [X] RSpec/Crystal Spec default
-    - [ ] JSON
+    - [X] JSON
     - [ ] JUnit
     - [ ] TAP
 
