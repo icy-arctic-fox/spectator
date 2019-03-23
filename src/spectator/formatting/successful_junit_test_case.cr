@@ -1,19 +1,11 @@
 module Spectator::Formatting
-  private struct SuccessfulJUnitTestCase
+  # JUnit test case for a successful result.
+  private class SuccessfulJUnitTestCase < FinishedJUnitTestCase
+    # Result for this test case.
+    private getter result
+
+    # Creates the JUnit test case.
     def initialize(@result : SuccessfulResult)
-    end
-
-    def to_xml(xml : ::XML::Builder)
-      xml.element("testcase",
-        name: @result.example,
-        status: @result,
-        time: @result.elapsed.total_seconds,
-        classname: classname,
-        assertions: @result.expectations.size)
-    end
-
-    private def classname
-      "TODO"
     end
   end
 end

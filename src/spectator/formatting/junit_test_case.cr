@@ -1,26 +1,34 @@
 module Spectator::Formatting
-  # Selector for creating a JUnit test case based on a result.
-  private module JUnitTestCase
-    extend self
-
-    # Creates a successful JUnit test case.
-    def success(result)
-      SuccessfulJUnitTestCase.new(result.as(SuccessfulResult))
+  # Base type for all JUnit test case results.
+  private abstract class JUnitTestCase
+    # Produces the test case XML element.
+    def to_xml(xml : ::XML::Builder)
+      xml.element("testcase", **attributes) do
+        content(xml)
+      end
     end
 
-    # Creates a failure JUnit test case.
-    def failure(result)
-      FailureJUnitTestCase.new(result.as(FailedResult))
+    # Attributes that go in the "testcase" XML element.
+    private def attributes
+      {
+        name:      result.example,
+        status:    result,
+        classname: classname,
+      }
     end
 
-    # Creates an error JUnit test case.
-    def error(result)
-      ErrorJUnitTestCase.new(result.as(ErroredResult))
+    # Result to pull values from.
+    private abstract def result
+
+    # Adds additional content to the "testcase" XML block.
+    # Override this to add more content.
+    private def content(xml)
+      # ...
     end
 
-    # Creates a skipped JUnit test case.
-    def pending(result)
-      SkippedJUnitTestCase.new(result.as(PendingResult))
+    # Java-ified class name created from the spec.
+    private def classname
+      "TODO"
     end
   end
 end

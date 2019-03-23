@@ -18,19 +18,51 @@ module Spectator::Formatting
         time: @report.runtime.total_seconds,
         name: name,
         package: package) do
-        @report.each do |result|
-          test_case = result.call(JUnitTestCase) { |r| r }
-          test_case.to_xml(xml)
-        end
+        add_test_cases(xml)
       end
     end
 
+    # Adds the test case elements to the XML.
+    private def add_test_cases(xml)
+      @report.each do |result|
+        test_case = result.call(JUnitTestCaseSelector) { |r| r }
+        test_case.to_xml(xml)
+      end
+    end
+
+    # Java-ified name of the test suite.
     private def name
       "TODO"
     end
 
+    # Java-ified package (path) of the test suite.
     private def package
       "TODO"
+    end
+
+    # Selector for creating a JUnit test case based on a result.
+    private module JUnitTestCaseSelector
+      extend self
+
+      # Creates a successful JUnit test case.
+      def success(result)
+        SuccessfulJUnitTestCase.new(result.as(SuccessfulResult))
+      end
+
+      # Creates a failure JUnit test case.
+      def failure(result)
+        FailureJUnitTestCase.new(result.as(FailedResult))
+      end
+
+      # Creates an error JUnit test case.
+      def error(result)
+        ErrorJUnitTestCase.new(result.as(ErroredResult))
+      end
+
+      # Creates a skipped JUnit test case.
+      def pending(result)
+        SkippedJUnitTestCase.new(result.as(PendingResult))
+      end
     end
   end
 end
