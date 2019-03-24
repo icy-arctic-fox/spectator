@@ -43,7 +43,7 @@ module Spectator
     # if specified by the configuration.
     private def example_order
       if @config.randomize?
-        @suite.to_a.shuffle(@config.random)
+        @suite.to_a.shuffle!(@config.random)
       else
         @suite.each
       end
