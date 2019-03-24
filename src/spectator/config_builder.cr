@@ -9,7 +9,7 @@ module Spectator
     end
 
     # Random number generator to use.
-    getter random = Random::DEFAULT
+    protected getter random = Random::DEFAULT
 
     @primary_formatter : Formatting::Formatter?
     @additional_formatters = [] of Formatting::Formatter
@@ -31,7 +31,7 @@ module Spectator
     # Retrieves the formatters to use.
     # If one wasn't specified by the user,
     # then `#default_formatter` is returned.
-    def formatters
+    protected def formatters
       @additional_formatters + [(@primary_formatter || default_formatter)]
     end
 
@@ -52,7 +52,7 @@ module Spectator
     end
 
     # Indicates whether fail-fast mode is enabled.
-    def fail_fast?
+    protected def fail_fast?
       @fail_fast
     end
 
@@ -68,7 +68,7 @@ module Spectator
 
     # Indicates whether fail-fast mode is enabled.
     # That is, it is a failure if there are no tests.
-    def fail_blank?
+    protected def fail_blank?
       @fail_blank
     end
 
@@ -84,7 +84,7 @@ module Spectator
 
     # Indicates whether dry-run mode is enabled.
     # In this mode, no tests are run, but output acts like they were.
-    def dry_run?
+    protected def dry_run?
       @dry_run
     end
 
@@ -104,12 +104,12 @@ module Spectator
     end
 
     # Indicates whether tests are run in a random order.
-    def randomize?
+    protected def randomize?
       @randomize
     end
 
     # Creates a configuration.
-    def build : Config
+    protected def build : Config
       Config.new(self)
     end
   end
