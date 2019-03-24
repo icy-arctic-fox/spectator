@@ -20,18 +20,13 @@ class Object
     # First argument of the `Expectation` initializer is the expression label.
     # However, since this isn't a macro and we can't "look behind" this method call
     # to see what it was invoked on, the argument is an empty string.
-    expectation = ::Spectator::Expectation.new(self)
-    unless matcher.match?(expectation)
-      raise ::Spectator::ExpectationFailed.new(matcher.message(expectation))
-    end
+    # Additionally, the source file and line can't be obtained.
+    ::Spectator::Expectations::ValueExpectationPartial.new(self, __FILE__, __LINE__).to(matcher)
   end
 
   # Works the same as `#should` except the condition is inverted.
   # When `#should` succeeds, this method will fail, and vice-versa.
   def should_not(matcher : ::Spectator::Matchers::Matcher)
-    expectation = ::Spectator::Expectation.new(self)
-    if matcher.match?(expectation)
-      raise ::Spectator::ExpectationFailed.new(matcher.message(expectation))
-    end
+    ::Spectator::Expectations::ValueExpectationPartial.new(self, __FILE__, __LINE__).to_not(matcher)
   end
 end
