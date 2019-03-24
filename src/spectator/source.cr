@@ -11,6 +11,18 @@ module Spectator
     def initialize(@file, @line)
     end
 
+    # Parses a source from a string.
+    def self.parse(string)
+      # Make sure to handle multiple colons.
+      # If this ran on Windows, there's a possibility of a colon in the path.
+      # The last element should always be the line number.
+      parts = string.split(':')
+      path = parts[0...-1].join(':')
+      line = parts.last
+      file = File.expand_path(path)
+      self.new(file, line.to_i)
+    end
+
     # The relative path to the file from the current directory.
     # If the file isn't in the current directory or a sub-directory,
     # then the absolute path is provided.

@@ -54,4 +54,23 @@ describe Spectator::Source do
       source.to_s.should match(/^(.+?)\:(\d+)$/)
     end
   end
+
+  describe "#parse" do
+    it "gets the absolute path" do
+      file = "foo.cr"
+      path = File.expand_path(file)
+      source = Spectator::Source.parse("#{file}:42")
+      source.file.should eq(path)
+    end
+
+    it "gets the relative path" do
+      source = Spectator::Source.parse("foo.cr:42")
+      source.path.should eq("foo.cr")
+    end
+
+    it "gets the line number" do
+      source = Spectator::Source.parse("foo.cr:42")
+      source.line.should eq(42)
+    end
+  end
 end
