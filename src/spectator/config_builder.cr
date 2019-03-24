@@ -8,8 +8,8 @@ module Spectator
       new.build
     end
 
-    # Seed for the random number generator.
-    property seed = 0
+    # Random number generator to use.
+    getter random = Random::DEFAULT
 
     @primary_formatter : Formatting::Formatter?
     @additional_formatters = [] of Formatting::Formatter
@@ -87,6 +87,10 @@ module Spectator
       @dry_run
     end
 
+    # Sets the seed for the random number generator.
+    def seed=(seed)
+      @random = Random.new(seed)
+    end
     # Creates a configuration.
     def build : Config
       Config.new(self)

@@ -78,7 +78,6 @@ module Spectator
 
   @@config_builder = ConfigBuilder.new
   @@config : Config?
-  @@random : Random?
 
   # Provides a means to configure how Spectator will run and report tests.
   # A `ConfigBuilder` is yielded to allow changing the configuration.
@@ -93,7 +92,7 @@ module Spectator
   # This provides reproducable results even though random values are used.
   # The seed for this random generator is controlled by `ConfigBuilder.seed=`.
   def random
-    @@random ||= Random.new(config.seed)
+    config.random
   end
 
   # Builds the tests and runs the framework.
