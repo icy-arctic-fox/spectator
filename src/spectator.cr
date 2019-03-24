@@ -77,6 +77,7 @@ module Spectator
   end
 
   @@config_builder = ConfigBuilder.new
+  @@config : Config?
 
   # Provides a means to configure how Spectator will run and report tests.
   # A `ConfigBuilder` is yielded to allow changing the configuration.
@@ -103,6 +104,11 @@ module Spectator
 
   # Processes and builds up a configuration to use for running tests.
   private def config
+    @@config ||= build_config
+  end
+
+  # Builds the configuration.
+  private def build_config
     # Build up the configuration from various sources.
     # The sources that take priority are later in the list.
     apply_config_file
