@@ -109,7 +109,7 @@ module Spectator
     end
 
     # Creates a configuration.
-    protected def build : Config
+    def build : Config
       Config.new(self)
     end
   end
