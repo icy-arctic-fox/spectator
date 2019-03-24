@@ -30,10 +30,10 @@ describe Spectator::Expectations::BlockExpectationPartial do
     end
 
     context "when omitted" do
-      it "contains a stringified version of #actual" do
+      it "contains \"proc\"" do
         actual = ->{ 777 }
         partial = Spectator::Expectations::BlockExpectationPartial.new(actual, __FILE__, __LINE__)
-        partial.label.should eq(actual.to_s)
+        partial.label.should match(/proc/i)
       end
     end
   end
