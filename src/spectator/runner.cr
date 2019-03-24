@@ -31,10 +31,21 @@ module Spectator
 
     # Runs all examples and adds results to a list.
     private def collect_results(results)
-      @suite.each do |example|
+      example_order.each do |example|
         result = run_example(example).as(Result)
         results << result
         break if @config.fail_fast? && result.is_a?(FailedResult)
+      end
+    end
+
+    # Retrieves an enumerable for the examples to run.
+    # The order of examples is randomized
+    # if specified by the configuration.
+    private def example_order
+      if @config.randomize?
+        @suite.to_a.shuffle(@config.random)
+      else
+        @suite.each
       end
     end
 

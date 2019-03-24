@@ -16,6 +16,9 @@ module Spectator
     # Random number generator to use for everything.
     getter random : Random
 
+    # Indicates whether tests are run in a random order.
+    getter? randomize : Bool
+
     # Creates a new configuration.
     def initialize(builder)
       @formatters = builder.formatters
@@ -23,6 +26,7 @@ module Spectator
       @fail_blank = builder.fail_blank?
       @dry_run = builder.dry_run?
       @random = builder.random
+      @randomize = builder.randomize?
     end
 
     # Yields each formatter that should be reported to.

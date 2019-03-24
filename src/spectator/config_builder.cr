@@ -16,6 +16,7 @@ module Spectator
     @fail_fast = false
     @fail_blank = false
     @dry_run = false
+    @randomize = false
 
     # Sets the primary formatter to use for reporting test progress and results.
     def formatter=(formatter : Formatting::Formatter)
@@ -91,6 +92,22 @@ module Spectator
     def seed=(seed)
       @random = Random.new(seed)
     end
+
+    # Randomizes test execution order.
+    def randomize
+      self.randomize = true
+    end
+
+    # Enables or disables running tests in a random order.
+    def randomize=(flag)
+      @randomize = flag
+    end
+
+    # Indicates whether tests are run in a random order.
+    def randomize?
+      @randomize
+    end
+
     # Creates a configuration.
     def build : Config
       Config.new(self)
