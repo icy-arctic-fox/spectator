@@ -25,7 +25,7 @@ module Spectator
         parser.on("--json", "Generate JSON output") { builder.formatter = Formatting::JsonFormatter.new }
         parser.on("--junit_output OUTPUT_DIR", "Generate JUnit XML output") { |output_dir| builder.add_formatter(Formatting::JUnitFormatter.new(output_dir)) }
         parser.on("--tap", "Generate TAP output (Test Anything Protocol)") { builder.formatter = Formatting::TAPFormatter.new }
-        parser.on("--no-color", "Disable colored output") { raise NotImplementedError.new("--no-color") }
+        parser.on("--no-color", "Disable colored output") { Colorize.enabled = false }
       end
     end
   end
