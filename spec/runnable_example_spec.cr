@@ -1565,4 +1565,66 @@ describe Spectator::RunnableExample do
       end
     end
   end
+
+  describe "#===" do
+    context "with a matching Regex" do
+      it "is true" do
+        example = new_runnable_example
+        regex = Regex.new(Regex.escape(example.what))
+        (example === regex).should be_true
+      end
+    end
+
+    context "with a non-matching Regex" do
+      it "is false" do
+        example = new_runnable_example
+        regex = /BOGUS/
+        (example === regex).should be_false
+      end
+    end
+
+    context "with a String equal to the name" do
+      it "is true" do
+        example = new_runnable_example
+        (example === example.to_s).should be_true
+      end
+    end
+
+    context "with a String different than the name" do
+      it "is false" do
+        example = new_runnable_example
+        (example === "BOGUS").should be_false
+      end
+    end
+
+    context "with a matching source location" do
+      it "is true" do
+        example = new_runnable_example
+        (example === example.source).should be_true
+      end
+    end
+
+    context "with a non-matching source location" do
+      it "is false" do
+        example = new_runnable_example
+        source = Spectator::Source.new(__FILE__, __LINE__)
+        (example === source).should be_false
+      end
+    end
+
+    context "with a matching source line" do
+      it "is true" do
+        example = new_runnable_example
+        (example === example.source.line).should be_true
+      end
+    end
+
+    context "with a non-matching source line" do
+      it "is false" do
+        example = new_runnable_example
+        line = example.source.line + 5
+        (example === line).should be_false
+      end
+    end
+  end
 end
