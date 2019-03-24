@@ -78,6 +78,7 @@ module Spectator
 
   @@config_builder = ConfigBuilder.new
   @@config : Config?
+  @@random : Random?
 
   # Provides a means to configure how Spectator will run and report tests.
   # A `ConfigBuilder` is yielded to allow changing the configuration.
@@ -85,6 +86,14 @@ module Spectator
   # with a `.spectator` file and command-line arguments.
   def configure : Nil
     yield @@config_builder
+  end
+
+  # Random number generator for the test suite.
+  # All randomly generated values should be pulled from this.
+  # This provides reproducable results even though random values are used.
+  # The seed for this random generator is controlled by `ConfigBuilder.seed=`.
+  def random
+    @@random ||= Random.new(config.seed)
   end
 
   # Builds the tests and runs the framework.

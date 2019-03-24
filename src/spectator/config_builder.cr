@@ -8,6 +8,9 @@ module Spectator
       new.build
     end
 
+    # Seed for the random number generator.
+    property seed = 0
+
     @primary_formatter : Formatting::Formatter?
     @additional_formatters = [] of Formatting::Formatter
     @fail_fast = false

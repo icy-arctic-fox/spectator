@@ -22,6 +22,7 @@ module Spectator
         parser.on("-l", "--line LINE", "Run examples whose line matches LINE") { |line| raise NotImplementedError.new("-l") }
         parser.on("-p", "--profile", "Display the 10 slowest specs") { raise NotImplementedError.new("-p") }
         parser.on("--location FILE:LINE", "Run the example at line 'LINE' in the file 'FILE', multiple allowed") { |location| raise NotImplementedError.new("--location") }
+        parser.on("--seed INTEGER", "Set the seed for the random number generator") { |seed| builder.seed = seed.to_i }
         parser.on("--json", "Generate JSON output") { builder.formatter = Formatting::JsonFormatter.new }
         parser.on("--junit_output OUTPUT_DIR", "Generate JUnit XML output") { |output_dir| builder.add_formatter(Formatting::JUnitFormatter.new(output_dir)) }
         parser.on("--tap", "Generate TAP output (Test Anything Protocol)") { builder.formatter = Formatting::TAPFormatter.new }

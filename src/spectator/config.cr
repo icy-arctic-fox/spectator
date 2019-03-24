@@ -13,12 +13,16 @@ module Spectator
     # Examples won't run, but the output will show that they did.
     getter? dry_run : Bool
 
+    # Seed for the random number generator.
+    getter seed : Int32
+
     # Creates a new configuration.
     def initialize(builder)
       @formatters = builder.formatters
       @fail_fast = builder.fail_fast?
       @fail_blank = builder.fail_blank?
       @dry_run = builder.dry_run?
+      @seed = builder.seed
     end
 
     # Yields each formatter that should be reported to.
