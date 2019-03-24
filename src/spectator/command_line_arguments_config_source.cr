@@ -12,6 +12,7 @@ module Spectator
     # Applies the specified configuration to a builder.
     # Calling this method from multiple sources builds up the final configuration.
     def apply_to(builder : ConfigBuilder) : Nil
+      filter_criteria = [] of ExampleFilter::Type
       OptionParser.parse(@args) do |parser|
         parser.on("-v", "--verbose", "Verbose output using document formatter") { builder.formatter = Formatting::DocumentFormatter.new }
         parser.on("-f", "--fail-fast", "Stop testing on first failure") { builder.fail_fast }
@@ -19,7 +20,7 @@ module Spectator
         parser.on("-d", "--dry-run", "Don't run any tests, output what would have run") { builder.dry_run }
         parser.on("-h", "--help", "Show this help") { puts parser; exit }
         parser.on("-e", "--example STRING", "Run examples whose full nested names include STRING") { |pattern| raise NotImplementedError.new("-e") }
-        parser.on("-l", "--line LINE", "Run examples whose line matches LINE") { |line| raise NotImplementedError.new("-l") }
+        parser.on("-l", "--line LINE", "Run examples whose line matches LINE") { |line| filter_criteria << line.to_i }
         parser.on("-p", "--profile", "Display the 10 slowest specs") { raise NotImplementedError.new("-p") }
         parser.on("-r", "--rand", "Randomize the execution order of tests") { builder.randomize }
         parser.on("--seed INTEGER", "Set the seed for the random number generator (implies -r)") { |seed| builder.randomize; builder.seed = seed.to_i }
@@ -33,7 +34,9 @@ module Spectator
             builder.seed = parts[1].to_i if parts.size > 1
           end
         end
-        parser.on("--location FILE:LINE", "Run the example at line 'LINE' in the file 'FILE', multiple allowed") { |location| raise NotImplementedError.new("--location") }
+        parser.on("--location FILE:LINE", "Run the example at line 'LINE' in the file 'FILE', multiple allowed") { |location| filter_criteria << Source.parse(location) }
+        parser.on("-e", "--example", "Filter an example by its full name") { |name| filter_criteria << name }
+        parser.on("--pattern GLOB", "Filter which files are run by using a glob pattern") { |glob| raise NotImplementedError.new("--pattern") }
         parser.on("--json", "Generate JSON output") { builder.formatter = Formatting::JsonFormatter.new }
         parser.on("--junit_output OUTPUT_DIR", "Generate JUnit XML output") { |output_dir| builder.add_formatter(Formatting::JUnitFormatter.new(output_dir)) }
         parser.on("--tap", "Generate TAP output (Test Anything Protocol)") { builder.formatter = Formatting::TAPFormatter.new }
