@@ -58,9 +58,9 @@ module Spectator::Formatting
     private def timing(report)
       @json.field("timing") do
         @json.object do
-          @json.field("runtime", report.runtime.to_s)
-          @json.field("examples", report.example_runtime.to_s)
-          @json.field("overhead", report.overhead_time.to_s)
+          @json.field("runtime", report.runtime.total_seconds)
+          @json.field("examples", report.example_runtime.total_seconds)
+          @json.field("overhead", report.overhead_time.total_seconds)
         end
       end
     end
@@ -70,7 +70,7 @@ module Spectator::Formatting
       @json.field("profile") do
         @json.object do
           @json.field("count", profile.size)
-          @json.field("time", profile.total_time.to_s)
+          @json.field("time", profile.total_time.total_seconds)
           @json.field("percentage", profile.percentage)
           @json.field("results") do
             @json.array do
@@ -87,7 +87,7 @@ module Spectator::Formatting
     private def profile_entry(result)
       @json.object do
         @json.field("example", result.example)
-        @json.field("time", result.elapsed.to_s)
+        @json.field("time", result.elapsed.total_seconds)
         @json.field("source", result.example.source)
       end
     end
