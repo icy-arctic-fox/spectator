@@ -8,9 +8,9 @@ def spectator_test_config(formatter : Spectator::Formatting::Formatter? = nil, f
   builder.build
 end
 
-def new_test_suite
-  example = PassingExample.create
-  Spectator::TestSuite.new(example.group)
+def new_test_suite(group : Spectator::ExampleGroup? = nil)
+  filter = Spectator::NullExampleFilter.new
+  Spectator::TestSuite.new(group || PassingExample.create.group, filter)
 end
 
 describe Spectator::Runner do
@@ -21,7 +21,7 @@ describe Spectator::Runner do
         called << index
         nil
       end
-      suite = Spectator::TestSuite.new(group)
+      suite = new_test_suite(group)
       runner = Spectator::Runner.new(suite, spectator_test_config)
       runner.run
       called.should eq([0, 1, 2, 3, 4])
@@ -34,7 +34,7 @@ describe Spectator::Runner do
           called << index
           raise "Failure" if index > 5
         end
-        suite = Spectator::TestSuite.new(group)
+        suite = new_test_suite(group)
         runner = Spectator::Runner.new(suite, spectator_test_config(fail_fast: true))
         runner.run
         called.should eq([0, 1, 2, 3, 4, 5, 6])
@@ -46,7 +46,7 @@ describe Spectator::Runner do
           group = SpyExample.create_group(10) do |index|
             raise "Failure" if index > 5
           end
-          suite = Spectator::TestSuite.new(group)
+          suite = new_test_suite(group)
           runner = Spectator::Runner.new(suite, spectator_test_config(spy, true))
           runner.run
           report = spy.end_suite_calls.first
@@ -101,7 +101,7 @@ describe Spectator::Runner do
 
       it "#start_example is called for each example" do
         group = SpyExample.create_group(5) { |index| nil }
-        suite = Spectator::TestSuite.new(group)
+        suite = new_test_suite(group)
         spy = SpyFormatter.new
         runner = Spectator::Runner.new(suite, spectator_test_config(spy))
         runner.run
@@ -110,7 +110,7 @@ describe Spectator::Runner do
 
       it "passes the correct example to #start_example" do
         group = SpyExample.create_group(5) { |index| nil }
-        suite = Spectator::TestSuite.new(group)
+        suite = new_test_suite(group)
         spy = SpyFormatter.new
         runner = Spectator::Runner.new(suite, spectator_test_config(spy))
         runner.run
@@ -126,7 +126,7 @@ describe Spectator::Runner do
 
       it "calls #end_example for each example" do
         group = SpyExample.create_group(5) { |index| nil }
-        suite = Spectator::TestSuite.new(group)
+        suite = new_test_suite(group)
         spy = SpyFormatter.new
         runner = Spectator::Runner.new(suite, spectator_test_config(spy))
         runner.run
@@ -142,7 +142,7 @@ describe Spectator::Runner do
             FailingExample.new(group, Spectator::Internals::SampleValues.empty)
           end.as(Spectator::ExampleComponent)
         end
-        suite = Spectator::TestSuite.new(group)
+        suite = new_test_suite(group)
         spy = SpyFormatter.new
         runner = Spectator::Runner.new(suite, spectator_test_config(spy))
         runner.run
@@ -160,7 +160,7 @@ describe Spectator::Runner do
             FailingExample.new(group, Spectator::Internals::SampleValues.empty)
           end.as(Spectator::ExampleComponent)
         end
-        suite = Spectator::TestSuite.new(group)
+        suite = new_test_suite(group)
         spy = SpyFormatter.new
         runner = Spectator::Runner.new(suite, spectator_test_config(spy))
         runner.run
@@ -175,7 +175,7 @@ describe Spectator::Runner do
 
       it "contains the expected time span" do
         group = SpyExample.create_group(5) { |index| nil }
-        suite = Spectator::TestSuite.new(group)
+        suite = new_test_suite(group)
         spy = SpyFormatter.new
         runner = Spectator::Runner.new(suite, spectator_test_config(spy))
         max_time = Time.measure { runner.run }

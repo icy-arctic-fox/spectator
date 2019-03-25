@@ -6,13 +6,14 @@ module Spectator
 
     # Creates the test suite.
     # The example *group* provided will be run.
-    def initialize(@group : ExampleGroup)
+    # The *filter* identifies which examples to run from the *group*.
+    def initialize(@group : ExampleGroup, @filter : ExampleFilter)
     end
 
     # Yields each example in the test suite.
     def each : Nil
       iterator.each do |example|
-        yield example
+        yield example if @filter.includes?(example)
       end
     end
 

@@ -103,9 +103,9 @@ module Spectator::DSL
 
     # Builds the entire spec and returns it as a test suite.
     # This should be called only once after the entire spec has been defined.
-    protected def build : TestSuite
+    protected def build(filter : ExampleFilter) : TestSuite
       group = root_group.build(Internals::SampleValues.empty)
-      TestSuite.new(group)
+      TestSuite.new(group, filter)
     end
   end
 end

@@ -98,7 +98,7 @@ module Spectator
   # Builds the tests and runs the framework.
   private def run
     # Build the test suite and run it.
-    suite = ::Spectator::DSL::Builder.build
+    suite = ::Spectator::DSL::Builder.build(config.example_filter)
     Runner.new(suite, config).run
   rescue ex
     # Catch all unhandled exceptions here.
