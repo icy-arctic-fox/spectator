@@ -17,6 +17,7 @@ module Spectator
     @fail_blank = false
     @dry_run = false
     @randomize = false
+    @filters = [] of ExampleFilter
 
     # Sets the primary formatter to use for reporting test progress and results.
     def formatter=(formatter : Formatting::Formatter)
@@ -106,6 +107,22 @@ module Spectator
     # Indicates whether tests are run in a random order.
     protected def randomize?
       @randomize
+    end
+
+    # Adds a filter to determine which examples can run.
+    def add_example_filter(filter : ExampleFilter)
+      @filters << filter
+    end
+
+    # Retrieves a filter that determines which examples can run.
+    # If no filters were added with `#add_example_filter`,
+    # then the returned filter will allow all examples to be run.
+    protected def example_filter
+      if @filters.empty?
+        NullExampleFilter.new
+      else
+        CompositeExampleFilter.new(@filters)
+      end
     end
 
     # Creates a configuration.

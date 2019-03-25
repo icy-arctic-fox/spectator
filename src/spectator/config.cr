@@ -19,6 +19,9 @@ module Spectator
     # Indicates whether tests are run in a random order.
     getter? randomize : Bool
 
+    # Filter that determines which examples to run.
+    getter example_filter : ExampleFilter
+
     # Creates a new configuration.
     def initialize(builder)
       @formatters = builder.formatters
@@ -27,6 +30,7 @@ module Spectator
       @dry_run = builder.dry_run?
       @random = builder.random
       @randomize = builder.randomize?
+      @example_filter = builder.example_filter
     end
 
     # Yields each formatter that should be reported to.
