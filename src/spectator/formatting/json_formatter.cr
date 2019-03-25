@@ -67,7 +67,29 @@ module Spectator::Formatting
 
     # Adds the profile information to the document.
     private def profile(profile)
-      raise NotImplementedError.new("profile")
+      @json.field("profile") do
+        @json.object do
+          @json.field("count", profile.size)
+          @json.field("time", profile.total_time.to_s)
+          @json.field("percentage", profile.percentage)
+          @json.field("results") do
+            @json.array do
+              profile.each do |result|
+                profile_entry(result)
+              end
+            end
+          end
+        end
+      end
+    end
+
+    # Adds a profile entry to the document.
+    private def profile_entry(result)
+      @json.object do
+        @json.field("example", result.example)
+        @json.field("time", result.elapsed.to_s)
+        @json.field("source", result.example.source)
+      end
     end
   end
 end
