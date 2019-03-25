@@ -9,12 +9,14 @@ module Spectator::Formatting
     # Produces the summary of test suite from a report.
     # A block describing each failure is displayed.
     # At the end, the totals and runtime are printed.
-    def end_suite(report)
+    # The *profile* flag is set to true when profiling results should be generated.
+    def end_suite(report, profile : Bool)
       if report.example_count > 0
         @io.puts if is_a?(DotsFormatter)
         @io.puts
       end
       failures(report.failures) if report.failed_count > 0
+      profile(report) if profile
       stats(report)
       remaining(report) if report.remaining?
       if report.failed?
@@ -34,6 +36,11 @@ module Spectator::Formatting
       failures.each_with_index do |result, index|
         @io.puts FailureBlock.new(index + 1, result)
       end
+    end
+
+    # Produces the profiling section of the summary.
+    private def profile(report)
+      raise NotImplementedError.new("profile")
     end
 
     # Produces the statistical section of the summary.

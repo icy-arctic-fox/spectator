@@ -3,7 +3,6 @@
 class SpyFormatter < Spectator::Formatting::Formatter
   {% for item in [
                    {"start_suite", "Spectator::TestSuite"},
-                   {"end_suite", "Spectator::Report"},
                    {"start_example", "Spectator::Example"},
                    {"end_example", "Spectator::Result"},
                  ] %}
@@ -26,6 +25,21 @@ class SpyFormatter < Spectator::Formatting::Formatter
   end
 
   {% end %}
+
+  # Stores all invocatiosn made to `#end_suite`.
+  # Each element is an invocation and the value is the arguments passed to the method.
+  getter end_suite_calls = [] of NamedTuple(report: Spectator::Report, profile: Bool)
+
+  # Number of times the `#end_suite` method was called.
+  def end_suite_call_count
+    @end_suite_calls.size
+  end
+
+  # Increments `#end_suite_call_count` and stores the arguments.
+  def end_suite(report, profile)
+    @all_calls << :end_suite
+    @end_suite_calls << {report: report, profile: profile}
+  end
 
   # Stores the methods that were called and in which order.
   # The symbols will be the method name (i.e. `:start_suite`).

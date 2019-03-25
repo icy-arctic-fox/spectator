@@ -20,10 +20,12 @@ module Spectator::Formatting
 
     # Called when a test suite finishes.
     # The results from the entire suite are provided.
-    def end_suite(report : Report)
+    # The *profile* flag is set to true when profiling results should be generated.
+    def end_suite(report : Report, profile : Bool)
       @json.end_array # examples
       totals(report)
       timing(report)
+      profile(report) if profile
       @json.field("result", report.failed? ? "fail" : "success")
       @json.end_object
     end
@@ -61,6 +63,11 @@ module Spectator::Formatting
           @json.field("overhead", report.overhead_time.to_s)
         end
       end
+    end
+
+    # Adds the profile information to the document.
+    private def profile(report)
+      raise NotImplementedError.new("profile")
     end
   end
 end

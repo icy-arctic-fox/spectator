@@ -49,8 +49,8 @@ describe Spectator::Runner do
           suite = new_test_suite(group)
           runner = Spectator::Runner.new(suite, spectator_test_config(spy, true))
           runner.run
-          report = spy.end_suite_calls.first
-          report.remaining_count.should eq(3)
+          args = spy.end_suite_calls.first
+          args[:report].remaining_count.should eq(3)
         end
       end
     end
@@ -164,7 +164,8 @@ describe Spectator::Runner do
         spy = SpyFormatter.new
         runner = Spectator::Runner.new(suite, spectator_test_config(spy))
         runner.run
-        spy.end_example_calls.each_with_index do |result, index|
+        args = spy.end_suite_calls.first
+        args[:report].each_with_index do |result, index|
           if index.odd?
             result.should be_a(Spectator::SuccessfulResult)
           else
@@ -180,7 +181,8 @@ describe Spectator::Runner do
         runner = Spectator::Runner.new(suite, spectator_test_config(spy))
         max_time = Time.measure { runner.run }
         min_time = spy.end_example_calls.each.map(&.as(Spectator::FinishedResult)).sum(&.elapsed)
-        report = spy.end_suite_calls.first
+        args = spy.end_suite_calls.first
+        report = args[:report]
         report.runtime.should be <= max_time
         report.runtime.should be >= min_time
       end
