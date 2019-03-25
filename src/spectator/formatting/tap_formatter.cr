@@ -35,7 +35,24 @@ module Spectator::Formatting
 
     # Displays profiling information.
     private def profile(profile)
-      raise NotImplementedError.new("profile")
+      @io.puts(Comment.new(ProfileSummary.new(profile)))
+
+      indent = Indent.new(@io)
+      indent.increase do
+        profile.each do |result|
+          profile_entry(indent, result)
+        end
+      end
+    end
+
+    # Adds a profile result entry to the output.
+    private def profile_entry(indent, result)
+      @io << "# "
+      indent.line(result.example)
+      indent.increase do
+        @io << "# "
+        indent.line(SourceTiming.new(result.elapsed, result.example.source))
+      end
     end
   end
 end
