@@ -40,7 +40,7 @@ module Spectator::Formatting
 
     # Produces the profiling section of the summary.
     private def profile(profile)
-      raise NotImplementedError.new("profile")
+      @io.puts ProfileBlock.new(profile)
     end
 
     # Produces the statistical section of the summary.
