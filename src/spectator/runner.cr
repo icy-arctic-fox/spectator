@@ -24,7 +24,7 @@ module Spectator
       # Generate a report and pass it along to the formatter.
       remaining = @suite.size - results.size
       report = Report.new(results, elapsed, remaining, @config.fail_blank?)
-      @config.each_formatter(&.end_suite(report, false)) # TODO: Profile flag.
+      @config.each_formatter(&.end_suite(report, @config.profile?))
 
       !report.failed?
     end

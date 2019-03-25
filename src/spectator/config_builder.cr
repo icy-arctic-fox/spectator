@@ -17,6 +17,7 @@ module Spectator
     @fail_blank = false
     @dry_run = false
     @randomize = false
+    @profile = false
     @filters = [] of ExampleFilter
 
     # Sets the primary formatter to use for reporting test progress and results.
@@ -107,6 +108,21 @@ module Spectator
     # Indicates whether tests are run in a random order.
     protected def randomize?
       @randomize
+    end
+
+    # Displays profiling information
+    def profile
+      self.profile = true
+    end
+
+    # Enables or disables displaying profiling information.
+    def profile=(flag)
+      @profile = flag
+    end
+
+    # Indicates whether profiling information should be displayed.
+    protected def profile?
+      @profile
     end
 
     # Adds a filter to determine which examples can run.

@@ -140,7 +140,7 @@ module Spectator
     # Adds the profile output option to the parser.
     private def profile_option(parser, builder)
       parser.on("-p", "--profile", "Display the 10 slowest specs") do
-        raise NotImplementedError.new("-p")
+        builder.profile
       end
     end
 

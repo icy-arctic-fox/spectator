@@ -19,6 +19,9 @@ module Spectator
     # Indicates whether tests are run in a random order.
     getter? randomize : Bool
 
+    # Indicates whether profiling information should be displayed.
+    getter? profile : Bool
+
     # Filter that determines which examples to run.
     getter example_filter : ExampleFilter
 
@@ -30,6 +33,7 @@ module Spectator
       @dry_run = builder.dry_run?
       @random = builder.random
       @randomize = builder.randomize?
+      @profile = builder.profile?
       @example_filter = builder.example_filter
     end
 
