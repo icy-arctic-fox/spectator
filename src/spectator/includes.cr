@@ -34,6 +34,7 @@ require "./source_example_filter"
 require "./line_example_filter"
 require "./name_example_filter"
 require "./null_example_filter"
+require "./composite_example_filter"
 
 require "./example_failed"
 require "./expectation_failed"
