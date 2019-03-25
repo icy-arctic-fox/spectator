@@ -89,21 +89,25 @@ module Spectator
     # Adds the example filter option to the parser.
     private def example_option(parser, builder)
       parser.on("-e", "--example STRING", "Run examples whose full nested names include STRING") do |pattern|
-        raise NotImplementedError.new("-e")
+        filter = NameExampleFilter.new(pattern)
+        builder.add_example_filter(filter)
       end
     end
 
     # Adds the line filter option to the parser.
     private def line_option(parser, builder)
       parser.on("-l", "--line LINE", "Run examples whose line matches LINE") do |line|
-        raise NotImplementedError.new("-l")
+        filter = LineExampleFilter.new(line.to_i)
+        builder.add_example_filter(filter)
       end
     end
 
     # Adds the location filter option to the parser.
     private def location_option(parser, builder)
       parser.on("--location FILE:LINE", "Run the example at line 'LINE' in the file 'FILE', multiple allowed") do |location|
-        raise NotImplementedError.new("--location")
+        source = Source.parse(location)
+        filter = SourceExampleFilter.new(source)
+        builder.add_example_filter(filter)
       end
     end
 
