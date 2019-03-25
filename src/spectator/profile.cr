@@ -36,7 +36,7 @@ module Spectator
       results = report.compact_map(&.as?(FinishedResult))
       sorted_results = results.sort_by(&.elapsed)
       slowest = sorted_results.last(size).reverse
-      self.new(slowest, report.runtime)
+      self.new(slowest, report.example_runtime)
     end
   end
 end
