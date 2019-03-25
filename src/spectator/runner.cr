@@ -42,10 +42,8 @@ module Spectator
     # The order of examples is randomized
     # if specified by the configuration.
     private def example_order
-      if @config.randomize?
-        @suite.to_a.shuffle!(@config.random)
-      else
-        @suite.each
+      @suite.to_a.tap do |examples|
+        examples.shuffle!(@config.random) if @config.randomize?
       end
     end
 

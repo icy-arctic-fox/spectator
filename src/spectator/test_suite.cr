@@ -3,7 +3,6 @@ module Spectator
   # Use `#each` to enumerate over all tests in the suite.
   class TestSuite
     include Enumerable(Example)
-    include Iterable(Example)
 
     # Creates the test suite.
     # The example *group* provided will be run.
@@ -12,13 +11,13 @@ module Spectator
 
     # Yields each example in the test suite.
     def each : Nil
-      each.each do |example|
+      iterator.each do |example|
         yield example
       end
     end
 
-    # Returns an iterator that yields all examples in the test suite.
-    def each : Iterator(Example)
+    # Creates an iterator for the example group.
+    private def iterator
       ExampleIterator.new(@group)
     end
   end
