@@ -84,7 +84,6 @@ module Spectator
       example_option(parser, builder)
       line_option(parser, builder)
       location_option(parser, builder)
-      pattern_option(parser, builder)
     end
 
     # Adds the example filter option to the parser.
@@ -105,13 +104,6 @@ module Spectator
     private def location_option(parser, builder)
       parser.on("--location FILE:LINE", "Run the example at line 'LINE' in the file 'FILE', multiple allowed") do |location|
         raise NotImplementedError.new("--location")
-      end
-    end
-
-    # Adds the pattern filter option to the parser.
-    private def pattern_option(parser, builder)
-      parser.on("--pattern GLOB", "Filter which files are run by using a glob pattern") do |glob|
-        raise NotImplementedError.new("--pattern")
       end
     end
 
