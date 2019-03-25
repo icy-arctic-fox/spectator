@@ -40,6 +40,7 @@ require "./example_failed"
 require "./expectation_failed"
 require "./test_suite"
 require "./report"
+require "./profile"
 require "./runner"
 
 require "./result"
