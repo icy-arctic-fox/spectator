@@ -59,21 +59,5 @@ module Spectator
     def to_json(json : ::JSON::Builder)
       json.string(to_s)
     end
-
-    # Checks if this example matches some criteria.
-    # This is used to filter examples.
-    def ===(other)
-      other === to_s
-    end
-
-    # Checks if this example is at the specified source.
-    def ===(other : Source)
-      source == other
-    end
-
-    # Checks if this example is at the specified line number.
-    def ===(other : Int32)
-      source.line === other
-    end
   end
 end

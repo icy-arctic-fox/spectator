@@ -28,7 +28,11 @@ require "./config"
 require "./config_builder"
 require "./config_source"
 require "./command_line_arguments_config_source"
+
 require "./example_filter"
+require "./source_example_filter"
+require "./line_example_filter"
+require "./name_example_filter"
 
 require "./example_failed"
 require "./expectation_failed"
