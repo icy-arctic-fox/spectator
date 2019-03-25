@@ -16,9 +16,10 @@ module Spectator::Formatting
 
     # Called when a test suite finishes.
     # The results from the entire suite are provided.
-    def end_suite(report : Report, profile : Bool)
+    # The *profile* value is not nil when profiling results should be displayed.
+    def end_suite(report : Report, profile : Profile?)
       @io.puts "Bail out!" if report.remaining?
-      profile(report) if profile
+      profile(profile) if profile
     end
 
     # Called before a test starts.
@@ -32,8 +33,8 @@ module Spectator::Formatting
       @index += 1
     end
 
-    # Generates profiling information for the report.
-    private def profile(report)
+    # Displays profiling information.
+    private def profile(profile)
       raise NotImplementedError.new("profile")
     end
   end

@@ -14,8 +14,8 @@ module Spectator::Formatting
 
     # Called when a test suite finishes.
     # The results from the entire suite are provided.
-    # The *profile* flag is set to true when profiling results should be generated.
-    abstract def end_suite(report : Report, profile : Bool)
+    # The *profile* value is not nil when profiling results should be displayed.
+    abstract def end_suite(report : Report, profile : Profile?)
 
     # Called before a test starts.
     abstract def start_example(example : Example)

@@ -28,7 +28,7 @@ class SpyFormatter < Spectator::Formatting::Formatter
 
   # Stores all invocatiosn made to `#end_suite`.
   # Each element is an invocation and the value is the arguments passed to the method.
-  getter end_suite_calls = [] of NamedTuple(report: Spectator::Report, profile: Bool)
+  getter end_suite_calls = [] of NamedTuple(report: Spectator::Report, profile: Spectator::Profile?)
 
   # Number of times the `#end_suite` method was called.
   def end_suite_call_count

@@ -24,7 +24,7 @@ module Spectator
       # Generate a report and pass it along to the formatter.
       remaining = @suite.size - results.size
       report = Report.new(results, elapsed, remaining, @config.fail_blank?)
-      @config.each_formatter(&.end_suite(report, @config.profile?))
+      @config.each_formatter(&.end_suite(report, profile(report)))
 
       !report.failed?
     end
@@ -65,6 +65,11 @@ module Spectator
       expectations = [] of Expectations::Expectation
       example_expectations = Expectations::ExampleExpectations.new(expectations)
       SuccessfulResult.new(example, Time::Span.zero, example_expectations)
+    end
+
+    # Generates and returns a profile if one should be displayed.
+    private def profile(report)
+      Profile.generate(report) if @config.profile?
     end
   end
 end

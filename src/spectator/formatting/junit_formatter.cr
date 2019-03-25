@@ -24,8 +24,8 @@ module Spectator::Formatting
 
     # Called when a test suite finishes.
     # The results from the entire suite are provided.
-    # The *profile* flag does nothing for this formatter.
-    def end_suite(report : Report, profile : Bool)
+    # The *profile* value does nothing for this formatter.
+    def end_suite(report : Report, profile : Profile?)
       test_suites_block(report)
       @xml.end_document
       @xml.flush
