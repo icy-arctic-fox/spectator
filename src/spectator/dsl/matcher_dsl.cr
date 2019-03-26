@@ -518,7 +518,7 @@ module Spectator::DSL
     # expect_raises(ArgumentError, "foobar") { raise ArgumentError.new("foobar") }
     # ```
     macro expect_raises(type, message)
-      expect {{yield}}.to raise_error(type, message)
+      expect {{yield}}.to raise_error({{type}}, {{message}})
     end
 
     # Used to create predicate matchers.
