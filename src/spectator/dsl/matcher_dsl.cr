@@ -502,8 +502,8 @@ module Spectator::DSL
     # hash = {"foo" => "bar"}
     # expect_raises(KeyError) { hash["baz"] }.to raise_error(KeyError)
     # ```
-    macro expect_raises(type)
-      expect {{yield}}.to raise_error({{type}})
+    macro expect_raises(type, &block)
+      expect {{block}}.to raise_error({{type}})
     end
 
     # Indicates that some block should raise an error with a given message and type.
@@ -517,8 +517,8 @@ module Spectator::DSL
     # expect_raises(KeyError, /baz/) { hash["baz"] }
     # expect_raises(ArgumentError, "foobar") { raise ArgumentError.new("foobar") }
     # ```
-    macro expect_raises(type, message)
-      expect {{yield}}.to raise_error({{type}}, {{message}})
+    macro expect_raises(type, message, &block)
+      expect {{block}}.to raise_error({{type}}, {{message}})
     end
 
     # Used to create predicate matchers.
