@@ -503,7 +503,7 @@ module Spectator::DSL
     # expect_raises(KeyError) { hash["baz"] }.to raise_error(KeyError)
     # ```
     macro expect_raises(type)
-      expect {{yield}}.to raise_error(type)
+      expect {{yield}}.to raise_error({{type}})
     end
 
     # Indicates that some block should raise an error with a given message and type.
