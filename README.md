@@ -75,26 +75,128 @@ end
 
 If you find yourself trying to shoehorn in functionality
 or unsure how to write a test, please create an [issue](https://gitlab.com/arctic-fox/spectator/issues/new) for it.
-We want to make it as easy as possible to write specs and keep your code clean.
+The goal is to make it as easy as possible to write specs and keep your code clean.
 We may come up with a solution or even introduce a feature to support your needs.
 
 NOTE: Due to the way this shard uses macros,
 you may find that some code you would expect to work, or works in other spec libraries, creates syntax errors.
-If you run into this, please create an issue so that we may help you resolve it.
+If you run into this, please create an issue so that we may try to resolve it.
 
 Features
 --------
 
-TODO: Document the features and give brief usage examples.
+Spectator has all of the basic functionality for BDD.
+
+### Contexts
+
+The DSL supports arbitrarily nested contexts.
+Contexts can have values defined for multiple tests (`let` and `subject`).
+Additionally, hooks can be used to ensure any initialization or cleanup is done (`before`, `after`, and `around`).
+Pre- and post-conditions can be used to ensure code contracts are kept.
+
+Spectator has different types of contexts to reduce boilerplate.
+One is the `sample` context.
+This context type repeats all tests (and contexts within) for a set of values.
+For instance, some feature should behave the same for different input.
+However, some inputs might cause problems, but should behave the same.
+An example is various strings (empty strings, quoted strings, strings with non-ASCII, etc),
+and numbers (positive, negative, zero, NaN, infinity).
+
+Another context type is `given`.
+This context drastically reduces the amount of code needed in some scenarios.
+It can be used where one (or more inputs) changes the output of multiple methods.
+The `given` context gives a concise syntax for this use case.
+
+### Assertions
+
+Spectator supports two formats for assertions (expectations).
+The preferred format is the "expect syntax".
+This takes the form:
+
+```crystal
+expect(THIS).to eq(THAT)
+```
+
+The other format, "should syntax" is used by Crystal's default Spec.
+
+```
+THIS.should eq(THAT)
+```
+
+The first format doesn't monkey-patch the `Object` type.
+And as a bonus, it captures the expression or variable passed to `expect()`.
+For instance, compare these two tests:
+
+```crystal
+foo = "Hello world"
+foo.size.should eq(12) # Wrong on purpose!
+```
+
+Produces this error output:
+
+```text
+Failure: 11 does not equal 12
+
+  expected: 11
+    actual: 12
+```
+
+Which is reasonable, but where did 11 come from?
+Alternatively, with the "expect syntax":
+
+```crystal
+foo = "Hello world"
+expect(foo.size).to eq(12) # Wrong on purpose!
+```
+
+Produces this error output:
+
+```text
+Failure: foo.size does not equal 12
+
+  expected: 12
+    actual: 11
+```
+
+This makes it clearer what was being tested and failed.
+
+### Matchers
+
+Spectator has a variety of matchers for assertions.
+These are named in such a way to help tests read as plain English.
+Matchers can be used on any value or block.
+
+There are typical matchers for testing equality: `eq` and `ne`.
+And matchers for comparison: `<`, `<=`, `>`, `>=`, `be_within`.
+There are matchers for checking contents of collections:
+`contain`, `have`, `start_with`, `end_with`, `be_empty`, `have_key`, and more.
+See the full documentation for a full list of matchers.
+
+### Running
+
+Spectator supports multiple options for running tests.
+"Fail fast" aborts on the first test failure.
+"Fail blank" fails if there are no tests.
+Tests can be filtered by their location and name.
+Additionally, tests can be randomized.
+Spectator can be configured with command-line arguments, a config block in a `spec_helper.cr` file, and `.spectator` config file.
+
+### Output
+
+Spectator matches Crystal's default Spec output with some minor changes.
+JUnit and TAP are also supported output formats.
+There is also a highly detailed JSON output.
 
 Development
 -----------
 
-This shard is under heavy development and is not ready to be used for production.
+This shard is still under development and is not recommended for production use (same as Crystal).
+However, feel free to play around with it and use it for non-critical projects.
 
 ### Feature Progress
 
-In no particular order, features that have been implemented and are planned:
+In no particular order, features that have been implemented and are planned.
+Items not marked as completed may have partial implementations.
 
 - [ ] DSL
     - [X] `describe` and `context` blocks
@@ -135,11 +237,11 @@ In no particular order, features that have been implemented and are planned:
     - [X] JUnit
     - [X] TAP
 
-### How it Works
+### How it Works (in a nutshell)
 
 This shard makes extensive use of the Crystal macro system to build classes and modules.
 Each `describe` and `context` block creates a new module nested in its parent.
-The `it` block creates a class derived from an `Example` class.
+The `it` block creates an example class.
 An instance of the example class is created to run the test.
 Each example class includes a context module, which contains all test values and hooks.
 
@@ -151,6 +253,14 @@ Contributing
 3. Commit your changes (`git commit -am 'Add some feature'`)
 4. Push to the branch (`git push origin my-new-feature`)
 5. Create a new Merge Request
+
+Please make sure to run `crystal tool format` before submitting.
+The CI build checks for properly formatted code.
+
+Tests must be written for any new functionality.
+Macros that create types are not as easy to test,
+so they are exempt for the current time.
+However, please test all code locally with an example spec file.
 
 Contributors
 ------------
