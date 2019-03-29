@@ -90,6 +90,22 @@ module Spectator::DSL
       be_a({{expected}})
     end
 
+    # Indicates that some value should respond to a method call.
+    # One or more method names can be provided.
+    #
+    # Examples:
+    # ```
+    # expect("foobar").to respond_to(:downcase)
+    # expect(%i[a b c]).to respond_to(:size, :first)
+    # ```
+    macro respond_to(*expected)
+      ::Spectator::Matchers::RespondMatcher({% begin %}NamedTuple(
+        {% for method in expected %}
+        {{method.id.stringify}}: Nil,
+        {% end %}
+        ){% end %}).new
+    end
+
     # Indicates that some value should be less than another.
     # The < operator is used for this check.
     # The value passed to this method is the value expected to be larger.

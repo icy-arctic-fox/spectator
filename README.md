@@ -215,7 +215,7 @@ Items not marked as completed may have partial implementations.
 - [ ] Matchers
     - [X] Equality matchers - `eq`, `ne`, `be ==`, `be !=`
     - [X] Comparison matchers - `be <`, `be <=`, `be >`, `be >=`, `be_within[.of]`, `be_close`
-    - [X] Type matchers - `be_a`
+    - [X] Type matchers - `be_a`, `respond_to`
     - [ ] Collection matchers - `contain`, `have`, `contain_exactly[.in_order|.in_any_order]`, `match_array[.in_order|.in_any_order]`, `start_with`, `end_with`, `be_empty`, `have_key`, `have_value`, `all`, `all_satisfy`
     - [X] Truthy matchers - `be`, `be_true`, `be_truthy`, `be_false`, `be_falsey`, `be_nil`
     - [X] Error matchers - `raise_error`
