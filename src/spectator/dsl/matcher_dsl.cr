@@ -447,6 +447,26 @@ module Spectator::DSL
       have_value({{expected}})
     end
 
+    # Indicates that some set should contain some values in exact order.
+    #
+    # Example:
+    # ```
+    # expect([1, 2, 3]).to contain_exactly(1, 2, 3)
+    # ```
+    macro contain_exactly(*expected)
+      ::Spectator::Matchers::ArrayMatcher.new({{expected}}, {{expected.stringify}})
+    end
+
+    # Indicates that some set should contain the same values in exact order as another set.
+    #
+    # Example:
+    # ```
+    # expect([1, 2, 3]).to match_array([1, 2, 3])
+    # ```
+    macro match_array(expected)
+      ::Spectator::Matchers::ArrayMatcher.new({{expected}}, {{expected.stringify}})
+    end
+
     # Indicates that some value should have a set of attributes matching some conditions.
     # A list of named arguments are expected.
     # The names correspond to the attributes in the instance to check.
