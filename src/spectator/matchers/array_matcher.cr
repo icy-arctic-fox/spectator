@@ -1,6 +1,8 @@
 require "./value_matcher"
 
 module Spectator::Matchers
+  # Matcher for checking that the contents of one array (or similar type)
+  # has the exact same contents as another and in the same order.
   struct ArrayMatcher(ExpectedType) < ValueMatcher(ExpectedType)
     # Determines whether the matcher is satisfied with the partial given to it.
     # `MatchData` is returned that contains information about the match.
