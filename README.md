@@ -78,7 +78,7 @@ or unsure how to write a test, please create an [issue](https://gitlab.com/arcti
 The goal is to make it as easy as possible to write specs and keep your code clean.
 We may come up with a solution or even introduce a feature to support your needs.
 
-NOTE: Due to the way this shard uses macros,
+**NOTE:** Due to the way this shard uses macros,
 you may find that some code you would expect to work, or works in other spec libraries, creates syntax errors.
 If you run into this, please create an issue so that we may try to resolve it.
 
@@ -86,6 +86,7 @@ Features
 --------
 
 Spectator has all of the basic functionality for BDD.
+For full documentation on what it can do, please visit the [wiki](https://gitlab.com/arctic-fox/spectator/wikis/home).
 
 ### Contexts
 
@@ -102,10 +103,45 @@ However, some inputs might cause problems, but should behave the same.
 An example is various strings (empty strings, quoted strings, strings with non-ASCII, etc),
 and numbers (positive, negative, zero, NaN, infinity).
 
+```crystal
+# List of integers to test against.
+def various_integers
+  [-7, -1, 0, 1, 42]
+end
+
+# Repeat nested tests for every value in `#various_integers`.
+sample various_integers do |int|
+  # Example that checks if a fictitious method `#format` converts to strings.
+  it "formats correctly" do
+    expect(format(int)).to eq(int.to_s)
+  end
+end
+```
+
 Another context type is `given`.
 This context drastically reduces the amount of code needed in some scenarios.
 It can be used where one (or more inputs) changes the output of multiple methods.
 The `given` context gives a concise syntax for this use case.
+
+```crystal
+subject { User.new(age) }
+
+# Each expression in the `given` block is its own test.
+given age = 10 do
+  expect(user.can_drive?).to be_false
+  expect(user.can_vote?).to be_false
+end
+
+given age = 16 do
+  expect(user.can_drive?).to be_true
+  expect(user.can_vote?).to be_false
+end
+
+given age = 18 do
+  expect(user.can_drive?).to be_true
+  expect(user.can_vote?).to be_true
+end
+```
 
 ### Assertions
 
@@ -170,7 +206,7 @@ There are typical matchers for testing equality: `eq` and `ne`.
 And matchers for comparison: `<`, `<=`, `>`, `>=`, `be_within`.
 There are matchers for checking contents of collections:
 `contain`, `have`, `start_with`, `end_with`, `be_empty`, `have_key`, and more.
-See the full documentation for a full list of matchers.
+See the [wiki](https://gitlab.com/arctic-fox/spectator/wikis/Matchers) for a full list of matchers.
 
 ### Running
 
@@ -180,6 +216,14 @@ Spectator supports multiple options for running tests.
 Tests can be filtered by their location and name.
 Additionally, tests can be randomized.
 Spectator can be configured with command-line arguments, a config block in a `spec_helper.cr` file, and `.spectator` config file.
+
+```crystal
+Spectator.configure do |config|
+  config.fail_blank # Fail on no tests.
+  config.randomize  # Randomize test order.
+  config.profile    # Display slowest tests.
+end
+```
 
 ### Output
 
