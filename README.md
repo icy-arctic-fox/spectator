@@ -124,7 +124,7 @@ It can be used where one (or more inputs) changes the output of multiple methods
 The `given` context gives a concise syntax for this use case.
 
 ```crystal
-subject { User.new(age) }
+subject(user) { User.new(age) }
 
 # Each expression in the `given` block is its own test.
 given age = 10 do
