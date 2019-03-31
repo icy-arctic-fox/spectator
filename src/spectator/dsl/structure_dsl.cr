@@ -701,7 +701,7 @@ module Spectator::DSL
     # The `#subject` method can be used in examples to retrieve the value (basically a method).
     #
     # This macro expects a block.
-    # The block should return the value.
+    # The block should return the value of the subject.
     # This can be used to define a value once and reuse it in multiple examples.
     #
     # For instance:
@@ -752,6 +752,37 @@ module Spectator::DSL
     # ```
     macro subject(&block)
       let(:subject) {{block}}
+    end
+
+    # Explicitly defines the subject being tested.
+    # The `#subject` method can be used in examples to retrieve the value (basically a method).
+    # This also names the subject so that it can be referenced by the name instead.
+    #
+    # This macro expects a block.
+    # The block should return the value of the subject.
+    # This can be used to define a value once and reuse it in multiple examples.
+    #
+    # For instance:
+    # ```
+    # subject(string) { "foobar" }
+    #
+    # it "isn't empty" do
+    #   # Refer to it with `subject`.
+    #   expect(subject.empty?).to be_false
+    # end
+    #
+    # it "is six characters" do
+    #   # Refer to it by its name `string`.
+    #   expect(string.size).to eq(6)
+    # end
+    # ```
+    #
+    # The subject is created the first time it is referenced (lazy initialization).
+    # It is cached so that the same instance is used throughout the test.
+    # The subject will be recreated for each test it is used in.
+    macro subject(name, &block)
+      subject {{block}}
+      let({{name.id}}) { subject }
     end
 
     # Defines an expression by name.
