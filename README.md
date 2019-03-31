@@ -216,13 +216,31 @@ Items not marked as completed may have partial implementations.
     - [X] Equality matchers - `eq`, `ne`, `be ==`, `be !=`
     - [X] Comparison matchers - `be <`, `be <=`, `be >`, `be >=`, `be_within[.of]`, `be_close`
     - [X] Type matchers - `be_a`, `respond_to`
-    - [ ] Collection matchers - `contain`, `have`, `contain_exactly[.in_order|.in_any_order]`, `match_array[.in_order|.in_any_order]`, `start_with`, `end_with`, `be_empty`, `have_key`, `have_value`, `all`, `all_satisfy`
+    - [ ] Collection matchers
+      - [X] `contain`
+      - [X] `have`
+      - [X] `contain_exactly`
+      - [ ] `contain_exactly.in_any_order`
+      - [X] `match_array`
+      - [ ] `match_array.in_any_order`
+      - [X] `start_with`
+      - [X] `end_with`
+      - [X] `be_empty`
+      - [X] `have_key`
+      - [X] `have_value`
+      - [ ] `all`
+      - [ ] `all_satisfy`
     - [X] Truthy matchers - `be`, `be_true`, `be_truthy`, `be_false`, `be_falsey`, `be_nil`
     - [X] Error matchers - `raise_error`
     - [ ] Yield matchers - `yield_control[.times]`, `yield_with_args[.times]`, `yield_with_no_args[.times]`, `yield_successive_args`
     - [ ] Output matchers - `output[.to_stdout|.to_stderr]`
-    - [ ] Misc. matchers - `exist`, `match`, `satisfy`, `change[.by|.from[.to]|.to|.by_at_least|.by_at_most]`, `have_attributes`
-    - [ ] Expectation combining - `and`, `or`
+    - [ ] Misc. matchers
+      - [ ] `exist`
+      - [X] `match`
+      - [ ] `satisfy`
+      - [ ] `change[.by|.from[.to]|.to|.by_at_least|.by_at_most]`
+      - [X] `have_attributes`
+    - [ ] Compound - `and`, `or`
 - [ ] Runner
     - [X] Fail fast
     - [ ] Test filtering - by name, context, and tags
