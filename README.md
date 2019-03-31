@@ -95,6 +95,29 @@ Contexts can have values defined for multiple tests (`let` and `subject`).
 Additionally, hooks can be used to ensure any initialization or cleanup is done (`before`, `after`, and `around`).
 Pre- and post-conditions can be used to ensure code contracts are kept.
 
+```crystal
+# Initialize the database before running the tests in this context.
+before_all { Database.init }
+
+# Teardown the database and cleanup after tests in the is context finish.
+after_all { Database.cleanup }
+
+# Before each test, add some rows to the database.
+let(row_count) { 5 }
+before_each do
+  row_count.times { Database.insert_row }
+end
+
+# Remove the rows after the test to get a clean slate.
+after_each { Database.clear }
+
+describe "#row_count" do
+  it "returns the number of rows" do
+    expect(Database.row_count).to eq(row_count)
+  end
+end
+```
+
 Spectator has different types of contexts to reduce boilerplate.
 One is the `sample` context.
 This context type repeats all tests (and contexts within) for a set of values.
