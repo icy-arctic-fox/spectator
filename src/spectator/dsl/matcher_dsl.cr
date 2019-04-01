@@ -527,7 +527,7 @@ module Spectator::DSL
     # expect_raises { raise "foobar" }
     # ```
     macro expect_raises
-      expect {{yield}}.to raise_error
+      expect {{block}}.to raise_error
     end
 
     # Indicates that some block should raise an error with a given type.
