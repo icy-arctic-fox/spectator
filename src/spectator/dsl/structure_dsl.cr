@@ -1272,7 +1272,7 @@ module Spectator::DSL
     # pre_condition { expect(array.size).to eq(3) } # 2
     # ```
     #
-    # With nested groups, the inner blocks will run first.
+    # With nested groups, the outer blocks will run first.
     # ```
     # describe Something do
     #   pre_condition { is_expected.to_not be_nil } # 1
