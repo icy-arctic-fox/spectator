@@ -347,6 +347,9 @@ Macros that create types are not as easy to test,
 so they are exempt for the current time.
 However, please test all code locally with an example spec file.
 
+Documentation is automatically generated and published to GitLab pages.
+It can be found here: https://arctic-fox.gitlab.io/spectator
+
 Contributors
 ------------
 
