@@ -651,7 +651,7 @@ module Spectator::DSL
         # 2. The collection might contain randomly generated values.
         #    Iterating multiple times would generate inconsistent values at runtime.
         def %to_a
-          %sample.to_a.sample({{count}})
+          %sample.to_a.sample({{count}}, ::Spectator.random)
         end
       end
 
