@@ -1412,6 +1412,34 @@ module Spectator::DSL
       ::Spectator::DSL::Builder.add_example(Example%example)
     end
 
+    # Creates an example, or a test case.
+    # The block contains the code to run the test.
+    # One or more expectations should be in the block.
+    #
+    # ```
+    # it { expect(1 + 2).to eq(3) }
+    # ```
+    #
+    # See `ExampleDSL` and `MatcherDSL` for additional macros and methods
+    # that can be used in example code blocks.
+    #
+    # A short-hand, one-liner syntax can also be used.
+    # Typically, this is combined with `#subject`.
+    # For instance:
+    # ```
+    # subject { 1 + 2 }
+    # it is_expected.to eq(3)
+    # ```
+    macro it(&block)
+      it({{block.body.stringify}}) {{block}}
+    end
+
+    # An alternative way to write an example.
+    # This is identical to `#it`.
+    macro specify(what, &block)
+      it({{what}}) {{block}}
+    end
+
     # An alternative way to write an example.
     # This is identical to `#it`,
     # except that it doesn't take a "what" argument.
@@ -1456,10 +1484,31 @@ module Spectator::DSL
       ::Spectator::DSL::Builder.add_example(Example%example)
     end
 
+    # Creates an example, or a test case, that does not run.
+    # This can be used to prototype functionality that isn't ready.
+    # The *what* argument describes "what" is being tested or asserted.
+    # The block contains the code to run the test.
+    # One or more expectations should be in the block.
+    #
+    # ```
+    # pending do
+    #   # Something that isn't implemented yet.
+    # end
+    # ```
+    macro pending(&block)
+      peding({{block.body.stringify}}) {{block}}
+    end
+
     # Same as `#pending`.
     # Included for compatibility with RSpec.
     macro xit(what, &block)
       pending({{what}}) {{block}}
+    end
+
+    # Same as `#pending`.
+    # Included for compatibility with RSpec.
+    macro xit(&block)
+      pending({{block.body.stringify}}) {{block}}
     end
 
     # Creates a wrapper class for test code.

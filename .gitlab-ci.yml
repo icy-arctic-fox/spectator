@@ -15,3 +15,16 @@ spec:
   script:
   - crystal tool format --check
   - crystal spec
+
+pages:
+  stage: deploy
+  dependencies:
+    - spec
+  script:
+    - crystal docs
+    - mv docs/ public/
+  artifacts:
+    paths:
+      - public
+  only:
+    - master
