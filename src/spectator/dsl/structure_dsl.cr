@@ -1501,6 +1501,18 @@ module Spectator::DSL
 
     # Same as `#pending`.
     # Included for compatibility with RSpec.
+    macro skip(what, &block)
+      pending({{what}}) {{block}}
+    end
+
+    # Same as `#pending`.
+    # Included for compatibility with RSpec.
+    macro skip(&block)
+      pending({{block.body.stringify}}) {{block}}
+    end
+
+    # Same as `#pending`.
+    # Included for compatibility with RSpec.
     macro xit(what, &block)
       pending({{what}}) {{block}}
     end
