@@ -13,8 +13,9 @@ before_script:
 
 spec:
   script:
-  - crystal tool format --check
   - crystal spec
+  - bin/ameba
+  - crystal tool format --check
 
 pages:
   stage: deploy

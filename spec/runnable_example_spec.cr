@@ -856,7 +856,7 @@ describe Spectator::RunnableExample do
         root = Spectator::RootExampleGroup.new(Spectator::ExampleHooks.empty, conditions)
         group = Spectator::NestedExampleGroup.new("what", root, Spectator::ExampleHooks.empty, Spectator::ExampleConditions.empty)
         root.children = [group.as(Spectator::ExampleComponent)]
-        result = run_example(FailingExample, group)
+        run_example(FailingExample, group)
         called.should be_false
       end
     end
@@ -1219,7 +1219,7 @@ describe Spectator::RunnableExample do
         root = Spectator::RootExampleGroup.new(Spectator::ExampleHooks.empty, conditions)
         group = Spectator::NestedExampleGroup.new("what", root, Spectator::ExampleHooks.empty, Spectator::ExampleConditions.empty)
         root.children = [group.as(Spectator::ExampleComponent)]
-        result = run_example(ErroredExample, group)
+        run_example(ErroredExample, group)
         called.should be_false
       end
     end

@@ -154,7 +154,7 @@ describe Spectator::DSL::NestedExampleGroupBuilder do
     it "adds a hook" do
       hook_called = false
       builder = Spectator::DSL::NestedExampleGroupBuilder.new("foo")
-      builder.add_around_each_hook(->(proc : ->) {
+      builder.add_around_each_hook(->(_proc : ->) {
         hook_called = true
       })
       root = Spectator::DSL::RootExampleGroupBuilder.new.build(Spectator::Internals::SampleValues.empty)

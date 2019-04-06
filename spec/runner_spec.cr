@@ -100,7 +100,7 @@ describe Spectator::Runner do
       end
 
       it "#start_example is called for each example" do
-        group = SpyExample.create_group(5) { |index| nil }
+        group = SpyExample.create_group(5) { |_| nil }
         suite = new_test_suite(group)
         spy = SpyFormatter.new
         runner = Spectator::Runner.new(suite, spectator_test_config(spy))
@@ -109,7 +109,7 @@ describe Spectator::Runner do
       end
 
       it "passes the correct example to #start_example" do
-        group = SpyExample.create_group(5) { |index| nil }
+        group = SpyExample.create_group(5) { |_| nil }
         suite = new_test_suite(group)
         spy = SpyFormatter.new
         runner = Spectator::Runner.new(suite, spectator_test_config(spy))
@@ -125,7 +125,7 @@ describe Spectator::Runner do
       end
 
       it "calls #end_example for each example" do
-        group = SpyExample.create_group(5) { |index| nil }
+        group = SpyExample.create_group(5) { |_| nil }
         suite = new_test_suite(group)
         spy = SpyFormatter.new
         runner = Spectator::Runner.new(suite, spectator_test_config(spy))
@@ -175,7 +175,7 @@ describe Spectator::Runner do
       end
 
       it "contains the expected time span" do
-        group = SpyExample.create_group(5) { |index| nil }
+        group = SpyExample.create_group(5) { |_| nil }
         suite = new_test_suite(group)
         spy = SpyFormatter.new
         runner = Spectator::Runner.new(suite, spectator_test_config(spy))

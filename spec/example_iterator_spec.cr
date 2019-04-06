@@ -93,7 +93,7 @@ describe Spectator::ExampleIterator do
             end
           else
             Spectator::NestedExampleGroup.new(i.to_s, group, Spectator::ExampleHooks.empty, Spectator::ExampleConditions.empty).tap do |sub_group|
-              sub_group.children = Array(Spectator::ExampleComponent).new(5) do |j|
+              sub_group.children = Array(Spectator::ExampleComponent).new(5) do |_|
                 PassingExample.new(sub_group, Spectator::Internals::SampleValues.empty).tap do |example|
                   expected_examples << example
                 end
@@ -113,7 +113,7 @@ describe Spectator::ExampleIterator do
             PassingExample.new(group, Spectator::Internals::SampleValues.empty)
           else
             Spectator::NestedExampleGroup.new(i.to_s, group, Spectator::ExampleHooks.empty, Spectator::ExampleConditions.empty).tap do |sub_group|
-              sub_group.children = Array(Spectator::ExampleComponent).new(5) do |j|
+              sub_group.children = Array(Spectator::ExampleComponent).new(5) do |_|
                 PassingExample.new(sub_group, Spectator::Internals::SampleValues.empty)
               end
             end

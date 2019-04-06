@@ -35,7 +35,7 @@ module Spectator::Formatting
 
       days = hours / 24
       hours %= 24
-      return sprintf("%i days %i:%02i:%02i", days, hours, minutes, int_seconds)
+      sprintf("%i days %i:%02i:%02i", days, hours, minutes, int_seconds)
     end
   end
 end

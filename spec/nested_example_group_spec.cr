@@ -28,7 +28,7 @@ def nested_group_with_sub_groups(sub_group_count = 5, example_count = 5)
   examples = [] of Spectator::Example
   group.children = Array(Spectator::ExampleComponent).new(sub_group_count) do |i|
     Spectator::NestedExampleGroup.new(i.to_s, group, Spectator::ExampleHooks.empty, Spectator::ExampleConditions.empty).tap do |sub_group|
-      sub_group.children = Array(Spectator::ExampleComponent).new(example_count) do |j|
+      sub_group.children = Array(Spectator::ExampleComponent).new(example_count) do |_|
         PassingExample.new(group, Spectator::Internals::SampleValues.empty).tap do |example|
           examples << example
         end
@@ -359,7 +359,7 @@ describe Spectator::NestedExampleGroup do
         root = Spectator::RootExampleGroup.new(Spectator::ExampleHooks.empty, Spectator::ExampleConditions.empty)
         group = Spectator::NestedExampleGroup.new("what", root, hooks, Spectator::ExampleConditions.empty)
         root.children = [group.as(Spectator::ExampleComponent)]
-        group.children = Array(Spectator::ExampleComponent).new(5) do |i|
+        group.children = Array(Spectator::ExampleComponent).new(5) do |_|
           PassingExample.new(group, Spectator::Internals::SampleValues.empty).tap do |example|
             examples << example
           end
@@ -378,7 +378,7 @@ describe Spectator::NestedExampleGroup do
         root = Spectator::RootExampleGroup.new(Spectator::ExampleHooks.empty, Spectator::ExampleConditions.empty)
         group = Spectator::NestedExampleGroup.new("what", root, hooks, Spectator::ExampleConditions.empty)
         root.children = [group.as(Spectator::ExampleComponent)]
-        group.children = Array(Spectator::ExampleComponent).new(5) do |i|
+        group.children = Array(Spectator::ExampleComponent).new(5) do |_|
           PassingExample.new(group, Spectator::Internals::SampleValues.empty).tap do |example|
             examples << example
           end
@@ -397,7 +397,7 @@ describe Spectator::NestedExampleGroup do
         root = Spectator::RootExampleGroup.new(hooks, Spectator::ExampleConditions.empty)
         group = Spectator::NestedExampleGroup.new("what", root, Spectator::ExampleHooks.empty, Spectator::ExampleConditions.empty)
         root.children = [group.as(Spectator::ExampleComponent)]
-        group.children = Array(Spectator::ExampleComponent).new(5) do |i|
+        group.children = Array(Spectator::ExampleComponent).new(5) do |_|
           PassingExample.new(group, Spectator::Internals::SampleValues.empty).tap do |example|
             examples << example
           end
@@ -416,7 +416,7 @@ describe Spectator::NestedExampleGroup do
         root = Spectator::RootExampleGroup.new(hooks, Spectator::ExampleConditions.empty)
         group = Spectator::NestedExampleGroup.new("what", root, Spectator::ExampleHooks.empty, Spectator::ExampleConditions.empty)
         root.children = [group.as(Spectator::ExampleComponent)]
-        group.children = Array(Spectator::ExampleComponent).new(5) do |i|
+        group.children = Array(Spectator::ExampleComponent).new(5) do |_|
           PassingExample.new(group, Spectator::Internals::SampleValues.empty).tap do |example|
             examples << example
           end

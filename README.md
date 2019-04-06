@@ -341,6 +341,7 @@ Contributing
 
 Please make sure to run `crystal tool format` before submitting.
 The CI build checks for properly formatted code.
+[Ameba](https://github.com/veelenga/ameba) is run to check for code style.
 
 Tests must be written for any new functionality.
 Macros that create types are not as easy to test,
