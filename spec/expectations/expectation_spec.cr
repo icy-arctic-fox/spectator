@@ -59,8 +59,9 @@ describe Spectator::Expectations::Expectation do
         match_data = new_matcher(value).match(new_partial(value))
         expectation = Spectator::Expectations::Expectation.new(match_data, true)
         expectation.values.each do |labeled_value|
+          label = labeled_value.label
           value = labeled_value.value
-          value.to_s.should start_with(/not/i) if value.responds_to?(:negate)
+          value.to_s.should start_with(/not/i) if label == :expected
         end
       end
     end

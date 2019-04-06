@@ -21,12 +21,12 @@ module Spectator::Matchers
 
     # Produces a stringified value.
     def to_s(io)
-      value.inspect(io)
+      io << value
     end
 
     # Produces a stringified value with additional information.
     def inspect(io)
-      value.inspect(io)
+      io << value
     end
   end
 end
