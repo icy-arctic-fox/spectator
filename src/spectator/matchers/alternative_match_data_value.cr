@@ -21,7 +21,7 @@ module Spectator::Matchers
 
     # Produces a stringified value.
     def to_s(io)
-      @value.inspect(io)
+      value.inspect(io)
     end
 
     # Produces a stringified value with additional information.
