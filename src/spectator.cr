@@ -47,6 +47,11 @@ module Spectator
     end
   end
 
+  # ditto
+  macro context(what, &block)
+    describe({{what}}) {{block}}
+  end
+
   # Flag indicating whether Spectator should automatically run tests.
   # This should be left alone (set to true) in typical usage.
   # There are times when Spectator shouldn't run tests.
