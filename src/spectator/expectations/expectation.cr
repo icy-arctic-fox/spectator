@@ -25,7 +25,7 @@ module Spectator::Expectations
         if @negated
           labeled_values.each do |labeled_value|
             value = labeled_value.value
-            value.negate if value.responds_to?(:negate)
+            value.negate
           end
         end
       end
