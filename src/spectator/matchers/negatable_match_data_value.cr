@@ -21,7 +21,7 @@ module Spectator::Matchers
     # The string will be prefixed with "Not" when negated.
     def to_s(io)
       io << "Not " if @negated
-      io << @value
+      @value.inspect(io)
     end
 
     # Produces a stringified value with additional information.
