@@ -1272,7 +1272,7 @@ module Spectator::DSL
     # pre_condition { expect(array.size).to eq(3) } # 2
     # ```
     #
-    # With nested groups, the inner blocks will run first.
+    # With nested groups, the outer blocks will run first.
     # ```
     # describe Something do
     #   pre_condition { is_expected.to_not be_nil } # 1
@@ -1497,6 +1497,18 @@ module Spectator::DSL
     # ```
     macro pending(&block)
       peding({{block.body.stringify}}) {{block}}
+    end
+
+    # Same as `#pending`.
+    # Included for compatibility with RSpec.
+    macro skip(what, &block)
+      pending({{what}}) {{block}}
+    end
+
+    # Same as `#pending`.
+    # Included for compatibility with RSpec.
+    macro skip(&block)
+      pending({{block.body.stringify}}) {{block}}
     end
 
     # Same as `#pending`.

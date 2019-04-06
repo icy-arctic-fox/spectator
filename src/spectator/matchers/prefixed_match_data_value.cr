@@ -14,7 +14,7 @@ module Spectator::Matchers
     def to_s(io)
       io << @prefix
       io << ' '
-      io << @value
+      @value.inspect(io)
     end
 
     # Outputs details of the formatted value with a prefix.
