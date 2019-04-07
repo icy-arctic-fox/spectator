@@ -143,7 +143,7 @@ describe Spectator::DSL::RootExampleGroupBuilder do
     it "adds a hook" do
       hook_called = false
       builder = Spectator::DSL::RootExampleGroupBuilder.new
-      builder.add_around_each_hook(->(proc : ->) {
+      builder.add_around_each_hook(->(_proc : ->) {
         hook_called = true
       })
       group = builder.build(Spectator::Internals::SampleValues.empty)

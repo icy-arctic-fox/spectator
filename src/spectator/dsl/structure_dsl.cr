@@ -1592,7 +1592,7 @@ module Spectator::DSL
 
         # Indicates whether the example references a method.
         def symbolic?
-          {{what.starts_with?('#') ? true : false}}
+          {{what.is_a?(StringLiteral) && what.starts_with?('#') ? true : false}}
         end
 
         # Add the block's content.

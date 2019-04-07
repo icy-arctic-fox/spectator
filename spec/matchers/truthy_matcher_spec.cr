@@ -125,7 +125,6 @@ describe Spectator::Matchers::TruthyMatcher do
 
           it "contains the \"truthy\"" do
             value = 42
-            label = "everything"
             partial = new_partial(value)
             matcher = Spectator::Matchers::TruthyMatcher.new(true)
             match_data = matcher.match(partial)
@@ -145,7 +144,6 @@ describe Spectator::Matchers::TruthyMatcher do
 
           it "contains the \"truthy\"" do
             value = 42
-            label = "everything"
             partial = new_partial(value)
             matcher = Spectator::Matchers::TruthyMatcher.new(true)
             match_data = matcher.match(partial)
@@ -261,7 +259,6 @@ describe Spectator::Matchers::TruthyMatcher do
 
           it "contains the \"falsey\"" do
             value = 42
-            label = "everything"
             partial = new_partial(value)
             matcher = Spectator::Matchers::TruthyMatcher.new(false)
             match_data = matcher.match(partial)
@@ -281,7 +278,6 @@ describe Spectator::Matchers::TruthyMatcher do
 
           it "contains the \"falsey\"" do
             value = 42
-            label = "everything"
             partial = new_partial(value)
             matcher = Spectator::Matchers::TruthyMatcher.new(false)
             match_data = matcher.match(partial)

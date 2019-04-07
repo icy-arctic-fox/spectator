@@ -95,7 +95,7 @@ module Spectator
       offset = index
       # Loop through each child
       # until one is found to contain the index.
-      child = children.each do |child|
+      found = children.each do |child|
         count = child.example_count
         # Example groups consider their range to be [0, example_count).
         # Each child is offset by the total example count of the previous children.
@@ -114,7 +114,7 @@ module Spectator
       # Otherwise, the indexer repeats the process for the next child.
       # It should be impossible to get nil here,
       # provided the bounds check and example counts are correct.
-      child.not_nil![offset]
+      found.not_nil![offset]
     end
 
     # Checks whether all examples in the group have been run.

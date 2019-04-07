@@ -11,8 +11,8 @@ module Spectator::Matchers
       values = ExpectedActual.new(expected, label, actual, partial.label)
       if values.expected.size == values.actual.size
         index = 0
-        values.expected.zip(values.actual) do |expected, actual|
-          return ContentMatchData.new(index, values) unless expected == actual
+        values.expected.zip(values.actual) do |expected, element|
+          return ContentMatchData.new(index, values) unless expected == element
           index += 1
         end
         IdenticalMatchData.new(values)

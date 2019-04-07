@@ -30,7 +30,7 @@ describe Spectator::ExampleIterator do
       it "iterates through all examples" do
         examples = [] of Spectator::Example
         group = Spectator::RootExampleGroup.new(Spectator::ExampleHooks.empty, Spectator::ExampleConditions.empty)
-        group.children = Array(Spectator::ExampleComponent).new(5) do |_|
+        group.children = Array(Spectator::ExampleComponent).new(5) do
           PassingExample.new(group, Spectator::Internals::SampleValues.empty)
         end
         iterator = Spectator::ExampleIterator.new(group)
@@ -40,7 +40,7 @@ describe Spectator::ExampleIterator do
 
       it "returns 'stop' at the end" do
         group = Spectator::RootExampleGroup.new(Spectator::ExampleHooks.empty, Spectator::ExampleConditions.empty)
-        group.children = Array(Spectator::ExampleComponent).new(5) do |_|
+        group.children = Array(Spectator::ExampleComponent).new(5) do
           PassingExample.new(group, Spectator::Internals::SampleValues.empty)
         end
         iterator = Spectator::ExampleIterator.new(group)
@@ -93,7 +93,7 @@ describe Spectator::ExampleIterator do
             end
           else
             Spectator::NestedExampleGroup.new(i.to_s, group, Spectator::ExampleHooks.empty, Spectator::ExampleConditions.empty).tap do |sub_group|
-              sub_group.children = Array(Spectator::ExampleComponent).new(5) do |j|
+              sub_group.children = Array(Spectator::ExampleComponent).new(5) do
                 PassingExample.new(sub_group, Spectator::Internals::SampleValues.empty).tap do |example|
                   expected_examples << example
                 end
@@ -113,7 +113,7 @@ describe Spectator::ExampleIterator do
             PassingExample.new(group, Spectator::Internals::SampleValues.empty)
           else
             Spectator::NestedExampleGroup.new(i.to_s, group, Spectator::ExampleHooks.empty, Spectator::ExampleConditions.empty).tap do |sub_group|
-              sub_group.children = Array(Spectator::ExampleComponent).new(5) do |j|
+              sub_group.children = Array(Spectator::ExampleComponent).new(5) do
                 PassingExample.new(sub_group, Spectator::Internals::SampleValues.empty)
               end
             end
@@ -138,7 +138,7 @@ describe Spectator::ExampleIterator do
               Spectator::NestedExampleGroup.new(j.to_s, sub_group1, Spectator::ExampleHooks.empty, Spectator::ExampleConditions.empty).tap do |sub_group2|
                 sub_group2.children = Array(Spectator::ExampleComponent).new(5) do |k|
                   Spectator::NestedExampleGroup.new(k.to_s, sub_group2, Spectator::ExampleHooks.empty, Spectator::ExampleConditions.empty).tap do |sub_group3|
-                    sub_group3.children = Array(Spectator::ExampleComponent).new(5) do |_|
+                    sub_group3.children = Array(Spectator::ExampleComponent).new(5) do
                       PassingExample.new(sub_group3, Spectator::Internals::SampleValues.empty).tap do |example|
                         expected_examples << example
                       end
@@ -162,7 +162,7 @@ describe Spectator::ExampleIterator do
               Spectator::NestedExampleGroup.new(j.to_s, sub_group1, Spectator::ExampleHooks.empty, Spectator::ExampleConditions.empty).tap do |sub_group2|
                 sub_group2.children = Array(Spectator::ExampleComponent).new(5) do |k|
                   Spectator::NestedExampleGroup.new(k.to_s, sub_group2, Spectator::ExampleHooks.empty, Spectator::ExampleConditions.empty).tap do |sub_group3|
-                    sub_group3.children = Array(Spectator::ExampleComponent).new(5) do |_|
+                    sub_group3.children = Array(Spectator::ExampleComponent).new(5) do
                       PassingExample.new(sub_group3, Spectator::Internals::SampleValues.empty)
                     end
                   end

@@ -53,7 +53,6 @@ describe Spectator::Internals::Harness do
   describe "#report_expectation" do
     context "with a successful result" do
       it "stores the result" do
-        error = nil.as(Exception?)
         expectation = new_satisfied_expectation
         spy = SpyExample.create do
           harness = Spectator::Internals::Harness.current
@@ -81,7 +80,6 @@ describe Spectator::Internals::Harness do
       end
 
       it "stores the result" do
-        error = nil.as(Exception?)
         expectation = new_unsatisfied_expectation
         spy = SpyExample.create do
           harness = Spectator::Internals::Harness.current
