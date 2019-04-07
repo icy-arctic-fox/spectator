@@ -6,6 +6,7 @@ image: "crystallang/crystal:latest"
 cache:
   paths:
     - lib
+    - bin
 
 before_script:
   - crystal -v # Print out Crystal version for debugging
