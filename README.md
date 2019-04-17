@@ -238,7 +238,8 @@ Spectator supports multiple options for running tests.
 "Fail blank" fails if there are no tests.
 Tests can be filtered by their location and name.
 Additionally, tests can be randomized.
-Spectator can be configured with command-line arguments, a config block in a `spec_helper.cr` file, and `.spectator` config file.
+Spectator can be configured with command-line arguments,
+a config block in a `spec_helper.cr` file, and `.spectator` config file.
 
 ```crystal
 Spectator.configure do |config|
@@ -350,6 +351,10 @@ However, please test all code locally with an example spec file.
 
 Documentation is automatically generated and published to GitLab pages.
 It can be found here: https://arctic-fox.gitlab.io/spectator
+
+This project is developed on [GitLab](https://gitlab.com/arctic-fox/spectator),
+and mirrored to [GitHub](https://github.com/icy-arctic-fox/spectator).
+Issues and PRs/MRs are accepted on both.
 
 Contributors
 ------------
