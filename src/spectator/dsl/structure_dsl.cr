@@ -812,7 +812,7 @@ module Spectator::DSL
     # so the same value is returned with consecutive calls.
     #
     # ```
-    # let(current_time) { Time.now }
+    # let(current_time) { Time.utc }
     #
     # it "lazy evaluates" do
     #   now = current_time
@@ -893,7 +893,7 @@ module Spectator::DSL
     # Unlike `#let`, the value is not cached and is recreated on each call.
     #
     # ```
-    # let!(current_time) { Time.now }
+    # let!(current_time) { Time.utc }
     #
     # it "lazy evaluates" do
     #   now = current_time
