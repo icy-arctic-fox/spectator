@@ -40,6 +40,40 @@ describe Spectator::Runner do
         called.should eq([0, 1, 2, 3, 4, 5, 6])
       end
 
+      it "runs after_each hooks" do
+        called = false
+        hooks = new_hooks(after_each: ->{ called = true; nil })
+        group = FailingExample.create_group(hooks: hooks)
+        suite = new_test_suite(group)
+        runner = Spectator::Runner.new(suite, spectator_test_config(fail_fast: true))
+        runner.run
+        called.should be_true
+      end
+
+      it "runs after_all hooks" do
+        called = false
+        hooks = new_hooks(after_all: ->{ called = true; nil })
+        group = FailingExample.create_group(hooks: hooks)
+        suite = new_test_suite(group)
+        runner = Spectator::Runner.new(suite, spectator_test_config(fail_fast: true))
+        runner.run
+        called.should be_true
+      end
+
+      it "runs the remaining around_each hook code" do
+        called = false
+        hooks = new_hooks(around_each: ->(proc : ->) {
+          proc.call
+          called = true
+          nil
+        })
+        group = FailingExample.create_group(hooks: hooks)
+        suite = new_test_suite(group)
+        runner = Spectator::Runner.new(suite, spectator_test_config(fail_fast: true))
+        runner.run
+        called.should be_true
+      end
+
       context "the report" do
         it "has the remaining tests" do
           spy = SpyFormatter.new

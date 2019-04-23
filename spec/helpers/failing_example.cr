@@ -33,4 +33,12 @@ class FailingExample < Spectator::RunnableExample
       group.children = [example.as(Spectator::ExampleComponent)]
     end
   end
+
+  # Creates a group of failing examples.
+  def self.create_group(count = 5, hooks = Spectator::ExampleHooks.empty, conditions = Spectator::ExampleConditions.empty)
+    values = Spectator::Internals::SampleValues.empty
+    Spectator::RootExampleGroup.new(hooks, conditions).tap do |group|
+      group.children = Array.new(count) { new(group, values).as(Spectator::ExampleComponent) }
+    end
+  end
 end
