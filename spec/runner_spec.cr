@@ -13,6 +13,18 @@ def new_test_suite(group : Spectator::ExampleGroup? = nil)
   Spectator::TestSuite.new(group || PassingExample.create.group, filter)
 end
 
+def suite_with_nested_failures(hooks)
+  conditions = Spectator::ExampleConditions.empty
+  values = Spectator::Internals::SampleValues.empty
+  root = Spectator::RootExampleGroup.new(hooks, conditions)
+  root.children = Array(Spectator::ExampleComponent).new(5) do |index|
+    Spectator::NestedExampleGroup.new(index.to_s, root, hooks, conditions).tap do |group|
+      group.children = Array(Spectator::ExampleComponent).new(5) { FailingExample.new(group, values) }
+    end
+  end
+  new_test_suite(root)
+end
+
 describe Spectator::Runner do
   describe "#run" do
     it "runs all examples in the suite" do
@@ -72,6 +84,39 @@ describe Spectator::Runner do
         runner = Spectator::Runner.new(suite, spectator_test_config(fail_fast: true))
         runner.run
         called.should be_true
+      end
+
+      context "with nested groups" do
+        it "runs after_each hooks" do
+          call_count = 0
+          hooks = new_hooks(after_each: ->{ call_count += 1; nil })
+          suite = suite_with_nested_failures(hooks)
+          runner = Spectator::Runner.new(suite, spectator_test_config(fail_fast: true))
+          runner.run
+          call_count.should eq(2)
+        end
+
+        it "runs after_all hooks" do
+          call_count = 0
+          hooks = new_hooks(after_all: ->{ call_count += 1; nil })
+          suite = suite_with_nested_failures(hooks)
+          runner = Spectator::Runner.new(suite, spectator_test_config(fail_fast: true))
+          runner.run
+          call_count.should eq(2)
+        end
+
+        it "runs the remaining around_each hook code" do
+          call_count = 0
+          hooks = new_hooks(around_each: ->(proc : ->) {
+            proc.call
+            call_count += 1
+            nil
+          })
+          suite = suite_with_nested_failures(hooks)
+          runner = Spectator::Runner.new(suite, spectator_test_config(fail_fast: true))
+          runner.run
+          call_count.should eq(2)
+        end
       end
 
       context "the report" do
