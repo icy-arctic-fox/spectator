@@ -26,9 +26,7 @@ class FailingExample < Spectator::RunnableExample
   end
 
   # Creates a failing example.
-  def self.create
-    hooks = Spectator::ExampleHooks.empty
-    conditions = Spectator::ExampleConditions.empty
+  def self.create(hooks = Spectator::ExampleHooks.empty, conditions = Spectator::ExampleConditions.empty)
     group = Spectator::RootExampleGroup.new(hooks, conditions)
     values = Spectator::Internals::SampleValues.empty
     new(group, values).tap do |example|
