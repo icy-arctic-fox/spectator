@@ -51,9 +51,9 @@ module Spectator
     # and only after all examples in the group have finished.
     # Subsequent calls after the hooks have been run will do nothing.
     # Parent "after-all" hooks will be run last.
-    protected def run_after_all_hooks : Nil
+    protected def run_after_all_hooks(ignore_unfinished = false) : Nil
       super
-      parent.run_after_all_hooks
+      parent.run_after_all_hooks(ignore_unfinished)
     end
 
     # Runs all of the "after-each" hooks.

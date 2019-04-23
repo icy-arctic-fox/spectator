@@ -34,7 +34,10 @@ module Spectator
       example_order.each do |example|
         result = run_example(example).as(Result)
         results << result
-        break if @config.fail_fast? && result.is_a?(FailedResult)
+        if @config.fail_fast? && result.is_a?(FailedResult)
+          example.group.run_after_all_hooks(ignore_unfinished: true)
+          break
+        end
       end
     end
 

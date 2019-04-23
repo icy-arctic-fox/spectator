@@ -157,9 +157,10 @@ module Spectator
     # The hooks will be run only once,
     # and only after all examples in the group have finished.
     # Subsequent calls after the hooks have been run will do nothing.
-    protected def run_after_all_hooks : Nil
+    protected def run_after_all_hooks(ignore_unfinished = false) : Nil
       return if @after_all_hooks_run
-      return unless finished?
+      return unless ignore_unfinished || finished?
+
       @hooks.run_after_all
       @after_all_hooks_run = true
     end
