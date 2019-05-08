@@ -88,6 +88,28 @@ describe Spectator::Matchers::CaseMatcher do
               match_data.matched?.should be_false
             end
           end
+
+          context "with a matching regex" do
+            it "is true" do
+              value = "foobar"
+              pattern = /foo/
+              partial = new_partial(value)
+              matcher = Spectator::Matchers::CaseMatcher.new(pattern)
+              match_data = matcher.match(partial)
+              match_data.matched?.should be_true
+            end
+          end
+
+          context "with a non-matching regex" do
+            it "is false" do
+              value = "foo"
+              pattern = /bar/
+              partial = new_partial(value)
+              matcher = Spectator::Matchers::CaseMatcher.new(pattern)
+              match_data = matcher.match(partial)
+              match_data.matched?.should be_false
+            end
+          end
         end
       end
 
@@ -116,14 +138,6 @@ describe Spectator::Matchers::CaseMatcher do
       end
 
       describe "#message" do
-        it "mentions ===" do
-          value = 42
-          partial = new_partial(value)
-          matcher = Spectator::Matchers::CaseMatcher.new(value)
-          match_data = matcher.match(partial)
-          match_data.message.should contain("===")
-        end
-
         it "contains the actual label" do
           value = 42
           label = "everything"
@@ -155,14 +169,6 @@ describe Spectator::Matchers::CaseMatcher do
       end
 
       describe "#negated_message" do
-        it "mentions ===" do
-          value = 42
-          partial = new_partial(value)
-          matcher = Spectator::Matchers::CaseMatcher.new(value)
-          match_data = matcher.match(partial)
-          match_data.negated_message.should contain("===")
-        end
-
         it "contains the actual label" do
           value = 42
           label = "everything"
