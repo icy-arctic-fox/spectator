@@ -47,18 +47,18 @@ module Spectator::DSL
       ::Spectator::Matchers::TruthyMatcher.new(true)
     end
 
-    # Indicates that some value should semantically equal another.
-    # The === operator is used for this check.
-    # This has identical behavior as a "when" condition in a case block.
+    # Indicates that some object should be the same as another.
+    # This checks if two references are the same.
+    # The `Reference#same?` method is used for this check.
     #
     # Examples:
     # ```
-    # expect(1 + 2).to be(3)
-    # expect(5).to be(Int32) # Using `#be_a` instead is recommened here.
-    # expect(tuple).to be({1, 2})
+    # obj = "foobar"
+    # expect(obj).to be(obj)
+    # expect(obj.dup).to_not be(obj)
     # ```
     macro be(expected)
-      ::Spectator::Matchers::CaseMatcher.new({{expected}}, {{expected.stringify}})
+      ::Spectator::Matchers::ReferenceMatcher.new({{expected}}, {{expected.stringify}})
     end
 
     # Indicates that some value should be of a specified type.
