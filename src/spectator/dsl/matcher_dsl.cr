@@ -517,7 +517,7 @@ module Spectator::DSL
     # expect { raise ArgumentError.new("foobar") }.to raise_error(ArgumentError, "foobar")
     # ```
     macro raise_error(type, message)
-      ::Spectator::Matchers::ExceptionMatcher.new({{type}}, {{message}}, {{message.stringify}})
+      ::Spectator::Matchers::ExceptionMatcher.create({{type}}, {{message}}, {{message.stringify}})
     end
 
     # Indicates that some block should raise an error.
