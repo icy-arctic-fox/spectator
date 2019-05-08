@@ -57,6 +57,11 @@ module Spectator::Matchers
       ExceptionMatcher(Exception, typeof(expected)).new(expected, label)
     end
 
+    # Creates a new exception matcher with a type and message check.
+    def self.create(exception_type : T.class, expected, label : String) forall T
+      ExceptionMatcher(T, typeof(expected)).new(expected, label)
+    end
+
     # Match data specific to this matcher.
     private struct MatchData(ExceptionType, ExpectedType, ActualType) < MatchData
       # Creates the match data.
