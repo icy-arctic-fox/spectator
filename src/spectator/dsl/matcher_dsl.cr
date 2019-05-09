@@ -47,18 +47,18 @@ module Spectator::DSL
       ::Spectator::Matchers::TruthyMatcher.new(true)
     end
 
-    # Indicates that some value should semantically equal another.
-    # The === operator is used for this check.
-    # This has identical behavior as a "when" condition in a case block.
+    # Indicates that some object should be the same as another.
+    # This checks if two references are the same.
+    # The `Reference#same?` method is used for this check.
     #
     # Examples:
     # ```
-    # expect(1 + 2).to be(3)
-    # expect(5).to be(Int32) # Using `#be_a` instead is recommened here.
-    # expect(tuple).to be({1, 2})
+    # obj = "foobar"
+    # expect(obj).to be(obj)
+    # expect(obj.dup).to_not be(obj)
     # ```
     macro be(expected)
-      ::Spectator::Matchers::CaseMatcher.new({{expected}}, {{expected.stringify}})
+      ::Spectator::Matchers::ReferenceMatcher.new({{expected}}, {{expected.stringify}})
     end
 
     # Indicates that some value should be of a specified type.
@@ -155,17 +155,20 @@ module Spectator::DSL
     end
 
     # Indicates that some value should match another.
-    # The =~ operator is used for this check.
-    # Typically a regular expression is used,
-    # but any type that has the =~ operator will work.
+    # The === (case equality) operator is used for this check.
+    # Typically a regular expression is used.
+    # This has identical behavior as a "when" condition in a case block.
     #
     # Examples:
     # ```
     # expect("foo").to match(/foo|bar/)
     # expect("BAR").to match(/foo|bar/i)
+    # expect(1 + 2).to match(3)
+    # expect(5).to match(Int32) # Using `#be_a` instead is recommened here.
+    # expect({:foo, 5}).to match({Symbol, Int32})
     # ```
     macro match(expected)
-      ::Spectator::Matchers::RegexMatcher.new({{expected}}, {{expected.stringify}})
+      ::Spectator::Matchers::CaseMatcher.new({{expected}}, {{expected.stringify}})
     end
 
     # Indicates that some value should be true.

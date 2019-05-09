@@ -1,12 +1,12 @@
 require "./value_matcher"
 
 module Spectator::Matchers
-  # Matcher that tests whether a value matches a regular expression.
-  # The value is compared with the =~ operator.
-  struct RegexMatcher(ExpectedType) < ValueMatcher(ExpectedType)
+  # Matcher that tests whether two references are the same.
+  # The values are compared with the `Reference#same?` method.
+  struct ReferenceMatcher(ExpectedType) < ValueMatcher(ExpectedType)
     # Determines whether the matcher is satisfied with the value given to it.
     private def match?(actual)
-      !!(actual =~ expected)
+      actual.same?(expected)
     end
 
     # Determines whether the matcher is satisfied with the partial given to it.
@@ -34,13 +34,13 @@ module Spectator::Matchers
       # Describes the condition that satisfies the matcher.
       # This is informational and displayed to the end-user.
       def message
-        "#{@values.actual_label} matches #{@values.expected_label} (using =~)"
+        "#{@values.actual_label} is #{@values.expected_label}"
       end
 
       # Describes the condition that won't satsify the matcher.
       # This is informational and displayed to the end-user.
       def negated_message
-        "#{@values.actual_label} does not match #{@values.expected_label} (using =~)"
+        "#{@values.actual_label} is not #{@values.expected_label}"
       end
     end
   end
