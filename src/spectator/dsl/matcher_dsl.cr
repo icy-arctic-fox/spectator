@@ -284,6 +284,26 @@ module Spectator::DSL
       )
     end
 
+    # Indicates that some value should be between a lower and upper-bound.
+    #
+    # Example:
+    # ```
+    # expect(7).to be_between(1, 10)
+    # ```
+    #
+    # Additionally, an "inclusive" or "exclusive" suffix can be added.
+    # These modify the upper-bound on the range being checked against.
+    # By default, the range is inclusive.
+    #
+    # Examples:
+    # ```
+    # expect(days).to be_between(28, 31).inclusive # 28, 29, 30, or 31
+    # expect(100).to be_between(97, 101).exclusive # 97, 98, 99, or 100 (not 101)
+    # ```
+    macro be_between(min, max)
+      be_within({{min}}, {{max}})
+    end
+
     # Indicates that some value should be within a delta of an expected value.
     #
     # Example:
