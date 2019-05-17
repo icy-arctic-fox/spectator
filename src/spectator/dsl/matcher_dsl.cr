@@ -242,7 +242,7 @@ module Spectator::DSL
     # ```
     #
     # NOTE: The of suffix must be used
-    # if the *expected* argument does not implement an includes? method.
+    # if the *expected* argument does not implement an `includes?` method.
     #
     # Additionally, for this second usage,
     # an "inclusive" or "exclusive" suffix can be added.
@@ -258,7 +258,7 @@ module Spectator::DSL
     # NOTE: Do not attempt to mix the two use cases.
     # It likely won't work and will result in a compilation error.
     macro be_within(expected)
-      ::Spectator::Matchers::RangeMatcher.new({{expected}}, {{expected.stringify}})
+      ::Spectator::Matchers::CollectionMatcher.new({{expected}}, {{expected.stringify}})
     end
 
     # Indicates that some value should be between a lower and upper-bound.
