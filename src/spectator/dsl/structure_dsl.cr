@@ -781,8 +781,8 @@ module Spectator::DSL
     # It is cached so that the same instance is used throughout the test.
     # The subject will be recreated for each test it is used in.
     macro subject(name, &block)
-      subject {{block}}
-      let({{name.id}}) { subject }
+      let({{name.id}}) {{block}}
+      subject { {{name.id}} }
     end
 
     # Defines an expression by name.
