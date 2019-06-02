@@ -19,13 +19,13 @@ module Spectator::Matchers
     # `MatchData` is returned that contains information about the match.
     def match(partial)
       actual = partial.actual
-      MatchData(Expected, typeof(actual)).new(match?(actual), partial.label)
+      MatchData(Expected, typeof(actual)).new(match?(actual), actual, partial.label)
     end
 
     # Match data specific to this matcher.
     private struct MatchData(ExpectedType, ActualType) < MatchData
       # Creates the match data.
-      def initialize(matched, @actual_label : String)
+      def initialize(matched, @actual : ActualType, @actual_label : String)
         super(matched)
       end
 
@@ -33,7 +33,7 @@ module Spectator::Matchers
       def named_tuple
         {
           expected: NegatableMatchDataValue.new(ExpectedType),
-          actual:   ActualType,
+          actual:   @actual.class,
         }
       end
 
