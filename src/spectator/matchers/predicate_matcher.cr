@@ -6,12 +6,6 @@ module Spectator::Matchers
   # Each key in the tuple is a predicate (without the '?') to test.
   # Each value is a a `Tuple` of arguments to pass to the predicate method.
   struct PredicateMatcher(ExpectedType) < ValueMatcher(ExpectedType)
-    # Textual representation of what the matcher expects.
-    # Constructs the label from the type parameters.
-    def label
-      {{ExpectedType.keys.splat.stringify}}
-    end
-
     # Determines whether the matcher is satisfied with the value given to it.
     private def match?(values)
       # Test each predicate and immediately return false if one is false.
@@ -27,7 +21,7 @@ module Spectator::Matchers
     # `MatchData` is returned that contains information about the match.
     def match(partial) : MatchData
       values = snapshot_values(partial.actual)
-      MatchData.new(match?(values), values, partial.label)
+      MatchData.new(match?(values), values, partial.label, label)
     end
 
     # Captures all of the actual values.
@@ -46,7 +40,7 @@ module Spectator::Matchers
     # Match data specific to this matcher.
     private struct MatchData(ActualType) < MatchData
       # Creates the match data.
-      def initialize(matched, @named_tuple : ActualType, @actual_label : String)
+      def initialize(matched, @named_tuple : ActualType, @actual_label : String, @expected_label : String)
         super(matched)
       end
 
@@ -56,13 +50,13 @@ module Spectator::Matchers
       # Describes the condition that satisfies the matcher.
       # This is informational and displayed to the end-user.
       def message
-        "#{@actual_label} is " + {{ActualType.keys.splat.stringify}}
+        "#{@actual_label} is #{@expected_label}"
       end
 
       # Describes the condition that won't satsify the matcher.
       # This is informational and displayed to the end-user.
       def negated_message
-        "#{@actual_label} is not " + {{ActualType.keys.splat.stringify}}
+        "#{@actual_label} is not #{@expected_label}"
       end
     end
   end
