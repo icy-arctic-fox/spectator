@@ -574,7 +574,7 @@ module Spectator::DSL
     macro method_missing(call)
       {% if call.name.starts_with?("be_") %}
       {% method_name = call.name[3..-1] %} # Remove be_ prefix.
-      ::Spectator::Matchers::PredicateMatcher(NamedTuple({{method_name}}: Nil)).new
+      ::Spectator::Matchers::PredicateMatcher.new({ {{method_name}}: Tuple.new({{call.args.splat}}) }, {{method_name.stringify}})
       {% else %}
       {% raise "Undefined local variable or method '#{call}'" %}
       {% end %}

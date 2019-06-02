@@ -4,7 +4,8 @@ module Spectator::Matchers
   # Matcher that tests one or more predicates (methods ending in '?').
   # The `ExpectedType` type param should be a `NamedTuple`.
   # Each key in the tuple is a predicate (without the '?') to test.
-  struct PredicateMatcher(ExpectedType) < Matcher
+  # Each value is a a `Tuple` of arguments to pass to the predicate method.
+  struct PredicateMatcher(ExpectedType) < ValueMatcher(ExpectedType)
     # Textual representation of what the matcher expects.
     # Constructs the label from the type parameters.
     def label
@@ -36,7 +37,7 @@ module Spectator::Matchers
       {% begin %}
       {
         {% for attribute in ExpectedType.keys %}
-        {{attribute}}: actual.{{attribute}}?,
+        {{attribute}}: actual.{{attribute}}?(*@expected[{{attribute.symbolize}}]),
         {% end %}
       }
       {% end %}
