@@ -561,7 +561,7 @@ module Spectator::DSL
     end
 
     # Used to create predicate matchers.
-    # Any missing method that starts with 'be_' will be handled.
+    # Any missing method that starts with 'be_' or 'have_' will be handled.
     # All other method names will be ignored and raise a compile-time error.
     #
     # This can be used to simply check a predicate method that ends in '?'.
@@ -570,14 +570,37 @@ module Spectator::DSL
     # expect("foobar").to be_ascii_only
     # # Is equivalent to:
     # expect("foobar".ascii_only?).to be_true
+    #
+    # expect("foobar").to_not have_back_references
+    # # Is equivalent to:
+    # expect("foobar".has_back_references?).to_not be_true
     # ```
     macro method_missing(call)
       {% if call.name.starts_with?("be_") %}
-      {% method_name = call.name[3..-1] %} # Remove be_ prefix.
-      ::Spectator::Matchers::PredicateMatcher(NamedTuple({{method_name}}: Nil)).new
+        # Remove `be_` prefix.
+        {% method_name = call.name[3..-1] %}
+        {% matcher = "PredicateMatcher" %}
+      {% elsif call.name.starts_with?("have_") %}
+        # Remove `have_` prefix.
+        {% method_name = call.name[5..-1] %}
+        {% matcher = "HavePredicateMatcher" %}
       {% else %}
-      {% raise "Undefined local variable or method '#{call}'" %}
+        {% raise "Undefined local variable or method '#{call}'" %}
       {% end %}
+
+      descriptor = { {{method_name}}: Tuple.new({{call.args.splat}}) }
+      label = String::Builder.new({{method_name.stringify}})
+      {% unless call.args.empty? %}
+        label << '('
+        {% for arg, index in call.args %}
+          label << {{arg}}
+          {% if index < call.args.size - 1 %}
+            label << ", "
+          {% end %}
+        {% end %}
+        label << ')'
+      {% end %}
+      ::Spectator::Matchers::{{matcher.id}}.new(descriptor, label.to_s)
     end
   end
 end

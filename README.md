@@ -302,8 +302,8 @@ Items not marked as completed may have partial implementations.
     - [X] Error matchers - `raise_error`
     - [ ] Yield matchers - `yield_control[.times]`, `yield_with_args[.times]`, `yield_with_no_args[.times]`, `yield_successive_args`
     - [ ] Output matchers - `output[.to_stdout|.to_stderr]`
+    - [X] Predicate matchers - `be_x`, `have_x`
     - [ ] Misc. matchers
-      - [ ] `exist`
       - [X] `match`
       - [ ] `satisfy`
       - [ ] `change[.by|.from[.to]|.to|.by_at_least|.by_at_most]`

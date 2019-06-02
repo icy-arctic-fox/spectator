@@ -1,11 +1,12 @@
 require "./value_matcher"
 
 module Spectator::Matchers
-  # Matcher that tests one or more predicates (methods ending in '?').
+  # Matcher that tests one or more "has" predicates
+  # (methods ending in '?' and starting with 'has_').
   # The `ExpectedType` type param should be a `NamedTuple`.
-  # Each key in the tuple is a predicate (without the '?') to test.
+  # Each key in the tuple is a predicate (without the '?' and 'has_' prefix) to test.
   # Each value is a a `Tuple` of arguments to pass to the predicate method.
-  struct PredicateMatcher(ExpectedType) < ValueMatcher(ExpectedType)
+  struct HavePredicateMatcher(ExpectedType) < ValueMatcher(ExpectedType)
     # Determines whether the matcher is satisfied with the value given to it.
     private def match?(values)
       # Test each predicate and immediately return false if one is false.
@@ -31,7 +32,7 @@ module Spectator::Matchers
       {% begin %}
       {
         {% for attribute in ExpectedType.keys %}
-        {{attribute}}: actual.{{attribute}}?(*@expected[{{attribute.symbolize}}]),
+        {{attribute}}: actual.has_{{attribute}}?(*@expected[{{attribute.symbolize}}]),
         {% end %}
       }
       {% end %}
@@ -50,13 +51,13 @@ module Spectator::Matchers
       # Describes the condition that satisfies the matcher.
       # This is informational and displayed to the end-user.
       def message
-        "#{@actual_label} is #{@expected_label}"
+        "#{@actual_label} has #{@expected_label}"
       end
 
       # Describes the condition that won't satsify the matcher.
       # This is informational and displayed to the end-user.
       def negated_message
-        "#{@actual_label} is not #{@expected_label}"
+        "#{@actual_label} does not have #{@expected_label}"
       end
     end
   end

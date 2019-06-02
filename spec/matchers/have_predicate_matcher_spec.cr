@@ -1,14 +1,14 @@
 require "../spec_helper"
 
-describe Spectator::Matchers::PredicateMatcher do
+describe Spectator::Matchers::HavePredicateMatcher do
   describe "#match" do
     context "returned MatchData" do
       describe "#match?" do
         context "with a true predicate" do
           it "is true" do
-            value = "foobar"
+            value = "foo\\bar"
             partial = new_partial(value)
-            matcher = Spectator::Matchers::PredicateMatcher.new({ascii_only: Tuple.new}, "ascii_only")
+            matcher = Spectator::Matchers::HavePredicateMatcher.new({back_references: Tuple.new}, "back_references")
             match_data = matcher.match(partial)
             match_data.matched?.should be_true
           end
@@ -18,7 +18,7 @@ describe Spectator::Matchers::PredicateMatcher do
           it "is false" do
             value = "foobar"
             partial = new_partial(value)
-            matcher = Spectator::Matchers::PredicateMatcher.new({empty: Tuple.new}, "empty")
+            matcher = Spectator::Matchers::HavePredicateMatcher.new({back_references: Tuple.new}, "back_references")
             match_data = matcher.match(partial)
             match_data.matched?.should be_false
           end
@@ -29,19 +29,17 @@ describe Spectator::Matchers::PredicateMatcher do
         it "contains a key for each expected attribute" do
           value = "foobar"
           partial = new_partial(value)
-          matcher = Spectator::Matchers::PredicateMatcher.new({empty: Tuple.new, ascii_only: Tuple.new}, "empty, ascii_only")
+          matcher = Spectator::Matchers::HavePredicateMatcher.new({back_references: Tuple.new}, "back_references")
           match_data = matcher.match(partial)
-          match_data_has_key?(match_data.values, :empty).should be_true
-          match_data_has_key?(match_data.values, :ascii_only).should be_true
+          match_data_has_key?(match_data.values, :back_references).should be_true
         end
 
         it "has the actual values" do
           value = "foobar"
           partial = new_partial(value)
-          matcher = Spectator::Matchers::PredicateMatcher.new({empty: Tuple.new, ascii_only: Tuple.new}, "empty, ascii_only")
+          matcher = Spectator::Matchers::HavePredicateMatcher.new({back_references: Tuple.new}, "back_references")
           match_data = matcher.match(partial)
-          match_data_value_sans_prefix(match_data.values, :empty)[:value].should eq(value.empty?)
-          match_data_value_sans_prefix(match_data.values, :ascii_only)[:value].should eq(value.ascii_only?)
+          match_data_value_sans_prefix(match_data.values, :back_references)[:value].should eq(value.has_back_references?)
         end
       end
 
@@ -50,7 +48,7 @@ describe Spectator::Matchers::PredicateMatcher do
           value = "foobar"
           label = "blah"
           partial = new_partial(value, label)
-          matcher = Spectator::Matchers::PredicateMatcher.new({ascii_only: Tuple.new}, "ascii_only")
+          matcher = Spectator::Matchers::HavePredicateMatcher.new({back_references: Tuple.new}, "back_references")
           match_data = matcher.match(partial)
           match_data.message.should contain(label)
         end
@@ -59,7 +57,7 @@ describe Spectator::Matchers::PredicateMatcher do
           value = "foobar"
           label = "blah"
           partial = new_partial(value)
-          matcher = Spectator::Matchers::PredicateMatcher.new({ascii_only: Tuple.new}, label)
+          matcher = Spectator::Matchers::HavePredicateMatcher.new({back_references: Tuple.new}, label)
           match_data = matcher.match(partial)
           match_data.message.should contain(label)
         end
@@ -70,7 +68,7 @@ describe Spectator::Matchers::PredicateMatcher do
           value = "foobar"
           label = "blah"
           partial = new_partial(value, label)
-          matcher = Spectator::Matchers::PredicateMatcher.new({ascii_only: Tuple.new}, "ascii_only")
+          matcher = Spectator::Matchers::HavePredicateMatcher.new({back_references: Tuple.new}, "back_references")
           match_data = matcher.match(partial)
           match_data.negated_message.should contain(label)
         end
@@ -79,7 +77,7 @@ describe Spectator::Matchers::PredicateMatcher do
           value = "foobar"
           label = "blah"
           partial = new_partial(value)
-          matcher = Spectator::Matchers::PredicateMatcher.new({ascii_only: Tuple.new}, label)
+          matcher = Spectator::Matchers::HavePredicateMatcher.new({back_references: Tuple.new}, label)
           match_data = matcher.match(partial)
           match_data.negated_message.should contain(label)
         end
