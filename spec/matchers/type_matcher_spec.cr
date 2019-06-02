@@ -74,6 +74,14 @@ describe Spectator::Matchers::TypeMatcher do
             match_data = matcher.match(partial)
             match_data_value_sans_prefix(match_data.values, :actual)[:value].should eq(typeof(value))
           end
+
+          it "is the runtime type name" do
+            value = 42.as(Int32?)
+            partial = new_partial(value)
+            matcher = Spectator::Matchers::TypeMatcher(String).new
+            match_data = matcher.match(partial)
+            match_data_value_sans_prefix(match_data.values, :actual)[:value].should eq(value.class)
+          end
         end
       end
 
