@@ -579,9 +579,11 @@ module Spectator::DSL
       {% if call.name.starts_with?("be_") %}
         # Remove `be_` prefix.
         {% method_name = call.name[3..-1] %}
+        {% matcher = "PredicateMatcher" %}
       {% elsif call.name.starts_with?("have_") %}
-        # Swap `have_` with `has_`.
-        {% method_name = ("has_" + call.name[5..-1].stringify).id %}
+        # Remove `have_` prefix.
+        {% method_name = call.name[5..-1] %}
+        {% matcher = "HavePredicateMatcher" %}
       {% else %}
         {% raise "Undefined local variable or method '#{call}'" %}
       {% end %}
@@ -598,7 +600,7 @@ module Spectator::DSL
         {% end %}
         label << ')'
       {% end %}
-      ::Spectator::Matchers::PredicateMatcher.new(descriptor, label.to_s)
+      ::Spectator::Matchers::{{matcher.id}}.new(descriptor, label.to_s)
     end
   end
 end
