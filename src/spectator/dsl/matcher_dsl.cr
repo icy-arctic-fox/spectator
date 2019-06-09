@@ -480,6 +480,16 @@ module Spectator::DSL
       ::Spectator::Matchers::SizeMatcher.new({{expected}}, {{expected.stringify}})
     end
 
+    # Indicates that some set should have the same size (number of elements) as another set.
+    #
+    # Example:
+    # ```
+    # expect([1, 2, 3]).to have_size_of(%i[x y z])
+    # ```
+    macro have_size_of(expected)
+      ::Spectator::Matchers::SizeOfMatcher.new(({{expected}}), {{expected.stringify}})
+    end
+
     # Indicates that some value should have a set of attributes matching some conditions.
     # A list of named arguments are expected.
     # The names correspond to the attributes in the instance to check.
