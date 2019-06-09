@@ -470,6 +470,16 @@ module Spectator::DSL
       ::Spectator::Matchers::ArrayMatcher.new({{expected}}, {{expected.stringify}})
     end
 
+    # Indicates that some set should have a specified size.
+    #
+    # Example:
+    # ```
+    # expect([1, 2, 3]).to have_size(3)
+    # ```
+    macro have_size(expected)
+      ::Spectator::Matchers::SizeMatcher.new({{expected}}, {{expected.stringify}})
+    end
+
     # Indicates that some value should have a set of attributes matching some conditions.
     # A list of named arguments are expected.
     # The names correspond to the attributes in the instance to check.
