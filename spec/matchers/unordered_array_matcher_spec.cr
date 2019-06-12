@@ -1,29 +1,6 @@
 require "../spec_helper"
 
-describe Spectator::Matchers::ArrayMatcher do
-  describe "#in_any_order" do
-    it "returns an unordered matcher" do
-      array = %i[x y z]
-      matcher = Spectator::Matchers::ArrayMatcher.new(array)
-      matcher.in_any_order.should be_a(Spectator::Matchers::UnorderedArrayMatcher(Symbol))
-    end
-
-    it "maintains the expected array" do
-      array = %i[x y z]
-      matcher = Spectator::Matchers::ArrayMatcher.new(array)
-      unordered_matcher = matcher.in_any_order
-      unordered_matcher.expected.should eq(array)
-    end
-
-    it "maintains the expected label" do
-      array = %i[x y z]
-      label = "some_array"
-      matcher = Spectator::Matchers::ArrayMatcher.new(array, label)
-      unordered_matcher = matcher.in_any_order
-      unordered_matcher.label.should eq(label)
-    end
-  end
-
+describe Spectator::Matchers::UnorderedArrayMatcher do
   describe "#match" do
     context "returned MatchData" do
       context "with identical arrays" do
@@ -31,7 +8,7 @@ describe Spectator::Matchers::ArrayMatcher do
           it "is true" do
             array = %i[a b c]
             partial = new_partial(array)
-            matcher = Spectator::Matchers::ArrayMatcher.new(array)
+            matcher = Spectator::Matchers::UnorderedArrayMatcher.new(array)
             match_data = matcher.match(partial)
             match_data.matched?.should be_true
           end
@@ -42,7 +19,7 @@ describe Spectator::Matchers::ArrayMatcher do
             it "is the expected array" do
               array = %i[a b c]
               partial = new_partial(array)
-              matcher = Spectator::Matchers::ArrayMatcher.new(array)
+              matcher = Spectator::Matchers::UnorderedArrayMatcher.new(array)
               match_data = matcher.match(partial)
               match_data_value_sans_prefix(match_data.values, :expected)[:value].should eq(array)
             end
@@ -52,7 +29,7 @@ describe Spectator::Matchers::ArrayMatcher do
             it "is the actual array" do
               array = %i[a b c]
               partial = new_partial(array)
-              matcher = Spectator::Matchers::ArrayMatcher.new(array)
+              matcher = Spectator::Matchers::UnorderedArrayMatcher.new(array)
               match_data = matcher.match(partial)
               match_data_value_sans_prefix(match_data.values, :actual)[:value].should eq(array)
             end
@@ -64,7 +41,7 @@ describe Spectator::Matchers::ArrayMatcher do
             array = %i[a b c]
             label = "everything"
             partial = new_partial(array, label)
-            matcher = Spectator::Matchers::ArrayMatcher.new(array)
+            matcher = Spectator::Matchers::UnorderedArrayMatcher.new(array)
             match_data = matcher.match(partial)
             match_data.message.should contain(label)
           end
@@ -73,7 +50,7 @@ describe Spectator::Matchers::ArrayMatcher do
             array = %i[a b c]
             label = "everything"
             partial = new_partial(array)
-            matcher = Spectator::Matchers::ArrayMatcher.new(array, label)
+            matcher = Spectator::Matchers::UnorderedArrayMatcher.new(array, label)
             match_data = matcher.match(partial)
             match_data.message.should contain(label)
           end
@@ -83,7 +60,7 @@ describe Spectator::Matchers::ArrayMatcher do
               array1 = %i[a b c]
               array2 = [1, 2, 3]
               partial = new_partial(array1)
-              matcher = Spectator::Matchers::ArrayMatcher.new(array2)
+              matcher = Spectator::Matchers::UnorderedArrayMatcher.new(array2)
               match_data = matcher.match(partial)
               match_data.message.should contain(array2.to_s)
             end
@@ -95,7 +72,7 @@ describe Spectator::Matchers::ArrayMatcher do
             array = %i[a b c]
             label = "everything"
             partial = new_partial(array, label)
-            matcher = Spectator::Matchers::ArrayMatcher.new(array)
+            matcher = Spectator::Matchers::UnorderedArrayMatcher.new(array)
             match_data = matcher.match(partial)
             match_data.negated_message.should contain(label)
           end
@@ -104,7 +81,7 @@ describe Spectator::Matchers::ArrayMatcher do
             array = %i[a b c]
             label = "everything"
             partial = new_partial(array)
-            matcher = Spectator::Matchers::ArrayMatcher.new(array, label)
+            matcher = Spectator::Matchers::UnorderedArrayMatcher.new(array, label)
             match_data = matcher.match(partial)
             match_data.negated_message.should contain(label)
           end
@@ -114,7 +91,110 @@ describe Spectator::Matchers::ArrayMatcher do
               array1 = %i[a b c]
               array2 = [1, 2, 3]
               partial = new_partial(array1)
-              matcher = Spectator::Matchers::ArrayMatcher.new(array2)
+              matcher = Spectator::Matchers::UnorderedArrayMatcher.new(array2)
+              match_data = matcher.match(partial)
+              match_data.negated_message.should contain(array2.to_s)
+            end
+          end
+        end
+      end
+
+      context "with identical unordered arrays" do
+        describe "#matched?" do
+          it "is true" do
+            array1 = %i[a b c]
+            array2 = %i[c a b]
+            partial = new_partial(array1)
+            matcher = Spectator::Matchers::UnorderedArrayMatcher.new(array2)
+            match_data = matcher.match(partial)
+            match_data.matched?.should be_true
+          end
+        end
+
+        describe "#values" do
+          context "expected" do
+            it "is the expected array" do
+              array1 = %i[a b c]
+              array2 = %i[c a b]
+              partial = new_partial(array1)
+              matcher = Spectator::Matchers::UnorderedArrayMatcher.new(array2)
+              match_data = matcher.match(partial)
+              match_data_value_sans_prefix(match_data.values, :expected)[:value].should eq(array2)
+            end
+          end
+
+          context "actual" do
+            it "is the actual array" do
+              array1 = %i[a b c]
+              array2 = %i[c a b]
+              partial = new_partial(array1)
+              matcher = Spectator::Matchers::UnorderedArrayMatcher.new(array2)
+              match_data = matcher.match(partial)
+              match_data_value_sans_prefix(match_data.values, :actual)[:value].should eq(array1)
+            end
+          end
+        end
+
+        describe "#message" do
+          it "contains the actual label" do
+            array1 = %i[a b c]
+            array2 = %i[c a b]
+            label = "everything"
+            partial = new_partial(array1, label)
+            matcher = Spectator::Matchers::UnorderedArrayMatcher.new(array2)
+            match_data = matcher.match(partial)
+            match_data.message.should contain(label)
+          end
+
+          it "contains the expected label" do
+            array1 = %i[a b c]
+            array2 = %i[c a b]
+            label = "everything"
+            partial = new_partial(array1)
+            matcher = Spectator::Matchers::UnorderedArrayMatcher.new(array2, label)
+            match_data = matcher.match(partial)
+            match_data.message.should contain(label)
+          end
+
+          context "when expected label is omitted" do
+            it "contains stringified form of expected array" do
+              array1 = %i[a b c]
+              array2 = %i[c a b]
+              partial = new_partial(array1)
+              matcher = Spectator::Matchers::UnorderedArrayMatcher.new(array2)
+              match_data = matcher.match(partial)
+              match_data.message.should contain(array2.to_s)
+            end
+          end
+        end
+
+        describe "#negated_message" do
+          it "contains the actual label" do
+            array1 = %i[a b c]
+            array2 = %i[c a b]
+            label = "everything"
+            partial = new_partial(array1, label)
+            matcher = Spectator::Matchers::UnorderedArrayMatcher.new(array2)
+            match_data = matcher.match(partial)
+            match_data.negated_message.should contain(label)
+          end
+
+          it "contains the expected label" do
+            array1 = %i[a b c]
+            array2 = %i[c a b]
+            label = "everything"
+            partial = new_partial(array1)
+            matcher = Spectator::Matchers::UnorderedArrayMatcher.new(array2, label)
+            match_data = matcher.match(partial)
+            match_data.negated_message.should contain(label)
+          end
+
+          context "when expected label is omitted" do
+            it "contains stringified form of expected array" do
+              array1 = %i[a b c]
+              array2 = %i[c a b]
+              partial = new_partial(array1)
+              matcher = Spectator::Matchers::UnorderedArrayMatcher.new(array2)
               match_data = matcher.match(partial)
               match_data.negated_message.should contain(array2.to_s)
             end
@@ -126,9 +206,9 @@ describe Spectator::Matchers::ArrayMatcher do
         describe "#matched?" do
           it "is false" do
             array1 = %i[a b c d e]
-            array2 = %i[x y z]
+            array2 = %i[a c e f]
             partial = new_partial(array1)
-            matcher = Spectator::Matchers::ArrayMatcher.new(array2)
+            matcher = Spectator::Matchers::UnorderedArrayMatcher.new(array2)
             match_data = matcher.match(partial)
             match_data.matched?.should be_false
           end
@@ -138,9 +218,9 @@ describe Spectator::Matchers::ArrayMatcher do
           context "expected" do
             it "is the expected array" do
               array1 = %i[a b c d e]
-              array2 = %i[x y z]
+              array2 = %i[a c e f]
               partial = new_partial(array1)
-              matcher = Spectator::Matchers::ArrayMatcher.new(array2)
+              matcher = Spectator::Matchers::UnorderedArrayMatcher.new(array2)
               match_data = matcher.match(partial)
               match_data_value_sans_prefix(match_data.values, :expected)[:value].should eq(array2)
             end
@@ -149,33 +229,36 @@ describe Spectator::Matchers::ArrayMatcher do
           context "actual" do
             it "is the actual array" do
               array1 = %i[a b c d e]
-              array2 = %i[x y z]
+              array2 = %i[a c e f]
               partial = new_partial(array1)
-              matcher = Spectator::Matchers::ArrayMatcher.new(array2)
+              matcher = Spectator::Matchers::UnorderedArrayMatcher.new(array2)
               match_data = matcher.match(partial)
               match_data_value_sans_prefix(match_data.values, :actual)[:value].should eq(array1)
             end
           end
 
-          context "expected size" do
-            it "is the expected size" do
+          context "missing" do
+            it "is the missing items" do
               array1 = %i[a b c d e]
-              array2 = %i[x y z]
+              array2 = %i[a c e f]
               partial = new_partial(array1)
-              matcher = Spectator::Matchers::ArrayMatcher.new(array2)
+              matcher = Spectator::Matchers::UnorderedArrayMatcher.new(array2)
               match_data = matcher.match(partial)
-              match_data_value_sans_prefix(match_data.values, :"expected size")[:value].should eq(array2.size)
+              missing = match_data_value_sans_prefix(match_data.values, :missing)[:value].as(typeof(array2))
+              missing.should contain(:f)
             end
           end
 
-          context "actual size" do
-            it "is the actual size" do
+          context "extra" do
+            it "is the extra items" do
               array1 = %i[a b c d e]
-              array2 = %i[x y z]
+              array2 = %i[a c e f]
               partial = new_partial(array1)
-              matcher = Spectator::Matchers::ArrayMatcher.new(array2)
+              matcher = Spectator::Matchers::UnorderedArrayMatcher.new(array2)
               match_data = matcher.match(partial)
-              match_data_value_sans_prefix(match_data.values, :"actual size")[:value].should eq(array1.size)
+              extra = match_data_value_sans_prefix(match_data.values, :extra)[:value].as(typeof(array1))
+              extra.should contain(:b)
+              extra.should contain(:d)
             end
           end
         end
@@ -183,20 +266,20 @@ describe Spectator::Matchers::ArrayMatcher do
         describe "#message" do
           it "contains the actual label" do
             array1 = %i[a b c d e]
-            array2 = %i[x y z]
+            array2 = %i[a c e f]
             label = "everything"
             partial = new_partial(array1, label)
-            matcher = Spectator::Matchers::ArrayMatcher.new(array2)
+            matcher = Spectator::Matchers::UnorderedArrayMatcher.new(array2)
             match_data = matcher.match(partial)
             match_data.message.should contain(label)
           end
 
           it "contains the expected label" do
             array1 = %i[a b c d e]
-            array2 = %i[x y z]
+            array2 = %i[a c e f]
             label = "everything"
             partial = new_partial(array1)
-            matcher = Spectator::Matchers::ArrayMatcher.new(array2, label)
+            matcher = Spectator::Matchers::UnorderedArrayMatcher.new(array2, label)
             match_data = matcher.match(partial)
             match_data.message.should contain(label)
           end
@@ -204,9 +287,9 @@ describe Spectator::Matchers::ArrayMatcher do
           context "when expected label is omitted" do
             it "contains stringified form of expected array" do
               array1 = %i[a b c d e]
-              array2 = %i[x y z]
+              array2 = %i[a c e f]
               partial = new_partial(array1)
-              matcher = Spectator::Matchers::ArrayMatcher.new(array2)
+              matcher = Spectator::Matchers::UnorderedArrayMatcher.new(array2)
               match_data = matcher.match(partial)
               match_data.message.should contain(array2.to_s)
             end
@@ -214,31 +297,22 @@ describe Spectator::Matchers::ArrayMatcher do
         end
 
         describe "#negated_message" do
-          it "mentions size" do
-            array1 = %i[a b c d e]
-            array2 = %i[x y z]
-            partial = new_partial(array1)
-            matcher = Spectator::Matchers::ArrayMatcher.new(array2)
-            match_data = matcher.match(partial)
-            match_data.negated_message.should contain("size")
-          end
-
           it "contains the actual label" do
             array1 = %i[a b c d e]
-            array2 = %i[x y z]
+            array2 = %i[a c e f]
             label = "everything"
             partial = new_partial(array1, label)
-            matcher = Spectator::Matchers::ArrayMatcher.new(array2)
+            matcher = Spectator::Matchers::UnorderedArrayMatcher.new(array2)
             match_data = matcher.match(partial)
             match_data.negated_message.should contain(label)
           end
 
           it "contains the expected label" do
             array1 = %i[a b c d e]
-            array2 = %i[x y z]
+            array2 = %i[a c e f]
             label = "everything"
             partial = new_partial(array1)
-            matcher = Spectator::Matchers::ArrayMatcher.new(array2, label)
+            matcher = Spectator::Matchers::UnorderedArrayMatcher.new(array2, label)
             match_data = matcher.match(partial)
             match_data.negated_message.should contain(label)
           end
@@ -246,9 +320,9 @@ describe Spectator::Matchers::ArrayMatcher do
           context "when expected label is omitted" do
             it "contains stringified form of expected array" do
               array1 = %i[a b c d e]
-              array2 = %i[x y z]
+              array2 = %i[a c e f]
               partial = new_partial(array1)
-              matcher = Spectator::Matchers::ArrayMatcher.new(array2)
+              matcher = Spectator::Matchers::UnorderedArrayMatcher.new(array2)
               match_data = matcher.match(partial)
               match_data.negated_message.should contain(array2.to_s)
             end
@@ -262,7 +336,7 @@ describe Spectator::Matchers::ArrayMatcher do
             array1 = %i[a b c]
             array2 = %i[x y z]
             partial = new_partial(array1)
-            matcher = Spectator::Matchers::ArrayMatcher.new(array2)
+            matcher = Spectator::Matchers::UnorderedArrayMatcher.new(array2)
             match_data = matcher.match(partial)
             match_data.matched?.should be_false
           end
@@ -274,7 +348,7 @@ describe Spectator::Matchers::ArrayMatcher do
               array1 = %i[a b c]
               array2 = %i[x y z]
               partial = new_partial(array1)
-              matcher = Spectator::Matchers::ArrayMatcher.new(array2)
+              matcher = Spectator::Matchers::UnorderedArrayMatcher.new(array2)
               match_data = matcher.match(partial)
               match_data_value_sans_prefix(match_data.values, :expected)[:value].should eq(array2)
             end
@@ -285,42 +359,37 @@ describe Spectator::Matchers::ArrayMatcher do
               array1 = %i[a b c]
               array2 = %i[x y z]
               partial = new_partial(array1)
-              matcher = Spectator::Matchers::ArrayMatcher.new(array2)
+              matcher = Spectator::Matchers::UnorderedArrayMatcher.new(array2)
               match_data = matcher.match(partial)
               match_data_value_sans_prefix(match_data.values, :actual)[:value].should eq(array1)
             end
           end
 
-          context "expected element" do
-            it "is the first mismatch" do
+          context "missing" do
+            it "is the missing items" do
               array1 = %i[a b c]
               array2 = %i[x y z]
               partial = new_partial(array1)
-              matcher = Spectator::Matchers::ArrayMatcher.new(array2)
+              matcher = Spectator::Matchers::UnorderedArrayMatcher.new(array2)
               match_data = matcher.match(partial)
-              match_data_value_sans_prefix(match_data.values, :"expected element")[:value].should eq(array2.first)
+              missing = match_data_value_sans_prefix(match_data.values, :missing)[:value].as(typeof(array2))
+              missing.should contain(:x)
+              missing.should contain(:y)
+              missing.should contain(:z)
             end
           end
 
-          context "actual element" do
-            it "is the first mismatch" do
+          context "extra" do
+            it "is the extra items" do
               array1 = %i[a b c]
               array2 = %i[x y z]
               partial = new_partial(array1)
-              matcher = Spectator::Matchers::ArrayMatcher.new(array2)
+              matcher = Spectator::Matchers::UnorderedArrayMatcher.new(array2)
               match_data = matcher.match(partial)
-              match_data_value_sans_prefix(match_data.values, :"actual element")[:value].should eq(array1.first)
-            end
-          end
-
-          context "index" do
-            it "is the mismatched index" do
-              array1 = %i[a b c]
-              array2 = %i[x y z]
-              partial = new_partial(array1)
-              matcher = Spectator::Matchers::ArrayMatcher.new(array2)
-              match_data = matcher.match(partial)
-              match_data_value_sans_prefix(match_data.values, :index)[:value].should eq(0)
+              extra = match_data_value_sans_prefix(match_data.values, :extra)[:value].as(typeof(array1))
+              extra.should contain(:a)
+              extra.should contain(:b)
+              extra.should contain(:c)
             end
           end
         end
@@ -331,7 +400,7 @@ describe Spectator::Matchers::ArrayMatcher do
             array2 = %i[x y z]
             label = "everything"
             partial = new_partial(array1, label)
-            matcher = Spectator::Matchers::ArrayMatcher.new(array2)
+            matcher = Spectator::Matchers::UnorderedArrayMatcher.new(array2)
             match_data = matcher.match(partial)
             match_data.message.should contain(label)
           end
@@ -341,7 +410,7 @@ describe Spectator::Matchers::ArrayMatcher do
             array2 = %i[x y z]
             label = "everything"
             partial = new_partial(array1)
-            matcher = Spectator::Matchers::ArrayMatcher.new(array2, label)
+            matcher = Spectator::Matchers::UnorderedArrayMatcher.new(array2, label)
             match_data = matcher.match(partial)
             match_data.message.should contain(label)
           end
@@ -351,7 +420,7 @@ describe Spectator::Matchers::ArrayMatcher do
               array1 = %i[a b c]
               array2 = %i[x y z]
               partial = new_partial(array1)
-              matcher = Spectator::Matchers::ArrayMatcher.new(array2)
+              matcher = Spectator::Matchers::UnorderedArrayMatcher.new(array2)
               match_data = matcher.match(partial)
               match_data.message.should contain(array2.to_s)
             end
@@ -363,7 +432,7 @@ describe Spectator::Matchers::ArrayMatcher do
             array1 = %i[a b c]
             array2 = %i[x y z]
             partial = new_partial(array1)
-            matcher = Spectator::Matchers::ArrayMatcher.new(array2)
+            matcher = Spectator::Matchers::UnorderedArrayMatcher.new(array2)
             match_data = matcher.match(partial)
             match_data.negated_message.should contain("content")
           end
@@ -373,7 +442,7 @@ describe Spectator::Matchers::ArrayMatcher do
             array2 = %i[x y z]
             label = "everything"
             partial = new_partial(array1, label)
-            matcher = Spectator::Matchers::ArrayMatcher.new(array2)
+            matcher = Spectator::Matchers::UnorderedArrayMatcher.new(array2)
             match_data = matcher.match(partial)
             match_data.negated_message.should contain(label)
           end
@@ -383,7 +452,7 @@ describe Spectator::Matchers::ArrayMatcher do
             array2 = %i[x y z]
             label = "everything"
             partial = new_partial(array1)
-            matcher = Spectator::Matchers::ArrayMatcher.new(array2, label)
+            matcher = Spectator::Matchers::UnorderedArrayMatcher.new(array2, label)
             match_data = matcher.match(partial)
             match_data.negated_message.should contain(label)
           end
@@ -393,7 +462,7 @@ describe Spectator::Matchers::ArrayMatcher do
               array1 = %i[a b c]
               array2 = %i[x y z]
               partial = new_partial(array1)
-              matcher = Spectator::Matchers::ArrayMatcher.new(array2)
+              matcher = Spectator::Matchers::UnorderedArrayMatcher.new(array2)
               match_data = matcher.match(partial)
               match_data.negated_message.should contain(array2.to_s)
             end
