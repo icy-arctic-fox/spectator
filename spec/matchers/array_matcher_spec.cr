@@ -50,7 +50,7 @@ describe Spectator::Matchers::ArrayMatcher do
             array = %i[a b c]
             label = "everything"
             partial = new_partial(array)
-            matcher = Spectator::Matchers::CaseMatcher.new(array, label)
+            matcher = Spectator::Matchers::ArrayMatcher.new(array, label)
             match_data = matcher.match(partial)
             match_data.message.should contain(label)
           end
@@ -60,7 +60,7 @@ describe Spectator::Matchers::ArrayMatcher do
               array1 = %i[a b c]
               array2 = [1, 2, 3]
               partial = new_partial(array1)
-              matcher = Spectator::Matchers::CaseMatcher.new(array2)
+              matcher = Spectator::Matchers::ArrayMatcher.new(array2)
               match_data = matcher.match(partial)
               match_data.message.should contain(array2.to_s)
             end
@@ -81,7 +81,7 @@ describe Spectator::Matchers::ArrayMatcher do
             array = %i[a b c]
             label = "everything"
             partial = new_partial(array)
-            matcher = Spectator::Matchers::CaseMatcher.new(array, label)
+            matcher = Spectator::Matchers::ArrayMatcher.new(array, label)
             match_data = matcher.match(partial)
             match_data.negated_message.should contain(label)
           end
@@ -91,7 +91,7 @@ describe Spectator::Matchers::ArrayMatcher do
               array1 = %i[a b c]
               array2 = [1, 2, 3]
               partial = new_partial(array1)
-              matcher = Spectator::Matchers::CaseMatcher.new(array2)
+              matcher = Spectator::Matchers::ArrayMatcher.new(array2)
               match_data = matcher.match(partial)
               match_data.negated_message.should contain(array2.to_s)
             end
