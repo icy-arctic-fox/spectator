@@ -1,26 +1,41 @@
 require "./value_matcher"
-require "./unordered_array_matcher"
 
 module Spectator::Matchers
   # Matcher for checking that the contents of one array (or similar type)
-  # has the exact same contents as another and in the same order.
-  struct ArrayMatcher(ExpectedType) < ValueMatcher(Enumerable(ExpectedType))
+  # has the exact same contents as another, but in any order.
+  struct UnorderedArrayMatcher(ExpectedType) < ValueMatcher(Enumerable(ExpectedType))
     # Determines whether the matcher is satisfied with the partial given to it.
     # `MatchData` is returned that contains information about the match.
     def match(partial)
-      actual = partial.actual.to_a
       expected_elements = expected.to_a
+      actual = partial.actual.to_a
+      missing, extra = array_diff(expected, actual)
+
       values = ExpectedActual.new(expected_elements, label, actual, partial.label)
-      if values.expected.size == values.actual.size
-        index = 0
-        values.expected.zip(values.actual) do |expected, element|
-          return ContentMatchData.new(index, values) unless expected == element
-          index += 1
-        end
+      if missing.empty? && extra.empty?
         IdenticalMatchData.new(values)
       else
-        SizeMatchData.new(values)
+        ContentMatchData.new(values, missing, extra)
       end
+    end
+
+    # Finds the difference of two unordered arrays.
+    # Returns a tuple of arrays - missing from *actual* and extra in *actual*.
+    private def array_diff(expected, actual)
+      extra = actual.dup
+      missing = [] of ExpectedType
+
+      # TODO: OPTIMIZE
+      expected.each do |item|
+        index = extra.index(item)
+        if index
+          extra.delete_at(index)
+        else
+          missing << item
+        end
+      end
+
+      {missing, extra}
     end
 
     # Creates the value matcher.
@@ -35,17 +50,6 @@ module Spectator::Matchers
     # The expected value is stored for later use.
     def initialize(expected : Enumerable(ExpectedType))
       super
-    end
-
-    # Returns a matcher that uses the same expected array, but allows unordered items.
-    def in_any_order
-      UnorderedArrayMatcher.new(@expected, @label)
-    end
-
-    # Returns self.
-    # Exists for syntax to ensure in-order matching is performed.
-    def in_order
-      self
     end
 
     # Common functionality for all match data for this matcher.
@@ -66,7 +70,7 @@ module Spectator::Matchers
       # Describes the condition that satisfies the matcher.
       # This is informational and displayed to the end-user.
       def message
-        "#{@values.actual_label} contains exactly #{@values.expected_label}"
+        "#{@values.actual_label} contains #{@values.expected_label} (unordered)"
       end
     end
 
@@ -81,30 +85,7 @@ module Spectator::Matchers
       # Describes the condition that won't satsify the matcher.
       # This is informational and displayed to the end-user.
       def negated_message
-        "#{@values.actual_label} does not contain exactly #{@values.expected_label}"
-      end
-    end
-
-    # Match data specific to this matcher.
-    # This type is used when the actual size differs from the expected size.
-    private struct SizeMatchData(ExpectedType, ActualType) < CommonMatchData(ExpectedType, ActualType)
-      # Creates the match data.
-      def initialize(values : ExpectedActual(Array(ExpectedType), Array(ActualType)))
-        super(false, values)
-      end
-
-      # Information about the match.
-      def named_tuple
-        super.merge({
-          "expected size": NegatableMatchDataValue.new(@values.expected.size),
-          "actual size":   @values.actual.size,
-        })
-      end
-
-      # Describes the condition that won't satsify the matcher.
-      # This is informational and displayed to the end-user.
-      def negated_message
-        "#{@values.actual_label} does not contain exactly #{@values.expected_label} (size differs)"
+        "#{@values.actual_label} does not contain #{@values.expected_label} (unordered)"
       end
     end
 
@@ -112,23 +93,22 @@ module Spectator::Matchers
     # This type is used when the actual contents differs from the expected contents.
     private struct ContentMatchData(ExpectedType, ActualType) < CommonMatchData(ExpectedType, ActualType)
       # Creates the match data.
-      def initialize(@index : Int32, values : ExpectedActual(Array(ExpectedType), Array(ActualType)))
+      def initialize(values : ExpectedActual(Array(ExpectedType), Array(ActualType)), @missing : Array(ExpectedType), @extra : Array(ActualType))
         super(false, values)
       end
 
       # Information about the match.
       def named_tuple
         super.merge({
-          index:              @index,
-          "expected element": NegatableMatchDataValue.new(@values.expected[@index]),
-          "actual element":   @values.actual[@index],
+          missing: @missing,
+          extra:   @extra,
         })
       end
 
       # Describes the condition that won't satsify the matcher.
       # This is informational and displayed to the end-user.
       def negated_message
-        "#{@values.actual_label} does not contain exactly #{@values.expected_label} (content differs)"
+        "#{@values.actual_label} does not contain #{@values.expected_label} (content differs)"
       end
     end
   end
