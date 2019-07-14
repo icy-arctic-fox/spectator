@@ -1,3 +1,4 @@
+require "./change_from_matcher"
 require "./value_matcher"
 
 module Spectator::Matchers
@@ -26,6 +27,11 @@ module Spectator::Matchers
     def initialize(&expression : -> ExpressionType)
       super(yield, expression.to_s)
       @expression = expression
+    end
+
+    # Specifies what the initial value of the expression must be.
+    def from(value : T) forall T
+      ChangeFromMatcher.new(label, value, expected, &@expression)
     end
 
     # Match data specific to this matcher.
