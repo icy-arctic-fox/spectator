@@ -66,10 +66,5 @@ module Spectator::Expectations
         end
       end
     end
-
-    # Indicates whether the match data should be negated.
-    private def negated?
-      !@match_data.override? && @negated
-    end
   end
 end
