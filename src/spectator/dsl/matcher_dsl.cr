@@ -506,6 +506,38 @@ module Spectator::DSL
       ::Spectator::Matchers::AttributesMatcher.new(::Spectator::TestValue.new({{expected}}, {{expected.double_splat.stringify}}))
     end
 
+    # Indicates that some expression's value should change after taking an action.
+    #
+    # Examples:
+    # ```
+    # i = 0
+    # expect { i += 1 }.to change { i }
+    # expect { i += 0 }.to_not change { i }
+    # ```
+    #
+    # ```
+    # i = 0
+    # expect { i += 5 }.to change { i }.from(0).to(5)
+    # ```
+    #
+    # ```
+    # i = 0
+    # expect { i += 5 }.to change { i }.to(5)
+    # ```
+    #
+    # ```
+    # i = 0
+    # expect { i += 5 }.to change { i }.from(0)
+    # ```
+    #
+    # ```
+    # i = 0
+    # expect { i += 42 }.to change { i }.by(42)
+    # ```
+    macro change(&expression)
+      ::Spectator::Matchers::ChangeMatcher.new("`" + {{expression.body.stringify}} + "`") {{expression}}
+    end
+
     # Indicates that some block should raise an error.
     #
     # Examples:
