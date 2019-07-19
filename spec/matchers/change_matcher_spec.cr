@@ -3,6 +3,18 @@ require "../spec_helper"
 describe Spectator::Matchers::ChangeMatcher do
   describe "#match" do
     context "returned MatchData" do
+      context "with a static expression" do
+        describe "#matched?" do
+          it "is false" do
+            i = 0
+            partial = new_block_partial { i += 0 }
+            matcher = Spectator::Matchers::ChangeMatcher.new { i }
+            match_data = matcher.match(partial)
+            match_data.matched?.should be_false
+          end
+        end
+      end
+
       context "with changing expression" do
         describe "#matched?" do
           it "is true" do
@@ -76,6 +88,31 @@ describe Spectator::Matchers::ChangeMatcher do
           end
         end
       end
+    end
+  end
+
+  describe "#from" do
+    it "returns a ChangeFromMatcher" do
+      i = 0
+      matcher = Spectator::Matchers::ChangeMatcher.new { i }
+      matcher.from(0).should be_a(Spectator::Matchers::ChangeFromMatcher(Int32, Int32))
+    end
+
+    it "passes along the expression" do
+      i = 0
+      partial = new_block_partial { i += 5 }
+      matcher = Spectator::Matchers::ChangeMatcher.new { i }
+      match_data = matcher.from(0).match(partial)
+      i.should eq(5) # Local scope `i` will be updated if the expression (closure) was passed on.
+    end
+
+    it "passes along the label" do
+      i = 0
+      label = "EXPRESSION"
+      partial = new_block_partial { i += 5 }
+      matcher = Spectator::Matchers::ChangeMatcher.new(label) { i }
+      match_data = matcher.from(0).match(partial)
+      match_data.message.should contain(label)
     end
   end
 end
