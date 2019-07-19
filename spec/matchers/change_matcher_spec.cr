@@ -102,7 +102,7 @@ describe Spectator::Matchers::ChangeMatcher do
       i = 0
       partial = new_block_partial { i += 5 }
       matcher = Spectator::Matchers::ChangeMatcher.new { i }
-      match_data = matcher.from(0).match(partial)
+      matcher.from(0).match(partial)
       i.should eq(5) # Local scope `i` will be updated if the expression (closure) was passed on.
     end
 
