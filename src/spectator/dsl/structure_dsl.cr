@@ -813,14 +813,13 @@ module Spectator::DSL
     # let(lazy_time) { Time.utc }
     #
     # it "lazy evaluates" do
-    #   now = current_time
     #   sleep 5
     #   expect(lazy_time).to_not eq(now)
     # end
     # ```
     #
     # However, the value is not reused across tests.
-    # It will be reconstructed when the next test starts.
+    # Each test will have its own copy.
     #
     # ```
     # let array = [0, 1, 2]
