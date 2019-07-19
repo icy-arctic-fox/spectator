@@ -2,31 +2,36 @@ require "./value_matcher"
 
 module Spectator::Matchers
   # Matcher that tests whether an expression changed from a specific value.
-  struct ChangeFromMatcher(ExpressionType, FromType) < ValueMatcher(ExpressionType)
+  struct ChangeFromMatcher(ExpressionType, FromType) < Matcher
+    # Textual representation of what the matcher expects.
+    # This shouldn't be used in the conditional logic,
+    # but for verbose output to help the end-user.
+    getter label : String
+
     # Determines whether the matcher is satisfied with the partial given to it.
     # `MatchData` is returned that contains information about the match.
     def match(partial)
-      partial.actual           # Invoke action that might change the expression's value.
-      after = @expression.call # Retrieve the expression's value.
-      if expected != @actual_before
+      before = @expression.call # Retrieve the expression's initial value.
+      partial.actual            # Invoke action that might change the expression's value.
+      after = @expression.call  # Retrieve the expression's value again.
+      if @expected_before != before
         # Initial value isn't what was expected.
-        InitialMatchData.new(expected, @actual_before, after, partial.label, label)
+        InitialMatchData.new(@expected_before, before, after, partial.label, label)
       else
         # Check if the expression's value changed.
-        matched = expected != after
-        ChangeMatchData.new(matched, expected, @actual_before, after, partial.label, label)
+        same = before == after
+        ChangeMatchData.new(!same, @expected_before, before, after, partial.label, label)
       end
     end
 
     # Creates a new change matcher with a custom label.
-    def initialize(expression_label : String, expected_before : FromType, @actual_before : ExpressionType, &expression : -> ExpressionType)
-      super(expected_before, expression_label)
+    def initialize(@label, @expected_before : FromType, &expression : -> ExpressionType)
       @expression = expression
     end
 
     # Creates a new change matcher.
-    def initialize(expected_before : FromType, @actual_before : ExpressionType, &expression : -> ExpressionType)
-      super(expected_before, expression.to_s)
+    def initialize(@expected_before : FromType, &expression : -> ExpressionType)
+      @label = expression.to_s
       @expression = expression
     end
 
