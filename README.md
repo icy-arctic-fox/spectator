@@ -288,9 +288,9 @@ Items not marked as completed may have partial implementations.
       - [X] `contain`
       - [X] `have`
       - [X] `contain_exactly`
-      - [ ] `contain_exactly.in_any_order`
+      - [X] `contain_exactly.in_any_order`
       - [X] `match_array`
-      - [ ] `match_array.in_any_order`
+      - [X] `match_array.in_any_order`
       - [X] `start_with`
       - [X] `end_with`
       - [X] `be_empty`
