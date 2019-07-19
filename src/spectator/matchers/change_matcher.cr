@@ -1,5 +1,6 @@
 require "./change_from_matcher"
-require "./value_matcher"
+require "./change_to_matcher"
+require "./matcher"
 
 module Spectator::Matchers
   # Matcher that tests whether an expression changed.
@@ -33,6 +34,11 @@ module Spectator::Matchers
     # Specifies what the initial value of the expression must be.
     def from(value : T) forall T
       ChangeFromMatcher.new(label, value, &@expression)
+    end
+
+    # Specifies what the resulting value of the expression must be.
+    def to(value : T) forall T
+      ChangeToMatcher.new(label, value, &@expression)
     end
 
     # Match data specific to this matcher.
