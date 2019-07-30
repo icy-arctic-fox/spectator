@@ -6,8 +6,7 @@ module Spectator::Matchers
   # has the exact same contents as another and in the same order.
   struct ArrayMatcher(ExpectedType) < ValueMatcher(Enumerable(ExpectedType))
     # Determines whether the matcher is satisfied with the partial given to it.
-    # `MatchData` is returned that contains information about the match.
-    def match(partial)
+    def match(partial, negated = false)
       actual = partial.actual.to_a
       expected_elements = expected.to_a
       values = ExpectedActual.new(expected_elements, label, actual, partial.label)

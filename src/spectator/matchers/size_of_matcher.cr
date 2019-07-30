@@ -5,8 +5,7 @@ module Spectator::Matchers
   # The set's `#size` method is used for this check.
   struct SizeOfMatcher(ExpectedType) < ValueMatcher(ExpectedType)
     # Determines whether the matcher is satisfied with the partial given to it.
-    # `MatchData` is returned that contains information about the match.
-    def match(partial)
+    def match(partial, negated = false)
       actual = partial.actual.size
       size = expected.size
       values = ExpectedActual.new(size, label, actual, partial.label)

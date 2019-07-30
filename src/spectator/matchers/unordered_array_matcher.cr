@@ -5,8 +5,7 @@ module Spectator::Matchers
   # has the exact same contents as another, but in any order.
   struct UnorderedArrayMatcher(ExpectedType) < ValueMatcher(Enumerable(ExpectedType))
     # Determines whether the matcher is satisfied with the partial given to it.
-    # `MatchData` is returned that contains information about the match.
-    def match(partial)
+    def match(partial, negated = false)
       expected_elements = expected.to_a
       actual = partial.actual.to_a
       missing, extra = array_diff(expected, actual)

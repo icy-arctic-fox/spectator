@@ -10,8 +10,7 @@ module Spectator::Matchers
     # but for verbose output to help the end-user.
     abstract def label : String
 
-    # Determines whether the matcher is satisfied with the value given to it.
-    # True is returned if the match was successful, false otherwise.
-    abstract def match(partial) : MatchData
+    # Determines whether the matcher is satisfied with the partial given to it.
+    def match(partial, negated = false) : Expectation
   end
 end

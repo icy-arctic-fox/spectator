@@ -17,8 +17,7 @@ module Spectator::Matchers
     end
 
     # Determines whether the matcher is satisfied with the partial given to it.
-    # `MatchData` is returned that contains information about the match.
-    def match(partial)
+    def match(partial, negated = false)
       actual_values = snapshot_values(partial.actual)
       values = ExpectedActual.new(expected, label, actual_values, partial.label)
       MatchData.new(match?(actual_values), values)

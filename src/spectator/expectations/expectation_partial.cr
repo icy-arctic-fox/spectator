@@ -27,25 +27,19 @@ module Spectator::Expectations
 
     # Asserts that some criteria defined by the matcher is satisfied.
     def to(matcher) : Nil
-      report(eval(matcher))
+      report(matcher.match(self, false))
     end
 
     # Asserts that some criteria defined by the matcher is not satisfied.
     # This is effectively the opposite of `#to`.
     def to_not(matcher) : Nil
-      report(eval(matcher, true))
+      report(matcher.match(self, true))
     end
 
     # ditto
     @[AlwaysInline]
     def not_to(matcher) : Nil
       to_not(matcher)
-    end
-
-    # Evaluates the expectation and returns it.
-    private def eval(matcher, negated = false)
-      match_data = matcher.match(self)
-      Expectation.new(match_data, negated)
     end
 
     # Reports an expectation to the current harness.
