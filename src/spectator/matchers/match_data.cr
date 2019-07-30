@@ -1,46 +1,41 @@
 require "./match_data_labeled_value"
-require "./match_data_value"
-require "./generic_match_data_value"
 
 module Spectator::Matchers
-  # Information regarding a expectation parial and matcher.
-  # `Matcher#match` will return a sub-type of this.
-  abstract struct MatchData
+  # Result of evaluating a matcher on an expectation partial.
+  #
+  # Procs are used to "store references" to the information.
+  # Most of the time, the information in this struct is unused.
+  # To reduce unecessary overhead and memory usage,
+  # the values are constructed lazily, on-demand when needed.
+  struct MatchData
     # Indicates whether the matcher was satisified with the expectation partial.
     getter? matched : Bool
 
-    # Creates the base of the match data.
+    # Extra information about the match that is shown in the result output.
+    getter values : Array(MatchDataLabeledValue)
+
+    # Creates the match data.
+    #
     # The *matched* argument indicates
     # whether the matcher was satisified with the expectation partial.
-    def initialize(@matched)
+    # The *expected* and *actual* procs are what was expected to happen
+    # and what actually happened.
+    # They should write a string to the given IO.
+    # The *values* are extra information about the match,
+    # that is shown in the result output.
+    def initialize(@matched, @expected : IO -> , @actual : IO -> , @values)
     end
 
-    # Information about the match.
-    # Returned elments will differ by matcher,
-    # but all will return a set of labeled values.
-    def values : Array(MatchDataLabeledValue)
-      named_tuple.map do |key, value|
-        if value.is_a?(MatchDataValue)
-          MatchDataLabeledValue.new(key, value)
-        else
-          wrapper = GenericMatchDataValue.new(value)
-          MatchDataLabeledValue.new(key, wrapper)
-        end
-      end
+    # Description of what should have happened and would satisfy the matcher.
+    # This is informational and displayed to the end-user.
+    def expected
+      @expected.call
     end
 
-    # Raw information about the match.
-    # Sub-types must implement this and return a `NamedTuple`
-    # containing the match data values.
-    # This will be transformed and returned by `#values`.
-    private abstract def named_tuple
-
-    # Describes the condition that satisfies the matcher.
+    # Description of what actually happened.
     # This is informational and displayed to the end-user.
-    abstract def message : String
-
-    # Describes the condition that won't satsify the matcher.
-    # This is informational and displayed to the end-user.
-    abstract def negated_message : String
+    def actual
+      @actual.call
+    end
   end
 end
