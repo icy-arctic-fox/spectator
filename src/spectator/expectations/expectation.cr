@@ -1,52 +1,52 @@
 module Spectator::Expectations
-  # Ties together a partial, matcher, and their outcome.
-  class Expectation
-    # Populates the base portiion of the expectation with values.
-    # The *negated* flag should be true if the expectation is inverted.
-    # The *match_data* is the value returned by `Spectator::Matcher#match`
-    # when the expectation was evaluated.
-    # The *negated* flag and `MatchData#matched?` flag
-    # are mutually-exclusive in this context.
-    def initialize(@match_data : Spectator::Matchers::MatchData, @negated : Bool)
-    end
+  # Result of evaluating a matcher on an expectation partial.
+  #
+  # Procs are used to "store references" to the information.
+  # Most of the time, the information in this struct is unused.
+  # To reduce unecessary overhead and memory usage,
+  # the values are constructed lazily, on-demand when needed.
+  struct Expectation
+    # Indicates whether the matcher was satisified with the expectation partial.
+    getter? matched : Bool
 
-    # Indicates whether the expectation was satisifed.
-    # This is true if:
-    # - The matcher was satisified and the expectation is not negated.
-    # - The matcher wasn't satisfied and the expectation is negated.
+    # ditto
     def satisfied?
-      @match_data.matched? ^ @negated
+      matched?
     end
 
-    # Information about the match.
-    # Returned value and type will something that has key-value pairs (like a `NamedTuple`).
-    def values
-      @match_data.values.tap do |labeled_values|
-        if @negated
-          labeled_values.each do |labeled_value|
-            value = labeled_value.value
-            value.negate
-          end
-        end
-      end
+    # Extra information about the match that is shown in the result output.
+    getter values : Array(MatchDataLabeledValue)
+
+    # Creates the expectation (match data).
+    #
+    # The *matched* argument indicates
+    # whether the matcher was satisified with the expectation partial.
+    # The *expected* and *actual* procs are what was expected to happen
+    # and what actually happened.
+    # They should write a string to the given IO.
+    # The *values* are extra information about the match,
+    # that is shown in the result output.
+    def initialize(@matched, @expected : IO -> , @actual : IO -> , @values)
     end
 
-    # Text that indicates the condition that must be met for the expectation to be satisifed.
-    def expected_message
-      @negated ? @match_data.negated_message : @match_data.message
+    # Description of what should have happened and would satisfy the matcher.
+    # This is informational and displayed to the end-user.
+    def expected
+      @expected.call
     end
 
-    # Text that indicates what the outcome was.
-    def actual_message
-      @match_data.matched? ? @match_data.message : @match_data.negated_message
+    # Description of what actually happened.
+    # This is informational and displayed to the end-user.
+    def actual
+      @actual.call
     end
 
     # Creates the JSON representation of the expectation.
     def to_json(json : ::JSON::Builder)
       json.object do
         json.field("satisfied", satisfied?)
-        json.field("expected", expected_message)
-        json.field("actual", actual_message)
+        json.field("expected", expected)
+        json.field("actual", actual)
         json.field("values") do
           json.object do
             values.each do |labeled_value|
