@@ -2,7 +2,7 @@ require "./actual"
 
 module Spectator::Expectations
   # Captures an actual value and its label.
-  struct ValueActual(T) < Actual
+  struct ActualValue(T) < Actual
     # Actual value.
     getter value : T
 

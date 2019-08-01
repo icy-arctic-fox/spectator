@@ -2,7 +2,7 @@ require "./actual"
 
 module Spectator::Expectations
   # Captures an actual block and its label.
-  struct BlockActual(ReturnType) < Actual
+  struct ActualBlock(ReturnType) < Actual
     # Calls the block and retrieves the value.
     def value : ReturnType
       @proc.call
