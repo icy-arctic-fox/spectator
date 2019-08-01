@@ -43,7 +43,7 @@ module Spectator::Matchers
     end
 
     private def values(actual) : Array(LabeledValue)
-      [LabeledValue.new(:actual, actual.value)]
+      [LabeledValue.new(actual.value.to_s, "actual")]
     end
 
     private def negated_values(actual) : Array(LabeledValue)
