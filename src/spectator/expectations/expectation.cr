@@ -1,57 +1,58 @@
+require "../matchers/failed_matched_data"
+require "../matchers/match_data"
+require "../source"
+
 module Spectator::Expectations
   # Result of evaluating a matcher on an expectation partial.
-  #
-  # Procs are used to "store references" to the information.
-  # Most of the time, the information in this struct is unused.
-  # To reduce unecessary overhead and memory usage,
-  # the values are constructed lazily, on-demand when needed.
   struct Expectation
-    # Indicates whether the matcher was satisified with the expectation partial.
-    getter? matched : Bool
+    # Location where this expectation was defined.
+    getter source : Source
 
-    # ditto
+    # Creates the expectation.
+    def initialize(@match_data : MatchData, @source : Source)
+    end
+
     def satisfied?
-      matched?
+      @match_data.matched?
     end
 
-    # Extra information about the match that is shown in the result output.
-    getter values : Array(MatchDataLabeledValue)
-
-    # Creates the expectation (match data).
-    #
-    # The *matched* argument indicates
-    # whether the matcher was satisified with the expectation partial.
-    # The *expected* and *actual* procs are what was expected to happen
-    # and what actually happened.
-    # They should write a string to the given IO.
-    # The *values* are extra information about the match,
-    # that is shown in the result output.
-    def initialize(@matched, @expected : IO -> , @actual : IO -> , @values)
+    def failure?
+      !satisfied?
     end
 
-    # Description of what should have happened and would satisfy the matcher.
-    # This is informational and displayed to the end-user.
-    def expected
-      @expected.call
+    def failure_message?
+      @match_data.as?(FailedMatchData).try(&.failure_message)
     end
 
-    # Description of what actually happened.
-    # This is informational and displayed to the end-user.
-    def actual
-      @actual.call
+    def failure_message
+      @match_data.as(FailedMatchData).failure_message
+    end
+
+    def values?
+      @match_data.as?(FailedMatchData).try(&.values)
+    end
+
+    def values
+      @match_data.as(FailedMatchData).values
     end
 
     # Creates the JSON representation of the expectation.
     def to_json(json : ::JSON::Builder)
       json.object do
+        json.field("source") { @source.to_json(json) }
         json.field("satisfied", satisfied?)
-        json.field("expected", expected)
-        json.field("actual", actual)
-        json.field("values") do
-          json.object do
-            values.each do |labeled_value|
-              json.field(labeled_value.label, labeled_value.value.to_s)
-            end
+        if (failed = @match_data.as?(FailedMatchData))
+          failed_to_json(failed, json)
+        end
+      end
+    end
+
+    private def failed_to_json(failed : FailedMatchData, json : ::JSON::Builder)
+      json.field("failure", failed.failure_message)
+      json.field("values") do
+        json.object do
+          failed.values.each do |pair|
+            json.field(pair.label, pair.value)
           end
         end
       end
