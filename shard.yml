@@ -6,7 +6,7 @@ description: |
 authors:
   - Michael Miller <icy.arctic.fox@gmail.com>
 
-crystal: 0.28.0
+crystal: 0.30.0
 
 license: MIT
 
