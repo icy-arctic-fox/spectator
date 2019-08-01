@@ -1,4 +1,5 @@
-require "./match_data"
+require "./failed_matched_data"
+require "./successful_match_data"
 
 module Spectator::Matchers
   # Common base class for all expectation conditions.
@@ -40,12 +41,28 @@ module Spectator::Matchers
       !matches?(actual)
     end
 
+    private def values(actual) : Array(LabeledValue)
+      [LabeledValue.new(:actual, actual.value)]
+    end
+
+    private def negated_values(actual) : Array(LabeledValue)
+      values
+    end
+
     def match(actual)
-      matched = match?(actual)
+      if match?(actual)
+        SuccessfulMatchData.new
+      else
+        FailedMatchData.new(failure_message, values)
+      end
     end
 
     def negated_match(actual)
-      matched = does_not_match?(actual)
+      if does_not_match?(actual)
+        SuccessfulMatchData.new
+      else
+        FailedMatchData.new(failure_message_when_negated, negated_values)
+      end
     end
   end
 end
