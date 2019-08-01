@@ -18,7 +18,7 @@ module Spectator::Matchers
 
     # Message displayed when the matcher isn't satisifed.
     # This is only called when `#matches?` returns false.
-    abstract def failure_message : String
+    abstract def failure_message(actual) : String
 
     # Message displayed when the matcher isn't satisifed and is negated.
     # This is only called when `#does_not_match?` returns false.
@@ -26,7 +26,7 @@ module Spectator::Matchers
     # A default implementation of this method is provided,
     # which causes compilation to fail.
     # If the matcher supports negation, it must override this method.
-    def failure_message_when_negated : String
+    def failure_message_when_negated(actual) : String
       {% raise "Negation with #{@type.name} is not supported." %}
     end
 
@@ -54,7 +54,7 @@ module Spectator::Matchers
       if match?(actual)
         SuccessfulMatchData.new
       else
-        FailedMatchData.new(failure_message, values)
+        FailedMatchData.new(failure_message(actual), values(actual))
       end
     end
 
@@ -62,7 +62,7 @@ module Spectator::Matchers
       if does_not_match?(actual)
         SuccessfulMatchData.new
       else
-        FailedMatchData.new(failure_message_when_negated, negated_values)
+        FailedMatchData.new(failure_message_when_negated(actual), negated_values(actual))
       end
     end
   end
