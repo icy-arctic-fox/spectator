@@ -21,13 +21,17 @@ class Object
     # However, since this isn't a macro and we can't "look behind" this method call
     # to see what it was invoked on, the argument is an empty string.
     # Additionally, the source file and line can't be obtained.
-    ::Spectator::Expectations::ValueExpectationPartial.new(self, __FILE__, __LINE__).to(matcher)
+    actual = ::Spectator::Expectations::ValueActual.new(self)
+    source = ::Spectator::Source.new(__FILE__, __LINE__)
+    ::Spectator::Expectations::ExpectationPartial.new(actual, source).to(matcher)
   end
 
   # Works the same as `#should` except the condition is inverted.
   # When `#should` succeeds, this method will fail, and vice-versa.
   def should_not(matcher : ::Spectator::Matchers::Matcher)
-    ::Spectator::Expectations::ValueExpectationPartial.new(self, __FILE__, __LINE__).to_not(matcher)
+    actual = ::Spectator::Expectations::ValueActual.new(self)
+    source = ::Spectator::Source.new(__FILE__, __LINE__)
+    ::Spectator::Expectations::ExpectationPartial.new(actual, source).to_not(matcher)
   end
 end
 
@@ -35,12 +39,16 @@ struct Proc(*T, R)
   # Extension method to create an expectation for a block of code (proc).
   # Depending on the matcher, the proc may be executed multiple times.
   def should(matcher : ::Spectator::Matchers::Matcher)
-    ::Spectator::Expectations::BlockExpectationPartial.new(self, __FILE__, __LINE__).to(matcher)
+    actual = ::Spectator::Expectations::BlockActual.new(self)
+    source = ::Spectator::Source.new(__FILE__, __LINE__)
+    ::Spectator::Expectations::ExpectationPartial.new(actual, source).to(matcher)
   end
 
   # Works the same as `#should` except the condition is inverted.
   # When `#should` succeeds, this method will fail, and vice-versa.
   def should_not(matcher : ::Spectator::Matchers::Matcher)
-    ::Spectator::Expectations::BlockExpectationPartial.new(self, __FILE__, __LINE__).to_not(matcher)
+    actual = ::Spectator::Expectations::BlockActual.new(self)
+    source = ::Spectator::Source.new(__FILE__, __LINE__)
+    ::Spectator::Expectations::BlockExpectationPartial.new(actual, source).to_not(matcher)
   end
 end
