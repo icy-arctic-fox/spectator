@@ -1,4 +1,4 @@
-module Spectator::Expectations
+module Spectator
   # Base type for capturing an expression from a test.
   abstract struct TestExpression
     # User-friendly string displayed for the actual expression being tested.
