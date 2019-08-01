@@ -1,39 +1,34 @@
+require "../matchers/match_data"
+require "../source"
+require "./actual"
+
 module Spectator::Expectations
-  # Base class for all expectation partials.
-  # An "expectation partial" stores part of an expectation (obviously).
-  # The part of the expectation this class covers is the actual value.
+  # Stores part of an expectation (obviously).
+  # The part of the expectation this type covers is the actual value and source.
   # This can also cover a block's behavior.
-  # Sub-types of this class are returned by the `DSL::ExampleDSL.expect` call.
-  abstract struct ExpectationPartial
-    # User-friendly string displayed for the actual expression being tested.
-    # For instance, in the expectation:
-    # ```
-    # expect(foo).to eq(bar)
-    # ```
-    # This property will be "foo".
-    # It will be the literal string "foo",
-    # and not the actual value of the foo.
-    getter label : String
+  struct ExpectationPartial
+    # The actual value being tested.
+    # This also contains its label.
+    getter actual : Actual
 
-    # Source file the expectation originated from.
-    getter source_file : String
+    # Location where this expectation was defined.
+    getter source : Source
 
-    # Line number in the source file the expectation originated from.
-    getter source_line : Int32
-
-    # Creates the base of the partial.
-    private def initialize(@label, @source_file, @source_line)
+    # Creates the partial.
+    def initialize(@actual, @source)
     end
 
     # Asserts that some criteria defined by the matcher is satisfied.
     def to(matcher) : Nil
-      report(matcher.match(self, false))
+      match_data = matcher.match(@actual)
+      report(match_data)
     end
 
     # Asserts that some criteria defined by the matcher is not satisfied.
     # This is effectively the opposite of `#to`.
     def to_not(matcher) : Nil
-      report(matcher.match(self, true))
+      match_data = matcher.negated_match(@actual)
+      report(match_data)
     end
 
     # ditto
@@ -43,7 +38,8 @@ module Spectator::Expectations
     end
 
     # Reports an expectation to the current harness.
-    private def report(expectation : Expectation)
+    private def report(match_data : Matchers::MatchData)
+      expectation = Expectation.new(match_data, @source)
       Internals::Harness.current.report_expectation(expectation)
     end
   end
