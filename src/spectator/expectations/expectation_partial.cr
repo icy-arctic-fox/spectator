@@ -1,6 +1,6 @@
 require "../matchers/match_data"
 require "../source"
-require "./actual"
+require "../test_expression"
 
 module Spectator::Expectations
   # Stores part of an expectation (obviously).
@@ -9,7 +9,7 @@ module Spectator::Expectations
   struct ExpectationPartial
     # The actual value being tested.
     # This also contains its label.
-    getter actual : Actual
+    getter actual : TestExpression
 
     # Location where this expectation was defined.
     getter source : Source

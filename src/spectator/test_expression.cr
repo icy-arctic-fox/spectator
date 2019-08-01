@@ -1,6 +1,6 @@
 module Spectator::Expectations
-  # Base class for capturing an actual value - the thing being checked/tested.
-  abstract struct Actual
+  # Base type for capturing an expression from a test.
+  abstract struct TestExpression
     # User-friendly string displayed for the actual expression being tested.
     # For instance, in the expectation:
     # ```
@@ -11,11 +11,11 @@ module Spectator::Expectations
     # and not the actual value of the foo.
     getter label : String
 
-    # Creates the common base of the actual value.
+    # Creates the common base of the expression.
     def initialize(@label)
     end
 
-    # String representation of the actual value.
+    # String representation of the expression.
     def to_s(io)
       io << label
     end

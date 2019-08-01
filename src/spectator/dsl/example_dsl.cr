@@ -19,7 +19,7 @@ module Spectator::DSL
     # Where the actual value is returned by the system-under-test,
     # and the expected value is what the actual value should be to satisfy the condition.
     macro expect(actual, _source_file = __FILE__, _source_line = __LINE__)
-      value_actual = ::Spectator::Expectations::ActualValue.new({{actual.stringify}}, {{actual}})
+      test_value = ::Spectator::TestValue.new({{actual.stringify}}, {{actual}})
       source = ::Spectator::Source.new({{_source_file}}, {{_source_line}})
       ::Spectator::Expectations::ExpectationPartial.new(value_actual, source)
     end
@@ -70,11 +70,11 @@ module Spectator::DSL
         # The raw block can't be used because it's not clear to the user.
         {% method_name = block.body.id.split('.')[1..-1].join('.') %}
         %partial = %proc.partial(subject)
-        block_actual = ::Spectator::Expectations::ActualBlock.new({{"#" + method_name}}, %partial)
+        test_block = ::Spectator::Expectations::TestBlock.new({{"#" + method_name}}, %partial)
       {% else %}
         # In this case, it looks like the short-hand method syntax wasn't used.
         # Just drop in the proc as-is.
-        block_actual = ::Spectator::Expectations::ActualBlock.new({{"`" + block.body.stringify + "`"}}, %proc)
+        test_block = ::Spectator::Expectations::TestBlock.new({{"`" + block.body.stringify + "`"}}, %proc)
       {% end %}
 
       source = ::Spectator::Source.new({{_source_file}}, {{_source_line}})
