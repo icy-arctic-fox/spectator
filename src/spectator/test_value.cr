@@ -7,7 +7,7 @@ module Spectator
     getter value : T
 
     # Creates the expression value with a custom label.
-    def initialize(label : String, @value)
+    def initialize(@value, label : String)
       super(label)
     end
 

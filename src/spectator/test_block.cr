@@ -10,7 +10,7 @@ module Spectator
 
     # Creates the block expression with a custom label.
     # Typically the label is the code in the block/proc.
-    def initialize(label : String, @proc : -> ReturnType)
+    def initialize(@proc : -> ReturnType, label : String)
       super(label)
     end
 
