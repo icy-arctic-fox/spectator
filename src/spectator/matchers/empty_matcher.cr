@@ -4,44 +4,24 @@ module Spectator::Matchers
   # Matcher that tests whether a collection is empty.
   # The values are checked with the `empty?` method.
   struct EmptyMatcher < Matcher
-    # Textual representation of what the matcher expects.
-    def label
-      "empty?"
+    private def match?(actual)
+      actual.value.empty?
     end
 
-    # Determines whether the matcher is satisfied with the partial given to it.
-    def match(partial, negated = false)
-      actual = partial.actual
-      matched = actual.empty?
-      MatchData.new(matched, actual, partial.label)
+    def description
+      "is empty"
     end
 
-    # Match data specific to this matcher.
-    private struct MatchData(T) < MatchData
-      # Creates the match data.
-      def initialize(matched, @actual : T, @actual_label : String)
-        super(matched)
-      end
+    private def failure_message(actual)
+      "#{actual.label} is not empty"
+    end
 
-      # Information about the match.
-      def named_tuple
-        {
-          expected: NegatableMatchDataValue.new([] of Nil),
-          actual:   @actual,
-        }
-      end
+    private def failure_message_when_negated(actual)
+      "#{actual.label} is empty"
+    end
 
-      # Describes the condition that satisfies the matcher.
-      # This is informational and displayed to the end-user.
-      def message
-        "#{@actual_label} is empty"
-      end
-
-      # Describes the condition that won't satsify the matcher.
-      # This is informational and displayed to the end-user.
-      def negated_message
-        "#{@actual_label} is not empty"
-      end
+    private def values(actual) : Array(LabeledValue)
+      [LabeledValue.new(actual.value.to_s, "actual")]
     end
   end
 end

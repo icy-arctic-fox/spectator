@@ -7,16 +7,16 @@ module Spectator::Matchers
     private def match?(actual)
       expected.value === actual.value
     end
-    
+
     def description
       "matches #{expected.label}"
     end
 
-    def failure_message(actual)
-      "#{actual.label} did not match #{expected.label}"
+    private def failure_message(actual)
+      "#{actual.label} does not match #{expected.label}"
     end
 
-    def failure_message_when_negated(actual)
+    private def failure_message_when_negated(actual)
       "#{actual.label} matched #{expected.label}"
     end
   end
