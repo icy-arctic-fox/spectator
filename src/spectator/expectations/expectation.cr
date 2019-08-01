@@ -1,4 +1,4 @@
-require "../matchers/failed_matched_data"
+require "../matchers/failed_match_data"
 require "../matchers/match_data"
 require "../source"
 

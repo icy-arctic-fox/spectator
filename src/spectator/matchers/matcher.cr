@@ -1,6 +1,6 @@
-require "./failed_matched_data"
+require "../test_value"
+require "./failed_match_data"
 require "./successful_match_data"
-require "./test_value"
 
 module Spectator::Matchers
   # Common base class for all expectation conditions.

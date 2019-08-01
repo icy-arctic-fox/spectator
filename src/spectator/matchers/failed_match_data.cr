@@ -1,4 +1,4 @@
-require "./labeled_value"
+require "../test_value"
 require "./match_data"
 
 module Spectator::Matchers
