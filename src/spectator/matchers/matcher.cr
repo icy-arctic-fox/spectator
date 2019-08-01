@@ -26,7 +26,7 @@ module Spectator::Matchers
     # which causes compilation to fail.
     # If the matcher supports negation, it must override this method.
     def failure_message_when_negated : String
-      {% raise "Negation with #{@type.name} is not supported."}
+      {% raise "Negation with #{@type.name} is not supported." %}
     end
 
     # Checks whether the matcher is satisifed.
