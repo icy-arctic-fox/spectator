@@ -4,43 +4,34 @@ module Spectator::Matchers
   # Matcher that tests whether one value is greater than another.
   # The values are compared with the > operator.
   struct GreaterThanMatcher(ExpectedType) < ValueMatcher(ExpectedType)
-    # Determines whether the matcher is satisfied with the value given to it.
     private def match?(actual)
-      actual > expected
+      actual.value > expected.value
     end
 
-    # Determines whether the matcher is satisfied with the partial given to it.
-    def match(partial, negated = false)
-      values = ExpectedActual.new(partial, self)
-      MatchData.new(match?(values.actual), values)
+    def description
+      "greater than #{expected.label}"
     end
 
-    # Match data specific to this matcher.
-    private struct MatchData(ExpectedType, ActualType) < MatchData
-      # Creates the match data.
-      def initialize(matched, @values : ExpectedActual(ExpectedType, ActualType))
-        super(matched)
-      end
+    private def failure_message(actual)
+      "#{actual.label} is less than or equal to #{expected.label}"
+    end
 
-      # Information about the match.
-      def named_tuple
-        {
-          expected: NegatablePrefixedMatchDataValue.new(">", "<=", @values.expected),
-          actual:   @values.actual,
-        }
-      end
+    private def failure_message_when_negated(actual)
+      "#{actual.label} is greater than #{expected.label}"
+    end
 
-      # Describes the condition that satisfies the matcher.
-      # This is informational and displayed to the end-user.
-      def message
-        "#{@values.actual_label} is greater than #{@values.expected_label} (using >)"
-      end
+    private def values(actual)
+      [
+        LabeledValue.new("> #{expected.value}", "expected"),
+        LabeledValue.new(actual.value.to_s, "actual")
+      ]
+    end
 
-      # Describes the condition that won't satsify the matcher.
-      # This is informational and displayed to the end-user.
-      def negated_message
-        "#{@values.actual_label} is less than or equal to #{@values.expected_label} (using >)"
-      end
+    private def negated_values(actual)
+      [
+        LabeledValue.new("<= #{expected.value}", "expected"),
+        LabeledValue.new(actual.value.to_s, "actual")
+      ]
     end
   end
 end
