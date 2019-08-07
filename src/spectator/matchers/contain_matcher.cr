@@ -24,8 +24,8 @@ module Spectator::Matchers
 
     private def values(actual) : Array(LabeledValue)
       [
-        LabeledValue.new(expected.value.to_s, "subset"),
-        LabeledValue.new(actual.value.to_s, "superset"),
+        LabeledValue.new(expected.value.inspect, "subset"),
+        LabeledValue.new(actual.value.inspect, "superset"),
       ]
     end
   end

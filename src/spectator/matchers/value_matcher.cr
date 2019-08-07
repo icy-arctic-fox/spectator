@@ -14,11 +14,11 @@ module Spectator::Matchers
     end
 
     private def values(actual) : Array(LabeledValue)
-      super(actual) << LabeledValue.new(expected.value.to_s, "expected")
+      super(actual) << LabeledValue.new(expected.value.inspect, "expected")
     end
 
     private def negated_values(actual) : Array(LabeledValue)
-      super(actual) << LabeledValue.new("Not #{expected.value}", "expected")
+      super(actual) << LabeledValue.new("Not #{expected.value.inspect}", "expected")
     end
   end
 end

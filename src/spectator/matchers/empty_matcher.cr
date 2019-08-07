@@ -21,7 +21,7 @@ module Spectator::Matchers
     end
 
     private def values(actual) : Array(LabeledValue)
-      [LabeledValue.new(actual.value.to_s, "actual")]
+      [LabeledValue.new(actual.value.inspect, "actual")]
     end
   end
 end

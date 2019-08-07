@@ -22,15 +22,15 @@ module Spectator::Matchers
 
     private def values(actual)
       [
-        LabeledValue.new("<= #{expected.value}", "expected"),
-        LabeledValue.new(actual.value.to_s, "actual")
+        LabeledValue.new("<= #{expected.value.inspect}", "expected"),
+        LabeledValue.new(actual.value.inspect, "actual"),
       ]
     end
 
     private def negated_values(actual)
       [
-        LabeledValue.new("> #{expected.value}", "expected"),
-        LabeledValue.new(actual.value.to_s, "actual")
+        LabeledValue.new("> #{expected.value.inspect}", "expected"),
+        LabeledValue.new(actual.value.inspect, "actual"),
       ]
     end
   end
