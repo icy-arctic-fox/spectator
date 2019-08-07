@@ -45,6 +45,14 @@ module Spectator::Matchers
       end
     end
 
+    def in_order
+      self
+    end
+
+    def in_any_order
+      UnorderedArrayMatcher.new(expected)
+    end
+
     private def compare_arrays(expected_elements, actual_elements)
       if expected_elements.size == actual_elements.size
         index = 0
