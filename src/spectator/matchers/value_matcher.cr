@@ -1,9 +1,9 @@
-require "./matcher"
+require "./standard_matcher"
 
 module Spectator::Matchers
   # Category of matcher that uses a value.
   # Matchers of this type expect that a SUT applies to the value in some way.
-  abstract struct ValueMatcher(ExpectedType) < Matcher
+  abstract struct ValueMatcher(ExpectedType) < StandardMatcher
     # Expected value.
     # Sub-types may use this value to test the expectation and generate message strings.
     private getter expected : TestValue(ExpectedType)

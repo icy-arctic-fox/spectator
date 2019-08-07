@@ -1,28 +1,20 @@
-require "./value_matcher"
+require "../test_value"
+require "./failed_match_data"
+require "./matcher"
+require "./successful_match_data"
 require "./unordered_array_matcher"
 
 module Spectator::Matchers
   # Matcher for checking that the contents of one array (or similar type)
   # has the exact same contents as another and in the same order.
-  struct ArrayMatcher(ExpectedType) < ValueMatcher(Enumerable(ExpectedType))
+  struct ArrayMatcher(ExpectedType) < Matcher
+    private getter expected : TestValue(ExpectedType)
+
+    def initialize(@expected)
+    end
+
     def description
       "contains exactly #{expected.label}"
-    end
-
-    private def failure_message(actual)
-      {% raise "This method should never be called" %}
-    end
-
-    private def failure_message_when_negated(actual)
-      {% raise "This method should never be called" %}
-    end
-
-    private def match?(actual)
-      {% raise "This method should never be called" %}
-    end
-
-    private def does_not_match?(actual)
-      {% raise "This method should never be called" %}
     end
 
     def match(actual)
@@ -67,7 +59,7 @@ module Spectator::Matchers
       end
     end
 
-    def failed_size_mismatch(expected_elements, actual_elements, actual_label)
+    private def failed_size_mismatch(expected_elements, actual_elements, actual_label)
       FailedMatchData.new("#{actual_label} does not contain exactly #{expected.label} (size mismatch)",
         [
           LabeledValue.new(expected_elements.inspect, "expected"),
@@ -77,7 +69,7 @@ module Spectator::Matchers
         ])
     end
 
-    def failed_content_mismatch(expected_elements, actual_elements, index, actual_label)
+    private def failed_content_mismatch(expected_elements, actual_elements, index, actual_label)
       FailedMatchData.new("#{actual_label} does not contain exactly #{expected.label} (element mismatch)",
         [
           LabeledValue.new(expected_elements[index].inspect, "expected"),
@@ -86,7 +78,7 @@ module Spectator::Matchers
         ])
     end
 
-    def failed_content_identical(expected_elements, actual_elements, actual_label)
+    private def failed_content_identical(expected_elements, actual_elements, actual_label)
       FailedMatchData.new("#{actual.label} contains exactly #{expected.label}",
         [
           LabeledValue.new("Not #{expected_elements.inspect}", "expected"),
