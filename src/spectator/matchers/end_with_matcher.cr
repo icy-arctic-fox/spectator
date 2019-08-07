@@ -1,88 +1,86 @@
-require "./value_matcher"
+require "./failed_match_data"
+require "./matcher"
+require "./successful_match_data"
 
 module Spectator::Matchers
   # Matcher that tests whether a value, such as a `String` or `Array`, ends with a value.
   # The `ends_with?` method is used if it's defined on the actual type.
   # Otherwise, it is treated as an `Indexable` and the `last` value is compared against.
-  struct EndWithMatcher(ExpectedType) < ValueMatcher(ExpectedType)
-    # Determines whether the matcher is satisfied with the value given to it.
-    private def match_ends_with?(actual)
-      actual.ends_with?(expected)
+  struct EndWithMatcher(ExpectedType) < Matcher
+    private getter expected
+
+    def initialize(@expected : TestValue(ExpectedType))
     end
 
-    # Determines whether the matcher is satisfied with the value given to it.
-    private def match_last?(actual)
-      expected === actual
+    def description
+      "ends with #{expected.label}"
     end
 
-    # Determines whether the matcher is satisfied with the partial given to it.
-    def match(partial, negated = false)
-      values = ExpectedActual.new(partial, self)
-      actual = values.actual
-      if actual.responds_to?(:ends_with?)
-        EndsWithMatchData.new(match_ends_with?(actual), values)
+    def match(actual)
+      if actual.value.responds_to?(:ends_with?)
+        match_ends_with(actual)
       else
-        last = actual.last
-        LastMatchData.new(match_last?(last), values, last)
+        match_last(actual)
       end
     end
 
-    # Match data specific to this matcher.
-    # This type is used when the actual value responds to `ends_with?`.
-    private struct EndsWithMatchData(ExpectedType, ActualType) < MatchData
-      # Creates the match data.
-      def initialize(matched, @values : ExpectedActual(ExpectedType, ActualType))
-        super(matched)
-      end
-
-      # Information about the match.
-      def named_tuple
-        {
-          expected: NegatableMatchDataValue.new(@values.expected),
-          actual:   @values.actual,
-        }
-      end
-
-      # Describes the condition that satisfies the matcher.
-      # This is informational and displayed to the end-user.
-      def message
-        "#{@values.actual_label} ends with #{@values.expected_label} (using #ends_with?)"
-      end
-
-      # Describes the condition that won't satsify the matcher.
-      # This is informational and displayed to the end-user.
-      def negated_message
-        "#{@values.actual_label} does not end with #{@values.expected_label} (using #ends_with?)"
+    private def match_ends_with(actual)
+      if actual.value.ends_with?(expected.value)
+        SuccessfulMatchData.new
+      else
+        FailedMatchData.new("#{actual.label} does not end with #{expected.label} (using #ends_with?)",
+          expected: expected.value.inspect,
+          actual: actual.value.inspect
+        )
       end
     end
 
-    # Match data specific to this matcher.
-    # This type is used when the actual value does not respond to `ends_with?`.
-    private struct LastMatchData(ExpectedType, ActualType, LastType) < MatchData
-      # Creates the match data.
-      def initialize(matched, @values : ExpectedActual(ExpectedType, ActualType), @last : LastType)
-        super(matched)
-      end
+    private def match_last(actual)
+      list = actual.value.to_a
+      last = list.last
 
-      # Information about the match.
-      def named_tuple
-        {
-          expected: @values.expected,
-          actual:   @last,
-          list:     @values.actual,
-        }
+      if expected.value === last
+        SuccessfulMatchData.new
+      else
+        FailedMatchData.new("#{actual.label} does not end with #{expected.label} (using expected === last)",
+          expected: expected.value,
+          actual: last,
+          list: list
+        )
       end
+    end
 
-      # Describes the condition that satisfies the matcher.
-      # This is informational and displayed to the end-user.
-      def message
-        "#{@values.actual_label} ends with #{@values.expected_label} (using expected === actual.last)"
+    def negated_match(actual)
+      if actual.value.responds_to?(:ends_with?)
+        negated_match_ends_with(actual)
+      else
+        negated_match_last(actual)
       end
+    end
 
-      # Describes the condition that won't satsify the matcher.
-      # This is informational and displayed to the end-user.
-      def negated_message
-        "#{@values.actual_label} does not end with #{@values.expected_label} (using expected === actual.last)"
+    private def negated_match_ends_with(actual)
+      if actual.value.ends_with?(expected.value)
+        FailedMatchData.new("#{actual.label} ends with #{expected.label} (using #ends_with?)",
+          expected: expected.value.inspect,
+          actual: actual.value.inspect
+        )
+      else
+        SuccessfulMatchData.new
+      end
+    end
+
+    private def negated_match_last(actual)
+      list = actual.value.to_a
+      last = list.last
+
+      if expected.value === last
+        FailedMatchData.new("#{actual.label} ends with #{expected.label} (using expected === last)",
+          expected: expected.value,
+          actual: last,
+          list: list
+        )
+      else
+        SuccessfulMatchData.new
       end
     end
   end
