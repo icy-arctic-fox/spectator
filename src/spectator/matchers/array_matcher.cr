@@ -7,9 +7,9 @@ module Spectator::Matchers
   # Matcher for checking that the contents of one array (or similar type)
   # has the exact same contents as another and in the same order.
   struct ArrayMatcher(ExpectedType) < Matcher
-    private getter expected : TestValue(ExpectedType)
+    private getter expected
 
-    def initialize(@expected)
+    def initialize(@expected : TestValue(Enumerable(ExpectedType)))
     end
 
     def description

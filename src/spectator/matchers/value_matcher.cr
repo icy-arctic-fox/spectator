@@ -6,11 +6,11 @@ module Spectator::Matchers
   abstract struct ValueMatcher(ExpectedType) < StandardMatcher
     # Expected value.
     # Sub-types may use this value to test the expectation and generate message strings.
-    private getter expected : TestValue(ExpectedType)
+    private getter expected
 
     # Creates the value matcher.
     # The expected value is stored for later use.
-    def initialize(@expected)
+    def initialize(@expected : TestValue(ExpectedType))
     end
 
     private def values(actual)
