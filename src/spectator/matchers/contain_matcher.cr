@@ -22,11 +22,11 @@ module Spectator::Matchers
       "#{actual.label} contains #{expected.label}"
     end
 
-    private def values(actual) : Array(LabeledValue)
-      [
-        LabeledValue.new(expected.value.inspect, "subset"),
-        LabeledValue.new(actual.value.inspect, "superset"),
-      ]
+    private def values(actual)
+      {
+        subset:   expected.value.inspect,
+        superset: actual.value.inspect,
+      }
     end
   end
 end

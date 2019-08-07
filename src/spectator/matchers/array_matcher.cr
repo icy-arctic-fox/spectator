@@ -1,4 +1,3 @@
-require "../test_value"
 require "./failed_match_data"
 require "./matcher"
 require "./successful_match_data"
@@ -61,29 +60,26 @@ module Spectator::Matchers
 
     private def failed_size_mismatch(expected_elements, actual_elements, actual_label)
       FailedMatchData.new("#{actual_label} does not contain exactly #{expected.label} (size mismatch)",
-        [
-          LabeledValue.new(expected_elements.inspect, "expected"),
-          LabeledValue.new(actual_elements.inspect, "actual"),
-          LabeledValue.new(expected_elements.size, "expected size"),
-          LabeledValue.new(actual_elements.size, "actual size"),
-        ])
+        expected: expected_elements.inspect,
+        actual: actual_elements.inspect,
+        "expected size": expected_elements.size.to_s,
+        "actual size": actual_elements.size.to_s
+      )
     end
 
     private def failed_content_mismatch(expected_elements, actual_elements, index, actual_label)
       FailedMatchData.new("#{actual_label} does not contain exactly #{expected.label} (element mismatch)",
-        [
-          LabeledValue.new(expected_elements[index].inspect, "expected"),
-          LabeledValue.new(actual_elements[index].inspect, "actual"),
-          LabeledValue.new(index.to_s, "index"),
-        ])
+        expected: expected_elements[index].inspect,
+        actual: actual_elements[index].inspect,
+        index: index.to_s
+      )
     end
 
     private def failed_content_identical(expected_elements, actual_elements, actual_label)
       FailedMatchData.new("#{actual.label} contains exactly #{expected.label}",
-        [
-          LabeledValue.new("Not #{expected_elements.inspect}", "expected"),
-          LabeledValue.new(actual_elements.inspect, "actual"),
-        ])
+        expected: "Not #{expected_elements.inspect}",
+        actual: actual_elements.inspect
+      )
     end
   end
 end

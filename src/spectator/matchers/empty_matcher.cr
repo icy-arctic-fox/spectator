@@ -20,8 +20,8 @@ module Spectator::Matchers
       "#{actual.label} is empty"
     end
 
-    private def values(actual) : Array(LabeledValue)
-      [LabeledValue.new(actual.value.inspect, "actual")]
+    private def values(actual)
+      {actual: actual.value.inspect}
     end
   end
 end

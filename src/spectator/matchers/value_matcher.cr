@@ -13,12 +13,12 @@ module Spectator::Matchers
     def initialize(@expected)
     end
 
-    private def values(actual) : Array(LabeledValue)
-      super(actual) << LabeledValue.new(expected.value.inspect, "expected")
+    private def values(actual)
+      super.merge(expected: expected.value.inspect)
     end
 
-    private def negated_values(actual) : Array(LabeledValue)
-      super(actual) << LabeledValue.new("Not #{expected.value.inspect}", "expected")
+    private def negated_values(actual)
+      super.merge(expected: "Not #{expected.value.inspect}")
     end
   end
 end

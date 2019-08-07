@@ -1,4 +1,3 @@
-require "../test_value"
 require "./match_data"
 
 module Spectator::Matchers
@@ -9,9 +8,10 @@ module Spectator::Matchers
 
     getter failure_message : String
 
-    getter values : Array(LabeledValue)
+    getter values : Array(Tuple(Symbol, String))
 
-    def initialize(@failure_message, @values = [] of LabeledValue)
+    def initialize(@failure_message, **values)
+      @values = values.to_a
     end
   end
 end

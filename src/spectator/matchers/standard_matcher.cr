@@ -32,12 +32,12 @@ module Spectator::Matchers
       !matches?(actual)
     end
 
-    private def values(actual) : Array(LabeledValue)
-      [LabeledValue.new(actual.value.inspect, "actual")]
+    private def values(actual)
+      {actual: actual.value.inspect}
     end
 
-    private def negated_values(actual) : Array(LabeledValue)
-      values
+    private def negated_values(actual)
+      values(actual)
     end
 
     def match(actual)
