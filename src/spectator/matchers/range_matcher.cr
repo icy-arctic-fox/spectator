@@ -4,74 +4,65 @@ module Spectator::Matchers
   # Matcher that tests whether a value is in a given range.
   # The `Range#includes?` method is used for this check.
   struct RangeMatcher(ExpectedType) < ValueMatcher(ExpectedType)
-    # Determines whether the matcher is satisfied with the value given to it.
     private def match?(actual)
-      expected.includes?(actual)
+      expected.value.includes?(actual.value)
     end
 
-    # Determines whether the matcher is satisfied with the partial given to it.
-    def match(partial, negated = false)
-      actual = partial.actual
-      matched = match?(actual)
-      expected_value = @expected
-      MatchData.new(matched, ExpectedActual.new(expected_value, label, actual, partial.label))
+    def description
+      "is in #{expected.label}"
+    end
+
+    private def failure_message(actual)
+      "#{actual.label} is not in #{expected.label} (#{exclusivity})"
+    end
+
+    private def failure_message_when_negated(actual)
+      "#{actual.label} is in #{expected.label} (#{exclusivity})"
+    end
+
+    private def values(actual)
+      {
+        lower:  ">= #{range.begin.inspect}",
+        upper:  "#{exclusive? ? "<" : "<="} #{range.end.inspect}",
+        actual: actual.value.inspect,
+      }
+    end
+
+    private def negated_values(actual)
+      {
+        lower:  "< #{range.begin.inspect}",
+        upper:  "#{exclusive? ? ">=" : ">"} #{range.end.inspect}",
+        actual: actual.value.inspect,
+      }
     end
 
     # Returns a new matcher, with the same bounds, but uses an inclusive range.
     def inclusive
-      range = Range.new(@expected.begin, @expected.end, exclusive: false)
-      RangeMatcher.new(range, label)
+      new_range = Range.new(range.begin, range.end, exclusive: false)
+      expected = TestValue.new(new_range, label)
+      RangeMatcher.new(expected)
     end
 
     # Returns a new matcher, with the same bounds, but uses an exclusive range.
     def exclusive
-      range = Range.new(@expected.begin, @expected.end, exclusive: true)
-      RangeMatcher.new(range, label)
+      new_range = Range.new(range.begin, range.end, exclusive: true)
+      expected = TestValue.new(new_range, label)
+      RangeMatcher.new(expected)
     end
 
-    # Match data specific to this matcher.
-    # This is used when the expected type is a `Range`.
-    private struct MatchData(B, E, ActualType) < MatchData
-      # Creates the match data.
-      def initialize(matched, @values : ExpectedActual(Range(B, E), ActualType))
-        super(matched)
-      end
+    # Gets the expected range.
+    private def range
+      expected.value
+    end
 
-      # Information about the match.
-      def named_tuple
-        {
-          lower:  NegatablePrefixedMatchDataValue.new(">=", "<", range.begin),
-          upper:  NegatablePrefixedMatchDataValue.new(exclusive? ? "<" : "<=", exclusive? ? ">=" : ">", range.end),
-          actual: @values.actual,
-        }
-      end
+    # Indicates whether the range is inclusive or exclusive.
+    private def exclusive?
+      range.exclusive?
+    end
 
-      # Describes the condition that satisfies the matcher.
-      # This is informational and displayed to the end-user.
-      def message
-        "#{@values.actual_label} is in #{@values.expected_label} (#{exclusivity})"
-      end
-
-      # Describes the condition that won't satsify the matcher.
-      # This is informational and displayed to the end-user.
-      def negated_message
-        "#{@values.actual_label} is not in #{@values.expected_label} (#{exclusivity})"
-      end
-
-      # Gets the expected range.
-      private def range
-        @values.expected
-      end
-
-      # Indicates whether the range is inclusive or exclusive.
-      private def exclusive?
-        range.exclusive?
-      end
-
-      # Produces a string "inclusive" or "exclusive" based on the range.
-      private def exclusivity
-        exclusive? ? "exclusive" : "inclusive"
-      end
+    # Produces a string "inclusive" or "exclusive" based on the range.
+    private def exclusivity
+      exclusive? ? "exclusive" : "inclusive"
     end
   end
 end
