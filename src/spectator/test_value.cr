@@ -7,13 +7,13 @@ module Spectator
     getter value : T
 
     # Creates the expression value with a custom label.
-    def initialize(@value, label : String)
+    def initialize(@value : T, label : String)
       super(label)
     end
 
     # Creates the expression with a stringified value.
     # This is used for the "should" syntax and when the label doesn't matter.
-    def initialize(@value)
+    def initialize(@value : T)
       super(@value.to_s)
     end
 
