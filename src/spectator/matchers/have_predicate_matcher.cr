@@ -34,6 +34,14 @@ module Spectator::Matchers
       end
     end
 
+    private def failure_message(actual)
+      "#{actual.label} does not have #{expected.label}"
+    end
+
+    private def failure_message_when_negated(actual)
+      "#{actual.label} has #{expected.label}"
+    end
+
     # Captures all of the actual values.
     # A `NamedTuple` is returned, with each key being the attribute.
     private def snapshot_values(object)

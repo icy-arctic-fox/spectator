@@ -5,7 +5,7 @@ module Spectator::Matchers
   # The `ExpectedType` type param should be a `NamedTuple`.
   # Each key in the tuple is a predicate (without the '?') to test.
   # Each value is a a `Tuple` of arguments to pass to the predicate method.
-  struct PredicateMatcher(ExpectedType) < Matcher(ExpectedType)
+  struct PredicateMatcher(ExpectedType) < Matcher
     private getter expected
 
     def initialize(@expected : TestValue(ExpectedType))
@@ -31,6 +31,14 @@ module Spectator::Matchers
       else
         SuccessfulMatchData.new
       end
+    end
+
+    private def failure_message(actual)
+      "#{actual.label} is not #{expected.label}"
+    end
+
+    private def failure_message_when_negated(actual)
+      "#{actual.label} is #{expected.label}"
     end
 
     # Captures all of the actual values.

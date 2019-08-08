@@ -15,6 +15,14 @@ module Spectator::Matchers
     def initialize(@expected : TestValue(ExpectedType))
     end
 
+    def description
+      if (message = @expected)
+        "raises #{ExceptionType} with message #{message}"
+      else
+        "raises #{ExceptionType}"
+      end
+    end
+
     def match(actual)
       exception = capture_exception { actual.value }
       case exception
