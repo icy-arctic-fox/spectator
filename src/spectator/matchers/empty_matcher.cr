@@ -3,7 +3,7 @@ require "./matcher"
 module Spectator::Matchers
   # Matcher that tests whether a collection is empty.
   # The values are checked with the `empty?` method.
-  struct EmptyMatcher < Matcher
+  struct EmptyMatcher < StandardMatcher
     private def match?(actual)
       actual.value.empty?
     end
@@ -18,10 +18,6 @@ module Spectator::Matchers
 
     private def failure_message_when_negated(actual)
       "#{actual.label} is empty"
-    end
-
-    private def values(actual)
-      {actual: actual.value.inspect}
     end
   end
 end

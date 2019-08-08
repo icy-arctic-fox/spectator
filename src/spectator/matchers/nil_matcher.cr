@@ -3,45 +3,21 @@ require "./matcher"
 module Spectator::Matchers
   # Common matcher that tests whether a value is nil.
   # The `Object#nil?` method is used for this.
-  struct NilMatcher < Matcher
-    # Textual representation of what the matcher expects.
-    def label
-      "nil?"
+  struct NilMatcher < StandardMatcher
+    private def match?(actual)
+      actual.value.nil?
     end
 
-    # Determines whether the matcher is satisfied with the partial given to it.
-    def match(partial, negated = false)
-      actual = partial.actual
-      matched = actual.nil?
-      MatchData.new(matched, actual, partial.label)
+    def description
+      "is nil"
     end
 
-    # Match data specific to this matcher.
-    private struct MatchData(T) < MatchData
-      # Creates the match data.
-      def initialize(matched, @actual : T, @actual_label : String)
-        super(matched)
-      end
+    private def failure_message(actual)
+      "#{actual.label} is not nil"
+    end
 
-      # Information about the match.
-      def named_tuple
-        {
-          expected: NegatableMatchDataValue.new(nil),
-          actual:   @actual,
-        }
-      end
-
-      # Describes the condition that satisfies the matcher.
-      # This is informational and displayed to the end-user.
-      def message
-        "#{@actual_label} is nil"
-      end
-
-      # Describes the condition that won't satsify the matcher.
-      # This is informational and displayed to the end-user.
-      def negated_message
-        "#{@actual_label} is not nil"
-      end
+    private def failure_message_when_negated(actual)
+      "#{actual.label} is nil"
     end
   end
 end

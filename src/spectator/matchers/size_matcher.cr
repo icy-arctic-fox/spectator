@@ -4,39 +4,34 @@ module Spectator::Matchers
   # Matcher that tests whether a set has a specified number of elements.
   # The set's `#size` method is used for this check.
   struct SizeMatcher(ExpectedType) < ValueMatcher(ExpectedType)
-    # Determines whether the matcher is satisfied with the partial given to it.
-    def match(partial, negated = false)
-      actual = partial.actual.size
-      values = ExpectedActual.new(expected, label, actual, partial.label)
-      MatchData.new(actual == expected, values)
+    private def match?(actual)
+      expected.value == actual.value.size
     end
 
-    # Match data specific to this matcher.
-    private struct MatchData(ExpectedType, ActualType) < MatchData
-      # Creates the match data.
-      def initialize(matched, @values : ExpectedActual(ExpectedType, ActualType))
-        super(matched)
-      end
+    def description
+      "has size #{expected.label}"
+    end
 
-      # Information about the match.
-      def named_tuple
-        {
-          expected: NegatableMatchDataValue.new(@values.expected),
-          actual:   @values.actual,
-        }
-      end
+    private def failure_message(actual)
+      "#{actual.label} does not have #{expected.label} elements"
+    end
 
-      # Describes the condition that satisfies the matcher.
-      # This is informational and displayed to the end-user.
-      def message
-        "#{@values.actual_label} has #{@values.expected_label} elements"
-      end
+    private def failure_message_when_negated(actual)
+      "#{actual.label} has #{expected.label} elements"
+    end
 
-      # Describes the condition that won't satsify the matcher.
-      # This is informational and displayed to the end-user.
-      def negated_message
-        "#{@values.actual_label} does not have #{@values.expected_label} elements"
-      end
+    private def values(actual)
+      {
+        expected: expected.value.inspect,
+        actual:   actual.value.size.inspect,
+      }
+    end
+
+    private def negated_values(actual)
+      {
+        expected: "Not #{expected.value.inspect}",
+        actual:   actual.value.size.inspect,
+      }
     end
   end
 end

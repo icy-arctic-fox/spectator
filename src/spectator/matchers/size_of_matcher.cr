@@ -4,40 +4,34 @@ module Spectator::Matchers
   # Matcher that tests whether a set has the same number of elements as another set.
   # The set's `#size` method is used for this check.
   struct SizeOfMatcher(ExpectedType) < ValueMatcher(ExpectedType)
-    # Determines whether the matcher is satisfied with the partial given to it.
-    def match(partial, negated = false)
-      actual = partial.actual.size
-      size = expected.size
-      values = ExpectedActual.new(size, label, actual, partial.label)
-      MatchData.new(actual == size, values)
+    private def match?(actual)
+      expected.value.size == actual.value.size
     end
 
-    # Match data specific to this matcher.
-    private struct MatchData(ExpectedType, ActualType) < MatchData
-      # Creates the match data.
-      def initialize(matched, @values : ExpectedActual(ExpectedType, ActualType))
-        super(matched)
-      end
+    def description
+      "is the same size as #{expected.label}"
+    end
 
-      # Information about the match.
-      def named_tuple
-        {
-          expected: NegatableMatchDataValue.new(@values.expected),
-          actual:   @values.actual,
-        }
-      end
+    private def failure_message(actual)
+      "#{actual.label} is not the same size as #{expected.label}"
+    end
 
-      # Describes the condition that satisfies the matcher.
-      # This is informational and displayed to the end-user.
-      def message
-        "#{@values.actual_label} has the same number of elements as #{@values.expected_label}"
-      end
+    private def failure_message_when_negated(actual)
+      "#{actual.label} is the same size as #{expected.label}"
+    end
 
-      # Describes the condition that won't satsify the matcher.
-      # This is informational and displayed to the end-user.
-      def negated_message
-        "#{@values.actual_label} has a different number of elements than #{@values.expected_label}"
-      end
+    private def values(actual)
+      {
+        expected: expected.value.size.inspect,
+        actual:   actual.value.size.inspect,
+      }
+    end
+
+    private def negated_values(actual)
+      {
+        expected: "Not #{expected.value.size.inspect}",
+        actual:   actual.value.size.inspect,
+      }
     end
   end
 end

@@ -3,50 +3,35 @@ require "./matcher"
 module Spectator::Matchers
   # Matcher that tests a value is of a specified type.
   # The values are compared with the `Object#is_a?` method.
-  struct TypeMatcher(Expected) < Matcher
-    # Textual representation of what the matcher expects.
-    # The `Expected` type param will be used to populate the label.
-    def label
-      Expected.to_s
-    end
-
-    # Determines whether the matcher is satisfied with the value given to it.
+  struct TypeMatcher(Expected) < StandardMatcher
     private def match?(actual)
-      actual.is_a?(Expected)
+      actual.value.is_a?(Expected)
     end
 
-    # Determines whether the matcher is satisfied with the partial given to it.
-    def match(partial, negated = false)
-      actual = partial.actual
-      MatchData(Expected, typeof(actual)).new(match?(actual), actual, partial.label)
+    def description
+      "is as #{Expected}"
     end
 
-    # Match data specific to this matcher.
-    private struct MatchData(ExpectedType, ActualType) < MatchData
-      # Creates the match data.
-      def initialize(matched, @actual : ActualType, @actual_label : String)
-        super(matched)
-      end
+    private def failure_message(actual)
+      "#{actual.label} is not a #{Expected}"
+    end
 
-      # Information about the match.
-      def named_tuple
-        {
-          expected: NegatableMatchDataValue.new(ExpectedType),
-          actual:   @actual.class,
-        }
-      end
+    private def failure_message_when_negated(actual)
+      "#{actual.label} is a #{Expected}"
+    end
 
-      # Describes the condition that satisfies the matcher.
-      # This is informational and displayed to the end-user.
-      def message
-        "#{@actual_label} is a #{ExpectedType}"
-      end
+    private def values(actual)
+      {
+        expected: Expected.to_s,
+        actual:   actual.value.class.inspect,
+      }
+    end
 
-      # Describes the condition that won't satsify the matcher.
-      # This is informational and displayed to the end-user.
-      def negated_message
-        "#{@actual_label} is not a #{ExpectedType}"
-      end
+    private def negated_values(actual)
+      {
+        expected: "Not #{Expected}",
+        actual:   actual.value.class.inspect,
+      }
     end
   end
 end
