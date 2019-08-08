@@ -4,44 +4,29 @@ module Spectator::Matchers
   # Matcher that tests whether a `Hash` (or similar type) has a given key.
   # The set is checked with the `has_key?` method.
   struct HaveKeyMatcher(ExpectedType) < ValueMatcher(ExpectedType)
-    # Determines whether the matcher is satisfied with the value given to it.
     private def match?(actual)
-      actual.has_key?(expected)
+      actual.value.has_key?(expected.value)
     end
 
-    # Determines whether the matcher is satisfied with the partial given to it.
-    def match(partial, negated = false)
-      values = ExpectedActual.new(partial, self)
-      MatchData.new(match?(values.actual), values)
+    def description
+      "has key #{expected.label}"
     end
 
-    # Match data specific to this matcher.
-    private struct MatchData(ExpectedType, ActualType) < MatchData
-      # Creates the match data.
-      def initialize(matched, @values : ExpectedActual(ExpectedType, ActualType))
-        super(matched)
-      end
+    private def failure_message(actual)
+      "#{actual.label} does not have key #{expected.label}"
+    end
 
-      # Information about the match.
-      def named_tuple
-        actual = @values.actual
-        {
-          key:    NegatableMatchDataValue.new(@values.expected),
-          actual: actual.responds_to?(:keys) ? actual.keys : actual,
-        }
-      end
+    private def failure_message_when_negated(actual)
+      "#{actual.label} has key #{expected.label}"
+    end
 
-      # Describes the condition that satisfies the matcher.
-      # This is informational and displayed to the end-user.
-      def message
-        "#{@values.actual_label} has key #{@values.expected_label}"
-      end
-
-      # Describes the condition that won't satsify the matcher.
-      # This is informational and displayed to the end-user.
-      def negated_message
-        "#{@values.actual_label} does not have key #{@values.expected_label}"
-      end
+    private def values(actual)
+      actual_value = actual.value
+      set = actual_value.responds_to?(:keys) ? actual_value.keys : actual_value
+      {
+        key:    expected.value.inspect,
+        actual: set.inspect,
+      }
     end
   end
 end
