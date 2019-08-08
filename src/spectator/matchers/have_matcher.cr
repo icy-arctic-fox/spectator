@@ -5,67 +5,51 @@ module Spectator::Matchers
   # For a `String`, the `includes?` method is used.
   # Otherwise, it expects an `Enumerable` and iterates over each item until === is true.
   struct HaveMatcher(ExpectedType) < ValueMatcher(ExpectedType)
-    # Determines whether the matcher is satisfied with the value given to it.
-    # True is returned if the match was successful, false otherwise.
     private def match?(actual)
-      if actual.is_a?(String)
-        match_string?(actual)
+      actual_value = actual.value
+      if actual_value.is_a?(String)
+        match_string(actual_value)
       else
-        match_enumerable?(actual)
+        match_enumerable(actual_value)
       end
     end
 
     # Checks if a `String` matches the expected values.
     # The `includes?` method is used for this check.
-    private def match_string?(actual)
-      expected.all? do |item|
-        actual.includes?(item)
+    private def match_string?(actual_value)
+      expected.value.all? do |item|
+        actual_value.includes?(item)
       end
     end
 
     # Checks if an `Enumerable` matches the expected values.
     # The `===` operator is used on every item.
-    private def match_enumerable?(actual)
-      array = actual.to_a
-      expected.all? do |item|
-        array.any? do |elem|
-          item === elem
+    private def match_enumerable?(actual_value)
+      array = actual_value.to_a
+      expected.value.all? do |item|
+        array.any? do |element|
+          item === element
         end
       end
     end
 
-    # Determines whether the matcher is satisfied with the partial given to it.
-    def match(partial, negated = false)
-      values = ExpectedActual.new(partial, self)
-      MatchData.new(match?(values.actual), values)
+    def description
+      "includes #{expected.label}"
     end
 
-    # Match data specific to this matcher.
-    private struct MatchData(ExpectedType, ActualType) < MatchData
-      # Creates the match data.
-      def initialize(matched, @values : ExpectedActual(ExpectedType, ActualType))
-        super(matched)
-      end
+    private def failure_message(actual)
+      "#{actual.label} does not include #{expected.label}"
+    end
 
-      # Information about the match.
-      def named_tuple
-        {
-          subset:   NegatableMatchDataValue.new(@values.expected),
-          superset: @values.actual,
-        }
-      end
+    private def failure_message_when_negated(actual)
+      "#{actual.label} includes #{expected.label}"
+    end
 
-      # Describes the condition that satisfies the matcher.
-      # This is informational and displayed to the end-user.
-      def message
-        "#{@values.actual_label} includes #{@values.expected_label}"
-      end
-
-      # Describes the condition that won't satsify the matcher.
-      # This is informational and displayed to the end-user.
-      def negated_message
-        "#{@values.actual_label} does not include #{@values.expected_label}"
-      end
+    private def values(actual)
+      {
+        subset:   expected.value.inspect,
+        superset: actual.value.inspect,
+      }
     end
   end
 end
