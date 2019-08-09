@@ -63,8 +63,8 @@ module Spectator::Matchers
       {% begin %}
       {
         {% for attribute in ExpectedType.keys %}
-        {{"expected " + attribute.stringify}}: expected.value[{{attribute.symbolize}}]),
-        {{"actual " + attribute.stringify}}:   snapshot[{{attribute.symbolize}}],
+        {{"expected " + attribute.stringify}}: expected.value[{{attribute.symbolize}}].inspect,
+        {{"actual " + attribute.stringify}}:   snapshot[{{attribute.symbolize}}].inspect,
         {% end %}
       }
       {% end %}
