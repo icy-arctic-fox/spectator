@@ -25,7 +25,7 @@ module Spectator::Expectations
     end
 
     def failure_message
-      @match_data.as(Matchers::FailedMatchData).failure_message
+      failure_message?.not_nil!
     end
 
     def values?
@@ -33,7 +33,7 @@ module Spectator::Expectations
     end
 
     def values
-      @match_data.as(Matchers::FailedMatchData).values
+      values?.not_nil!
     end
 
     # Creates the JSON representation of the expectation.
