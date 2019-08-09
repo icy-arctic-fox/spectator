@@ -23,7 +23,7 @@ module Spectator::Matchers
       end
     end
 
-    def match(actual)
+    def match(actual : TestExpression(T)) : MatchData forall T
       exception = capture_exception { actual.value }
       if exception.nil?
         FailedMatchData.new("#{actual.label} did not raise", expected: ExceptionType.inspect)
@@ -52,7 +52,7 @@ module Spectator::Matchers
       end
     end
 
-    def negated_match(actual)
+    def negated_match(actual : TestExpression(T)) : MatchData forall T
       exception = capture_exception { actual.value }
       if exception.nil?
         SuccessfulMatchData.new

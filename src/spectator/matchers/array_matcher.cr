@@ -16,7 +16,7 @@ module Spectator::Matchers
       "contains exactly #{expected.label}"
     end
 
-    def match(actual)
+    def match(actual : TestExpression(T)) : MatchData forall T
       actual_elements = actual.value.to_a
       expected_elements = expected.value.to_a
       index = compare_arrays(expected_elements, actual_elements)
@@ -31,7 +31,7 @@ module Spectator::Matchers
       end
     end
 
-    def negated_match(actual)
+    def negated_match(actual : TestExpression(T)) : MatchData forall T
       actual_elements = actual.value.to_a
       expected_elements = expected.value.to_a
 

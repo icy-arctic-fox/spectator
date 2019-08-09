@@ -14,7 +14,7 @@ module Spectator::Matchers
       "starts with #{expected.label}"
     end
 
-    def match(actual)
+    def match(actual : TestExpression(T)) : MatchData forall T
       if (value = actual.value).responds_to?(:starts_with?)
         match_starts_with(value, actual.label)
       else
@@ -48,7 +48,7 @@ module Spectator::Matchers
       end
     end
 
-    def negated_match(actual)
+    def negated_match(actual : TestExpression(T)) : MatchData forall T
       if (value = actual.value).responds_to?(:starts_with?)
         negated_match_starts_with(value, actual.label)
       else

@@ -16,7 +16,7 @@ module Spectator::Matchers
       "ends with #{expected.label}"
     end
 
-    def match(actual)
+    def match(actual : TestExpression(T)) : MatchData forall T
       if (value = actual.value).responds_to?(:ends_with?)
         match_ends_with(value, actual.label)
       else
@@ -50,7 +50,7 @@ module Spectator::Matchers
       end
     end
 
-    def negated_match(actual)
+    def negated_match(actual : TestExpression(T)) : MatchData forall T
       if actual.value.responds_to?(:ends_with?)
         negated_match_ends_with(actual)
       else

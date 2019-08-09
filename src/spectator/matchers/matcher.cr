@@ -14,8 +14,8 @@ module Spectator::Matchers
     # The phrasing should be such that it reads "it ___."
     abstract def description : String
 
-    abstract def match(actual) : MatchData
+    abstract def match(actual : TestExpression(T)) : MatchData forall T
 
-    abstract def negated_match(actual) : MatchData
+    abstract def negated_match(actual : TestExpression(T)) : MatchData forall T
   end
 end

@@ -15,7 +15,7 @@ module Spectator::Matchers
       {{ExpectedType.keys.map { |e| "##{e}".id }.splat.stringify}}
     end
 
-    def match(actual)
+    def match(actual : TestExpression(T)) : MatchData forall T
       snapshot = snapshot_values(actual.value)
       if match?(snapshot)
         SuccessfulMatchData.new
@@ -24,7 +24,7 @@ module Spectator::Matchers
       end
     end
 
-    def negated_match(actual)
+    def negated_match(actual : TestExpression(T)) : MatchData forall T
       snapshot = snapshot_values(actual.value)
       if match?(snapshot)
         FailedMatchData.new("#{actual.label} responds to #{label}", **snapshot)

@@ -13,7 +13,7 @@ module Spectator::Matchers
       "contains #{expected.label} in any order"
     end
 
-    def match(actual)
+    def match(actual : TestExpression(T)) : MatchData forall T
       actual_elements = actual.value.to_a
       expected_elements = expected.value.to_a
       missing, extra = array_diff(expected_elements, actual_elements)
@@ -30,7 +30,7 @@ module Spectator::Matchers
       end
     end
 
-    def negated_match(actual)
+    def negated_match(actual : TestExpression(T)) : MatchData forall T
       actual_elements = actual.value.to_a
       expected_elements = expected.value.to_a
       missing, extra = array_diff(expected_elements, actual_elements)

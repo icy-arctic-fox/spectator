@@ -40,7 +40,7 @@ module Spectator::Matchers
       values(actual)
     end
 
-    def match(actual)
+    def match(actual : TestExpression(T)) : MatchData forall T
       if match?(actual)
         SuccessfulMatchData.new
       else
@@ -48,7 +48,7 @@ module Spectator::Matchers
       end
     end
 
-    def negated_match(actual)
+    def negated_match(actual : TestExpression(T)) : MatchData forall T
       if does_not_match?(actual)
         SuccessfulMatchData.new
       else
