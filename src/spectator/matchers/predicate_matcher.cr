@@ -47,7 +47,7 @@ module Spectator::Matchers
       {% begin %}
       {
         {% for attribute in ExpectedType.keys %}
-        {{attribute}}: object.{{attribute}}?(*@expected[{{attribute.symbolize}}]),
+        {{attribute}}: object.{{attribute}}?(*@expected.value[{{attribute.symbolize}}]),
         {% end %}
       }
       {% end %}
