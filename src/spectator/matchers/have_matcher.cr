@@ -19,6 +19,7 @@ module Spectator::Matchers
     private def match_string?(actual_value)
       expected.value.all? do |item|
         actual_value.includes?(item)
+        actual_value.includes?(item) if item.is_a?(Char | String)
       end
     end
 
