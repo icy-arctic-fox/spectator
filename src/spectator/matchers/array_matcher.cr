@@ -9,7 +9,7 @@ module Spectator::Matchers
   struct ArrayMatcher(ExpectedType) < Matcher
     private getter expected
 
-    def initialize(@expected : TestValue(Enumerable(ExpectedType)))
+    def initialize(@expected : TestValue(ExpectedType))
     end
 
     def description

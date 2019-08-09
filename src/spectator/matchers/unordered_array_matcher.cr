@@ -6,7 +6,7 @@ module Spectator::Matchers
   struct UnorderedArrayMatcher(ExpectedType) < Matcher
     private getter expected
 
-    def initialize(@expected : TestValue(Enumerable(ExpectedType)))
+    def initialize(@expected : TestValue(ExpectedType))
     end
 
     def description
