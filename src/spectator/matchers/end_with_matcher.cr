@@ -17,35 +17,35 @@ module Spectator::Matchers
     end
 
     def match(actual)
-      if actual.value.responds_to?(:ends_with?)
-        match_ends_with(actual)
+      if (value = actual.value).responds_to?(:ends_with?)
+        match_ends_with(value, actual.label)
       else
-        match_last(actual)
+        match_last(value, actual.label)
       end
     end
 
-    private def match_ends_with(actual)
-      if actual.value.ends_with?(expected.value)
+    private def match_ends_with(actual_value, actual_label)
+      if actual_value.ends_with?(expected.value)
         SuccessfulMatchData.new
       else
-        FailedMatchData.new("#{actual.label} does not end with #{expected.label} (using #ends_with?)",
+        FailedMatchData.new("#{actual_label} does not end with #{expected.label} (using #ends_with?)",
           expected: expected.value.inspect,
-          actual: actual.value.inspect
+          actual: actual_value.inspect
         )
       end
     end
 
-    private def match_last(actual)
-      list = actual.value.to_a
+    private def match_last(actual_value, actual_label)
+      list = actual_value.to_a
       last = list.last
 
       if expected.value === last
         SuccessfulMatchData.new
       else
-        FailedMatchData.new("#{actual.label} does not end with #{expected.label} (using expected === last)",
-          expected: expected.value,
-          actual: last,
-          list: list
+        FailedMatchData.new("#{actual_label} does not end with #{expected.label} (using expected === last)",
+          expected: expected.value.inspect,
+          actual: last.inspect,
+          list: list.inspect
         )
       end
     end
@@ -75,9 +75,9 @@ module Spectator::Matchers
 
       if expected.value === last
         FailedMatchData.new("#{actual.label} ends with #{expected.label} (using expected === last)",
-          expected: expected.value,
-          actual: last,
-          list: list
+          expected: expected.value.inspect,
+          actual: last.inspect,
+          list: list.inspect
         )
       else
         SuccessfulMatchData.new

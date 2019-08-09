@@ -17,7 +17,7 @@ module Spectator::Matchers
     # The `includes?` method is used for this check.
     private def match_string?(value)
       expected.value.all? do |item|
-        value.includes?(item) if item.is_a?(Char | String)
+        value.includes?(item)
       end
     end
 

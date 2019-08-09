@@ -15,66 +15,67 @@ module Spectator::Matchers
     end
 
     def match(actual)
-      if actual.value.responds_to?(:starts_with?)
-        match_starts_with(actual)
+      if (value = actual.value).responds_to?(:starts_with?)
+        match_starts_with(value, actual.label)
       else
-        match_first(actual)
+        match_first(value, actual.label)
       end
     end
 
-    private def match_starts_with(actual)
-      if actual.value.starts_with?(expected.value)
+    private def match_starts_with(actual_value, actual_label)
+      if actual_value.starts_with?(expected.value)
         SuccessfulMatchData.new
       else
-        FailedMatchData.new("#{actual.label} does not start with #{expected.label} (using #starts_with?)",
+        FailedMatchData.new("#{actual_label} does not start with #{expected.label} (using #starts_with?)",
           expected: expected.value.inspect,
-          actual: actual.value.inspect
+          actual: actual_value.inspect
         )
       end
     end
 
-    private def match_first(value, actual)
+    private def match_first(actual_value, actual_label)
+      list = actual_value.to_a
       first = list.first
 
       if expected.value === first
         SuccessfulMatchData.new
       else
-        FailedMatchData.new("#{actual.label} does not start with #{expected.label} (using expected === first)",
-          expected: expected.value,
-          actual: first,
-          list: list
+        FailedMatchData.new("#{actual_label} does not start with #{expected.label} (using expected === first)",
+          expected: expected.value.inspect,
+          actual: first.inspect,
+          list: list.inspect
         )
       end
     end
 
     def negated_match(actual)
-      if actual.value.responds_to?(:starts_with?)
-        negated_match_starts_with(actual)
+      if (value = actual.value).responds_to?(:starts_with?)
+        negated_match_starts_with(value, actual.label)
       else
-        negated_match_first(actual)
+        negated_match_first(value, actual.label)
       end
     end
 
-    private def negated_match_starts_with(actual)
-      if actual.value.starts_with?(expected.value)
-        FailedMatchData.new("#{actual.label} starts with #{expected.label} (using #starts_with?)",
+    private def negated_match_starts_with(actual_value, actual_label)
+      if actual_value.starts_with?(expected.value)
+        FailedMatchData.new("#{actual_label} starts with #{expected.label} (using #starts_with?)",
           expected: expected.value.inspect,
-          actual: actual.value.inspect
+          actual: actual_value.inspect
         )
       else
         SuccessfulMatchData.new
       end
     end
 
-    private def negated_match_first(actual)
-      list = actual.value.to_a
+    private def negated_match_first(actual_value, actual_label)
+      list = actual_value.to_a
       first = list.first
 
       if expected.value === first
-        FailedMatchData.new("#{actual.label} starts with #{expected.label} (using expected === first)",
-          expected: expected.value,
-          actual: first,
-          list: list
+        FailedMatchData.new("#{actual_label} starts with #{expected.label} (using expected === first)",
+          expected: expected.value.inspect,
+          actual: first.inspect,
+          list: list.inspect
         )
       else
         SuccessfulMatchData.new
