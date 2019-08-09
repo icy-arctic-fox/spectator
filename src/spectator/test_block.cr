@@ -15,7 +15,12 @@ module Spectator
     end
 
     def self.create(proc : -> T, label : String) forall T
-      TestBlock(T).new(proc, label)
+      {% if T.id == "ReturnType".id %}
+        wrapper = -> { proc.call; nil }
+        TestBlock(Nil).new(wrapper, label)
+      {% else %}
+        TestBlock(T).new(proc, label)
+      {% end %}
     end
 
     # Creates the block expression with a generic label.
@@ -25,7 +30,12 @@ module Spectator
     end
 
     def self.create(proc : -> T) forall T
-      TestBlock(T).new(proc)
+      {% if T.id == "ReturnType".id %}
+        wrapper = -> { proc.call; nil }
+        TestBlock(Nil).new(wrapper)
+      {% else %}
+        TestBlock(T).new(proc)
+      {% end %}
     end
 
     # Reports complete information about the expression.
