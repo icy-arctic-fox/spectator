@@ -6,16 +6,16 @@ module Spectator::Expectations
   # Stores part of an expectation (obviously).
   # The part of the expectation this type covers is the actual value and source.
   # This can also cover a block's behavior.
-  struct ExpectationPartial
+  struct ExpectationPartial(T)
     # The actual value being tested.
     # This also contains its label.
-    getter actual : TestExpression
+    getter actual : TestExpression(T)
 
     # Location where this expectation was defined.
     getter source : Source
 
     # Creates the partial.
-    def initialize(@actual, @source)
+    def initialize(@actual : TestExpression(T), @source : Source)
     end
 
     # Asserts that some criteria defined by the matcher is satisfied.

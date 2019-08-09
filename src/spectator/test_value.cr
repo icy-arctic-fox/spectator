@@ -2,7 +2,7 @@ require "./test_expression"
 
 module Spectator
   # Captures a value from a test and its label.
-  struct TestValue(T) < TestExpression
+  struct TestValue(T) < TestExpression(T)
     # Actual value.
     getter value : T
 

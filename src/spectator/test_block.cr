@@ -2,7 +2,7 @@ require "./test_expression"
 
 module Spectator
   # Captures an block from a test and its label.
-  struct TestBlock(ReturnType) < TestExpression
+  struct TestBlock(ReturnType) < TestExpression(ReturnType)
     # Calls the block and retrieves the value.
     def value : ReturnType
       @proc.call

@@ -1,6 +1,6 @@
 module Spectator
   # Base type for capturing an expression from a test.
-  abstract struct TestExpression
+  abstract struct TestExpression(T)
     # User-friendly string displayed for the actual expression being tested.
     # For instance, in the expectation:
     # ```
@@ -14,6 +14,8 @@ module Spectator
     # Creates the common base of the expression.
     def initialize(@label)
     end
+
+    abstract def value : T
 
     # String representation of the expression.
     def to_s(io)
