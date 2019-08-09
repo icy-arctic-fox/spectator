@@ -25,48 +25,59 @@ module Spectator::Matchers
 
     def match(actual)
       exception = capture_exception { actual.value }
-      case exception
-      when Nil
-        FailedMatchData.new("#{actual.label} did not raise", expected: ExpectedType.inspect)
-      when ExceptionType
-        if expected.value.nil? || expected.value === exception.message
-          SuccessfulMatchData.new
+      if exception.nil?
+        FailedMatchData.new("#{actual.label} did not raise", expected: ExceptionType.inspect)
+      else
+        if exception.is_a?(ExceptionType)
+          if (value = expected.value).nil?
+            SuccessfulMatchData.new
+          else
+            if value === exception.message
+              SuccessfulMatchData.new
+            else
+              FailedMatchData.new("#{actual.label} raised #{exception.class}, but the message is not #{expected.label}",
+                "expected type": ExceptionType.inspect,
+                "actual type": exception.class.inspect,
+                "expected message": value.inspect,
+                "actual message": exception.message.to_s
+              )
+            end
+          end
         else
-          FailedMatchData.new("#{actual.label} raised #{ExpectedType}, but the message is not #{expected.label}",
-            "expected type": ExceptionType.inspect,
-            "actual type": exception.class.inspect,
-            "expected message": expected.value.inspect,
-            "actual message": exception.message
+          FailedMatchData.new("#{actual.label} did not raise #{ExceptionType}",
+            expected: ExceptionType.inspect,
+            actual: exception.class.inspect
           )
         end
-      else
-        FailedMatchData.new("#{actual.label} did not raise #{ExpectedType}",
-          expected: ExpectedType.inspect,
-          actual: exception.class.inspect
-        )
       end
     end
 
     def negated_match(actual)
       exception = capture_exception { actual.value }
-      case exception
-      when Nil
+      if exception.nil?
         SuccessfulMatchData.new
-      when ExceptionType
-        if expected.value.nil?
-          FailedMatchData.new("#{actual.label} raised #{ExpectedType}")
-        elsif expected.value === exception.message
-          FailedMatchData.new("#{actual.label} raised #{ExpectedType} with message matching #{expected.label}",
-            "expected type": ExceptionType.inspect,
-            "actual type": exception.class.inspect,
-            "expected message": expected.value.inspect,
-            "actual message": exception.message
-          )
+      else
+        if exception.is_a?(ExceptionType)
+          if (value = expected.value).nil?
+            FailedMatchData.new("#{actual.label} raised #{exception.class}",
+              expected: "Not #{ExceptionType}",
+              actual: exception.class.inspect
+            )
+          else
+            if value === exception.message
+              FailedMatchData.new("#{actual.label} raised #{exception.class} with message matching #{expected.label}",
+                "expected type": ExceptionType.inspect,
+                "actual type": exception.class.inspect,
+                "expected message": value.inspect,
+                "actual message": exception.message.to_s
+              )
+            else
+              SuccessfulMatchData.new
+            end
+          end
         else
           SuccessfulMatchData.new
         end
-      else
-        SuccessfulMatchData.new
       end
     end
 
