@@ -14,7 +14,7 @@ module Spectator::DSL
     # expect(1 + 2).to eq(3)
     # ```
     macro eq(expected)
-      ::Spectator::Matchers::EqualityMatcher.new(::Spectator::TestValue.new({{expected}}, {{expected.stringify}})))
+      ::Spectator::Matchers::EqualityMatcher.new(::Spectator::TestValue.new({{expected}}, {{expected.stringify}}))
     end
 
     # Indicates that some value should not equal another.

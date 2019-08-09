@@ -21,14 +21,14 @@ module Spectator::Matchers
       if match?(snapshot)
         SuccessfulMatchData.new
       else
-        FailedMatchData.new("#{actual.label} does not have #{expected.label}", **snapshot)
+        FailedMatchData.new("#{actual.label} does not have #{expected.label}", **values(snapshot))
       end
     end
 
     def negated_match(actual)
       snapshot = snapshot_values(actual.value)
       if match?(snapshot)
-        FailedMatchData.new("#{actual.label} has #{expected.label}", **snapshot)
+        FailedMatchData.new("#{actual.label} has #{expected.label}", **values(snapshot))
       else
         SuccessfulMatchData.new
       end
@@ -49,6 +49,16 @@ module Spectator::Matchers
       {
         {% for attribute in ExpectedType.keys %}
         {{attribute}}: object.has_{{attribute}}?(*@expected.value[{{attribute.symbolize}}]),
+        {% end %}
+      }
+      {% end %}
+    end
+
+    private def values(snapshot)
+      {% begin %}
+      {
+        {% for attribute in ExpectedType.keys %}
+        {{attribute}}: snapshot[{{attribute.symbolize}}].inspect,
         {% end %}
       }
       {% end %}

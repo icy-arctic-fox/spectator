@@ -22,12 +22,12 @@ module Spectator::Matchers
       index = compare_arrays(expected_elements, actual_elements)
 
       case index
+      when Int # Content differs.
+        failed_content_mismatch(expected_elements, actual_elements, index, actual.label)
       when true # Contents are identical.
         SuccessfulMatchData.new
-      when false # Size differs.
+      else # Size differs.
         failed_size_mismatch(expected_elements, actual_elements, actual.label)
-      else # Content differs.
-        failed_content_mismatch(expected_elements, actual_elements, index, actual.label)
       end
     end
 
@@ -36,11 +36,11 @@ module Spectator::Matchers
       expected_elements = expected.value.to_a
 
       case compare_arrays(expected_elements, actual_elements)
+      when Int # Contents differ.
+        SuccessfulMatchData.new
       when true # Contents are identical.
         failed_content_identical(expected_elements, actual_elements, actual.label)
-      when false # Size differs.
-        SuccessfulMatchData.new
-      else # Contents differ.
+      else # Size differs.
         SuccessfulMatchData.new
       end
     end
@@ -84,7 +84,7 @@ module Spectator::Matchers
     end
 
     private def failed_content_identical(expected_elements, actual_elements, actual_label)
-      FailedMatchData.new("#{actual.label} contains exactly #{expected.label}",
+      FailedMatchData.new("#{actual_label} contains exactly #{expected.label}",
         expected: "Not #{expected_elements.inspect}",
         actual: actual_elements.inspect
       )
