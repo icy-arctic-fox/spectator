@@ -14,10 +14,18 @@ module Spectator
       super(label)
     end
 
+    def self.create(proc : -> T, label : String) forall T
+      TestBlock(T).new(proc, label)
+    end
+
     # Creates the block expression with a generic label.
     # This is used for the "should" syntax and when the label doesn't matter.
     def initialize(@proc : -> ReturnType)
       super("<Proc>")
+    end
+
+    def self.create(proc : -> T) forall T
+      TestBlock(T).new(proc)
     end
 
     # Reports complete information about the expression.

@@ -1,4 +1,6 @@
 require "../matchers"
+require "../test_block"
+require "../test_value"
 
 module Spectator::DSL
   # Methods for defining matchers for expectations.
