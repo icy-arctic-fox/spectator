@@ -12,26 +12,34 @@ module Spectator::Expectations
     def initialize(@match_data : Matchers::MatchData, @source : Source)
     end
 
+    # Indicates whether the matcher was satisified.
     def satisfied?
       @match_data.matched?
     end
 
+    # Indicates that the expectation was not satisified.
     def failure?
       !satisfied?
     end
 
+    # Description of why the match failed.
+    # If nil, then the match was successful.
     def failure_message?
       @match_data.as?(Matchers::FailedMatchData).try(&.failure_message)
     end
 
+    # Description of why the match failed.
     def failure_message
       failure_message?.not_nil!
     end
 
+    # Additional information about the match, useful for debug.
+    # If nil, then the match was successful.
     def values?
       @match_data.as?(Matchers::FailedMatchData).try(&.values)
     end
 
+    # Additional information about the match, useful for debug.
     def values
       values?.not_nil!
     end
@@ -47,6 +55,7 @@ module Spectator::Expectations
       end
     end
 
+    # Adds failure information to a JSON structure.
     private def failed_to_json(failed : Matchers::FailedMatchData, json : ::JSON::Builder)
       json.field("failure", failed.failure_message)
       json.field("values") do

@@ -12,10 +12,14 @@ module Spectator::Matchers
     # it { is_expected.to do_something }
     # ```
     # The phrasing should be such that it reads "it ___."
+    # where the blank is what is returned by this method.
     abstract def description : String
 
+    # Actually performs the test against the expression (value or block).
     abstract def match(actual : TestExpression(T)) : MatchData forall T
 
+    # Performs the test against the expression (value or block), but inverted.
+    # A successful match with `#match` should normally fail for this method, and vice-versa.
     abstract def negated_match(actual : TestExpression(T)) : MatchData forall T
   end
 end
