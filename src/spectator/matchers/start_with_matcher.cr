@@ -33,8 +33,6 @@ module Spectator::Matchers
       end
     end
 
-    private def match_last(actual)
-      list = actual.value.to_a
     private def match_first(value, actual)
       first = list.first
 

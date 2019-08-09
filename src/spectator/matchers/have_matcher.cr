@@ -6,27 +6,25 @@ module Spectator::Matchers
   # Otherwise, it expects an `Enumerable` and iterates over each item until === is true.
   struct HaveMatcher(ExpectedType) < ValueMatcher(ExpectedType)
     private def match?(actual)
-      actual_value = actual.value
-      if actual_value.is_a?(String)
-        match_string(actual_value)
+      if (value = actual.value).is_a?(String)
+        match_string?(value)
       else
-        match_enumerable(actual_value)
+        match_enumerable?(value)
       end
     end
 
     # Checks if a `String` matches the expected values.
     # The `includes?` method is used for this check.
-    private def match_string?(actual_value)
+    private def match_string?(value)
       expected.value.all? do |item|
-        actual_value.includes?(item)
-        actual_value.includes?(item) if item.is_a?(Char | String)
+        value.includes?(item) if item.is_a?(Char | String)
       end
     end
 
     # Checks if an `Enumerable` matches the expected values.
     # The `===` operator is used on every item.
-    private def match_enumerable?(actual_value)
-      array = actual_value.to_a
+    private def match_enumerable?(value)
+      array = value.to_a
       expected.value.all? do |item|
         array.any? do |element|
           item === element
