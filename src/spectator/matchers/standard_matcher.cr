@@ -29,7 +29,7 @@ module Spectator::Matchers
     # then this method should be overriden.
     # Remember to override `#failure_message_when_negated` as well.
     private def does_not_match?(actual) : Bool
-      !matches?(actual)
+      !match?(actual)
     end
 
     private def values(actual)
