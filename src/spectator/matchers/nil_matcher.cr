@@ -5,7 +5,7 @@ module Spectator::Matchers
   # The `Object#nil?` method is used for this.
   struct NilMatcher < StandardMatcher
     # Checks whether the matcher is satisifed with the expression given to it.
-    private def match?(actual)
+    private def match?(actual : TestExpression(T)) forall T
       actual.value.nil?
     end
 

@@ -5,7 +5,7 @@ module Spectator::Matchers
   # The set is checked with the `has_value?` method.
   struct HaveValueMatcher(ExpectedType) < ValueMatcher(ExpectedType)
     # Checks whether the matcher is satisifed with the expression given to it.
-    private def match?(actual)
+    private def match?(actual : TestExpression(T)) forall T
       actual.value.has_value?(expected.value)
     end
 

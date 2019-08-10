@@ -5,7 +5,7 @@ module Spectator::Matchers
   # The `Range#includes?` method is used for this check.
   struct RangeMatcher(ExpectedType) < ValueMatcher(ExpectedType)
     # Checks whether the matcher is satisifed with the expression given to it.
-    private def match?(actual)
+    private def match?(actual : TestExpression(T)) forall T
       expected.value.includes?(actual.value)
     end
 

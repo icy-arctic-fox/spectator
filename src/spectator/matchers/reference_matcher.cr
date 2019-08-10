@@ -5,7 +5,7 @@ module Spectator::Matchers
   # The values are compared with the `Reference#same?` method.
   struct ReferenceMatcher(ExpectedType) < ValueMatcher(ExpectedType)
     # Checks whether the matcher is satisifed with the expression given to it.
-    private def match?(actual)
+    private def match?(actual : TestExpression(T)) forall T
       expected.value.same?(actual.value)
     end
 

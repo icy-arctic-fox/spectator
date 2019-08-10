@@ -5,7 +5,7 @@ module Spectator::Matchers
   # The set's `#size` method is used for this check.
   struct SizeOfMatcher(ExpectedType) < ValueMatcher(ExpectedType)
     # Checks whether the matcher is satisifed with the expression given to it.
-    private def match?(actual)
+    private def match?(actual : TestExpression(T)) forall T
       expected.value.size == actual.value.size
     end
 

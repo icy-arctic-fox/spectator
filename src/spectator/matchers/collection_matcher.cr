@@ -6,7 +6,7 @@ module Spectator::Matchers
   # Matcher for checking that a value is in a collection of other values.
   struct CollectionMatcher(ExpectedType) < ValueMatcher(ExpectedType)
     # Checks whether the matcher is satisifed with the expression given to it.
-    private def match?(actual)
+    private def match?(actual : TestExpression(T)) forall T
       expected.value.includes?(actual.value)
     end
 

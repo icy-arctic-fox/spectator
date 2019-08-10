@@ -5,7 +5,7 @@ module Spectator::Matchers
   # The values are compared with the `Object#is_a?` method.
   struct TypeMatcher(Expected) < StandardMatcher
     # Checks whether the matcher is satisifed with the expression given to it.
-    private def match?(actual)
+    private def match?(actual : TestExpression(T)) forall T
       actual.value.is_a?(Expected)
     end
 

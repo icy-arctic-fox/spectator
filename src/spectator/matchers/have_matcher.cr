@@ -6,7 +6,7 @@ module Spectator::Matchers
   # Otherwise, it expects an `Enumerable` and iterates over each item until === is true.
   struct HaveMatcher(ExpectedType) < ValueMatcher(ExpectedType)
     # Checks whether the matcher is satisifed with the expression given to it.
-    private def match?(actual)
+    private def match?(actual : TestExpression(T)) forall T
       if (value = actual.value).is_a?(String)
         match_string?(value)
       else

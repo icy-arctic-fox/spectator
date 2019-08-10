@@ -5,7 +5,7 @@ module Spectator::Matchers
   # The values are checked with the `empty?` method.
   struct EmptyMatcher < StandardMatcher
     # Checks whether the matcher is satisifed with the expression given to it.
-    private def match?(actual)
+    private def match?(actual : TestExpression(T)) forall T
       actual.value.empty?
     end
 

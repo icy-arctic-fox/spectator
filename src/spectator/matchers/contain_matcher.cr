@@ -5,7 +5,7 @@ module Spectator::Matchers
   # The values are checked with the `includes?` method.
   struct ContainMatcher(ExpectedType) < ValueMatcher(ExpectedType)
     # Checks whether the matcher is satisifed with the expression given to it.
-    private def match?(actual)
+    private def match?(actual : TestExpression(T)) forall T
       expected.value.all? do |item|
         actual.value.includes?(item)
       end

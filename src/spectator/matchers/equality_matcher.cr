@@ -5,7 +5,7 @@ module Spectator::Matchers
   # The values are compared with the == operator.
   struct EqualityMatcher(ExpectedType) < ValueMatcher(ExpectedType)
     # Checks whether the matcher is satisifed with the expression given to it.
-    private def match?(actual)
+    private def match?(actual : TestExpression(T)) forall T
       expected.value == actual.value
     end
 
