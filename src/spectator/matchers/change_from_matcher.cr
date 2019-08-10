@@ -1,4 +1,6 @@
-require "./value_matcher"
+require "./failed_match_data"
+require "./matcher"
+require "./successful_match_data"
 
 module Spectator::Matchers
   # Matcher that tests whether an expression changed from a specific value.
