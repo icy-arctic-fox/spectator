@@ -6,15 +6,20 @@ module Spectator::Matchers
   # The `ExpectedType` type param should be a `NamedTuple`,
   # with each key being the method to check and the value is ignored.
   struct RespondMatcher(ExpectedType) < Matcher
+    # Short text about the matcher's purpose.
+    # This explains what condition satisfies the matcher.
+    # The description is used when the one-liner syntax is used.
     def description
       "responds to #{label}"
     end
 
+    # Generated, user-friendly, string for the expected value.
     private def label
       # Prefix every method name with # and join them with commas.
       {{ExpectedType.keys.map { |e| "##{e}".id }.splat.stringify}}
     end
 
+    # Actually performs the test against the expression.
     def match(actual : TestExpression(T)) : MatchData forall T
       snapshot = snapshot_values(actual.value)
       if match?(snapshot)
@@ -24,6 +29,8 @@ module Spectator::Matchers
       end
     end
 
+    # Performs the test against the expression, but inverted.
+    # A successful match with `#match` should normally fail for this method, and vice-versa.
     def negated_match(actual : TestExpression(T)) : MatchData forall T
       snapshot = snapshot_values(actual.value)
       if match?(snapshot)
@@ -45,6 +52,7 @@ module Spectator::Matchers
       {% end %}
     end
 
+    # Produces the tuple for the failed match data from a snapshot of the results.
     private def values(snapshot)
       {% begin %}
       {
@@ -55,6 +63,7 @@ module Spectator::Matchers
       {% end %}
     end
 
+    # Checks if all results from the snapshot are satisified.
     private def match?(snapshot)
       # The snapshot did the hard work.
       # Here just check if all values are true.

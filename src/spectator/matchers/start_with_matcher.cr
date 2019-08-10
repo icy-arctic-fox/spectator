@@ -1,19 +1,27 @@
-require "./value_matcher"
+
+    # Checks whether the last element of the value is the expected value.
+# This method expects that the actual value is a set (enumerable).require "./value_matcher"
 
 module Spectator::Matchers
   # Matcher that tests whether a value, such as a `String` or `Array`, starts with a value.
   # The `starts_with?` method is used if it's defined on the actual type.
   # Otherwise, it is treated as an `Enumerable` and the `first` value is compared against.
   struct StartWithMatcher(ExpectedType) < Matcher
+    # Expected value and label.
     private getter expected
 
+    # Creates the matcher with an expected value.
     def initialize(@expected : TestValue(ExpectedType))
     end
 
+    # Short text about the matcher's purpose.
+    # This explains what condition satisfies the matcher.
+    # The description is used when the one-liner syntax is used.
     def description
       "starts with #{expected.label}"
     end
 
+    # Actually performs the test against the expression.
     def match(actual : TestExpression(T)) : MatchData forall T
       if (value = actual.value).responds_to?(:starts_with?)
         match_starts_with(value, actual.label)
@@ -22,6 +30,8 @@ module Spectator::Matchers
       end
     end
 
+    # Checks whether the actual value starts with the expected value.
+    # This method expects (and uses) the `#starts_with?` method on the value.
     private def match_starts_with(actual_value, actual_label)
       if actual_value.starts_with?(expected.value)
         SuccessfulMatchData.new
@@ -33,6 +43,8 @@ module Spectator::Matchers
       end
     end
 
+    # Checks whether the first element of the value is the expected value.
+    # This method expects that the actual value is a set (enumerable).
     private def match_first(actual_value, actual_label)
       list = actual_value.to_a
       first = list.first
@@ -48,6 +60,8 @@ module Spectator::Matchers
       end
     end
 
+    # Performs the test against the expression, but inverted.
+    # A successful match with `#match` should normally fail for this method, and vice-versa.
     def negated_match(actual : TestExpression(T)) : MatchData forall T
       if (value = actual.value).responds_to?(:starts_with?)
         negated_match_starts_with(value, actual.label)
@@ -56,6 +70,8 @@ module Spectator::Matchers
       end
     end
 
+    # Checks whether the actual value does not start with the expected value.
+    # This method expects (and uses) the `#starts_with?` method on the value.
     private def negated_match_starts_with(actual_value, actual_label)
       if actual_value.starts_with?(expected.value)
         FailedMatchData.new("#{actual_label} starts with #{expected.label} (using #starts_with?)",
@@ -67,6 +83,8 @@ module Spectator::Matchers
       end
     end
 
+    # Checks whether the first element of the value is not the expected value.
+    # This method expects that the actual value is a set (enumerable).
     private def negated_match_first(actual_value, actual_label)
       list = actual_value.to_a
       first = list.first

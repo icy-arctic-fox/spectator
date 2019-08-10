@@ -26,6 +26,7 @@ module Spectator::Matchers
     private abstract def failure_message(actual : TestExpression(T)) : String forall T
 
     # Message displayed when the matcher isn't satisifed and is negated.
+    # This is essentially what would satisfy the matcher if it wasn't negated.
     #
     # This is only called when `#does_not_match?` returns false.
     #
@@ -39,7 +40,7 @@ module Spectator::Matchers
       {% raise "Negation with #{@type.name} is not supported." %}
     end
 
-    # Checks whether the matcher is satisifed.
+    # Checks whether the matcher is satisifed with the expression given to it.
     private abstract def match?(actual : TestExpression(T)) : Bool forall T
 
     # If the expectation is negated, then this method is called instead of `#match?`.

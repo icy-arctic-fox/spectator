@@ -4,15 +4,21 @@ module Spectator::Matchers
   # Matcher for checking that the contents of one array (or similar type)
   # has the exact same contents as another, but in any order.
   struct UnorderedArrayMatcher(ExpectedType) < Matcher
+    # Expected value and label.
     private getter expected
 
+    # Creates the matcher with an expected value.
     def initialize(@expected : TestValue(ExpectedType))
     end
 
+    # Short text about the matcher's purpose.
+    # This explains what condition satisfies the matcher.
+    # The description is used when the one-liner syntax is used.
     def description
       "contains #{expected.label} in any order"
     end
 
+    # Actually performs the test against the expression.
     def match(actual : TestExpression(T)) : MatchData forall T
       actual_elements = actual.value.to_a
       expected_elements = expected.value.to_a
@@ -30,6 +36,8 @@ module Spectator::Matchers
       end
     end
 
+    # Performs the test against the expression, but inverted.
+    # A successful match with `#match` should normally fail for this method, and vice-versa.
     def negated_match(actual : TestExpression(T)) : MatchData forall T
       actual_elements = actual.value.to_a
       expected_elements = expected.value.to_a

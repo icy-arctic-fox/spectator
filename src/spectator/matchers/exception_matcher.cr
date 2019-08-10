@@ -6,15 +6,21 @@ require "./successful_match_data"
 module Spectator::Matchers
   # Matcher that tests whether an exception is raised.
   struct ExceptionMatcher(ExceptionType, ExpectedType) < Matcher
+    # Expected value and label.
     private getter expected
 
+    # Creates the matcher with no expectation of the message.
     def initialize
       @expected = TestValue.new(nil, ExceptionType.to_s)
     end
 
+    # Creates the matcher with an expected message.
     def initialize(@expected : TestValue(ExpectedType))
     end
 
+    # Short text about the matcher's purpose.
+    # This explains what condition satisfies the matcher.
+    # The description is used when the one-liner syntax is used.
     def description
       if (message = @expected)
         "raises #{ExceptionType} with message #{message}"
@@ -23,6 +29,7 @@ module Spectator::Matchers
       end
     end
 
+    # Actually performs the test against the expression.
     def match(actual : TestExpression(T)) : MatchData forall T
       exception = capture_exception { actual.value }
       if exception.nil?
@@ -52,6 +59,8 @@ module Spectator::Matchers
       end
     end
 
+    # Performs the test against the expression, but inverted.
+    # A successful match with `#match` should normally fail for this method, and vice-versa.
     def negated_match(actual : TestExpression(T)) : MatchData forall T
       exception = capture_exception { actual.value }
       if exception.nil?

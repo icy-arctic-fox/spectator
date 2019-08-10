@@ -5,6 +5,7 @@ module Spectator::Matchers
   # For a `String`, the `includes?` method is used.
   # Otherwise, it expects an `Enumerable` and iterates over each item until === is true.
   struct HaveMatcher(ExpectedType) < ValueMatcher(ExpectedType)
+    # Checks whether the matcher is satisifed with the expression given to it.
     private def match?(actual)
       if (value = actual.value).is_a?(String)
         match_string?(value)
@@ -32,18 +33,36 @@ module Spectator::Matchers
       end
     end
 
+    # Short text about the matcher's purpose.
+    # This explains what condition satisfies the matcher.
+    # The description is used when the one-liner syntax is used.
     def description
       "includes #{expected.label}"
     end
 
+    # Message displayed when the matcher isn't satisifed.
+    #
+    # This is only called when `#match?` returns false.
+    #
+    # The message should typically only contain the test expression labels.
+    # Actual values should be returned by `#values`.
     private def failure_message(actual)
       "#{actual.label} does not include #{expected.label}"
     end
 
+    # Message displayed when the matcher isn't satisifed and is negated.
+    # This is essentially what would satisfy the matcher if it wasn't negated.
+    #
+    # This is only called when `#does_not_match?` returns false.
+    #
+    # The message should typically only contain the test expression labels.
+    # Actual values should be returned by `#values`.
     private def failure_message_when_negated(actual)
       "#{actual.label} includes #{expected.label}"
     end
 
+    # Additional information about the match failure.
+    # The return value is a NamedTuple with Strings for each value.
     private def values(actual)
       {
         subset:   expected.value.inspect,
