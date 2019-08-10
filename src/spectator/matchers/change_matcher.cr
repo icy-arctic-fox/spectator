@@ -45,7 +45,7 @@ module Spectator::Matchers
     private struct MatchData(ExpressionType) < MatchData
       # Creates the match data.
       def initialize(matched, @before : ExpressionType, @after : ExpressionType,
-        @action_label : String, @expression_label : String)
+                     @action_label : String, @expression_label : String)
         super(matched)
       end
 
@@ -53,7 +53,7 @@ module Spectator::Matchers
       def named_tuple
         {
           before: @before,
-          after:  @after
+          after:  @after,
         }
       end
 
