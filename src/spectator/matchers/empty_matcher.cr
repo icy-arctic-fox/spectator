@@ -4,16 +4,16 @@ module Spectator::Matchers
   # Matcher that tests whether a collection is empty.
   # The values are checked with the `empty?` method.
   struct EmptyMatcher < StandardMatcher
-    # Checks whether the matcher is satisifed with the expression given to it.
-    private def match?(actual : TestExpression(T)) forall T
-      actual.value.empty?
-    end
-
     # Short text about the matcher's purpose.
     # This explains what condition satisfies the matcher.
     # The description is used when the one-liner syntax is used.
     def description
       "is empty"
+    end
+
+    # Checks whether the matcher is satisifed with the expression given to it.
+    private def match?(actual : TestExpression(T)) forall T
+      actual.value.empty?
     end
 
     # Message displayed when the matcher isn't satisifed.

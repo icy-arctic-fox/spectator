@@ -4,16 +4,16 @@ module Spectator::Matchers
   # Matcher that tests whether a `Hash` (or similar type) has a given value.
   # The set is checked with the `has_value?` method.
   struct HaveValueMatcher(ExpectedType) < ValueMatcher(ExpectedType)
-    # Checks whether the matcher is satisifed with the expression given to it.
-    private def match?(actual : TestExpression(T)) forall T
-      actual.value.has_value?(expected.value)
-    end
-
     # Short text about the matcher's purpose.
     # This explains what condition satisfies the matcher.
     # The description is used when the one-liner syntax is used.
     def description
       "has value #{expected.label}"
+    end
+
+    # Checks whether the matcher is satisifed with the expression given to it.
+    private def match?(actual : TestExpression(T)) forall T
+      actual.value.has_value?(expected.value)
     end
 
     # Message displayed when the matcher isn't satisifed.

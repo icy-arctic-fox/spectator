@@ -5,6 +5,13 @@ module Spectator::Matchers
   # For a `String`, the `includes?` method is used.
   # Otherwise, it expects an `Enumerable` and iterates over each item until === is true.
   struct HaveMatcher(ExpectedType) < ValueMatcher(ExpectedType)
+    # Short text about the matcher's purpose.
+    # This explains what condition satisfies the matcher.
+    # The description is used when the one-liner syntax is used.
+    def description
+      "includes #{expected.label}"
+    end
+
     # Checks whether the matcher is satisifed with the expression given to it.
     private def match?(actual : TestExpression(T)) forall T
       if (value = actual.value).is_a?(String)
@@ -31,13 +38,6 @@ module Spectator::Matchers
           item === element
         end
       end
-    end
-
-    # Short text about the matcher's purpose.
-    # This explains what condition satisfies the matcher.
-    # The description is used when the one-liner syntax is used.
-    def description
-      "includes #{expected.label}"
     end
 
     # Message displayed when the matcher isn't satisifed.

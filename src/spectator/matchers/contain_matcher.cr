@@ -4,18 +4,18 @@ module Spectator::Matchers
   # Matcher that tests whether a value, such as a `String` or `Array`, contains one or more values.
   # The values are checked with the `includes?` method.
   struct ContainMatcher(ExpectedType) < ValueMatcher(ExpectedType)
-    # Checks whether the matcher is satisifed with the expression given to it.
-    private def match?(actual : TestExpression(T)) forall T
-      expected.value.all? do |item|
-        actual.value.includes?(item)
-      end
-    end
-
     # Short text about the matcher's purpose.
     # This explains what condition satisfies the matcher.
     # The description is used when the one-liner syntax is used.
     def description
       "contains #{expected.label}"
+    end
+
+    # Checks whether the matcher is satisifed with the expression given to it.
+    private def match?(actual : TestExpression(T)) forall T
+      expected.value.all? do |item|
+        actual.value.includes?(item)
+      end
     end
 
     # Message displayed when the matcher isn't satisifed.
@@ -38,7 +38,7 @@ module Spectator::Matchers
     private def failure_message_when_negated(actual)
       "#{actual.label} contains #{expected.label}"
     end
-    
+
     # Additional information about the match failure.
     # The return value is a NamedTuple with Strings for each value.
     private def values(actual)

@@ -17,6 +17,35 @@ module Spectator::Matchers
   # then the `#values` and `#negated_values` methods can be overriden.
   # Finally, define a `#description` message that can be used for the one-liner "it" syntax.
   abstract struct StandardMatcher < Matcher
+    # Actually performs the test against the expression (value or block).
+    #
+    # This method calls the abstract `#match?` method.
+    # If it returns true, then a `SuccessfulMatchData` instance is returned.
+    # Otherwise, a `FailedMatchData` instance is returned.
+    # Additionally, `#failure_message` and `#values` are called for a failed match.
+    def match(actual : TestExpression(T)) : MatchData forall T
+      if match?(actual)
+        SuccessfulMatchData.new
+      else
+        FailedMatchData.new(failure_message(actual), **values(actual))
+      end
+    end
+
+    # Performs the test against the expression (value or block), but inverted.
+    # A successful match with `#match` should normally fail for this method, and vice-versa.
+    #
+    # This method calls the abstract `#does_not_match?` method.
+    # If it returns true, then a `SuccessfulMatchData` instance is returned.
+    # Otherwise, a `FailedMatchData` instance is returned.
+    # Additionally, `#failure_message_when_negated` and `#negated_values` are called for a failed match.
+    def negated_match(actual : TestExpression(T)) : MatchData forall T
+      if does_not_match?(actual)
+        SuccessfulMatchData.new
+      else
+        FailedMatchData.new(failure_message_when_negated(actual), **negated_values(actual))
+      end
+    end
+
     # Message displayed when the matcher isn't satisifed.
     #
     # This is only called when `#match?` returns false.
@@ -95,35 +124,6 @@ module Spectator::Matchers
     # Labeled should be returned by `#failure_message_when_negated`.
     private def negated_values(actual : TestExpression(T)) forall T
       values(actual)
-    end
-
-    # Actually performs the test against the expression (value or block).
-    #
-    # This method calls the abstract `#match?` method.
-    # If it returns true, then a `SuccessfulMatchData` instance is returned.
-    # Otherwise, a `FailedMatchData` instance is returned.
-    # Additionally, `#failure_message` and `#values` are called for a failed match.
-    def match(actual : TestExpression(T)) : MatchData forall T
-      if match?(actual)
-        SuccessfulMatchData.new
-      else
-        FailedMatchData.new(failure_message(actual), **values(actual))
-      end
-    end
-
-    # Performs the test against the expression (value or block), but inverted.
-    # A successful match with `#match` should normally fail for this method, and vice-versa.
-    #
-    # This method calls the abstract `#does_not_match?` method.
-    # If it returns true, then a `SuccessfulMatchData` instance is returned.
-    # Otherwise, a `FailedMatchData` instance is returned.
-    # Additionally, `#failure_message_when_negated` and `#negated_values` are called for a failed match.
-    def negated_match(actual : TestExpression(T)) : MatchData forall T
-      if does_not_match?(actual)
-        SuccessfulMatchData.new
-      else
-        FailedMatchData.new(failure_message_when_negated(actual), **negated_values(actual))
-      end
     end
   end
 end

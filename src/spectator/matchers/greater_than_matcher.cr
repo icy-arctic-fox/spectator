@@ -4,16 +4,16 @@ module Spectator::Matchers
   # Matcher that tests whether one value is greater than another.
   # The values are compared with the > operator.
   struct GreaterThanMatcher(ExpectedType) < ValueMatcher(ExpectedType)
-    # Checks whether the matcher is satisifed with the expression given to it.
-    private def match?(actual : TestExpression(T)) forall T
-      actual.value > expected.value
-    end
-
     # Short text about the matcher's purpose.
     # This explains what condition satisfies the matcher.
     # The description is used when the one-liner syntax is used.
     def description
       "greater than #{expected.label}"
+    end
+
+    # Checks whether the matcher is satisifed with the expression given to it.
+    private def match?(actual : TestExpression(T)) forall T
+      actual.value > expected.value
     end
 
     # Message displayed when the matcher isn't satisifed.
@@ -45,7 +45,7 @@ module Spectator::Matchers
         actual:   actual.value.inspect,
       }
     end
-    
+
     # Additional information about the match failure when negated.
     # The return value is a NamedTuple with Strings for each value.
     private def negated_values(actual)

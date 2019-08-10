@@ -75,17 +75,6 @@ module Spectator::Matchers
       {% end %}
     end
 
-    # Produces the tuple for the failed match data from a snapshot of the predicate methods.
-    private def values(snapshot)
-      {% begin %}
-      {
-        {% for attribute in ExpectedType.keys %}
-        {{attribute}}: snapshot[{{attribute.symbolize}}].inspect,
-        {% end %}
-      }
-      {% end %}
-    end
-
     # Checks if all predicate methods from the snapshot of them are satisified.
     private def match?(snapshot)
       # Test each predicate and immediately return false if one is false.
@@ -95,6 +84,17 @@ module Spectator::Matchers
 
       # All checks passed if this point is reached.
       true
+    end
+
+    # Produces the tuple for the failed match data from a snapshot of the predicate methods.
+    private def values(snapshot)
+      {% begin %}
+      {
+        {% for attribute in ExpectedType.keys %}
+        {{attribute}}: snapshot[{{attribute.symbolize}}].inspect,
+        {% end %}
+      }
+      {% end %}
     end
   end
 end

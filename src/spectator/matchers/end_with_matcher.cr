@@ -30,6 +30,16 @@ module Spectator::Matchers
       end
     end
 
+    # Performs the test against the expression, but inverted.
+    # A successful match with `#match` should normally fail for this method, and vice-versa.
+    def negated_match(actual : TestExpression(T)) : MatchData forall T
+      if actual.value.responds_to?(:ends_with?)
+        negated_match_ends_with(actual)
+      else
+        negated_match_last(actual)
+      end
+    end
+
     # Checks whether the actual value ends with the expected value.
     # This method expects (and uses) the `#ends_with?` method on the value.
     private def match_ends_with(actual_value, actual_label)
@@ -57,16 +67,6 @@ module Spectator::Matchers
           actual: last.inspect,
           list: list.inspect
         )
-      end
-    end
-
-    # Performs the test against the expression, but inverted.
-    # A successful match with `#match` should normally fail for this method, and vice-versa.
-    def negated_match(actual : TestExpression(T)) : MatchData forall T
-      if actual.value.responds_to?(:ends_with?)
-        negated_match_ends_with(actual)
-      else
-        negated_match_last(actual)
       end
     end
 

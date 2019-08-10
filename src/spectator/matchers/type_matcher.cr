@@ -4,16 +4,16 @@ module Spectator::Matchers
   # Matcher that tests a value is of a specified type.
   # The values are compared with the `Object#is_a?` method.
   struct TypeMatcher(Expected) < StandardMatcher
-    # Checks whether the matcher is satisifed with the expression given to it.
-    private def match?(actual : TestExpression(T)) forall T
-      actual.value.is_a?(Expected)
-    end
-
     # Short text about the matcher's purpose.
     # This explains what condition satisfies the matcher.
     # The description is used when the one-liner syntax is used.
     def description
       "is as #{Expected}"
+    end
+
+    # Checks whether the matcher is satisifed with the expression given to it.
+    private def match?(actual : TestExpression(T)) forall T
+      actual.value.is_a?(Expected)
     end
 
     # Message displayed when the matcher isn't satisifed.

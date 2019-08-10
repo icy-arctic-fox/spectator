@@ -4,16 +4,16 @@ module Spectator::Matchers
   # Common matcher that tests whether a value is nil.
   # The `Object#nil?` method is used for this.
   struct NilMatcher < StandardMatcher
-    # Checks whether the matcher is satisifed with the expression given to it.
-    private def match?(actual : TestExpression(T)) forall T
-      actual.value.nil?
-    end
-
     # Short text about the matcher's purpose.
     # This explains what condition satisfies the matcher.
     # The description is used when the one-liner syntax is used.
     def description
       "is nil"
+    end
+
+    # Checks whether the matcher is satisifed with the expression given to it.
+    private def match?(actual : TestExpression(T)) forall T
+      actual.value.nil?
     end
 
     # Message displayed when the matcher isn't satisifed.

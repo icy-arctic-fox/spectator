@@ -1,5 +1,4 @@
-
-    # Checks whether the last element of the value is the expected value.
+# Checks whether the last element of the value is the expected value.
 # This method expects that the actual value is a set (enumerable).require "./value_matcher"
 
 module Spectator::Matchers
@@ -30,6 +29,16 @@ module Spectator::Matchers
       end
     end
 
+    # Performs the test against the expression, but inverted.
+    # A successful match with `#match` should normally fail for this method, and vice-versa.
+    def negated_match(actual : TestExpression(T)) : MatchData forall T
+      if (value = actual.value).responds_to?(:starts_with?)
+        negated_match_starts_with(value, actual.label)
+      else
+        negated_match_first(value, actual.label)
+      end
+    end
+
     # Checks whether the actual value starts with the expected value.
     # This method expects (and uses) the `#starts_with?` method on the value.
     private def match_starts_with(actual_value, actual_label)
@@ -57,16 +66,6 @@ module Spectator::Matchers
           actual: first.inspect,
           list: list.inspect
         )
-      end
-    end
-
-    # Performs the test against the expression, but inverted.
-    # A successful match with `#match` should normally fail for this method, and vice-versa.
-    def negated_match(actual : TestExpression(T)) : MatchData forall T
-      if (value = actual.value).responds_to?(:starts_with?)
-        negated_match_starts_with(value, actual.label)
-      else
-        negated_match_first(value, actual.label)
       end
     end
 

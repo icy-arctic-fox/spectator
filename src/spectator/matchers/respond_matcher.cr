@@ -13,12 +13,6 @@ module Spectator::Matchers
       "responds to #{label}"
     end
 
-    # Generated, user-friendly, string for the expected value.
-    private def label
-      # Prefix every method name with # and join them with commas.
-      {{ExpectedType.keys.map { |e| "##{e}".id }.splat.stringify}}
-    end
-
     # Actually performs the test against the expression.
     def match(actual : TestExpression(T)) : MatchData forall T
       snapshot = snapshot_values(actual.value)
@@ -52,6 +46,13 @@ module Spectator::Matchers
       {% end %}
     end
 
+    # Checks if all results from the snapshot are satisified.
+    private def match?(snapshot)
+      # The snapshot did the hard work.
+      # Here just check if all values are true.
+      snapshot.values.all?
+    end
+
     # Produces the tuple for the failed match data from a snapshot of the results.
     private def values(snapshot)
       {% begin %}
@@ -63,11 +64,10 @@ module Spectator::Matchers
       {% end %}
     end
 
-    # Checks if all results from the snapshot are satisified.
-    private def match?(snapshot)
-      # The snapshot did the hard work.
-      # Here just check if all values are true.
-      snapshot.values.all?
+    # Generated, user-friendly, string for the expected value.
+    private def label
+      # Prefix every method name with # and join them with commas.
+      {{ExpectedType.keys.map { |e| "##{e}".id }.splat.stringify}}
     end
   end
 end

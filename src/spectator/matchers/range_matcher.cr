@@ -4,16 +4,30 @@ module Spectator::Matchers
   # Matcher that tests whether a value is in a given range.
   # The `Range#includes?` method is used for this check.
   struct RangeMatcher(ExpectedType) < ValueMatcher(ExpectedType)
-    # Checks whether the matcher is satisifed with the expression given to it.
-    private def match?(actual : TestExpression(T)) forall T
-      expected.value.includes?(actual.value)
-    end
-
     # Short text about the matcher's purpose.
     # This explains what condition satisfies the matcher.
     # The description is used when the one-liner syntax is used.
     def description
       "is in #{expected.label}"
+    end
+
+    # Returns a new matcher, with the same bounds, but uses an inclusive range.
+    def inclusive
+      new_range = Range.new(range.begin, range.end, exclusive: false)
+      expected = TestValue.new(new_range, label)
+      RangeMatcher.new(expected)
+    end
+
+    # Returns a new matcher, with the same bounds, but uses an exclusive range.
+    def exclusive
+      new_range = Range.new(range.begin, range.end, exclusive: true)
+      expected = TestValue.new(new_range, label)
+      RangeMatcher.new(expected)
+    end
+
+    # Checks whether the matcher is satisifed with the expression given to it.
+    private def match?(actual : TestExpression(T)) forall T
+      expected.value.includes?(actual.value)
     end
 
     # Message displayed when the matcher isn't satisifed.
@@ -55,20 +69,6 @@ module Spectator::Matchers
         upper:  "#{exclusive? ? ">=" : ">"} #{range.end.inspect}",
         actual: actual.value.inspect,
       }
-    end
-
-    # Returns a new matcher, with the same bounds, but uses an inclusive range.
-    def inclusive
-      new_range = Range.new(range.begin, range.end, exclusive: false)
-      expected = TestValue.new(new_range, label)
-      RangeMatcher.new(expected)
-    end
-
-    # Returns a new matcher, with the same bounds, but uses an exclusive range.
-    def exclusive
-      new_range = Range.new(range.begin, range.end, exclusive: true)
-      expected = TestValue.new(new_range, label)
-      RangeMatcher.new(expected)
     end
 
     # Gets the expected range.

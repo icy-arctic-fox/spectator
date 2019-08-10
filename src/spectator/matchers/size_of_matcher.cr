@@ -4,16 +4,16 @@ module Spectator::Matchers
   # Matcher that tests whether a set has the same number of elements as another set.
   # The set's `#size` method is used for this check.
   struct SizeOfMatcher(ExpectedType) < ValueMatcher(ExpectedType)
-    # Checks whether the matcher is satisifed with the expression given to it.
-    private def match?(actual : TestExpression(T)) forall T
-      expected.value.size == actual.value.size
-    end
-
     # Short text about the matcher's purpose.
     # This explains what condition satisfies the matcher.
     # The description is used when the one-liner syntax is used.
     def description
       "is the same size as #{expected.label}"
+    end
+
+    # Checks whether the matcher is satisifed with the expression given to it.
+    private def match?(actual : TestExpression(T)) forall T
+      expected.value.size == actual.value.size
     end
 
     # Message displayed when the matcher isn't satisifed.
