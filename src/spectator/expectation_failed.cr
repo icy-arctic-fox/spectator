@@ -9,7 +9,7 @@ module Spectator
     # Creates the exception.
     # The exception string is generated from the expecation message.
     def initialize(@expectation)
-      super(@expectation.actual_message)
+      super(@expectation.failure_message)
     end
   end
 end

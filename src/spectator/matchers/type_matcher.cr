@@ -3,51 +3,56 @@ require "./matcher"
 module Spectator::Matchers
   # Matcher that tests a value is of a specified type.
   # The values are compared with the `Object#is_a?` method.
-  struct TypeMatcher(Expected) < Matcher
-    # Textual representation of what the matcher expects.
-    # The `Expected` type param will be used to populate the label.
-    def label
-      Expected.to_s
+  struct TypeMatcher(Expected) < StandardMatcher
+    # Short text about the matcher's purpose.
+    # This explains what condition satisfies the matcher.
+    # The description is used when the one-liner syntax is used.
+    def description
+      "is as #{Expected}"
     end
 
-    # Determines whether the matcher is satisfied with the value given to it.
-    private def match?(actual)
-      actual.is_a?(Expected)
+    # Checks whether the matcher is satisifed with the expression given to it.
+    private def match?(actual : TestExpression(T)) forall T
+      actual.value.is_a?(Expected)
     end
 
-    # Determines whether the matcher is satisfied with the partial given to it.
-    # `MatchData` is returned that contains information about the match.
-    def match(partial)
-      actual = partial.actual
-      MatchData(Expected, typeof(actual)).new(match?(actual), actual, partial.label)
+    # Message displayed when the matcher isn't satisifed.
+    #
+    # This is only called when `#match?` returns false.
+    #
+    # The message should typically only contain the test expression labels.
+    # Actual values should be returned by `#values`.
+    private def failure_message(actual)
+      "#{actual.label} is not a #{Expected}"
     end
 
-    # Match data specific to this matcher.
-    private struct MatchData(ExpectedType, ActualType) < MatchData
-      # Creates the match data.
-      def initialize(matched, @actual : ActualType, @actual_label : String)
-        super(matched)
-      end
+    # Message displayed when the matcher isn't satisifed and is negated.
+    # This is essentially what would satisfy the matcher if it wasn't negated.
+    #
+    # This is only called when `#does_not_match?` returns false.
+    #
+    # The message should typically only contain the test expression labels.
+    # Actual values should be returned by `#values`.
+    private def failure_message_when_negated(actual)
+      "#{actual.label} is a #{Expected}"
+    end
 
-      # Information about the match.
-      def named_tuple
-        {
-          expected: NegatableMatchDataValue.new(ExpectedType),
-          actual:   @actual.class,
-        }
-      end
+    # Additional information about the match failure.
+    # The return value is a NamedTuple with Strings for each value.
+    private def values(actual)
+      {
+        expected: Expected.to_s,
+        actual:   actual.value.class.inspect,
+      }
+    end
 
-      # Describes the condition that satisfies the matcher.
-      # This is informational and displayed to the end-user.
-      def message
-        "#{@actual_label} is a #{ExpectedType}"
-      end
-
-      # Describes the condition that won't satsify the matcher.
-      # This is informational and displayed to the end-user.
-      def negated_message
-        "#{@actual_label} is not a #{ExpectedType}"
-      end
+    # Additional information about the match failure when negated.
+    # The return value is a NamedTuple with Strings for each value.
+    private def negated_values(actual)
+      {
+        expected: "Not #{Expected}",
+        actual:   actual.value.class.inspect,
+      }
     end
   end
 end

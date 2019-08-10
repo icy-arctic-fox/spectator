@@ -53,7 +53,7 @@ module Spectator::Formatting
     # Produces a list of unsatisfied expectations and their values.
     private def unsatisfied_expectations(indent)
       @result.expectations.each_unsatisfied do |expectation|
-        indent.line(Color.failure(LabeledText.new("Failure", expectation.actual_message)))
+        indent.line(Color.failure(LabeledText.new("Failure", expectation.failure_message)))
         indent.line
         indent.increase do
           matcher_values(indent, expectation)

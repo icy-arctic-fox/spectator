@@ -1,57 +1,67 @@
+require "../matchers/failed_match_data"
+require "../matchers/match_data"
+require "../source"
+
 module Spectator::Expectations
-  # Ties together a partial, matcher, and their outcome.
-  class Expectation
-    # Populates the base portiion of the expectation with values.
-    # The *negated* flag should be true if the expectation is inverted.
-    # The *match_data* is the value returned by `Spectator::Matcher#match`
-    # when the expectation was evaluated.
-    # The *negated* flag and `MatchData#matched?` flag
-    # are mutually-exclusive in this context.
-    def initialize(@match_data : Spectator::Matchers::MatchData, @negated : Bool)
+  # Result of evaluating a matcher on an expectation partial.
+  struct Expectation
+    # Location where this expectation was defined.
+    getter source : Source
+
+    # Creates the expectation.
+    def initialize(@match_data : Matchers::MatchData, @source : Source)
     end
 
-    # Indicates whether the expectation was satisifed.
-    # This is true if:
-    # - The matcher was satisified and the expectation is not negated.
-    # - The matcher wasn't satisfied and the expectation is negated.
+    # Indicates whether the matcher was satisified.
     def satisfied?
-      @match_data.matched? ^ @negated
+      @match_data.matched?
     end
 
-    # Information about the match.
-    # Returned value and type will something that has key-value pairs (like a `NamedTuple`).
+    # Indicates that the expectation was not satisified.
+    def failure?
+      !satisfied?
+    end
+
+    # Description of why the match failed.
+    # If nil, then the match was successful.
+    def failure_message?
+      @match_data.as?(Matchers::FailedMatchData).try(&.failure_message)
+    end
+
+    # Description of why the match failed.
+    def failure_message
+      failure_message?.not_nil!
+    end
+
+    # Additional information about the match, useful for debug.
+    # If nil, then the match was successful.
+    def values?
+      @match_data.as?(Matchers::FailedMatchData).try(&.values)
+    end
+
+    # Additional information about the match, useful for debug.
     def values
-      @match_data.values.tap do |labeled_values|
-        if @negated
-          labeled_values.each do |labeled_value|
-            value = labeled_value.value
-            value.negate
-          end
-        end
-      end
-    end
-
-    # Text that indicates the condition that must be met for the expectation to be satisifed.
-    def expected_message
-      @negated ? @match_data.negated_message : @match_data.message
-    end
-
-    # Text that indicates what the outcome was.
-    def actual_message
-      @match_data.matched? ? @match_data.message : @match_data.negated_message
+      values?.not_nil!
     end
 
     # Creates the JSON representation of the expectation.
     def to_json(json : ::JSON::Builder)
       json.object do
+        json.field("source") { @source.to_json(json) }
         json.field("satisfied", satisfied?)
-        json.field("expected", expected_message)
-        json.field("actual", actual_message)
-        json.field("values") do
-          json.object do
-            values.each do |labeled_value|
-              json.field(labeled_value.label, labeled_value.value.to_s)
-            end
+        if (failed = @match_data.as?(Matchers::FailedMatchData))
+          failed_to_json(failed, json)
+        end
+      end
+    end
+
+    # Adds failure information to a JSON structure.
+    private def failed_to_json(failed : Matchers::FailedMatchData, json : ::JSON::Builder)
+      json.field("failure", failed.failure_message)
+      json.field("values") do
+        json.object do
+          failed.values.each do |pair|
+            json.field(pair.first, pair.last)
           end
         end
       end

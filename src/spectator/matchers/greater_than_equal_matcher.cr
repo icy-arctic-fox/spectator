@@ -4,44 +4,55 @@ module Spectator::Matchers
   # Matcher that tests whether one value is greater than or equal to another.
   # The values are compared with the >= operator.
   struct GreaterThanEqualMatcher(ExpectedType) < ValueMatcher(ExpectedType)
-    # Determines whether the matcher is satisfied with the value given to it.
-    private def match?(actual)
-      actual >= expected
+    # Short text about the matcher's purpose.
+    # This explains what condition satisfies the matcher.
+    # The description is used when the one-liner syntax is used.
+    def description
+      "greater than or equal to #{expected.label}"
     end
 
-    # Determines whether the matcher is satisfied with the partial given to it.
-    # `MatchData` is returned that contains information about the match.
-    def match(partial)
-      values = ExpectedActual.new(partial, self)
-      MatchData.new(match?(values.actual), values)
+    # Checks whether the matcher is satisifed with the expression given to it.
+    private def match?(actual : TestExpression(T)) forall T
+      actual.value >= expected.value
     end
 
-    # Match data specific to this matcher.
-    private struct MatchData(ExpectedType, ActualType) < MatchData
-      # Creates the match data.
-      def initialize(matched, @values : ExpectedActual(ExpectedType, ActualType))
-        super(matched)
-      end
+    # Message displayed when the matcher isn't satisifed.
+    #
+    # This is only called when `#match?` returns false.
+    #
+    # The message should typically only contain the test expression labels.
+    # Actual values should be returned by `#values`.
+    private def failure_message(actual)
+      "#{actual.label} is less than #{expected.label}"
+    end
 
-      # Information about the match.
-      def named_tuple
-        {
-          expected: NegatablePrefixedMatchDataValue.new(">=", "<", @values.expected),
-          actual:   @values.actual,
-        }
-      end
+    # Message displayed when the matcher isn't satisifed and is negated.
+    # This is essentially what would satisfy the matcher if it wasn't negated.
+    #
+    # This is only called when `#does_not_match?` returns false.
+    #
+    # The message should typically only contain the test expression labels.
+    # Actual values should be returned by `#values`.
+    private def failure_message_when_negated(actual)
+      "#{actual.label} is greater than or equal to #{expected.label}"
+    end
 
-      # Describes the condition that satisfies the matcher.
-      # This is informational and displayed to the end-user.
-      def message
-        "#{@values.actual_label} is greater than or equal to #{@values.expected_label} (using >=)"
-      end
+    # Additional information about the match failure.
+    # The return value is a NamedTuple with Strings for each value.
+    private def values(actual)
+      {
+        expected: ">= #{expected.value.inspect}",
+        actual:   actual.value.inspect,
+      }
+    end
 
-      # Describes the condition that won't satsify the matcher.
-      # This is informational and displayed to the end-user.
-      def negated_message
-        "#{@values.actual_label} is less than #{@values.expected_label} (using >=)"
-      end
+    # Additional information about the match failure when negated.
+    # The return value is a NamedTuple with Strings for each value.
+    private def negated_values(actual)
+      {
+        expected: "< #{expected.value.inspect}",
+        actual:   actual.value.inspect,
+      }
     end
   end
 end
