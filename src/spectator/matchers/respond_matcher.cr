@@ -20,14 +20,14 @@ module Spectator::Matchers
       if match?(snapshot)
         SuccessfulMatchData.new
       else
-        FailedMatchData.new("#{actual.label} does not respond to #{label}", **snapshot)
+        FailedMatchData.new("#{actual.label} does not respond to #{label}", **values(snapshot))
       end
     end
 
     def negated_match(actual : TestExpression(T)) : MatchData forall T
       snapshot = snapshot_values(actual.value)
       if match?(snapshot)
-        FailedMatchData.new("#{actual.label} responds to #{label}", **snapshot)
+        FailedMatchData.new("#{actual.label} responds to #{label}", **values(snapshot))
       else
         SuccessfulMatchData.new
       end
@@ -40,6 +40,16 @@ module Spectator::Matchers
       {
         {% for attribute in ExpectedType.keys %}
         {{attribute}}: object.responds_to?({{attribute.symbolize}}),
+        {% end %}
+      }
+      {% end %}
+    end
+
+    private def values(snapshot)
+      {% begin %}
+      {
+        {% for attribute in ExpectedType.keys %}
+        {{attribute}}: snapshot[{{attribute.symbolize}}].inspect,
         {% end %}
       }
       {% end %}
