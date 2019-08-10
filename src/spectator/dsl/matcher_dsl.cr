@@ -535,7 +535,8 @@ module Spectator::DSL
     # expect { i += 42 }.to change { i }.by(42)
     # ```
     macro change(&expression)
-      ::Spectator::Matchers::ChangeMatcher.new("`" + {{expression.body.stringify}} + "`") {{expression}}
+      %proc = ->({{expression.args.splat}}) {{expression}}
+      ::Spectator::Matchers::ChangeMatcher.new(::Spectator::TestBlock.new(%proc, "`" + {{expression.body.stringify}} + "`"))
     end
 
     # Indicates that some block should raise an error.

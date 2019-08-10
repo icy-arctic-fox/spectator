@@ -1,102 +1,70 @@
-require "./value_matcher"
+require "./change_matcher"
 
 module Spectator::Matchers
   # Matcher that tests whether an expression changed to a specific value.
   struct ChangeToMatcher(ExpressionType, ToType) < Matcher
-    # Textual representation of what the matcher expects.
-    # This shouldn't be used in the conditional logic,
-    # but for verbose output to help the end-user.
-    getter label : String
+    # The expression that is expected to (not) change.
+    private getter expression
 
-    # Determines whether the matcher is satisfied with the partial given to it.
-    # `MatchData` is returned that contains information about the match.
-    def match(partial)
-      before = @expression.call # Retrieve the expression's initial value.
-      partial.actual            # Invoke action that might change the expression's value.
-      after = @expression.call  # Retrieve the expression's value again.
-      if @expected_after != after
-        # Resulting value isn't what was expected.
-        ResultingMatchData.new(before, @expected_after, after, partial.label, label)
-      else
-        # Check if the expression's value changed.
-        same = before == after
-        ChangeMatchData.new(!same, before, @expected_after, after, partial.label, label)
-      end
-    end
-
-    # Creates a new change matcher with a custom label.
-    def initialize(@label, @expected_after : ToType, &expression : -> ExpressionType)
-      @expression = expression
-    end
+    # The expected value of the expression after the change.
+    private getter expected
 
     # Creates a new change matcher.
-    def initialize(@expected_after : ToType, &expression : -> ExpressionType)
-      @label = expression.to_s
-      @expression = expression
+    def initialize(@expression : TestBlock(ExpressionType), @expected : ToType)
     end
 
-    # Match data for when the resulting value isn't the expected value.
-    private struct ResultingMatchData(ExpressionType, ToType) < MatchData
-      # Creates the match data.
-      def initialize(@before : ExpressionType, @expected_after : ToType, @actual_after : ExpressionType,
-                     @action_label : String, @expression_label : String)
-        super(false)
-      end
+    # Short text about the matcher's purpose.
+    # This explains what condition satisfies the matcher.
+    # The description is used when the one-liner syntax is used.
+    def description
+      "changes #{expression.label} to #{expected}"
+    end
 
-      # Do not allow negation of this match data.
-      def override?
-        true
-      end
-
-      # Information about the match.
-      def named_tuple
-        {
-          "expected before": NegatableMatchDataValue.new(@expected_after, true),
-          "actual before":   @before,
-          "expected after":  @expected_after,
-          "actual after":    @actual_after,
-        }
-      end
-
-      # This is informational and displayed to the end-user.
-      def message
-        "#{@expression_label} changes to #{@expected_after}"
-      end
-
-      # This is informational and displayed to the end-user.
-      def negated_message
-        "#{@expression_label} did not change to #{@expected_after}"
+    # Actually performs the test against the expression.
+    def match(actual : TestExpression(T)) : MatchData forall T
+      before, after = change(actual)
+      if before == after
+        FailedMatchData.new("#{actual.label} did not change #{expression.label}",
+          before: before.inspect,
+          after: after.inspect,
+          expected: expected.inspect
+        )
+      elsif expected == after
+        SuccessfulMatchData.new
+      else
+        FailedMatchData.new("#{actual.label} did not change #{expression.label} to #{expected}",
+          before: before.inspect,
+          after: after.inspect,
+          expected: expected.inspect
+        )
       end
     end
 
-    private struct ChangeMatchData(ExpressionType, ToType) < MatchData
-      # Creates the match data.
-      def initialize(matched, @before : ToType, @expected_after : ToType, @actual_after : ExpressionType,
-                     @action_label : String, @expression_label : String)
-        super(matched)
-      end
+    # Negated matching for this matcher is not supported.
+    # Attempting to call this method will result in a compilation error.
+    #
+    # This syntax has a logical problem.
+    # "The action does not change the expression to some value."
+    # Is it a failure if the value is not changed,
+    # but it is the expected value?
+    #
+    # RSpec doesn't support this syntax either.
+    def negated_match(actual : TestExpression(T)) : MatchData forall T
+      {% raise "The `expect { }.to_not change { }.to()` syntax is not supported (ambiguous)." %}
+    end
 
-      # Information about the match.
-      def named_tuple
-        {
-          "expected before": NegatableMatchDataValue.new(@expected_after, true),
-          "actual before":   @before,
-          "expected after":  @expected_after,
-          "actual after":    @actual_after,
-        }
-      end
+    # Specifies what the initial value of the expression must be.
+    def from(value : T) forall T
+      raise NotImplementedError.new("ChangeToMatcher#from")
+    end
 
-      # Describes the condition that satisfies the matcher.
-      # This is informational and displayed to the end-user.
-      def message
-        "#{@action_label} changed #{@expression_label} to #{@expected_after}"
-      end
+    # Performs the change and reports the before and after values.
+    private def change(actual)
+      before = expression.value # Retrieve the expression's initial value.
+      actual.value              # Invoke action that might change the expression's value.
+      after = expression.value  # Retrieve the expression's value again.
 
-      # Describes the condition that won't satsify the matcher.
-      # This is informational and displayed to the end-user.
-      def negated_message
-        "#{@action_label} did not change #{@expression_label} to #{@expected_after}"
-      end
+      {before, after}
     end
   end
 end
