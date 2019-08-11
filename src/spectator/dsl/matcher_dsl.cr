@@ -554,9 +554,44 @@ module Spectator::DSL
     # i = 0
     # expect { i += 42 }.to change { i }.by(42)
     # ```
+    #
+    # The block short-hand syntax can be used here.
+    # It will reference the current subject.
+    #
+    # ```
+    # expect { subject << :foo }.to change(&.size).by(1)
+    # ```
     macro change(&expression)
-      %proc = ->({{expression.args.splat}}) {{expression}}
-      %test_block = ::Spectator::TestBlock.new(%proc, "`" + {{expression.body.stringify}} + "`")
+      {% if expression.is_a?(Nop) %}
+        {% raise "Block must be provided to change matcher" %}
+      {% end %}
+
+      # Check if the short-hand method syntax is used.
+      # This is a hack, since macros don't get this as a "literal" or something similar.
+      # The Crystal compiler will translate:
+      # ```
+      # &.foo
+      # ```
+      # to:
+      # ```
+      # { |__arg0| __arg0.foo }
+      # ```
+      # The hack used here is to check if it looks like a compiler-generated block.
+      {% if expression.args == ["__arg0".id] && expression.body.is_a?(Call) && expression.body.id =~ /^__arg0\./ %}
+        # Extract the method name to make it clear to the user what is tested.
+        # The raw block can't be used because it's not clear to the user.
+        {% method_name = expression.body.id.split('.')[1..-1].join('.') %}
+        %proc = ->{ subject.{{method_name.id}} }
+        %test_block = ::Spectator::TestBlock.create(%proc, {{"#" + method_name}})
+      {% elsif expression.args.empty? %}
+        # In this case, it looks like the short-hand method syntax wasn't used.
+        # Capture the block as a proc and pass along.
+        %proc = ->{{expression}}
+        %test_block = ::Spectator::TestBlock.create(%proc, {{"`" + expression.body.stringify + "`"}})
+      {% else %}
+        {% raise "Unexpected block arguments in change matcher" %}
+      {% end %}
+
       ::Spectator::Matchers::ChangeMatcher.new(%test_block)
     end
 
