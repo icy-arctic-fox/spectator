@@ -74,15 +74,15 @@ module Spectator::DSL
         # The raw block can't be used because it's not clear to the user.
         {% method_name = block.body.id.split('.')[1..-1].join('.') %}
         %partial = %proc.partial(subject)
-        test_block = ::Spectator::TestBlock.create(%partial, {{"#" + method_name}})
+        %test_block = ::Spectator::TestBlock.create(%partial, {{"#" + method_name}})
       {% else %}
         # In this case, it looks like the short-hand method syntax wasn't used.
         # Just drop in the proc as-is.
-        test_block = ::Spectator::TestBlock.create(%proc, {{"`" + block.body.stringify + "`"}})
+        %test_block = ::Spectator::TestBlock.create(%proc, {{"`" + block.body.stringify + "`"}})
       {% end %}
 
-      source = ::Spectator::Source.new({{_source_file}}, {{_source_line}})
-      ::Spectator::Expectations::ExpectationPartial.new(test_block, source)
+      %source = ::Spectator::Source.new({{_source_file}}, {{_source_line}})
+      ::Spectator::Expectations::ExpectationPartial.new(%test_block, %source)
     end
 
     # Starts an expectation.
