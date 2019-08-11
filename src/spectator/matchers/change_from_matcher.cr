@@ -26,7 +26,7 @@ module Spectator::Matchers
     # Actually performs the test against the expression.
     def match(actual : TestExpression(T)) : MatchData forall T
       before, after = change(actual)
-      if before != expected
+      if expected != before
         FailedMatchData.new("#{expression.label} was not initially #{expected}",
           expected: expected.inspect,
           actual: before.inspect,
@@ -46,7 +46,7 @@ module Spectator::Matchers
     # A successful match with `#match` should normally fail for this method, and vice-versa.
     def negated_match(actual : TestExpression(T)) : MatchData forall T
       before, after = change(actual)
-      if before != expected
+      if expected != before
         FailedMatchData.new("#{expression.label} was not initially #{expected}",
           expected: expected.inspect,
           actual: before.inspect
