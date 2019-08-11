@@ -67,6 +67,11 @@ module Spectator::Matchers
       ChangeExactMatcher.new(@expression, @expected, value)
     end
 
+    # Specifies what the resulting value of the expression should change by.
+    def by(amount : T) forall T
+      ChangeExactMatcher.new(@expression, @expected, @expected + value)
+    end
+
     # Performs the change and reports the before and after values.
     private def change(actual)
       before = expression.value # Retrieve the expression's initial value.
