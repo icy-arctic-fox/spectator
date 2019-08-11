@@ -1,3 +1,4 @@
+require "./change_exact_matcher"
 require "./failed_match_data"
 require "./matcher"
 require "./successful_match_data"
@@ -63,7 +64,7 @@ module Spectator::Matchers
 
     # Specifies what the resulting value of the expression must be.
     def to(value : T) forall T
-      raise NotImplementedError.new("ChangeFromMatcher#to")
+      ChangeExactMatcher.new(@expression, @expected, value)
     end
 
     # Performs the change and reports the before and after values.
