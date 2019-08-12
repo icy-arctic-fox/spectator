@@ -55,9 +55,6 @@ module Spectator::DSL
         {% raise "Argument or block must be provided to expect" %}
       {% end %}
 
-      # Create a proc to capture the block.
-      %proc = ->({{block.args.splat}}) {{block}}
-
       # Check if the short-hand method syntax is used.
       # This is a hack, since macros don't get this as a "literal" or something similar.
       # The Crystal compiler will translate:
@@ -73,16 +70,19 @@ module Spectator::DSL
         # Extract the method name to make it clear to the user what is tested.
         # The raw block can't be used because it's not clear to the user.
         {% method_name = block.body.id.split('.')[1..-1].join('.') %}
-        %partial = %proc.partial(subject)
-        test_block = ::Spectator::TestBlock.create(%partial, {{"#" + method_name}})
-      {% else %}
+        %proc = ->{ subject.{{method_name.id}} }
+        %test_block = ::Spectator::TestBlock.create(%proc, {{"#" + method_name}})
+      {% elsif block.args.empty? %}
         # In this case, it looks like the short-hand method syntax wasn't used.
-        # Just drop in the proc as-is.
-        test_block = ::Spectator::TestBlock.create(%proc, {{"`" + block.body.stringify + "`"}})
+        # Capture the block as a proc and pass along.
+        %proc = ->{{block}}
+        %test_block = ::Spectator::TestBlock.create(%proc, {{"`" + block.body.stringify + "`"}})
+      {% else %}
+        {% raise "Unexpected block arguments in expect call" %}
       {% end %}
 
-      source = ::Spectator::Source.new({{_source_file}}, {{_source_line}})
-      ::Spectator::Expectations::ExpectationPartial.new(test_block, source)
+      %source = ::Spectator::Source.new({{_source_file}}, {{_source_line}})
+      ::Spectator::Expectations::ExpectationPartial.new(%test_block, %source)
     end
 
     # Starts an expectation.
