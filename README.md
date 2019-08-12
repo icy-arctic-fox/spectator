@@ -296,7 +296,7 @@ Items not marked as completed may have partial implementations.
       - [X] `be_empty`
       - [X] `have_key`
       - [X] `have_value`
-      - [ ] `all`
+      - [X] `all`
       - [ ] `all_satisfy`
     - [X] Truthy matchers - `be`, `be_true`, `be_truthy`, `be_false`, `be_falsey`, `be_nil`
     - [X] Error matchers - `raise_error`
