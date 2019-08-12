@@ -1,19 +1,41 @@
+require "../test_value"
+require "./range_matcher"
 require "./value_matcher"
 
 module Spectator::Matchers
   # Matcher for checking that a value is in a collection of other values.
   struct CollectionMatcher(ExpectedType) < ValueMatcher(ExpectedType)
-    # Determines whether the matcher is satisfied with the value given to it.
-    private def match?(actual)
-      expected.includes?(actual)
+    # Short text about the matcher's purpose.
+    # This explains what condition satisfies the matcher.
+    # The description is used when the one-liner syntax is used.
+    def description
+      "is in #{expected.label}"
     end
 
-    # Determines whether the matcher is satisfied with the partial given to it.
-    # `MatchData` is returned that contains information about the match.
-    def match(partial)
-      actual = partial.actual
-      matched = match?(actual)
-      MatchData.new(matched, ExpectedActual.new(partial, self))
+    # Checks whether the matcher is satisifed with the expression given to it.
+    private def match?(actual : TestExpression(T)) forall T
+      expected.value.includes?(actual.value)
+    end
+
+    # Message displayed when the matcher isn't satisifed.
+    #
+    # This is only called when `#match?` returns false.
+    #
+    # The message should typically only contain the test expression labels.
+    # Actual values should be returned by `#values`.
+    private def failure_message(actual)
+      "#{actual.label} is not in #{expected.label}"
+    end
+
+    # Message displayed when the matcher isn't satisifed and is negated.
+    # This is essentially what would satisfy the matcher if it wasn't negated.
+    #
+    # This is only called when `#does_not_match?` returns false.
+    #
+    # The message should typically only contain the test expression labels.
+    # Actual values should be returned by `#values`.
+    private def failure_message_when_negated(actual)
+      "#{actual.label} is in #{expected.label}"
     end
 
     # Creates a new range matcher with bounds based off of *center*.
@@ -21,7 +43,7 @@ module Spectator::Matchers
     # This method expects that the original matcher was created with a "difference" value.
     # That is:
     # ```
-    # RangeMatcher.new(diff).of(center)
+    # CollectionMatcher.new(diff).of(center)
     # ```
     # This implies that the `#match` method would not work on the original matcher.
     #
@@ -29,39 +51,12 @@ module Spectator::Matchers
     # and have upper and lower bounds equal to *center* plus and minus diff.
     # The range will be inclusive.
     def of(center)
-      diff = @expected
+      diff = @expected.value
       lower = center - diff
       upper = center + diff
       range = Range.new(lower, upper)
-      RangeMatcher.new(range, "#{center} +/- #{label}")
-    end
-
-    # Match data specific to this matcher.
-    private struct MatchData(ExpectedType, ActualType) < MatchData
-      # Creates the match data.
-      def initialize(matched, @values : ExpectedActual(ExpectedType, ActualType))
-        super(matched)
-      end
-
-      # Information about the match.
-      def named_tuple
-        {
-          collection: NegatableMatchDataValue.new(@values.expected),
-          actual:     @values.actual,
-        }
-      end
-
-      # Describes the condition that satisfies the matcher.
-      # This is informational and displayed to the end-user.
-      def message
-        "#{@values.actual_label} is in #{@values.expected_label}"
-      end
-
-      # Describes the condition that won't satsify the matcher.
-      # This is informational and displayed to the end-user.
-      def negated_message
-        "#{@values.actual_label} is not in #{@values.expected_label}"
-      end
+      test_value = TestValue.new(range, "#{center} +/- #{expected.label}")
+      RangeMatcher.new(test_value)
     end
   end
 end

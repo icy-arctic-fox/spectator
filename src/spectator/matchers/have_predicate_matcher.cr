@@ -1,11 +1,12 @@
 require "./value_matcher"
 
 module Spectator::Matchers
-  # Matcher that tests one or more predicates (methods ending in '?').
+  # Matcher that tests one or more "has" predicates
+  # (methods ending in '?' and starting with 'has_').
   # The `ExpectedType` type param should be a `NamedTuple`.
-  # Each key in the tuple is a predicate (without the '?') to test.
+  # Each key in the tuple is a predicate (without the '?' and 'has_' prefix) to test.
   # Each value is a a `Tuple` of arguments to pass to the predicate method.
-  struct PredicateMatcher(ExpectedType) < Matcher
+  struct HavePredicateMatcher(ExpectedType) < ValueMatcher(ExpectedType)
     # Expected value and label.
     private getter expected
 
@@ -17,7 +18,7 @@ module Spectator::Matchers
     # This explains what condition satisfies the matcher.
     # The description is used when the one-liner syntax is used.
     def description
-      "is #{expected.label}"
+      "has #{expected.label}"
     end
 
     # Actually performs the test against the expression.
@@ -26,7 +27,7 @@ module Spectator::Matchers
       if match?(snapshot)
         SuccessfulMatchData.new
       else
-        FailedMatchData.new("#{actual.label} is not #{expected.label}", **values(snapshot))
+        FailedMatchData.new("#{actual.label} does not have #{expected.label}", **values(snapshot))
       end
     end
 
@@ -35,7 +36,7 @@ module Spectator::Matchers
     def negated_match(actual : TestExpression(T)) : MatchData forall T
       snapshot = snapshot_values(actual.value)
       if match?(snapshot)
-        FailedMatchData.new("#{actual.label} is #{expected.label}", **values(snapshot))
+        FailedMatchData.new("#{actual.label} has #{expected.label}", **values(snapshot))
       else
         SuccessfulMatchData.new
       end
@@ -48,7 +49,7 @@ module Spectator::Matchers
     # The message should typically only contain the test expression labels.
     # Actual values should be returned by `#values`.
     private def failure_message(actual)
-      "#{actual.label} is not #{expected.label}"
+      "#{actual.label} does not have #{expected.label}"
     end
 
     # Message displayed when the matcher isn't satisifed and is negated.
@@ -59,7 +60,7 @@ module Spectator::Matchers
     # The message should typically only contain the test expression labels.
     # Actual values should be returned by `#values`.
     private def failure_message_when_negated(actual)
-      "#{actual.label} is #{expected.label}"
+      "#{actual.label} has #{expected.label}"
     end
 
     # Captures all of the actual values.
@@ -68,7 +69,7 @@ module Spectator::Matchers
       {% begin %}
       {
         {% for attribute in ExpectedType.keys %}
-        {{attribute}}: object.{{attribute}}?(*@expected.value[{{attribute.symbolize}}]),
+        {{attribute}}: object.has_{{attribute}}?(*@expected.value[{{attribute.symbolize}}]),
         {% end %}
       }
       {% end %}

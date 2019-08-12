@@ -789,7 +789,53 @@ module Spectator::DSL
     # The name can be used in examples to retrieve the value (basically a method).
     # This can be used to define a value once and reuse it in multiple examples.
     #
-    # This macro expects a name and a block.
+    # There are two variants - assignment and block.
+    # Both must be given a name.
+    #
+    # For the assignment variant:
+    # ```
+    # let string = "foobar"
+    #
+    # it "isn't empty" do
+    #   expect(string.empty?).to be_false
+    # end
+    #
+    # it "is six characters" do
+    #   expect(string.size).to eq(6)
+    # end
+    # ```
+    #
+    # The value is evaluated and stored immediately.
+    # This is different from other `#let` variants that lazily-evaluate.
+    #
+    # ```
+    # let current_time = Time.utc
+    # let(lazy_time) { Time.utc }
+    #
+    # it "lazy evaluates" do
+    #   sleep 5
+    #   expect(lazy_time).to_not eq(now)
+    # end
+    # ```
+    #
+    # However, the value is not reused across tests.
+    # Each test will have its own copy.
+    #
+    # ```
+    # let array = [0, 1, 2]
+    #
+    # it "modifies the array" do
+    #   array[0] = 42
+    #   expect(array).to eq([42, 1, 2])
+    # end
+    #
+    # it "doesn't carry across tests" do
+    #   array[1] = 777
+    #   expect(array).to eq([0, 777, 2])
+    # end
+    # ```
+    #
+    # The block variant expects a name and a block.
     # The name can be a symbol or a literal - same as `Object#getter`.
     # The block should return the value.
     #
@@ -838,32 +884,43 @@ module Spectator::DSL
     # end
     # ```
     macro let(name, &block)
-      # Create a block that returns the value.
-      let!(%value) {{block}}
+      {% if block.is_a?(Nop) %}
+        # Assignment variant.
+        @%value = {{name.value}}
 
-      # Wrapper to hold the value.
-      # This will be nil if the value hasn't been referenced yet.
-      # After being referenced, the cached value will be stored in a wrapper.
-      @%wrapper : ::Spectator::Internals::ValueWrapper?
+        def {{name.target}}
+          @%value
+        end
+      {% else %}
+        # Block variant.
 
-      # Method for returning the value.
-      def {{name.id}}
-        # Check if the value is cached.
-        # The wrapper will be nil if it isn't.
-        if (wrapper = @%wrapper)
-          # It is cached, return that value.
-          # Unwrap it from the wrapper variable.
-          # Here we use typeof to get around the issue
-          # that the macro has no idea what type the value is.
-          wrapper.unsafe_as(::Spectator::Internals::TypedValueWrapper(typeof(%value))).value
-        else
-          # The value isn't cached,
-          # Construct it and store it in the wrapper.
-          %value.tap do |value|
-            @%wrapper = ::Spectator::Internals::TypedValueWrapper(typeof(%value)).new(value)
+        # Create a block that returns the value.
+        let!(%value) {{block}}
+
+        # Wrapper to hold the value.
+        # This will be nil if the value hasn't been referenced yet.
+        # After being referenced, the cached value will be stored in a wrapper.
+        @%wrapper : ::Spectator::Internals::ValueWrapper?
+
+        # Method for returning the value.
+        def {{name.id}}
+          # Check if the value is cached.
+          # The wrapper will be nil if it isn't.
+          if (wrapper = @%wrapper)
+            # It is cached, return that value.
+            # Unwrap it from the wrapper variable.
+            # Here we use typeof to get around the issue
+            # that the macro has no idea what type the value is.
+            wrapper.unsafe_as(::Spectator::Internals::TypedValueWrapper(typeof(%value))).value
+          else
+            # The value isn't cached,
+            # Construct it and store it in the wrapper.
+            %value.tap do |value|
+              @%wrapper = ::Spectator::Internals::TypedValueWrapper(typeof(%value)).new(value)
+            end
           end
         end
-      end
+      {% end %}
     end
 
     # The noisier sibling to `#let`.

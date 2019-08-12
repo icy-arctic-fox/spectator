@@ -19,7 +19,7 @@ module Spectator::Formatting
     private def content(xml)
       super
       @result.expectations.each_unsatisfied do |expectation|
-        xml.element("failure", message: expectation.actual_message) do
+        xml.element("failure", message: expectation.failure_message) do
           expectation_values(expectation.values, xml)
         end
       end
@@ -28,8 +28,8 @@ module Spectator::Formatting
     # Adds the expectation values to the failure block.
     private def expectation_values(labeled_values, xml)
       labeled_values.each do |entry|
-        label = entry.label
-        value = entry.value
+        label = entry.first
+        value = entry.last
         xml.text("#{label}: #{value}\n")
       end
     end

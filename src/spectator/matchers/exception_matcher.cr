@@ -1,11 +1,93 @@
-require "./value_matcher"
+require "../test_value"
+require "./failed_match_data"
+require "./matcher"
+require "./successful_match_data"
 
 module Spectator::Matchers
   # Matcher that tests whether an exception is raised.
-  struct ExceptionMatcher(ExceptionType, ExpectedType) < ValueMatcher(ExpectedType)
-    # Determines whether the matcher is satisfied with the value given to it.
-    private def match?(exception)
-      exception.is_a?(ExceptionType) && (expected.nil? || expected === exception.message)
+  struct ExceptionMatcher(ExceptionType, ExpectedType) < Matcher
+    # Expected value and label.
+    private getter expected
+
+    # Creates the matcher with no expectation of the message.
+    def initialize
+      @expected = TestValue.new(nil, ExceptionType.to_s)
+    end
+
+    # Creates the matcher with an expected message.
+    def initialize(@expected : TestValue(ExpectedType))
+    end
+
+    # Short text about the matcher's purpose.
+    # This explains what condition satisfies the matcher.
+    # The description is used when the one-liner syntax is used.
+    def description
+      if (message = @expected)
+        "raises #{ExceptionType} with message #{message}"
+      else
+        "raises #{ExceptionType}"
+      end
+    end
+
+    # Actually performs the test against the expression.
+    def match(actual : TestExpression(T)) : MatchData forall T
+      exception = capture_exception { actual.value }
+      if exception.nil?
+        FailedMatchData.new("#{actual.label} did not raise", expected: ExceptionType.inspect)
+      else
+        if exception.is_a?(ExceptionType)
+          if (value = expected.value).nil?
+            SuccessfulMatchData.new
+          else
+            if value === exception.message
+              SuccessfulMatchData.new
+            else
+              FailedMatchData.new("#{actual.label} raised #{exception.class}, but the message is not #{expected.label}",
+                "expected type": ExceptionType.inspect,
+                "actual type": exception.class.inspect,
+                "expected message": value.inspect,
+                "actual message": exception.message.to_s
+              )
+            end
+          end
+        else
+          FailedMatchData.new("#{actual.label} did not raise #{ExceptionType}",
+            expected: ExceptionType.inspect,
+            actual: exception.class.inspect
+          )
+        end
+      end
+    end
+
+    # Performs the test against the expression, but inverted.
+    # A successful match with `#match` should normally fail for this method, and vice-versa.
+    def negated_match(actual : TestExpression(T)) : MatchData forall T
+      exception = capture_exception { actual.value }
+      if exception.nil?
+        SuccessfulMatchData.new
+      else
+        if exception.is_a?(ExceptionType)
+          if (value = expected.value).nil?
+            FailedMatchData.new("#{actual.label} raised #{exception.class}",
+              expected: "Not #{ExceptionType}",
+              actual: exception.class.inspect
+            )
+          else
+            if value === exception.message
+              FailedMatchData.new("#{actual.label} raised #{exception.class} with message matching #{expected.label}",
+                "expected type": ExceptionType.inspect,
+                "actual type": exception.class.inspect,
+                "expected message": value.inspect,
+                "actual message": exception.message.to_s
+              )
+            else
+              SuccessfulMatchData.new
+            end
+          end
+        else
+          SuccessfulMatchData.new
+        end
+      end
     end
 
     # Runs a block of code and returns the exception it threw.
@@ -20,104 +102,21 @@ module Spectator::Matchers
       exception
     end
 
-    # Determines whether the matcher is satisfied with the partial given to it.
-    # `MatchData` is returned that contains information about the match.
-    def match(partial)
-      exception = capture_exception { partial.actual }
-      matched = match?(exception)
-      if exception.nil?
-        MatchData.new(ExceptionType, matched, ExpectedActual.new(expected, label, exception, partial.label))
-      else
-        values = ExpectedActual.new(expected, label, exception, partial.label)
-        if expected.nil?
-          MatchData.new(ExceptionType, matched, values)
-        else
-          MessageMatchData.new(ExceptionType, matched, values)
-        end
-      end
-    end
-
-    # Creates a new exception matcher with no message check.
-    def initialize
-      super(nil, ExceptionType.to_s)
-    end
-
-    # Creates a new exception matcher with a message check.
-    def initialize(expected : ExpectedType, label : String)
-      super(expected, label)
-    end
-
     # Creates a new exception matcher with no message check.
     def self.create(exception_type : T.class, label : String) forall T
       ExceptionMatcher(T, Nil).new
     end
 
     # Creates a new exception matcher with a message check.
-    def self.create(expected, label : String)
-      ExceptionMatcher(Exception, typeof(expected)).new(expected, label)
+    def self.create(value, label : String)
+      expected = TestValue.new(value, label)
+      ExceptionMatcher(Exception, typeof(value)).new(expected)
     end
 
     # Creates a new exception matcher with a type and message check.
-    def self.create(exception_type : T.class, expected, label : String) forall T
-      ExceptionMatcher(T, typeof(expected)).new(expected, label)
-    end
-
-    # Match data specific to this matcher.
-    private struct MatchData(ExceptionType, ExpectedType, ActualType) < MatchData
-      # Creates the match data.
-      def initialize(t : ExceptionType.class, matched, @values : ExpectedActual(ExpectedType, ActualType))
-        super(matched)
-      end
-
-      # Information about the match.
-      def named_tuple
-        {
-          "expected type": NegatableMatchDataValue.new(ExceptionType),
-          "actual type":   @values.actual.class,
-        }
-      end
-
-      # Describes the condition that satisfies the matcher.
-      # This is informational and displayed to the end-user.
-      def message
-        "#{@values.actual_label} raises #{ExceptionType}"
-      end
-
-      # Describes the condition that won't satsify the matcher.
-      # This is informational and displayed to the end-user.
-      def negated_message
-        "#{@values.actual_label} does not raise #{ExceptionType}"
-      end
-    end
-
-    # Match data specific to this matcher with an expected message.
-    private struct MessageMatchData(ExceptionType, ExpectedType) < ::Spectator::Matchers::MatchData
-      # Creates the match data.
-      def initialize(t : ExceptionType.class, matched, @values : ExpectedActual(ExpectedType, Exception))
-        super(matched)
-      end
-
-      # Information about the match.
-      def named_tuple
-        {
-          "expected type":    NegatableMatchDataValue.new(ExceptionType),
-          "actual type":      @values.actual.class,
-          "expected message": NegatableMatchDataValue.new(@values.expected),
-          "actual message":   @values.actual.message,
-        }
-      end
-
-      # Describes the condition that satisfies the matcher.
-      # This is informational and displayed to the end-user.
-      def message
-        "#{@values.actual_label} raises #{ExceptionType} with message #{@values.expected_label}"
-      end
-
-      # Describes the condition that won't satsify the matcher.
-      # This is informational and displayed to the end-user.
-      def negated_message
-        "#{@values.actual_label} does not raise #{ExceptionType} with message #{@values.expected_label}"
-      end
+    def self.create(exception_type : T.class, value, label : String) forall T
+      expected = TestValue.new(value, label)
+      ExceptionMatcher(T, typeof(value)).new(expected)
     end
   end
 end

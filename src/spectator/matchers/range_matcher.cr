@@ -4,75 +4,86 @@ module Spectator::Matchers
   # Matcher that tests whether a value is in a given range.
   # The `Range#includes?` method is used for this check.
   struct RangeMatcher(ExpectedType) < ValueMatcher(ExpectedType)
-    # Determines whether the matcher is satisfied with the value given to it.
-    private def match?(actual)
-      expected.includes?(actual)
-    end
-
-    # Determines whether the matcher is satisfied with the partial given to it.
-    # `MatchData` is returned that contains information about the match.
-    def match(partial)
-      actual = partial.actual
-      matched = match?(actual)
-      expected_value = @expected
-      MatchData.new(matched, ExpectedActual.new(expected_value, label, actual, partial.label))
+    # Short text about the matcher's purpose.
+    # This explains what condition satisfies the matcher.
+    # The description is used when the one-liner syntax is used.
+    def description
+      "is in #{expected.label}"
     end
 
     # Returns a new matcher, with the same bounds, but uses an inclusive range.
     def inclusive
-      range = Range.new(@expected.begin, @expected.end, exclusive: false)
-      RangeMatcher.new(range, label)
+      new_range = Range.new(range.begin, range.end, exclusive: false)
+      expected = TestValue.new(new_range, label)
+      RangeMatcher.new(expected)
     end
 
     # Returns a new matcher, with the same bounds, but uses an exclusive range.
     def exclusive
-      range = Range.new(@expected.begin, @expected.end, exclusive: true)
-      RangeMatcher.new(range, label)
+      new_range = Range.new(range.begin, range.end, exclusive: true)
+      expected = TestValue.new(new_range, label)
+      RangeMatcher.new(expected)
     end
 
-    # Match data specific to this matcher.
-    # This is used when the expected type is a `Range`.
-    private struct MatchData(B, E, ActualType) < MatchData
-      # Creates the match data.
-      def initialize(matched, @values : ExpectedActual(Range(B, E), ActualType))
-        super(matched)
-      end
+    # Checks whether the matcher is satisifed with the expression given to it.
+    private def match?(actual : TestExpression(T)) forall T
+      expected.value.includes?(actual.value)
+    end
 
-      # Information about the match.
-      def named_tuple
-        {
-          lower:  NegatablePrefixedMatchDataValue.new(">=", "<", range.begin),
-          upper:  NegatablePrefixedMatchDataValue.new(exclusive? ? "<" : "<=", exclusive? ? ">=" : ">", range.end),
-          actual: @values.actual,
-        }
-      end
+    # Message displayed when the matcher isn't satisifed.
+    #
+    # This is only called when `#match?` returns false.
+    #
+    # The message should typically only contain the test expression labels.
+    # Actual values should be returned by `#values`.
+    private def failure_message(actual)
+      "#{actual.label} is not in #{expected.label} (#{exclusivity})"
+    end
 
-      # Describes the condition that satisfies the matcher.
-      # This is informational and displayed to the end-user.
-      def message
-        "#{@values.actual_label} is in #{@values.expected_label} (#{exclusivity})"
-      end
+    # Message displayed when the matcher isn't satisifed and is negated.
+    # This is essentially what would satisfy the matcher if it wasn't negated.
+    #
+    # This is only called when `#does_not_match?` returns false.
+    #
+    # The message should typically only contain the test expression labels.
+    # Actual values should be returned by `#values`.
+    private def failure_message_when_negated(actual)
+      "#{actual.label} is in #{expected.label} (#{exclusivity})"
+    end
 
-      # Describes the condition that won't satsify the matcher.
-      # This is informational and displayed to the end-user.
-      def negated_message
-        "#{@values.actual_label} is not in #{@values.expected_label} (#{exclusivity})"
-      end
+    # Additional information about the match failure.
+    # The return value is a NamedTuple with Strings for each value.
+    private def values(actual)
+      {
+        lower:  ">= #{range.begin.inspect}",
+        upper:  "#{exclusive? ? "<" : "<="} #{range.end.inspect}",
+        actual: actual.value.inspect,
+      }
+    end
 
-      # Gets the expected range.
-      private def range
-        @values.expected
-      end
+    # Additional information about the match failure when negated.
+    # The return value is a NamedTuple with Strings for each value.
+    private def negated_values(actual)
+      {
+        lower:  "< #{range.begin.inspect}",
+        upper:  "#{exclusive? ? ">=" : ">"} #{range.end.inspect}",
+        actual: actual.value.inspect,
+      }
+    end
 
-      # Indicates whether the range is inclusive or exclusive.
-      private def exclusive?
-        range.exclusive?
-      end
+    # Gets the expected range.
+    private def range
+      expected.value
+    end
 
-      # Produces a string "inclusive" or "exclusive" based on the range.
-      private def exclusivity
-        exclusive? ? "exclusive" : "inclusive"
-      end
+    # Indicates whether the range is inclusive or exclusive.
+    private def exclusive?
+      range.exclusive?
+    end
+
+    # Produces a string "inclusive" or "exclusive" based on the range.
+    private def exclusivity
+      exclusive? ? "exclusive" : "inclusive"
     end
   end
 end

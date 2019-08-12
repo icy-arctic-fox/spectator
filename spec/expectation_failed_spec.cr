@@ -13,7 +13,7 @@ describe Spectator::ExpectationFailed do
     it "is the same as the expectation's #actual_message" do
       expectation = new_unsatisfied_expectation
       error = Spectator::ExpectationFailed.new(expectation)
-      error.message.should eq(expectation.actual_message)
+      error.message.should eq(expectation.failure_message)
     end
   end
 end

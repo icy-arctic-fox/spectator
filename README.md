@@ -288,25 +288,25 @@ Items not marked as completed may have partial implementations.
       - [X] `contain`
       - [X] `have`
       - [X] `contain_exactly`
-      - [ ] `contain_exactly.in_any_order`
+      - [X] `contain_exactly.in_any_order`
       - [X] `match_array`
-      - [ ] `match_array.in_any_order`
+      - [X] `match_array.in_any_order`
       - [X] `start_with`
       - [X] `end_with`
       - [X] `be_empty`
       - [X] `have_key`
       - [X] `have_value`
-      - [ ] `all`
+      - [X] `all`
       - [ ] `all_satisfy`
     - [X] Truthy matchers - `be`, `be_true`, `be_truthy`, `be_false`, `be_falsey`, `be_nil`
     - [X] Error matchers - `raise_error`
     - [ ] Yield matchers - `yield_control[.times]`, `yield_with_args[.times]`, `yield_with_no_args[.times]`, `yield_successive_args`
     - [ ] Output matchers - `output[.to_stdout|.to_stderr]`
+    - [X] Predicate matchers - `be_x`, `have_x`
     - [ ] Misc. matchers
-      - [ ] `exist`
       - [X] `match`
       - [ ] `satisfy`
-      - [ ] `change[.by|.from[.to]|.to|.by_at_least|.by_at_most]`
+      - [X] `change[.by|.from[.to]|.to|.by_at_least|.by_at_most]`
       - [X] `have_attributes`
     - [ ] Compound - `and`, `or`
 - [ ] Runner

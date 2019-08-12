@@ -1,4 +1,4 @@
-require "./value_matcher"
+require "./standard_matcher"
 
 module Spectator::Matchers
   # Matcher that tests whether a value is truthy or falsey.
@@ -8,29 +8,18 @@ module Spectator::Matchers
   #
   # Additionally, different matchers can be created
   # by using the `#<`, `#<=`, `#>`, `#>=`, `#==`, and `#!=` operators.
-  struct TruthyMatcher < Matcher
+  struct TruthyMatcher < StandardMatcher
     # Creates the truthy matcher.
     # The *truthy* argument should be true to match "truthy" values,
     # and false to match "falsey" values.
-    def initialize(@truthy : Bool)
+    def initialize(@truthy : Bool = true)
     end
 
-    # Textual representation of what the matcher expects.
-    def label
-      @truthy ? "truthy" : "falsey"
-    end
-
-    # Determines whether the matcher is satisfied with the value given to it.
-    private def match?(actual)
-      # Cast value to truthy value and compare.
-      @truthy == !!actual
-    end
-
-    # Determines whether the matcher is satisfied with the partial given to it.
-    # `MatchData` is returned that contains information about the match.
-    def match(partial)
-      actual = partial.actual
-      MatchData.new(match?(actual), @truthy, actual, partial.label)
+    # Short text about the matcher's purpose.
+    # This explains what condition satisfies the matcher.
+    # The description is used when the one-liner syntax is used.
+    def description
+      "is #{label}"
     end
 
     # Creates a matcher that checks if a value is less than an expected value.
@@ -38,7 +27,8 @@ module Spectator::Matchers
     # ```
     # expect(0).to be < 1
     # ```
-    def <(expected : ExpectedType) forall ExpectedType
+    def <(value : ExpectedType) forall ExpectedType
+      expected = TestValue.new(value)
       LessThanMatcher.new(expected)
     end
 
@@ -47,7 +37,8 @@ module Spectator::Matchers
     # ```
     # expect(0).to be <= 1
     # ```
-    def <=(expected : ExpectedType) forall ExpectedType
+    def <=(value : ExpectedType) forall ExpectedType
+      expected = TestValue.new(value)
       LessThanEqualMatcher.new(expected)
     end
 
@@ -56,7 +47,8 @@ module Spectator::Matchers
     # ```
     # expect(2).to be > 1
     # ```
-    def >(expected : ExpectedType) forall ExpectedType
+    def >(value : ExpectedType) forall ExpectedType
+      expected = TestValue.new(value)
       GreaterThanMatcher.new(expected)
     end
 
@@ -65,7 +57,8 @@ module Spectator::Matchers
     # ```
     # expect(2).to be >= 1
     # ```
-    def >=(expected : ExpectedType) forall ExpectedType
+    def >=(value : ExpectedType) forall ExpectedType
+      expected = TestValue.new(value)
       GreaterThanEqualMatcher.new(expected)
     end
 
@@ -74,7 +67,8 @@ module Spectator::Matchers
     # ```
     # expect(0).to be == 0
     # ```
-    def ==(expected : ExpectedType) forall ExpectedType
+    def ==(value : ExpectedType) forall ExpectedType
+      expected = TestValue.new(value)
       EqualityMatcher.new(expected)
     end
 
@@ -83,44 +77,65 @@ module Spectator::Matchers
     # ```
     # expect(0).to be != 1
     # ```
-    def !=(expected : ExpectedType) forall ExpectedType
+    def !=(value : ExpectedType) forall ExpectedType
+      expected = TestValue.new(value)
       InequalityMatcher.new(expected)
     end
 
-    # Match data specific to this matcher.
-    private struct MatchData(ActualType) < MatchData
-      # Creates the match data.
-      def initialize(matched, @truthy : Bool, @actual : ActualType, @actual_label : String)
-        super(matched)
-      end
+    # Checks whether the matcher is satisifed with the expression given to it.
+    private def match?(actual : TestExpression(T)) forall T
+      @truthy == !!actual.value
+    end
 
-      # Information about the match.
-      def named_tuple
-        truthy = "Not false or nil"
-        falsey = "false or nil"
-        {
-          expected: AlternativeMatchDataValue.new(@truthy ? truthy : falsey, @truthy ? falsey : truthy),
-          actual:   @actual,
-          truthy:   !!@actual,
-        }
-      end
+    # Message displayed when the matcher isn't satisifed.
+    #
+    # This is only called when `#match?` returns false.
+    #
+    # The message should typically only contain the test expression labels.
+    # Actual values should be returned by `#values`.
+    private def failure_message(actual)
+      "#{actual.label} is #{negated_label}"
+    end
 
-      # Describes the condition that satisfies the matcher.
-      # This is informational and displayed to the end-user.
-      def message
-        "#{@actual_label} is #{expected_label}"
-      end
+    # Message displayed when the matcher isn't satisifed and is negated.
+    # This is essentially what would satisfy the matcher if it wasn't negated.
+    #
+    # This is only called when `#does_not_match?` returns false.
+    #
+    # The message should typically only contain the test expression labels.
+    # Actual values should be returned by `#values`.
+    private def failure_message_when_negated(actual)
+      "#{actual.label} is #{label}"
+    end
 
-      # Describes the condition that won't satsify the matcher.
-      # This is informational and displayed to the end-user.
-      def negated_message
-        "#{@actual_label} is not #{expected_label}"
-      end
+    # Additional information about the match failure.
+    # The return value is a NamedTuple with Strings for each value.
+    private def values(actual)
+      {
+        expected: @truthy ? "Not false or nil" : "false or nil",
+        actual:   actual.value.inspect,
+        truthy:   !!actual.value.inspect,
+      }
+    end
 
-      # Textual representation of what the matcher expects.
-      private def expected_label
-        @truthy ? "truthy" : "falsey"
-      end
+    # Additional information about the match failure when negated.
+    # The return value is a NamedTuple with Strings for each value.
+    private def negated_values(actual)
+      {
+        expected: @truthy ? "false or nil" : "Not false or nil",
+        actual:   actual.value.inspect,
+        truthy:   !!actual.value.inspect,
+      }
+    end
+
+    # Generated, user-friendly, string for the expected value.
+    private def label
+      @truthy ? "truthy" : "falsey"
+    end
+
+    # Generated, user-friendly, string for the unexpected value.
+    private def negated_label
+      @truthy ? "falsey" : "truthy"
     end
   end
 end

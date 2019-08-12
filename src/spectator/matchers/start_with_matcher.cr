@@ -1,89 +1,101 @@
-require "./value_matcher"
+# Checks whether the last element of the value is the expected value.
+# This method expects that the actual value is a set (enumerable).require "./value_matcher"
 
 module Spectator::Matchers
   # Matcher that tests whether a value, such as a `String` or `Array`, starts with a value.
   # The `starts_with?` method is used if it's defined on the actual type.
   # Otherwise, it is treated as an `Enumerable` and the `first` value is compared against.
-  struct StartWithMatcher(ExpectedType) < ValueMatcher(ExpectedType)
-    # Determines whether the matcher is satisfied with the value given to it.
-    private def match_starts_with?(actual)
-      actual.starts_with?(expected)
+  struct StartWithMatcher(ExpectedType) < Matcher
+    # Expected value and label.
+    private getter expected
+
+    # Creates the matcher with an expected value.
+    def initialize(@expected : TestValue(ExpectedType))
     end
 
-    # Determines whether the matcher is satisfied with the value given to it.
-    private def match_first?(actual)
-      expected === actual
+    # Short text about the matcher's purpose.
+    # This explains what condition satisfies the matcher.
+    # The description is used when the one-liner syntax is used.
+    def description
+      "starts with #{expected.label}"
     end
 
-    # Determines whether the matcher is satisfied with the partial given to it.
-    # `MatchData` is returned that contains information about the match.
-    def match(partial)
-      values = ExpectedActual.new(partial, self)
-      actual = values.actual
-      if actual.responds_to?(:starts_with?)
-        StartsWithMatchData.new(match_starts_with?(actual), values)
+    # Actually performs the test against the expression.
+    def match(actual : TestExpression(T)) : MatchData forall T
+      if (value = actual.value).responds_to?(:starts_with?)
+        match_starts_with(value, actual.label)
       else
-        first = actual.first
-        FirstMatchData.new(match_first?(first), values, first)
+        match_first(value, actual.label)
       end
     end
 
-    # Match data specific to this matcher.
-    # This type is used when the actual value responds to `starts_with?`.
-    private struct StartsWithMatchData(ExpectedType, ActualType) < MatchData
-      # Creates the match data.
-      def initialize(matched, @values : ExpectedActual(ExpectedType, ActualType))
-        super(matched)
-      end
-
-      # Information about the match.
-      def named_tuple
-        {
-          expected: NegatableMatchDataValue.new(@values.expected),
-          actual:   @values.actual,
-        }
-      end
-
-      # Describes the condition that satisfies the matcher.
-      # This is informational and displayed to the end-user.
-      def message
-        "#{@values.actual_label} starts with #{@values.expected_label} (using #starts_with?)"
-      end
-
-      # Describes the condition that won't satsify the matcher.
-      # This is informational and displayed to the end-user.
-      def negated_message
-        "#{@values.actual_label} does not start with #{@values.expected_label} (using #starts_with?)"
+    # Performs the test against the expression, but inverted.
+    # A successful match with `#match` should normally fail for this method, and vice-versa.
+    def negated_match(actual : TestExpression(T)) : MatchData forall T
+      if (value = actual.value).responds_to?(:starts_with?)
+        negated_match_starts_with(value, actual.label)
+      else
+        negated_match_first(value, actual.label)
       end
     end
 
-    # Match data specific to this matcher.
-    # This type is used when the actual value does not respond to `ends_with?`.
-    private struct FirstMatchData(ExpectedType, ActualType, FirstType) < MatchData
-      # Creates the match data.
-      def initialize(matched, @values : ExpectedActual(ExpectedType, ActualType), @first : FirstType)
-        super(matched)
+    # Checks whether the actual value starts with the expected value.
+    # This method expects (and uses) the `#starts_with?` method on the value.
+    private def match_starts_with(actual_value, actual_label)
+      if actual_value.starts_with?(expected.value)
+        SuccessfulMatchData.new
+      else
+        FailedMatchData.new("#{actual_label} does not start with #{expected.label} (using #starts_with?)",
+          expected: expected.value.inspect,
+          actual: actual_value.inspect
+        )
       end
+    end
 
-      # Information about the match.
-      def named_tuple
-        {
-          expected: @values.expected,
-          actual:   @first,
-          list:     @values.actual,
-        }
+    # Checks whether the first element of the value is the expected value.
+    # This method expects that the actual value is a set (enumerable).
+    private def match_first(actual_value, actual_label)
+      list = actual_value.to_a
+      first = list.first
+
+      if expected.value === first
+        SuccessfulMatchData.new
+      else
+        FailedMatchData.new("#{actual_label} does not start with #{expected.label} (using expected === first)",
+          expected: expected.value.inspect,
+          actual: first.inspect,
+          list: list.inspect
+        )
       end
+    end
 
-      # Describes the condition that satisfies the matcher.
-      # This is informational and displayed to the end-user.
-      def message
-        "#{@values.actual_label} starts with #{@values.expected_label} (using expected === actual.first)"
+    # Checks whether the actual value does not start with the expected value.
+    # This method expects (and uses) the `#starts_with?` method on the value.
+    private def negated_match_starts_with(actual_value, actual_label)
+      if actual_value.starts_with?(expected.value)
+        FailedMatchData.new("#{actual_label} starts with #{expected.label} (using #starts_with?)",
+          expected: expected.value.inspect,
+          actual: actual_value.inspect
+        )
+      else
+        SuccessfulMatchData.new
       end
+    end
 
-      # Describes the condition that won't satsify the matcher.
-      # This is informational and displayed to the end-user.
-      def negated_message
-        "#{@values.actual_label} does not start with #{@values.expected_label} (using expected === actual.first)"
+    # Checks whether the first element of the value is not the expected value.
+    # This method expects that the actual value is a set (enumerable).
+    private def negated_match_first(actual_value, actual_label)
+      list = actual_value.to_a
+      first = list.first
+
+      if expected.value === first
+        FailedMatchData.new("#{actual_label} starts with #{expected.label} (using expected === first)",
+          expected: expected.value.inspect,
+          actual: first.inspect,
+          list: list.inspect
+        )
+      else
+        SuccessfulMatchData.new
       end
     end
   end

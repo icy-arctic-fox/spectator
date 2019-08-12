@@ -1,8 +1,8 @@
 module Spectator::Formatting
   # A single labeled value from the `Spectator::Matchers::MatchData#value` method.
-  private struct MatchDataValuePair(T)
+  private struct MatchDataValuePair
     # Creates the pair formatter.
-    def initialize(@key : Symbol, @value : T, @padding : Int32)
+    def initialize(@key : Symbol, @value : String, @padding : Int32)
     end
 
     # Appends the pair to the output.
@@ -10,7 +10,7 @@ module Spectator::Formatting
       @padding.times { io << ' ' }
       io << @key
       io << ": "
-      @value.inspect(io)
+      io << @value
     end
   end
 end

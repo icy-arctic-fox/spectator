@@ -1,72 +1,83 @@
-require "./value_matcher"
+require "../test_value"
+require "./failed_match_data"
+require "./matcher"
+require "./successful_match_data"
 
 module Spectator::Matchers
   # Matcher that tests that multiple attributes match specified conditions.
   # The attributes are tested with the === operator.
   # The `ExpectedType` type param should be a `NamedTuple`.
-  struct AttributesMatcher(ExpectedType) < ValueMatcher(ExpectedType)
-    # Determines whether the matcher is satisfied with the value given to it.
-    private def match?(actual)
-      # Test each attribute and immediately return false if a comparison fails.
-      {% for attribute in ExpectedType.keys %}
-      return false unless expected[{{attribute.symbolize}}] === actual[{{attribute.symbolize}}]
-      {% end %}
+  # Each key in the tuple is the attribute/method name,
+  # and the corresponding value is the expected value to match against.
+  struct AttributesMatcher(ExpectedType) < Matcher
+    # Expected value and label.
+    private getter expected
 
-      # All checks passed if this point is reached.
-      true
+    # Creates the matcher with an expected value.
+    def initialize(@expected : TestValue(ExpectedType))
     end
 
-    # Determines whether the matcher is satisfied with the partial given to it.
-    # `MatchData` is returned that contains information about the match.
-    def match(partial)
-      actual_values = snapshot_values(partial.actual)
-      values = ExpectedActual.new(expected, label, actual_values, partial.label)
-      MatchData.new(match?(actual_values), values)
+    # Short text about the matcher's purpose.
+    # This explains what condition satisfies the matcher.
+    # The description is used when the one-liner syntax is used.
+    def description
+      "has attributes #{expected.label}"
+    end
+
+    # Actually performs the test against the expression.
+    def match(actual : TestExpression(T)) : MatchData forall T
+      snapshot = snapshot_values(actual.value)
+      if match?(snapshot)
+        SuccessfulMatchData.new
+      else
+        FailedMatchData.new("#{actual.label} does not have attributes #{expected.label}", **values(snapshot))
+      end
+    end
+
+    # Performs the test against the expression, but inverted.
+    # A successful match with `#match` should normally fail for this method, and vice-versa.
+    def negated_match(actual : TestExpression(T)) : MatchData forall T
+      snapshot = snapshot_values(actual.value)
+      if match?(snapshot)
+        FailedMatchData.new("#{actual.label} has attributes #{expected.label}", **values(snapshot))
+      else
+        SuccessfulMatchData.new
+      end
     end
 
     # Captures all of the actual values.
-    # A `NamedTuple` is returned,
-    # with each key being the attribute.
-    private def snapshot_values(actual)
+    # A `NamedTuple` is returned, with each key being the attribute.
+    private def snapshot_values(object)
       {% begin %}
       {
         {% for attribute in ExpectedType.keys %}
-        {{attribute}}: actual.{{attribute}},
+        {{attribute}}: object.{{attribute}},
         {% end %}
       }
       {% end %}
     end
 
-    # Match data specific to this matcher.
-    private struct MatchData(ExpectedType, ActualType) < MatchData
-      # Creates the match data.
-      def initialize(matched, @values : ExpectedActual(ExpectedType, ActualType))
-        super(matched)
-      end
+    # Checks if all attributes from the snapshot of them are satisified.
+    private def match?(snapshot)
+      # Test that every attribute has the expected value.
+      {% for attribute in ExpectedType.keys %}
+      return false unless expected.value[{{attribute.symbolize}}] === snapshot[{{attribute.symbolize}}]
+      {% end %}
 
-      # Information about the match.
-      def named_tuple
-        {% begin %}
-        {
-          {% for attribute in ExpectedType.keys %}
-          {{"expected " + attribute.stringify}}: NegatableMatchDataValue.new(@values.expected[{{attribute.symbolize}}]),
-          {{"actual " + attribute.stringify}}:   @values.actual[{{attribute.symbolize}}],
-          {% end %}
-        }
+      # At this point, none of the checks failed, so the match was successful.
+      true
+    end
+
+    # Produces the tuple for the failed match data from a snapshot of the attributes.
+    private def values(snapshot)
+      {% begin %}
+      {
+        {% for attribute in ExpectedType.keys %}
+        {{"expected " + attribute.stringify}}: expected.value[{{attribute.symbolize}}].inspect,
+        {{"actual " + attribute.stringify}}:   snapshot[{{attribute.symbolize}}].inspect,
         {% end %}
-      end
-
-      # Describes the condition that satisfies the matcher.
-      # This is informational and displayed to the end-user.
-      def message
-        "#{@values.actual_label} has attributes #{@values.expected_label}"
-      end
-
-      # Describes the condition that won't satsify the matcher.
-      # This is informational and displayed to the end-user.
-      def negated_message
-        "#{@values.actual_label} does not have attributes #{@values.expected_label}"
-      end
+      }
+      {% end %}
     end
   end
 end
