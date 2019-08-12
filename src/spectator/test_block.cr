@@ -16,7 +16,7 @@ module Spectator
 
     def self.create(proc : -> T, label : String) forall T
       {% if T.id == "ReturnType".id %}
-        wrapper = -> { proc.call; nil }
+        wrapper = ->{ proc.call; nil }
         TestBlock(Nil).new(wrapper, label)
       {% else %}
         TestBlock(T).new(proc, label)
@@ -31,7 +31,7 @@ module Spectator
 
     def self.create(proc : -> T) forall T
       {% if T.id == "ReturnType".id %}
-        wrapper = -> { proc.call; nil }
+        wrapper = ->{ proc.call; nil }
         TestBlock(Nil).new(wrapper)
       {% else %}
         TestBlock(T).new(proc)

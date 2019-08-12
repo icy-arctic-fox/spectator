@@ -526,6 +526,19 @@ module Spectator::DSL
       ::Spectator::Matchers::AttributesMatcher.new(%test_value)
     end
 
+    # Verifies that all elements of a collection satisfy some matcher.
+    # The collection should implement `Enumerable`.
+    #
+    # Examples:
+    # ```
+    # array = [1, 2, 3, 4]
+    # expect(array).to all(be_even)  # Fails.
+    # expect(array).to all(be_lt(5)) # Passes.
+    # ```
+    macro all(matcher)
+      ::Spectator::Matchers::AllMatcher.new({{matcher}})
+    end
+
     # Indicates that some expression's value should change after taking an action.
     #
     # Examples:
