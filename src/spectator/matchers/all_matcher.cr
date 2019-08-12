@@ -29,10 +29,18 @@ module Spectator::Matchers
       found ? found : SuccessfulMatchData.new
     end
 
-    # Performs the test against the expression, but inverted.
-    # A successful match with `#match` should normally fail for this method, and vice-versa.
+    # Negated matching for this matcher is not supported.
+    # Attempting to call this method will result in a compilation error.
+    #
+    # This syntax has a logical problem.
+    # "All values do not satisfy some condition."
+    # Does this mean that all values don't satisfy the matcher?
+    # What if only one doesn't?
+    # What if the collection is empty?
+    #
+    # RSpec doesn't support this syntax either.
     def negated_match(actual : TestExpression(T)) : MatchData forall T
-      raise NotImplementedError.new("AllMatcher#negated_match")
+      {% raise "The `expect { }.to_not all()` syntax is not supported (ambiguous)." %}
     end
 
     # Maps all values in the test collection to their own test values.
