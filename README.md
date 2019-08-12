@@ -306,7 +306,7 @@ Items not marked as completed may have partial implementations.
     - [ ] Misc. matchers
       - [X] `match`
       - [ ] `satisfy`
-      - [ ] `change[.by|.from[.to]|.to|.by_at_least|.by_at_most]`
+      - [X] `change[.by|.from[.to]|.to|.by_at_least|.by_at_most]`
       - [X] `have_attributes`
     - [ ] Compound - `and`, `or`
 - [ ] Runner
