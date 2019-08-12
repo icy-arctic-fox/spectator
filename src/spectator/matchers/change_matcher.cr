@@ -7,6 +7,7 @@ require "./successful_match_data"
 module Spectator::Matchers
   # Matcher that tests whether an expression changed.
   struct ChangeMatcher(ExpressionType) < Matcher
+    # The expression that is expected to (not) change.
     private getter expression
 
     # Creates a new change matcher.
@@ -55,6 +56,21 @@ module Spectator::Matchers
     # Specifies what the resulting value of the expression must be.
     def to(value : T) forall T
       ChangeToMatcher.new(@expression, value)
+    end
+
+    # Specifies that t he resulting value must be some amount different.
+    def by(amount : T) forall T
+      ChangeRelativeMatcher.new(@expression, "by #{amount}") { |before, after| amount == after - before }
+    end
+
+    # Specifies that the resulting value must be at least some amount different.
+    def by_at_least(minimum : T) forall T
+      ChangeRelativeMatcher.new(@expression, "by at least #{minimum}") { |before, after| minimum <= after - before }
+    end
+
+    # Specifies that the resulting value must be at most some amount different.
+    def by_at_most(maximum : T) forall T
+      ChangeRelativeMatcher.new(@expression, "by at most #{maximum}") { |before, after| maximum >= after - before }
     end
 
     # Performs the change and reports the before and after values.
