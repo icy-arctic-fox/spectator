@@ -151,12 +151,6 @@ module Spectator::DSL
   # Sample values are a collection of test values that can be used in examples.
   # For more information, see `Internals::SampleValues`.
   module StructureDSL
-    # Placeholder initializer.
-    # This is needed because examples and groups call super in their initializer.
-    # Those initializers pass the sample values upward through their hierarchy.
-    def initialize(sample_values : Internals::SampleValues)
-    end
-
     # Creates a new example group to describe a component.
     # The *what* argument describes "what" is being tested.
     # Additional example groups and DSL may be nested in the block.
