@@ -29,6 +29,11 @@ module Spectator::DSL
       super(what)
     end
 
+    def self.create(what, collection_type : C.class, name, symbol) forall C
+      collection = collection_type.new(sample_values).to_a
+      SampleExampleGroupBuilder.new(what, collection, name, symbol)
+    end
+
     # Builds the example group.
     # A new `NestedExampleGroup` will be returned
     # which can have instances of `Example` and `ExampleGroup` nested in it.

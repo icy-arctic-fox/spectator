@@ -558,7 +558,7 @@ module Spectator::DSL
         # Sample groups require additional configuration.
         ::Spectator::DSL::Builder.start_sample_group(
           {{collection.stringify}}, # String representation of the collection.
-          Sample%sample.new.%to_a,  # All elements in the collection.
+          Sample%sample,            # All elements in the collection.
           {{name.stringify}},       # Name for the current element.
           :%sample                  # Unique identifier for retrieving elements for the associated collection.
         )
@@ -678,7 +678,7 @@ module Spectator::DSL
         # Sample groups require additional configuration.
         ::Spectator::DSL::Builder.start_sample_group(
           {{collection.stringify}}, # String representation of the collection.
-          Sample%sample.new.%to_a,  # All elements in the collection.
+          Sample%sample,            # All elements in the collection.
           {{name.stringify}},       # Name for the current element.
           :%sample                  # Unique identifier for retrieving elements for the associated collection.
         )
