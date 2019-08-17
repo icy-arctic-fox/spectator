@@ -41,7 +41,7 @@ module Spectator::DSL
     # that is, a group defined by the `StructureDSL#sample` macro in the DSL.
     # A corresponding `#end_group` call must be made
     # when the group being started is finished.
-    # See `SampleExampleGroupBuilder#create` for the arguments
+    # See `SampleExampleGroupBuilder#initialize` for the arguments
     # as arguments to this method are passed directly to it.
     def start_sample_group(*args) : Nil
       group = SampleExampleGroupBuilder.new(*args)
