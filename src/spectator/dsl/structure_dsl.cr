@@ -511,6 +511,13 @@ module Spectator::DSL
         # Include the parent module.
         include {{@type.id}}
 
+        # Placeholder initializer.
+        # This is needed because examples and groups call super in their initializer.
+        # Those initializers pass the sample values upward through their hierarchy.
+        def initialize(_sample_values : ::Spectator::Internals::SampleValues)
+          super
+        end
+
         # Method that returns an array containing the collection.
         # This method should be called only once.
         # The framework stores the collection as an array for a couple of reasons.
