@@ -6,7 +6,7 @@ module Spectator::DSL
   # This builder creates a container group with groups inside for each item in the collection.
   # The hooks are only defined for the container group.
   # By doing so, the hooks are defined once, are inherited, and use less memory.
-  class SampleExampleGroupBuilder(T) < NestedExampleGroupBuilder
+  class SampleExampleGroupBuilder(C, T) < NestedExampleGroupBuilder
     # Creates a new group builder.
     # The value for *what* should be the text the user specified for the collection.
     # The *collection* is the actual array of items to create examples for.
@@ -25,7 +25,7 @@ module Spectator::DSL
     # The *symbol* is passed along to the sample values
     # so that the example code can retrieve the current item from the collection.
     # The symbol should be unique.
-    def initialize(what : String, @collection_type : T.class, @name : String, @symbol : Symbol)
+    def initialize(what : String, @collection_type : C.class, @collection_builder : C -> Array(T), @name : String, @symbol : Symbol)
       super(what)
     end
 
@@ -35,7 +35,7 @@ module Spectator::DSL
     # The *parent* should be the group that contains this group.
     # The *sample_values* will be given to all of the examples (and groups) nested in this group.
     def build(parent : ExampleGroup, sample_values : Internals::SampleValues) : NestedExampleGroup
-      collection = @collection_type.new(sample_values).to_a
+      collection = @collection_builder.call(@collection_type.new(sample_values))
 
       # This creates the container for the sub-groups.
       # The hooks are defined here, instead of repeating for each sub-group.

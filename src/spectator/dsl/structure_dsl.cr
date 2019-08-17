@@ -566,6 +566,7 @@ module Spectator::DSL
         ::Spectator::DSL::Builder.start_sample_group(
           {{collection.stringify}}, # String representation of the collection.
           Sample%sample,            # All elements in the collection.
+          ->(s : Sample%sample) { s.%to_a },
           {{name.stringify}},       # Name for the current element.
           :%sample                  # Unique identifier for retrieving elements for the associated collection.
         )
