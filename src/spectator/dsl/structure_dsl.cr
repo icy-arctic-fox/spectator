@@ -564,11 +564,11 @@ module Spectator::DSL
         # Start a new example group.
         # Sample groups require additional configuration.
         ::Spectator::DSL::Builder.start_sample_group(
-          {{collection.stringify}}, # String representation of the collection.
-          Sample%sample,            # All elements in the collection.
-          ->(s : Sample%sample) { s.%to_a },
-          {{name.stringify}},       # Name for the current element.
-          :%sample                  # Unique identifier for retrieving elements for the associated collection.
+          {{collection.stringify}},          # String representation of the collection.
+          Sample%sample,                     # Type that can construct the elements.
+          ->(s : Sample%sample) { s.%to_a }, # Proc to build the array of elements in the collection.
+          {{name.stringify}},                # Name for the current element.
+          :%sample                           # Unique identifier for retrieving elements for the associated collection.
         )
 
         # Nest the block's content in the module.

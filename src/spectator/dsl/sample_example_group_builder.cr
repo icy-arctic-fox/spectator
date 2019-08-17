@@ -2,6 +2,7 @@ require "./nested_example_group_builder"
 
 module Spectator::DSL
   # Specialized example group builder for "sample" groups.
+  # The type parameter `C` is the type to instantiate to create the collection.
   # The type parameter `T` should be the type of each element in the sample collection.
   # This builder creates a container group with groups inside for each item in the collection.
   # The hooks are only defined for the container group.
@@ -9,7 +10,9 @@ module Spectator::DSL
   class SampleExampleGroupBuilder(C, T) < NestedExampleGroupBuilder
     # Creates a new group builder.
     # The value for *what* should be the text the user specified for the collection.
-    # The *collection* is the actual array of items to create examples for.
+    # The *collection_type* is the type to create that will produce the items.
+    # The *collection_builder* is a proc that takes an instance of *collection_type*
+    # and returns an actual array of items to create examples for.
     # The *name* is the variable name that the user accesses the current collection item with.
     #
     # In this code:
@@ -25,7 +28,8 @@ module Spectator::DSL
     # The *symbol* is passed along to the sample values
     # so that the example code can retrieve the current item from the collection.
     # The symbol should be unique.
-    def initialize(what : String, @collection_type : C.class, @collection_builder : C -> Array(T), @name : String, @symbol : Symbol)
+    def initialize(what : String, @collection_type : C.class, @collection_builder : C -> Array(T),
+                   @name : String, @symbol : Symbol)
       super(what)
     end
 
