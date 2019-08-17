@@ -151,12 +151,6 @@ module Spectator::DSL
   # Sample values are a collection of test values that can be used in examples.
   # For more information, see `Internals::SampleValues`.
   module StructureDSL
-    # Placeholder initializer.
-    # This is needed because examples and groups call super in their initializer.
-    # Those initializers pass the sample values upward through their hierarchy.
-    def initialize(sample_values : Internals::SampleValues)
-    end
-
     # Creates a new example group to describe a component.
     # The *what* argument describes "what" is being tested.
     # Additional example groups and DSL may be nested in the block.
@@ -517,6 +511,13 @@ module Spectator::DSL
         # Include the parent module.
         include {{@type.id}}
 
+        # Placeholder initializer.
+        # This is needed because examples and groups call super in their initializer.
+        # Those initializers pass the sample values upward through their hierarchy.
+        def initialize(_sample_values : ::Spectator::Internals::SampleValues)
+          super
+        end
+
         # Method that returns an array containing the collection.
         # This method should be called only once.
         # The framework stores the collection as an array for a couple of reasons.
@@ -563,10 +564,11 @@ module Spectator::DSL
         # Start a new example group.
         # Sample groups require additional configuration.
         ::Spectator::DSL::Builder.start_sample_group(
-          {{collection.stringify}}, # String representation of the collection.
-          Sample%sample.new.%to_a,  # All elements in the collection.
-          {{name.stringify}},       # Name for the current element.
-          :%sample                  # Unique identifier for retrieving elements for the associated collection.
+          {{collection.stringify}},          # String representation of the collection.
+          Sample%sample,                     # Type that can construct the elements.
+          ->(s : Sample%sample) { s.%to_a }, # Proc to build the array of elements in the collection.
+          {{name.stringify}},                # Name for the current element.
+          :%sample                           # Unique identifier for retrieving elements for the associated collection.
         )
 
         # Nest the block's content in the module.
@@ -684,7 +686,7 @@ module Spectator::DSL
         # Sample groups require additional configuration.
         ::Spectator::DSL::Builder.start_sample_group(
           {{collection.stringify}}, # String representation of the collection.
-          Sample%sample.new.%to_a,  # All elements in the collection.
+          Sample%sample,            # All elements in the collection.
           {{name.stringify}},       # Name for the current element.
           :%sample                  # Unique identifier for retrieving elements for the associated collection.
         )
