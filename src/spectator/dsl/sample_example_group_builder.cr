@@ -25,13 +25,8 @@ module Spectator::DSL
     # The *symbol* is passed along to the sample values
     # so that the example code can retrieve the current item from the collection.
     # The symbol should be unique.
-    def initialize(what : String, @collection : Array(T), @name : String, @symbol : Symbol)
+    def initialize(what : String, @collection_type : T.class, @name : String, @symbol : Symbol)
       super(what)
-    end
-
-    def self.create(what, collection_type : C.class, name, symbol) forall C
-      collection = collection_type.new(sample_values).to_a
-      SampleExampleGroupBuilder.new(what, collection, name, symbol)
     end
 
     # Builds the example group.
@@ -40,11 +35,13 @@ module Spectator::DSL
     # The *parent* should be the group that contains this group.
     # The *sample_values* will be given to all of the examples (and groups) nested in this group.
     def build(parent : ExampleGroup, sample_values : Internals::SampleValues) : NestedExampleGroup
+      collection = @collection_type.new(sample_values).to_a
+
       # This creates the container for the sub-groups.
       # The hooks are defined here, instead of repeating for each sub-group.
       NestedExampleGroup.new(@what, parent, hooks, conditions).tap do |group|
         # Set the container group's children to be sub-groups for each item in the collection.
-        group.children = @collection.map do |value|
+        group.children = collection.map do |value|
           # Create a sub-group for each item in the collection.
           build_sub_group(group, sample_values, value).as(ExampleComponent)
         end

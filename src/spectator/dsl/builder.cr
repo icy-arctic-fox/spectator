@@ -44,7 +44,7 @@ module Spectator::DSL
     # See `SampleExampleGroupBuilder#create` for the arguments
     # as arguments to this method are passed directly to it.
     def start_sample_group(*args) : Nil
-      group = SampleExampleGroupBuilder.create(*args)
+      group = SampleExampleGroupBuilder.new(*args)
       push_group(group)
     end
 
