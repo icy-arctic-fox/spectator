@@ -5,7 +5,7 @@ module Spectator
   extend self
 
   # Current version of the Spectator library.
-  VERSION = "0.5.0"
+  VERSION = "0.8.2"
 
   # Top-level describe method.
   # All specs in a file must be wrapped in this call.
