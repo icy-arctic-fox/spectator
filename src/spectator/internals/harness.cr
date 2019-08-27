@@ -46,6 +46,10 @@ module Spectator::Internals
       @reporter.expectations
     end
 
+    def double(id)
+      example.group.double(id, example.sample_values)
+    end
+
     # Creates a new harness.
     # The example the harness is for should be passed in.
     private def initialize(@example)

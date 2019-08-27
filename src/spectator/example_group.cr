@@ -17,7 +17,7 @@ module Spectator
 
     # Creates the example group.
     # The hooks are stored to be triggered later.
-    def initialize(@hooks : ExampleHooks, @conditions : ExampleConditions)
+    def initialize(@hooks : ExampleHooks, @conditions : ExampleConditions, @doubles : Hash(Symbol, DSL::DoubleFactory))
       @before_all_hooks_run = false
       @after_all_hooks_run = false
     end
@@ -38,6 +38,10 @@ module Spectator
       # Recursively count the number of examples.
       # This won't work if a sub-group hasn't had their children set (is still nil).
       @example_count = children.sum(&.example_count)
+    end
+
+    def double(id, sample_values)
+      @doubles[id].build(sample_values)
     end
 
     # Yields each direct descendant.

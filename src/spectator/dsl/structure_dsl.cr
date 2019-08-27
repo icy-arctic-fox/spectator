@@ -1440,15 +1440,15 @@ module Spectator::DSL
     macro double(name, &block)
       {% if block.is_a?(Nop) %}
         # Create an instance of the double.
-        Double{{name.id}}.new
+        ::Spectator::Internals::Harness.current.double({{name.id.symbolize}}).as(Double{{name.id}})
       {% else %}
         # Define a double.
-        struct Double{{name.id}} # TODO: Use fresh variable %double
-          include ::Spectator::Double
+        struct Double{{name.id}} < ::Spectator::Double # TODO: Use fresh variable %double
+          #include {{@type.id}} # Include parent type to allow contextual methods in the double.
 
           {{block.body}}
         end
-        # TODO: Register double in current context.
+        ::Spectator::DSL::Builder.add_double({{name.id.symbolize}}, Double{{name.id}})
       {% end %}
       {% debug %}
     end

@@ -43,7 +43,7 @@ module Spectator::DSL
 
       # This creates the container for the sub-groups.
       # The hooks are defined here, instead of repeating for each sub-group.
-      NestedExampleGroup.new(@what, parent, hooks, conditions).tap do |group|
+      NestedExampleGroup.new(@what, parent, hooks, conditions, doubles).tap do |group|
         # Set the container group's children to be sub-groups for each item in the collection.
         group.children = collection.map do |value|
           # Create a sub-group for each item in the collection.
@@ -61,7 +61,7 @@ module Spectator::DSL
     private def build_sub_group(parent : ExampleGroup, sample_values : Internals::SampleValues, value : T) : NestedExampleGroup
       # Add the value to sample values for this sub-group.
       sub_values = sample_values.add(@symbol, @name, value)
-      NestedExampleGroup.new(value.to_s, parent, ExampleHooks.empty, ExampleConditions.empty).tap do |group|
+      NestedExampleGroup.new(value.to_s, parent, ExampleHooks.empty, ExampleConditions.empty, {} of Symbol => DoubleFactory).tap do |group|
         # Set the sub-group's children to built versions of the children from this instance.
         group.children = @children.map do |child|
           # Build the child and up-cast to prevent type errors.

@@ -16,6 +16,8 @@ module Spectator
     # Source where the example originated from.
     abstract def source : Source
 
+    protected getter sample_values : Internals::SampleValues
+
     # Runs the example code.
     # A result is returned, which represents the outcome of the test.
     # An example can be run only once.
@@ -32,7 +34,7 @@ module Spectator
     # Creates the base of the example.
     # The group should be the example group the example belongs to.
     # The *sample_values* are passed to the example code.
-    def initialize(@group, sample_values : Internals::SampleValues)
+    def initialize(@group, @sample_values)
     end
 
     # Indicates there is only one example to run.

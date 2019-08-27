@@ -101,6 +101,11 @@ module Spectator::DSL
       current_group.add_post_condition(block)
     end
 
+    def add_double(id : Symbol, double_type : Double.class) : Nil
+      double_factory = DoubleFactory.new(double_type)
+      current_group.add_double(id, double_factory)
+    end
+
     # Builds the entire spec and returns it as a test suite.
     # This should be called only once after the entire spec has been defined.
     protected def build(filter : ExampleFilter) : TestSuite

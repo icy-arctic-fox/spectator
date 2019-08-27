@@ -7,6 +7,8 @@ module Spectator::DSL
     # and the root example group can't be a child.
     alias Child = ExampleFactory | NestedExampleGroupBuilder
 
+    private getter doubles = {} of Symbol => DoubleFactory
+
     # Factories and builders for all examples and groups.
     @children = [] of Child
 
@@ -61,6 +63,10 @@ module Spectator::DSL
     # Adds a post-condition to run at the end of every example in this group.
     def add_post_condition(block : ->) : Nil
       @post_conditions << block
+    end
+
+    def add_double(id : Symbol, double_factory : DoubleFactory) : Nil
+      @doubles[id] = double_factory
     end
 
     # Constructs an `ExampleHooks` instance with all the hooks defined for this group.
