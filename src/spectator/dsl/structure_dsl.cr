@@ -1437,6 +1437,22 @@ module Spectator::DSL
       {% debug %}
     end
 
+    macro double(name, &block)
+      {% if block.is_a?(Nop) %}
+        # Create an instance of the double.
+        Double{{name.id}}.new
+      {% else %}
+        # Define a double.
+        struct Double{{name.id}} # TODO: Use fresh variable %double
+          include ::Spectator::Double
+
+          {{block.body}}
+        end
+        # TODO: Register double in current context.
+      {% end %}
+      {% debug %}
+    end
+
     # Creates an example, or a test case.
     # The *what* argument describes "what" is being tested or asserted.
     # The block contains the code to run the test.
