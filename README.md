@@ -309,6 +309,12 @@ Items not marked as completed may have partial implementations.
       - [X] `change[.by|.from[.to]|.to|.by_at_least|.by_at_most]`
       - [X] `have_attributes`
     - [ ] Compound - `and`, `or`
+- [ ] Mocks and Doubles
+    - [ ] Mocks (Stub real types)
+    - [ ] Doubles (Stand-ins for real types)
+    - [ ] Method stubs
+    - [ ] Spies
+    - [ ] Null doubles
 - [ ] Runner
     - [X] Fail fast
     - [ ] Test filtering - by name, context, and tags
