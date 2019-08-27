@@ -30,6 +30,8 @@ require "./example_group"
 require "./nested_example_group"
 require "./root_example_group"
 
+require "./mock"
+
 require "./config"
 require "./config_builder"
 require "./config_source"

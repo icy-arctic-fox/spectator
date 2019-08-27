@@ -1419,6 +1419,24 @@ module Spectator::DSL
       end
     end
 
+    macro mock(type)
+      {% real_type = type.resolve %}
+      {% if real_type < ::Reference %}
+        class ::{{real_type.name.id}}
+          include ::Spectator::Mock
+        end
+      {% elsif real_type < ::Value %}
+        struct ::{{real_type.name.id}}
+          include ::Spectator::Mock
+        end
+      {% else %}
+        module ::{{real_type.name.id}}
+          include ::Spectator::Mock
+        end
+      {% end %}
+      {% debug %}
+    end
+
     # Creates an example, or a test case.
     # The *what* argument describes "what" is being tested or asserted.
     # The block contains the code to run the test.
