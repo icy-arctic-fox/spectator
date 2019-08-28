@@ -2,9 +2,9 @@ Spectator
 =========
 
 Spectator is a fully-featured spec-based test framework for Crystal.
-It provides more functionality from [RSpec](http://rspec.info/)
-than the built-in Crystal [Spec](https://crystal-lang.org/api/latest/Spec.html) utility.
-Additionally, Spectator provides extra features to make testing easier and more fluent.
+It mimics features from [RSpec](http://rspec.info/).
+Developers coming from Ruby and RSpec will feel right at home.
+Spectator provides additional functionality to make testing easier and more fluent.
 
 **Goal:**
 
@@ -34,8 +34,8 @@ If it doesn't exist already, create a `spec/spec_helper.cr` file.
 In it, place the following:
 
 ```crystal
-require "spectator"
 require "../src/*"
+require "spectator"
 ```
 
 This will include Spectator and the source code for your shard.
@@ -310,10 +310,13 @@ Items not marked as completed may have partial implementations.
       - [X] `have_attributes`
     - [ ] Compound - `and`, `or`
 - [ ] Mocks and Doubles
-    - [ ] Mocks (Stub real types)
-    - [ ] Doubles (Stand-ins for real types)
-    - [ ] Method stubs
-    - [ ] Spies
+    - [ ] Mocks (Stub real types) - `mock TYPE { }`
+    - [ ] Doubles (Stand-ins for real types) - `double NAME { }`
+    - [ ] Method stubs - `allow().to receive()`, `allow().to receive().and_return()`
+    - [ ] Spies - `expect().to receive()`
+    - [ ] Message expectations - `expect().to receive().at_least()`
+    - [ ] Argument expectations - `expect().to receive().with()`
+    - [ ] Message ordering - `expect().to receive().ordered`
     - [ ] Null doubles
 - [ ] Runner
     - [X] Fail fast
@@ -348,7 +351,7 @@ Contributing
 
 Please make sure to run `crystal tool format` before submitting.
 The CI build checks for properly formatted code.
-[Ameba](https://github.com/veelenga/ameba) is run to check for code style.
+[Ameba](https://crystal-ameba.github.io/) is run to check for code style.
 
 Tests must be written for any new functionality.
 Macros that create types are not as easy to test,
