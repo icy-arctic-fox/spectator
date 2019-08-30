@@ -41,12 +41,6 @@ module Spectator
       include ::Spectator::DSL::StructureDSL # Include the DSL for creating groups, example, and more.
       include ::Spectator::DSL::ExampleDSL   # Mix in methods and macros specifically for example DSL.
 
-      # Placeholder initializer.
-      # This is needed because examples and groups call super in their initializer.
-      # Those initializers pass the sample values upward through their hierarchy.
-      def initialize(_sample_values : ::Spectator::Internals::SampleValues)
-      end
-
       # Pass off the "what" argument and block to `DSL::StructureDSL.describe`.
       # That method will handle creating a new group for this spec.
       describe({{what}}) {{block}}

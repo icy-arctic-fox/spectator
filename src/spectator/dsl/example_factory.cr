@@ -7,9 +7,9 @@ module Spectator::DSL
     end
 
     # Constructs a new example instance and returns it.
-    # The *group* and *sample_values* are passed to `Example#initialize`.
-    def build(group : ExampleGroup, sample_values : Internals::SampleValues) : Example
-      @example_type.new(group, sample_values)
+    # The *group* is passed to `Example#initialize`.
+    def build(group : ExampleGroup, _sample_values : Internals::SampleValues) : Example
+      @example_type.new(group)
     end
   end
 end

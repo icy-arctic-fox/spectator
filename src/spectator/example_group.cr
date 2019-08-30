@@ -15,9 +15,11 @@ module Spectator
     include Enumerable(ExampleComponent)
     include Iterable(ExampleComponent)
 
+    getter sample_values : Internals::SampleValues
+
     # Creates the example group.
     # The hooks are stored to be triggered later.
-    def initialize(@hooks : ExampleHooks, @conditions : ExampleConditions)
+    def initialize(@hooks : ExampleHooks, @conditions : ExampleConditions, @sample_values)
       @before_all_hooks_run = false
       @after_all_hooks_run = false
     end

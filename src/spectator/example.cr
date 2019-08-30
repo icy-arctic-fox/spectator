@@ -31,8 +31,7 @@ module Spectator
 
     # Creates the base of the example.
     # The group should be the example group the example belongs to.
-    # The *sample_values* are passed to the example code.
-    def initialize(@group, sample_values : Internals::SampleValues)
+    def initialize(@group)
     end
 
     # Indicates there is only one example to run.

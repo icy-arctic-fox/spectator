@@ -503,13 +503,6 @@ module Spectator::DSL
       # The collection could reference a helper method
       # or anything else in the parent scope.
       class Sample%sample < {{@type.id}}
-        # Placeholder initializer.
-        # This is needed because examples and groups call super in their initializer.
-        # Those initializers pass the sample values upward through their hierarchy.
-        def initialize(_sample_values : ::Spectator::Internals::SampleValues)
-          super
-        end
-
         # Method that returns an array containing the collection.
         # This method should be called only once.
         # The framework stores the collection as an array for a couple of reasons.
@@ -543,9 +536,9 @@ module Spectator::DSL
         end
 
         # Initializer to extract current element of the collection from sample values.
-        def initialize(sample_values : ::Spectator::Internals::SampleValues)
+        def initialize
           super
-          @%wrapper = sample_values.get_wrapper(:%sample)
+          @%wrapper = ::Spectator::Internals::Harness.current.group.sample_values.get_wrapper(:%sample)
         end
 
         # Start a new example group.
@@ -656,9 +649,9 @@ module Spectator::DSL
         end
 
         # Initializer to extract current element of the collection from sample values.
-        def initialize(sample_values : ::Spectator::Internals::SampleValues)
+        def initialize
           super
-          @%wrapper = sample_values.get_wrapper(:%sample)
+          @%wrapper = ::Spectator::Internals::Harness.current.group.sample_values.get_wrapper(:%sample)
         end
 
         # Start a new example group.
@@ -1576,13 +1569,6 @@ module Spectator::DSL
     private macro _spectator_test(class_name, run_method_name)
       # Wrapper class for isolating the test code.
       class {{class_name.id}} < {{@type.id}}
-        # Initializer that accepts sample values.
-        # The sample values are passed upward to the group modules.
-        # Any module that adds sample values can pull their values from this instance.
-        def initialize(sample_values : ::Spectator::Internals::SampleValues)
-          super
-        end
-
         # Generated method for actually running the test code.
         def {{run_method_name.id}}
           {{yield}}
@@ -1614,9 +1600,9 @@ module Spectator::DSL
         # Stores the group the example belongs to
         # and sample values specific to this instance of the test.
         # This method's signature must match the one used in `ExampleFactory#build`.
-        def initialize(group : ::Spectator::ExampleGroup, sample_values : ::Spectator::Internals::SampleValues)
+        def initialize(group : ::Spectator::ExampleGroup)
           super
-          @instance = {{test_class_name.id}}.new(sample_values)
+          @instance = {{test_class_name.id}}.new
         end
 
         # Retrieves the underlying, wrapped test code.
