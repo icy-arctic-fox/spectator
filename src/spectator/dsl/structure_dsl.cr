@@ -238,13 +238,9 @@ module Spectator::DSL
     # it demonstrates how contexts can reuse code.
     # Contexts also make it clearer how a scenario is setup.
     macro context(what, &block)
-      # Module for the context.
-      # The module uses a generated unique name.
-      module Context%context
-        # Include the parent module.
-        # Since `@type` resolves immediately,
-        # this will reference the parent type.
-        include {{@type.id}}
+      # Class for the context.
+      # The class uses a generated unique name.
+      class Context%context < {{@type.id}}
 
         # Check if `what` looks like a type.
         # If it is, add the `#described_class` and `subject` methods.
@@ -507,10 +503,7 @@ module Spectator::DSL
       # This has to be a class that includes the parent module.
       # The collection could reference a helper method
       # or anything else in the parent scope.
-      class Sample%sample
-        # Include the parent module.
-        include {{@type.id}}
-
+      class Sample%sample < {{@type.id}}
         # Placeholder initializer.
         # This is needed because examples and groups call super in their initializer.
         # Those initializers pass the sample values upward through their hierarchy.
@@ -536,14 +529,9 @@ module Spectator::DSL
         end
       end
 
-      # Module for the context.
-      # The module uses a generated unique name.
-      module Context%sample
-        # Include the parent module.
-        # Since @type resolves immediately,
-        # this will reference the parent type.
-        include {{@type.id}}
-
+      # Class for the context.
+      # The class uses a generated unique name.
+      class Context%sample < {{@type.id}}
         # Value wrapper for the current element.
         @%wrapper : ::Spectator::Internals::ValueWrapper
 
@@ -642,10 +630,7 @@ module Spectator::DSL
       # This has to be a class that includes the parent module.
       # The collection could reference a helper method
       # or anything else in the parent scope.
-      class Sample%sample
-        # Include the parent module.
-        include {{@type.id}}
-
+      class Sample%sample < {{@type.id}}
         # Method that returns an array containing the collection.
         # This method should be called only once.
         # The framework stores the collection as an array for a couple of reasons.
@@ -657,14 +642,9 @@ module Spectator::DSL
         end
       end
 
-      # Module for the context.
-      # The module uses a generated unique name.
-      module Context%sample
-        # Include the parent module.
-        # Since @type resolves immediately,
-        # this will reference the parent type.
-        include {{@type.id}}
-
+      # Class for the context.
+      # The class uses a generated unique name.
+      class Context%sample < {{@type.id}}
         # Value wrapper for the current element.
         @%wrapper : ::Spectator::Internals::ValueWrapper
 
@@ -1596,12 +1576,9 @@ module Spectator::DSL
     # The block passed to this macro is the actual test code.
     private macro _spectator_test(class_name, run_method_name)
       # Wrapper class for isolating the test code.
-      class {{class_name.id}}
+      class {{class_name.id}} < {{@type.id}}
         # Mix in methods and macros specifically for example DSL.
         include ::Spectator::DSL::ExampleDSL
-
-        # Include the parent (example group) context.
-        include {{@type.id}}
 
         # Initializer that accepts sample values.
         # The sample values are passed upward to the group modules.

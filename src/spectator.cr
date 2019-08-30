@@ -36,8 +36,8 @@ module Spectator
     #
     # For more information on how the DSL works, see the `DSL` module.
 
-    # Root-level module that contains all examples and example groups.
-    module SpectatorExamples
+    # Root-level class that contains all examples and example groups.
+    class SpectatorExamples
       # Include the DSL for creating groups, example, and more.
       include ::Spectator::DSL::StructureDSL
 
