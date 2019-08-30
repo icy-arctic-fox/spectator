@@ -241,7 +241,6 @@ module Spectator::DSL
       # Class for the context.
       # The class uses a generated unique name.
       class Context%context < {{@type.id}}
-
         # Check if `what` looks like a type.
         # If it is, add the `#described_class` and `subject` methods.
         # At the time of writing this code,
@@ -1577,9 +1576,6 @@ module Spectator::DSL
     private macro _spectator_test(class_name, run_method_name)
       # Wrapper class for isolating the test code.
       class {{class_name.id}} < {{@type.id}}
-        # Mix in methods and macros specifically for example DSL.
-        include ::Spectator::DSL::ExampleDSL
-
         # Initializer that accepts sample values.
         # The sample values are passed upward to the group modules.
         # Any module that adds sample values can pull their values from this instance.

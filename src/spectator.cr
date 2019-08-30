@@ -38,8 +38,8 @@ module Spectator
 
     # Root-level class that contains all examples and example groups.
     class SpectatorExamples
-      # Include the DSL for creating groups, example, and more.
-      include ::Spectator::DSL::StructureDSL
+      include ::Spectator::DSL::StructureDSL # Include the DSL for creating groups, example, and more.
+      include ::Spectator::DSL::ExampleDSL   # Mix in methods and macros specifically for example DSL.
 
       # Placeholder initializer.
       # This is needed because examples and groups call super in their initializer.
