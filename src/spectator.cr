@@ -1,4 +1,5 @@
 require "./spectator/includes"
+require "./spectator_test"
 
 # Module that contains all functionality related to Spectator.
 module Spectator
@@ -32,15 +33,12 @@ module Spectator
     # We don't want the spec code to accidentally pickup types and values from the `Spectator` module.
     # Another reason is that we need a root module to put all examples and groups in.
     # And lastly, the spec DSL needs to be given to the block of code somehow.
-    # The DSL is included in the `SpectatorExamples` module.
+    # The DSL is included in the `SpectatorTest` class.
     #
     # For more information on how the DSL works, see the `DSL` module.
 
     # Root-level class that contains all examples and example groups.
-    class SpectatorExamples
-      include ::Spectator::DSL::StructureDSL # Include the DSL for creating groups, example, and more.
-      include ::Spectator::DSL::ExampleDSL   # Mix in methods and macros specifically for example DSL.
-
+    class SpectatorTest
       # Pass off the "what" argument and block to `DSL::StructureDSL.describe`.
       # That method will handle creating a new group for this spec.
       describe({{what}}) {{block}}
