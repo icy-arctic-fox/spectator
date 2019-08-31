@@ -1426,21 +1426,7 @@ module Spectator::DSL
         _spectator_test(Test%example, %run) {{block}}
       {% end %}
 
-      # Create a class derived from `RunnableExample` to run the test code.
-      _spectator_example(Example%example, Test%example, ::Spectator::RunnableExample, {{what}}) do
-        # Source where the example originated from.
-        def source
-          ::Spectator::Source.new({{_source_file}}, {{_source_line}})
-        end
-
-        # Implement abstract method to run the wrapped example block.
-        protected def run_instance
-          @instance.%run
-        end
-      end
-
-      # Add the example to the current group.
-      ::Spectator::DSL::Builder.add_example(Example%example)
+      # TODO
     end
 
     # Creates an example, or a test case.
@@ -1500,19 +1486,7 @@ module Spectator::DSL
     # By creating a `#pending` test, the code will be referenced.
     # Thus, forcing the compiler to at least process the code, even if it isn't run.
     macro pending(what, _source_file = __FILE__, _source_line = __LINE__, &block)
-      # Create the wrapper class for the test code.
-      _spectator_test(Test%example, %run) {{block}}
-
-      # Create a class derived from `PendingExample` to skip the test code.
-      _spectator_example(Example%example, Test%example, ::Spectator::PendingExample, {{what}}) do
-        # Source where the example originated from.
-        def source
-          ::Spectator::Source.new({{_source_file}}, {{_source_line}})
-        end
-      end
-
-      # Add the example to the current group.
-      ::Spectator::DSL::Builder.add_example(Example%example)
+      # TODO
     end
 
     # Creates an example, or a test case, that does not run.
@@ -1552,75 +1526,6 @@ module Spectator::DSL
     # Included for compatibility with RSpec.
     macro xit(&block)
       pending({{block.body.stringify}}) {{block}}
-    end
-
-    # Creates a wrapper class for test code.
-    # The class serves multiple purposes, mostly dealing with scope.
-    # 1. Include the parent modules as mix-ins.
-    # 2. Enable DSL specific to examples.
-    # 3. Isolate methods in `Example` from the test code.
-    #
-    # Since the names are generated, and macros can't return values,
-    # the names for everything must be passed in as arguments.
-    # The *class_name* argument is the name of the class to define.
-    # The *run_method_name* argument is the name of the method in the wrapper class
-    # that will actually run the test code.
-    # The block passed to this macro is the actual test code.
-    private macro _spectator_test(class_name, run_method_name)
-      # Wrapper class for isolating the test code.
-      class {{class_name.id}} < {{@type.id}}
-        # Generated method for actually running the test code.
-        def {{run_method_name.id}}
-          {{yield}}
-        end
-      end
-    end
-
-    # Creates an example class.
-    # Since the names are generated, and macros can't return values,
-    # the names for everything must be passed in as arguments.
-    # The *example_class_name* argument is the name of the class to define.
-    # The *test_class_name* argument is the name of the wrapper class to reference.
-    # This must be the same as `class_name` for `#_spectator_example_wrapper`.
-    # The *base_class* argument specifies which type of example class the new class should derive from.
-    # This should typically be `RunnableExample` or `PendingExample`.
-    # The *what* argument is the description passed to the `#it` or `#pending` block.
-    # And lastly, the block specified is additional content to put in the class.
-    # For instance, to define a method in the class, do it in the block.
-    # ```
-    # _spectator_example(Example123, Test123, RunnableExample, "does something") do
-    #   def something
-    #     # This method is defined in the Example123 class.
-    #   end
-    # end
-    # ```
-    private macro _spectator_example(example_class_name, test_class_name, base_class, what, &block)
-      # Example class containing meta information and instructions for running the test.
-      class {{example_class_name.id}} < {{base_class.id}}
-        # Stores the group the example belongs to
-        # and sample values specific to this instance of the test.
-        # This method's signature must match the one used in `ExampleFactory#build`.
-        def initialize(group : ::Spectator::ExampleGroup)
-          super
-          @instance = {{test_class_name.id}}.new
-        end
-
-        # Retrieves the underlying, wrapped test code.
-        getter instance
-
-        # Indicates whether the example references a method.
-        def symbolic?
-          {{what.is_a?(StringLiteral) && what.starts_with?('#') ? true : false}}
-        end
-
-        # Add the block's content.
-        {{block.body}}
-
-        # Description for the test.
-        def what
-          {{what.is_a?(StringLiteral) ? what : what.stringify}}
-        end
-      end
     end
   end
 end
