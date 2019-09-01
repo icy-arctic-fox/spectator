@@ -23,9 +23,9 @@ module Spectator::DSL
     # Where the actual value is returned by the system-under-test,
     # and the expected value is what the actual value should be to satisfy the condition.
     macro expect(actual, _source_file = __FILE__, _source_line = __LINE__)
-      test_value = ::Spectator::TestValue.new({{actual}}, {{actual.stringify}})
-      source = ::Spectator::Source.new({{_source_file}}, {{_source_line}})
-      ::Spectator::Expectations::ExpectationPartial.new(test_value, source)
+      %test_value = ::Spectator::TestValue.new({{actual}}, {{actual.stringify}})
+      %source = ::Spectator::Source.new({{_source_file}}, {{_source_line}})
+      ::Spectator::Expectations::ExpectationPartial.new(%test_value, %source)
     end
 
     # Starts an expectation on a block of code.
