@@ -22,8 +22,9 @@ module Spectator
     # An exception is raised if an attempt is made to run it more than once.
     def run : Result
       raise "Attempted to run example more than once (#{self})" if finished?
-      @finished = true
       run_impl
+    ensure
+      @finished = true
     end
 
     # Implementation-specific for running the example code.
