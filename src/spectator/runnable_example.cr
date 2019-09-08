@@ -1,36 +1,15 @@
 require "./example"
 
 module Spectator
-  # Common base for all examples that can be run.
-  # This class includes all the logic for running example hooks,
+  # Includes all the logic for running example hooks,
   # the example code, and capturing a result.
-  # Sub-classes need to implement the `#what` and `#run_instance` methods.
-  abstract class RunnableExample < Example
+  class RunnableExample < Example
     # Runs the example, hooks, and captures the result
     # and translates to a usable result.
     def run_impl
       result = capture_result
       expectations = Internals::Harness.current.expectations
       translate_result(result, expectations)
-    end
-
-    # Runs the actual test code.
-    private abstract def run_instance
-
-    # Runs the hooks that should be performed before starting the test code.
-    private def run_before_hooks
-      group.run_before_hooks
-    rescue ex
-      # If an error occurs in the before hooks, skip running the example.
-      raise Exception.new("Error encountered while running before hooks", ex)
-    end
-
-    # Runs the hooks that should be performed after the test code finishes.
-    private def run_after_hooks
-      group.run_after_hooks
-    rescue ex
-      # If an error occurs in the after hooks, elevate it to abort testing.
-      raise Exception.new("Error encountered while running after hooks", ex)
     end
 
     # Runs all hooks and the example code.
@@ -40,9 +19,7 @@ module Spectator
         # Get the proc that will call around-each hooks and the example.
         wrapper = wrap_run_example(result)
 
-        run_before_hooks
         run_wrapper(wrapper)
-        run_after_hooks
       end
     end
 
@@ -70,9 +47,7 @@ module Spectator
       # Capture how long it takes to run the test code.
       result.elapsed = Time.measure do
         begin
-          group.run_pre_conditions
-          run_instance # Actually run the example code.
-          group.run_post_conditions
+          test_wrapper.run {} # Actually run the example code.
         rescue ex # Catch all errors and handle them later.
           result.error = ex
         end

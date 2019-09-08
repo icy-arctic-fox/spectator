@@ -2,7 +2,7 @@ require "./example_component"
 
 module Spectator
   # Base class for all types of examples.
-  # Concrete types must implement the `#run_impl, `#what`, `#instance`, and `#source` methods.
+  # Concrete types must implement the `#run_impl` method.
   abstract class Example < ExampleComponent
     # Indicates whether the example has already been run.
     getter? finished = false
@@ -11,10 +11,16 @@ module Spectator
     getter group : ExampleGroup
 
     # Retrieves the internal wrapped instance.
-    abstract def instance
+    private getter @test_wrapper : TestWrapper
 
     # Source where the example originated from.
-    abstract def source : Source
+    def source
+      @test_wrapper.source
+    end
+
+    def what
+      @test_wrapper.description
+    end
 
     # Runs the example code.
     # A result is returned, which represents the outcome of the test.
@@ -32,7 +38,7 @@ module Spectator
 
     # Creates the base of the example.
     # The group should be the example group the example belongs to.
-    def initialize(@group)
+    def initialize(@group, @test_wrapper)
     end
 
     # Indicates there is only one example to run.

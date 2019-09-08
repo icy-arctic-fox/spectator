@@ -1416,17 +1416,20 @@ module Spectator::DSL
       # Create the wrapper class for the test code.
       {% if block.is_a?(Nop) %}
         {% if what.is_a?(Call) %}
-          _spectator_test(Test%example, %run) do
+          def %run
             {{what}}
           end
         {% else %}
           {% raise "Unrecognized syntax: `it #{what}`" %}
         {% end %}
       {% else %}
-        _spectator_test(Test%example, %run) {{block}}
+        def %run
+          {{block}}
+        end
       {% end %}
 
-      # TODO
+      %source = ::Spectator::Source.new({{_source_file}}, {{_source_line}})
+      ::Spectator::DSL::Builder.add_example({{what.stringify}}, %source, {{@type.name}}) { |test| test.as({{@type.name}}).%run }
     end
 
     # Creates an example, or a test case.
