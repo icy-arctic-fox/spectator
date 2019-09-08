@@ -1,11 +1,9 @@
 require "./example"
 
 module Spectator
-  # Common base for all examples that can be run.
-  # This class includes all the logic for running example hooks,
+  # Includes all the logic for running example hooks,
   # the example code, and capturing a result.
-  # Sub-classes need to implement the `#what` and `#run_instance` methods.
-  abstract class RunnableExample < Example
+  class RunnableExample < Example
     # Runs the example, hooks, and captures the result
     # and translates to a usable result.
     def run_impl
@@ -13,9 +11,6 @@ module Spectator
       expectations = Internals::Harness.current.expectations
       translate_result(result, expectations)
     end
-
-    # Runs the actual test code.
-    private abstract def run_instance
 
     # Runs all hooks and the example code.
     # A captured result is returned.
@@ -52,7 +47,7 @@ module Spectator
       # Capture how long it takes to run the test code.
       result.elapsed = Time.measure do
         begin
-          run_instance # Actually run the example code.
+          test_wrapper.run {} # Actually run the example code.
         rescue ex # Catch all errors and handle them later.
           result.error = ex
         end
