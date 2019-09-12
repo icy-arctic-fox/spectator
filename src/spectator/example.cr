@@ -1,4 +1,5 @@
 require "./example_component"
+require "./test_wrapper"
 
 module Spectator
   # Base class for all types of examples.
@@ -11,7 +12,7 @@ module Spectator
     getter group : ExampleGroup
 
     # Retrieves the internal wrapped instance.
-    private getter @test_wrapper : TestWrapper
+    private getter test_wrapper : TestWrapper
 
     # Source where the example originated from.
     def source
@@ -20,6 +21,11 @@ module Spectator
 
     def what
       @test_wrapper.description
+    end
+
+    def symbolic?
+      description = @test_wrapper.description
+      description.start_with?('#') || description.start_with?('.')
     end
 
     # Runs the example code.
