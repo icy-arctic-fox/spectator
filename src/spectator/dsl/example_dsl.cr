@@ -2,14 +2,9 @@ require "../expectations/expectation_partial"
 require "../source"
 require "../test_block"
 require "../test_value"
-require "./matcher_dsl"
 
-module Spectator::DSL
-  # Methods that are available inside test code.
-  # Basically, inside an `StructureDSL#it` block.
-  module ExampleDSL
-    include MatcherDSL
-
+module Spectator
+  module DSL
     # Starts an expectation.
     # This should be followed up with `Spectator::Expectations::ExpectationPartial#to`
     # or `Spectator::Expectations::ExpectationPartial#to_not`.

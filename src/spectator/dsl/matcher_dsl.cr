@@ -2,9 +2,8 @@ require "../matchers"
 require "../test_block"
 require "../test_value"
 
-module Spectator::DSL
-  # Methods for defining matchers for expectations.
-  module MatcherDSL
+module Spectator
+  module DSL
     # Indicates that some value should equal another.
     # The == operator is used for this check.
     # The value passed to this method is the expected value.
