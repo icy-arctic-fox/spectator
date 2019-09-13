@@ -1424,7 +1424,7 @@ module Spectator::DSL
         {% end %}
       {% else %}
         def %run
-          {{block}}
+          {{block.body}}
         end
       {% end %}
 

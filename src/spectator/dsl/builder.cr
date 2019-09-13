@@ -46,8 +46,8 @@ module Spectator::DSL
       example_type : ::SpectatorTest.class, &runner : ::SpectatorTest ->) : Nil
       builder = ->{ example_type.new.as(::SpectatorTest) }
       wrapper = TestWrapper.new(description, source, builder, runner)
-      example = Example.new(current_group, wrapper)
-      # TODO: Add to stack.
+      factory = Builders::ExampleBuilder.new(wrapper)
+      @@stack.current.add_child(factory)
     end
 
     # Adds a block of code to run before all examples in the current group.
