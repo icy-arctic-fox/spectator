@@ -2,6 +2,8 @@ require "../spectator_test"
 require "./source"
 
 module Spectator
+  alias TestMethod = ::SpectatorTest ->
+
   # Stores information about a end-user test.
   # Used to instantiate tests and run them.
   struct TestWrapper
@@ -14,7 +16,7 @@ module Spectator
     # Creates a wrapper for the test.
     # The *builder* creates an instance of the test.
     # The *runner* takes the test created by *builder* and runs it.
-    def initialize(@description, @source, @builder : -> SpectatorTest, @runner : SpectatorTest ->)
+    def initialize(@description, @source, @builder : -> ::SpectatorTest, @runner : TestMethod)
     end
 
     # Instantiates and runs the test.

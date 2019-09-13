@@ -35,7 +35,7 @@ module Spectator
         result = run_example(example).as(Result)
         results << result
         if @config.fail_fast? && result.is_a?(FailedResult)
-          example.group.run_after_all_hooks(ignore_unfinished: true)
+          # TODO: example.group.run_after_all_hooks(ignore_unfinished: true)
           break
         end
       end

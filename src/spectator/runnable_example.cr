@@ -16,28 +16,6 @@ module Spectator
     # A captured result is returned.
     private def capture_result
       ResultCapture.new.tap do |result|
-        # Get the proc that will call around-each hooks and the example.
-        wrapper = wrap_run_example(result)
-
-        run_wrapper(wrapper)
-      end
-    end
-
-    private def run_wrapper(wrapper)
-      wrapper.call
-    rescue ex
-      # If an error occurs calling the wrapper,
-      # it means it came from the "around-each" hooks.
-      # This is because the test code is completely wrapped with a begin/rescue block.
-      raise Exception.new("Error encountered while running around hooks", ex)
-    end
-
-    # Creates a proc that runs the test code
-    # and captures the result.
-    private def wrap_run_example(result)
-      # Wrap the method that runs and captures
-      # the test code with the around-each hooks.
-      group.wrap_around_each_hooks do
         run_example(result)
       end
     end

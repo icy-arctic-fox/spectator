@@ -1,3 +1,5 @@
+require "../builders/example_group_stack"
+
 module Spectator::DSL
   # Global builder used to create the runtime instance of the spec.
   # The DSL methods call into this module to generate parts of the spec.
@@ -14,7 +16,7 @@ module Spectator::DSL
     # See `NestedExampleGroupBuilder#initialize` for the arguments
     # as arguments to this method are passed directly to it.
     def start_group(*args) : Nil
-      group = NestedExampleGroupBuilder.new(*args)
+      group = Builders::NestedExampleGroupBuilder.new(*args)
       @@stack.push(group)
     end
 
@@ -88,7 +90,7 @@ module Spectator::DSL
     # Builds the entire spec and returns it as a test suite.
     # This should be called only once after the entire spec has been defined.
     protected def build(filter : ExampleFilter) : TestSuite
-      group = @@stack.root.build(Internals::SampleValues.empty)
+      group = @@stack.root.build
       TestSuite.new(group, filter)
     end
   end

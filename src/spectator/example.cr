@@ -25,8 +25,10 @@ module Spectator
 
     def symbolic?
       description = @test_wrapper.description
-      description.start_with?('#') || description.start_with?('.')
+      description.starts_with?('#') || description.starts_with?('.')
     end
+
+    abstract def run_impl
 
     # Runs the example code.
     # A result is returned, which represents the outcome of the test.
@@ -38,9 +40,6 @@ module Spectator
     ensure
       @finished = true
     end
-
-    # Implementation-specific for running the example code.
-    private abstract def run_impl : Result
 
     # Creates the base of the example.
     # The group should be the example group the example belongs to.

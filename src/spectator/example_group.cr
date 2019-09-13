@@ -15,10 +15,6 @@ module Spectator
     include Enumerable(ExampleComponent)
     include Iterable(ExampleComponent)
 
-    # Creates the example group.
-    def initialize
-    end
-
     # Retrieves the children in the group.
     # This only returns the direct descends (non-recursive).
     # The children must be set (with `#children=`) prior to calling this method.

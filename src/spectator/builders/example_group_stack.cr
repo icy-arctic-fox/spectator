@@ -1,8 +1,14 @@
+require "./root_example_group_builder"
+require "./nested_example_group_builder"
+
 module Spectator::Builders
   struct ExampleGroupStack
-    getter root = RootExampleGroupBuilder.new
+    getter root
 
-    @stack = Deque(ExampleGroupBuilder).new(1, @root)
+    def initialize
+      @root = RootExampleGroupBuilder.new
+      @stack = Deque(ExampleGroupBuilder).new(1, @root)
+    end
 
     def current
       @stack.last
