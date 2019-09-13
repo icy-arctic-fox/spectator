@@ -18,6 +18,7 @@ require "./matchers"
 require "./formatting"
 
 # Then all of the top-level types.
+require "./spec_builder"
 require "./example_component"
 require "./example"
 require "./runnable_example"

@@ -1,7 +1,7 @@
 require "./root_example_group_builder"
 require "./nested_example_group_builder"
 
-module Spectator::Builders
+module Spectator::SpecBuilder
   struct ExampleGroupStack
     getter root
 

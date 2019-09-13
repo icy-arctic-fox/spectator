@@ -1,4 +1,4 @@
-module Spectator::Builders
+module Spectator::SpecBuilder
   class ExampleBuilder
     def initialize(@wrapper : TestWrapper)
     end

@@ -263,7 +263,7 @@ module Spectator::DSL
         {% end %}
 
         # Start a new group.
-        ::Spectator::DSL::Builder.start_group(
+        ::Spectator::SpecBuilder.start_group(
           {% if what.is_a?(StringLiteral) %}
             {% if what.starts_with?("#") || what.starts_with?(".") %}
               {{what.id.symbolize}}
@@ -279,7 +279,7 @@ module Spectator::DSL
         {{block.body}}
 
         # End the current group.
-        ::Spectator::DSL::Builder.end_group
+        ::Spectator::SpecBuilder.end_group
       end
     end
 
@@ -543,7 +543,7 @@ module Spectator::DSL
 
         # Start a new example group.
         # Sample groups require additional configuration.
-        ::Spectator::DSL::Builder.start_sample_group(
+        ::Spectator::SpecBuilder.start_sample_group(
           {{collection.stringify}},          # String representation of the collection.
           Sample%sample,                     # Type that can construct the elements.
           ->(s : Sample%sample) { s.%to_a }, # Proc to build the array of elements in the collection.
@@ -555,7 +555,7 @@ module Spectator::DSL
         {{block.body}}
 
         # End the current group.
-        ::Spectator::DSL::Builder.end_group
+        ::Spectator::SpecBuilder.end_group
       end
     end
 
@@ -656,7 +656,7 @@ module Spectator::DSL
 
         # Start a new example group.
         # Sample groups require additional configuration.
-        ::Spectator::DSL::Builder.start_sample_group(
+        ::Spectator::SpecBuilder.start_sample_group(
           {{collection.stringify}}, # String representation of the collection.
           Sample%sample,            # All elements in the collection.
           {{name.stringify}},       # Name for the current element.
@@ -667,7 +667,7 @@ module Spectator::DSL
         {{block.body}}
 
         # End the current group.
-        ::Spectator::DSL::Builder.end_group
+        ::Spectator::SpecBuilder.end_group
       end
     end
 
@@ -990,7 +990,7 @@ module Spectator::DSL
     #
     # See also: `#before_each`, `#after_all`, `#after_each`, and `#around_each`.
     macro before_all(&block)
-      ::Spectator::DSL::Builder.add_before_all_hook {{block}}
+      ::Spectator::SpecBuilder.add_before_all_hook {{block}}
     end
 
     # Creates a hook that will run prior to every example in the group.
@@ -1051,7 +1051,7 @@ module Spectator::DSL
         {{yield}}
       end
 
-      ::Spectator::DSL::Builder.add_before_each_hook do
+      ::Spectator::SpecBuilder.add_before_each_hook do
         # Get the wrapper instance and cast to current group type.
         example = ::Spectator::Internals::Harness.current.example
         instance = example.instance.as({{@type.id}})
@@ -1110,7 +1110,7 @@ module Spectator::DSL
     #
     # See also: `#before_all`, `#before_each`, `#after_each`, and `#around_each`.
     macro after_all(&block)
-      ::Spectator::DSL::Builder.add_after_all_hook {{block}}
+      ::Spectator::SpecBuilder.add_after_all_hook {{block}}
     end
 
     # Creates a hook that will run following every example in the group.
@@ -1170,7 +1170,7 @@ module Spectator::DSL
         {{yield}}
       end
 
-      ::Spectator::DSL::Builder.add_after_each_hook do
+      ::Spectator::SpecBuilder.add_after_each_hook do
         # Get the wrapper instance and cast to current group type.
         example = ::Spectator::Internals::Harness.current.example
         instance = example.instance.as({{@type.id}})
@@ -1266,7 +1266,7 @@ module Spectator::DSL
         {{yield}}
       end
 
-      ::Spectator::DSL::Builder.add_around_each_hook do |proc|
+      ::Spectator::SpecBuilder.add_around_each_hook do |proc|
         # Get the wrapper instance and cast to current group type.
         example = ::Spectator::Internals::Harness.current.example
         instance = example.instance.as({{@type.id}})
@@ -1325,7 +1325,7 @@ module Spectator::DSL
         {{yield}}
       end
 
-      ::Spectator::DSL::Builder.add_pre_condition do
+      ::Spectator::SpecBuilder.add_pre_condition do
         example = ::Spectator::Internals::Harness.current.example
         instance = example.instance.as({{@type.id}})
         instance.%condition
@@ -1384,7 +1384,7 @@ module Spectator::DSL
         {{yield}}
       end
 
-      ::Spectator::DSL::Builder.add_post_condition do
+      ::Spectator::SpecBuilder.add_post_condition do
         example = ::Spectator::Internals::Harness.current.example
         instance = example.instance.as({{@type.id}})
         instance.%condition
@@ -1429,7 +1429,7 @@ module Spectator::DSL
       {% end %}
 
       %source = ::Spectator::Source.new({{_source_file}}, {{_source_line}})
-      ::Spectator::DSL::Builder.add_example({{what.stringify}}, %source, {{@type.name}}) { |test| test.as({{@type.name}}).%run }
+      ::Spectator::SpecBuilder.add_example({{what.stringify}}, %source, {{@type.name}}) { |test| test.as({{@type.name}}).%run }
     end
 
     # Creates an example, or a test case.

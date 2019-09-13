@@ -1,6 +1,6 @@
 require "./example_group_builder"
 
-module Spectator::Builders
+module Spectator::SpecBuilder
   class RootExampleGroupBuilder < ExampleGroupBuilder
     def build
       RootExampleGroup.new.tap do |group|

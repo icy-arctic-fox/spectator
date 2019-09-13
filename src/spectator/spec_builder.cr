@@ -1,14 +1,14 @@
-require "../builders/example_group_stack"
+require "./spec_builder/*"
 
-module Spectator::DSL
+module Spectator
   # Global builder used to create the runtime instance of the spec.
   # The DSL methods call into this module to generate parts of the spec.
   # Once the DSL is done, the `#build` method can be invoked
   # to create the entire spec as a runtime instance.
-  module Builder
+  module SpecBuilder
     extend self
 
-    @@stack = Builders::ExampleGroupStack.new
+    @@stack = ExampleGroupStack.new
 
     # Begins a new nested group in the spec.
     # A corresponding `#end_group` call must be made
@@ -16,7 +16,7 @@ module Spectator::DSL
     # See `NestedExampleGroupBuilder#initialize` for the arguments
     # as arguments to this method are passed directly to it.
     def start_group(*args) : Nil
-      group = Builders::NestedExampleGroupBuilder.new(*args)
+      group = NestedExampleGroupBuilder.new(*args)
       @@stack.push(group)
     end
 
@@ -46,7 +46,7 @@ module Spectator::DSL
       example_type : ::SpectatorTest.class, &runner : ::SpectatorTest ->) : Nil
       builder = ->{ example_type.new.as(::SpectatorTest) }
       wrapper = TestWrapper.new(description, source, builder, runner)
-      factory = Builders::ExampleBuilder.new(wrapper)
+      factory = ExampleBuilder.new(wrapper)
       @@stack.current.add_child(factory)
     end
 

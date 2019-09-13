@@ -1,6 +1,6 @@
 require "./example_group_builder"
 
-module Spectator::Builders
+module Spectator::SpecBuilder
   class NestedExampleGroupBuilder < ExampleGroupBuilder
     def initialize(@what : String | Symbol)
     end

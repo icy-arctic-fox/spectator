@@ -1,6 +1,6 @@
 require "./example_builder"
 
-module Spectator::Builders
+module Spectator::SpecBuilder
   abstract class ExampleGroupBuilder
     alias Child = NestedExampleGroupBuilder | ExampleBuilder
 
