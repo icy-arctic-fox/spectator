@@ -37,7 +37,13 @@ module Spectator::SpecBuilder
     end
 
     private def build_hooks
-      ExampleHooks.empty
+      ExampleHooks.new(
+        @before_all_hooks.to_a,
+        @before_each_hooks.to_a,
+        @after_all_hooks.to_a,
+        @after_each_hooks.to_a,
+        [] of Proc(Nil) ->
+      )
     end
   end
 end

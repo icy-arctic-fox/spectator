@@ -15,8 +15,11 @@ module Spectator
     # Runs all hooks and the example code.
     # A captured result is returned.
     private def capture_result
+      context = group.context
       ResultCapture.new.tap do |result|
+        context.run_before_hooks(test_wrapper)
         run_example(result)
+        context.run_after_hooks(test_wrapper)
       end
     end
 
