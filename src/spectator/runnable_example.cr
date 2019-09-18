@@ -29,7 +29,7 @@ module Spectator
       result.elapsed = Time.measure do
         begin
           test_wrapper.run # Actually run the example code.
-        rescue ex # Catch all errors and handle them later.
+        rescue ex          # Catch all errors and handle them later.
           result.error = ex
         end
       end
