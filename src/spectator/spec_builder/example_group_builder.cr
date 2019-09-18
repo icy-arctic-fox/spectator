@@ -4,7 +4,7 @@ module Spectator::SpecBuilder
   abstract class ExampleGroupBuilder
     alias Child = NestedExampleGroupBuilder | ExampleBuilder
 
-    private getter children = [] of Child
+    private getter children = Deque(Child).new
 
     @before_each_hooks = Deque(TestMethod).new
     @after_each_hooks = Deque(TestMethod).new
