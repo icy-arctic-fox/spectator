@@ -1,3 +1,4 @@
+require "../test_context"
 require "./example_builder"
 
 module Spectator::SpecBuilder
@@ -29,6 +30,10 @@ module Spectator::SpecBuilder
 
     def add_after_all_hook(hook : ->)
       @after_all_hooks << hook
+    end
+
+    private def context
+      TestContext.new(build_hooks)
     end
 
     private def build_hooks

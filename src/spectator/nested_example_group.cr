@@ -18,7 +18,8 @@ module Spectator
     # The parent's children must contain this group,
     # otherwise there may be unexpected behavior.
     # The *hooks* are stored to be triggered later.
-    def initialize(@what, @parent)
+    def initialize(@what, @parent, context)
+      super(context)
     end
 
     # Indicates wheter the group references a type.

@@ -6,7 +6,7 @@ module Spectator::SpecBuilder
     end
 
     def build(group)
-      NestedExampleGroup.new(@what, group).tap do |group|
+      NestedExampleGroup.new(@what, group, context).tap do |group|
         group.children = children.map do |child|
           child.build(group).as(ExampleComponent)
         end

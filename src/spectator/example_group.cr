@@ -33,6 +33,11 @@ module Spectator
       @example_count = children.sum(&.example_count)
     end
 
+    getter context
+
+    def initialize(@context : TestContext)
+    end
+
     # Yields each direct descendant.
     def each
       children.each do |child|
