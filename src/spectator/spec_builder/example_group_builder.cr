@@ -32,10 +32,6 @@ module Spectator::SpecBuilder
       @after_all_hooks << hook
     end
 
-    private def context
-      TestContext.new(build_hooks)
-    end
-
     private def build_hooks
       ExampleHooks.new(
         @before_all_hooks.to_a,
