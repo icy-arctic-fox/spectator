@@ -70,9 +70,9 @@ module Spectator
     end
 
     # Adds a block of code to run before and after each example in the current group.
-    # The block of code will be given another proc as an argument.
-    # It is expected that the block will call the proc.
-    def add_around_each_hook(&block : Proc(Nil) ->) : Nil
+    # The block of code will be given another hook as an argument.
+    # It is expected that the block will call the hook.
+    def add_around_each_hook(&block : ::SpectatorTest, Proc(Nil) ->) : Nil
       @@stack.current.add_around_each_hook(block)
     end
 

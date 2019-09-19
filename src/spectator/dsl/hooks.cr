@@ -29,7 +29,7 @@ module Spectator
         {{block.body}}
       end
 
-      # TODO: Handle wrapping proc and test together.
+      ::Spectator::SpecBuilder.add_around_each_hook { |test, proc| test.as({{@type.id}}).%hook(proc) }
     end
   end
 end

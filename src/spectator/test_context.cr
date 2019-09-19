@@ -42,5 +42,14 @@ module Spectator
       @hooks.run_after_each(wrapper)
       @parent.try &.run_after_each_hooks(wrapper)
     end
+
+    def wrap_around_each_hooks(test, &block : ->)
+      wrapper = @hooks.wrap_around_each(test, block)
+      if (parent = @parent)
+        parent.wrap_around_each_hooks(test, &wrapper)
+      else
+        wrapper
+      end
+    end
   end
 end

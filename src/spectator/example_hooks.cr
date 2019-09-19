@@ -10,7 +10,7 @@ module Spectator
         [] of TestMethod,
         [] of ->,
         [] of TestMethod,
-        [] of Proc(Nil) ->
+        [] of ::SpectatorTest, Proc(Nil) ->
       )
     end
 
@@ -20,7 +20,7 @@ module Spectator
       @before_each : Array(TestMethod),
       @after_all : Array(->),
       @after_each : Array(TestMethod),
-      @around_each : Array(Proc(Nil) ->)
+      @around_each : Array(::SpectatorTest, Proc(Nil) ->)
     )
     end
 
@@ -56,19 +56,18 @@ module Spectator
     # in addition to a block passed to this method.
     # To call the block and all "around-each" hooks,
     # just invoke `Proc#call` on the returned proc.
-    def wrap_around_each(&block : ->) : ->
+    def wrap_around_each(test, block : ->)
       wrapper = block
       # Must wrap in reverse order,
       # otherwise hooks will run in the wrong order.
       @around_each.reverse_each do |hook|
-        wrapper = wrap_proc(hook, wrapper)
+        wrapper = wrap_foo(test, hook, wrapper)
       end
       wrapper
     end
 
-    # Utility method for wrapping one proc with another.
-    private def wrap_proc(inner : Proc(Nil) ->, wrapper : ->)
-      ->{ inner.call(wrapper) }
+    private def wrap_foo(test, hook, wrapper)
+      ->{ hook.call(test, wrapper) }
     end
   end
 end
