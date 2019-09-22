@@ -17,9 +17,9 @@ module Spectator
     private def capture_result
       context = group.context
       ResultCapture.new.tap do |result|
-        context.run_before_hooks(test_wrapper)
+        context.run_before_hooks(self)
         run_example(result)
-        context.run_after_hooks(test_wrapper)
+        context.run_after_hooks(self)
       end
     end
 

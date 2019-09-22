@@ -12,7 +12,7 @@ module Spectator
     getter group : ExampleGroup
 
     # Retrieves the internal wrapped instance.
-    private getter test_wrapper : TestWrapper
+    protected getter test_wrapper : TestWrapper
 
     # Source where the example originated from.
     def source

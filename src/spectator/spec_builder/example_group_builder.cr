@@ -7,8 +7,8 @@ module Spectator::SpecBuilder
 
     private getter children = Deque(Child).new
 
-    @before_each_hooks = Deque(TestMethod).new
-    @after_each_hooks = Deque(TestMethod).new
+    @before_each_hooks = Deque(TestMetaMethod).new
+    @after_each_hooks = Deque(TestMetaMethod).new
     @before_all_hooks = Deque(->).new
     @after_all_hooks = Deque(->).new
     @around_each_hooks = Deque(::SpectatorTest, Proc(Nil) ->).new
@@ -17,11 +17,11 @@ module Spectator::SpecBuilder
       @children << child
     end
 
-    def add_before_each_hook(hook : TestMethod)
+    def add_before_each_hook(hook : TestMetaMethod)
       @before_each_hooks << hook
     end
 
-    def add_after_each_hook(hook : TestMethod)
+    def add_after_each_hook(hook : TestMetaMethod)
       @after_each_hooks << hook
     end
 

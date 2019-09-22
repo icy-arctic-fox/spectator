@@ -25,6 +25,10 @@ module Spectator
       method.call(@test)
     end
 
+    def call(method, *args) : Nil
+      method.call(@test, *args)
+    end
+
     def around_hook(context : TestContext)
       context.wrap_around_each_hooks(@test) { run }
     end

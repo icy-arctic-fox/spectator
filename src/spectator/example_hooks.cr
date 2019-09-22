@@ -1,4 +1,6 @@
 module Spectator
+  alias TestMetaMethod = ::SpectatorTest, Example ->
+
   # Collection of hooks that run at various times throughout testing.
   # A hook is just a `Proc` (code block) that runs at a specified time.
   class ExampleHooks
@@ -7,9 +9,9 @@ module Spectator
     def self.empty
       new(
         [] of ->,
-        [] of TestMethod,
+        [] of TestMetaMethod,
         [] of ->,
-        [] of TestMethod,
+        [] of TestMetaMethod,
         [] of ::SpectatorTest, Proc(Nil) ->
       )
     end
@@ -17,9 +19,9 @@ module Spectator
     # Creates a new set of hooks.
     def initialize(
       @before_all : Array(->),
-      @before_each : Array(TestMethod),
+      @before_each : Array(TestMetaMethod),
       @after_all : Array(->),
-      @after_each : Array(TestMethod),
+      @after_each : Array(TestMetaMethod),
       @around_each : Array(::SpectatorTest, Proc(Nil) ->)
     )
     end
@@ -32,9 +34,9 @@ module Spectator
 
     # Runs all "before-each" hooks.
     # These hooks should be run every time before each example in a group.
-    def run_before_each(wrapper : TestWrapper)
+    def run_before_each(wrapper : TestWrapper, example : Example)
       @before_each.each do |hook|
-        wrapper.call(hook)
+        wrapper.call(hook, example)
       end
     end
 
@@ -46,9 +48,9 @@ module Spectator
 
     # Runs all "after-all" hooks.
     # These hooks should be run every time after each example in a group.
-    def run_after_each(wrapper : TestWrapper)
+    def run_after_each(wrapper : TestWrapper, example : Example)
       @after_each.each do |hook|
-        wrapper.call(hook)
+        wrapper.call(hook, example)
       end
     end
 

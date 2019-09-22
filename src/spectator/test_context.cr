@@ -5,9 +5,9 @@ module Spectator
       @after_all_hooks_run = false
     end
 
-    def run_before_hooks(wrapper : TestWrapper)
+    def run_before_hooks(example : Example)
       run_before_all_hooks
-      run_before_each_hooks(wrapper)
+      run_before_each_hooks(example)
     end
 
     protected def run_before_all_hooks
@@ -19,13 +19,13 @@ module Spectator
       @before_all_hooks_run = true
     end
 
-    protected def run_before_each_hooks(wrapper : TestWrapper)
-      @parent.try &.run_before_each_hooks(wrapper)
-      @hooks.run_before_each(wrapper)
+    protected def run_before_each_hooks(example : Example)
+      @parent.try &.run_before_each_hooks(example)
+      @hooks.run_before_each(example.test_wrapper, example)
     end
 
-    def run_after_hooks(wrapper : TestWrapper)
-      run_after_each_hooks(wrapper)
+    def run_after_hooks(example : Example)
+      run_after_each_hooks(example)
       run_after_all_hooks
     end
 
@@ -38,9 +38,9 @@ module Spectator
       @after_all_hooks_run = true
     end
 
-    protected def run_after_each_hooks(wrapper : TestWrapper)
-      @hooks.run_after_each(wrapper)
-      @parent.try &.run_after_each_hooks(wrapper)
+    protected def run_after_each_hooks(example : Example)
+      @hooks.run_after_each(example.test_wrapper, example)
+      @parent.try &.run_after_each_hooks(example)
     end
 
     def wrap_around_each_hooks(test, &block : ->)

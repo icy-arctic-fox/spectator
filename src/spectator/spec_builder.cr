@@ -55,7 +55,7 @@ module Spectator
     end
 
     # Adds a block of code to run before each example in the current group.
-    def add_before_each_hook(&block : TestMethod) : Nil
+    def add_before_each_hook(&block : TestMetaMethod) : Nil
       @@stack.current.add_before_each_hook(block)
     end
 
@@ -65,7 +65,7 @@ module Spectator
     end
 
     # Adds a block of code to run after each example in the current group.
-    def add_after_each_hook(&block : TestMethod) : Nil
+    def add_after_each_hook(&block : TestMetaMethod) : Nil
       @@stack.current.add_after_each_hook(block)
     end
 
