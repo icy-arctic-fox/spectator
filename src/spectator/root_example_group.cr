@@ -5,12 +5,12 @@ module Spectator
   # The root has no parent.
   class RootExampleGroup < ExampleGroup
     # Dummy value - this should never be used.
-    def what
+    def what : Symbol | String
       "ROOT"
     end
 
     # Indicates that the group is symbolic.
-    def symbolic?
+    def symbolic? : Bool
       true
     end
 

@@ -6,7 +6,7 @@ module Spectator
     end
 
     # Checks whether the example satisfies the filter.
-    def includes?(example)
+    def includes?(example) : Bool
       @line == example.source.line
     end
   end
