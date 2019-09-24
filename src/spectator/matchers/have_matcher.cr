@@ -8,12 +8,12 @@ module Spectator::Matchers
     # Short text about the matcher's purpose.
     # This explains what condition satisfies the matcher.
     # The description is used when the one-liner syntax is used.
-    def description
+    def description : String
       "includes #{expected.label}"
     end
 
     # Checks whether the matcher is satisifed with the expression given to it.
-    private def match?(actual : TestExpression(T)) forall T
+    private def match?(actual : TestExpression(T)) : Bool forall T
       if (value = actual.value).is_a?(String)
         match_string?(value)
       else
@@ -46,7 +46,7 @@ module Spectator::Matchers
     #
     # The message should typically only contain the test expression labels.
     # Actual values should be returned by `#values`.
-    private def failure_message(actual)
+    private def failure_message(actual) : String
       "#{actual.label} does not include #{expected.label}"
     end
 
@@ -57,7 +57,7 @@ module Spectator::Matchers
     #
     # The message should typically only contain the test expression labels.
     # Actual values should be returned by `#values`.
-    private def failure_message_when_negated(actual)
+    private def failure_message_when_negated(actual) : String
       "#{actual.label} includes #{expected.label}"
     end
 

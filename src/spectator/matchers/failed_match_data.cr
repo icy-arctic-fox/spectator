@@ -4,7 +4,7 @@ module Spectator::Matchers
   # Information about a failed match.
   struct FailedMatchData < MatchData
     # Indicates that the match failed.
-    def matched?
+    def matched? : Bool
       false
     end
 

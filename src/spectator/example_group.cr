@@ -18,6 +18,7 @@ module Spectator
     # Creates the example group.
     # The hooks are stored to be triggered later.
     def initialize(@hooks : ExampleHooks, @conditions : ExampleConditions)
+      @example_count = 0
       @before_all_hooks_run = false
       @after_all_hooks_run = false
     end
@@ -53,7 +54,9 @@ module Spectator
     end
 
     # Number of examples in this group and all sub-groups.
-    getter example_count = 0
+    def example_count : Int
+      @example_count
+    end
 
     # Retrieves an example by its index.
     # This recursively searches for an example.
@@ -118,7 +121,7 @@ module Spectator
     end
 
     # Checks whether all examples in the group have been run.
-    def finished?
+    def finished? : Bool
       children.all?(&.finished?)
     end
 
