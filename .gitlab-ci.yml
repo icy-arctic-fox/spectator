@@ -18,6 +18,13 @@ spec:
   - bin/ameba
   - crystal tool format --check
 
+nightly:
+  image: "crystallang/crystal:nightly"
+  allow_failure: true
+  script:
+  - crystal spec
+  - crystal tool format --check
+
 pages:
   stage: deploy
   dependencies:
