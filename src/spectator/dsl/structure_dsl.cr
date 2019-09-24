@@ -1457,7 +1457,7 @@ module Spectator::DSL
       # Create a class derived from `RunnableExample` to run the test code.
       _spectator_example(Example%example, Test%example, ::Spectator::RunnableExample, {{what}}) do
         # Source where the example originated from.
-        def source
+        def source : ::Spectator::Source
           ::Spectator::Source.new({{_source_file}}, {{_source_line}})
         end
 
@@ -1534,7 +1534,7 @@ module Spectator::DSL
       # Create a class derived from `PendingExample` to skip the test code.
       _spectator_example(Example%example, Test%example, ::Spectator::PendingExample, {{what}}) do
         # Source where the example originated from.
-        def source
+        def source : ::Spectator::Source
           ::Spectator::Source.new({{_source_file}}, {{_source_line}})
         end
       end
@@ -1650,7 +1650,7 @@ module Spectator::DSL
         getter instance
 
         # Indicates whether the example references a method.
-        def symbolic?
+        def symbolic? : Bool
           {{what.is_a?(StringLiteral) && what.starts_with?('#') ? true : false}}
         end
 
@@ -1658,7 +1658,7 @@ module Spectator::DSL
         {{block.body}}
 
         # Description for the test.
-        def what
+        def what : String | Symbol
           {{what.is_a?(StringLiteral) ? what : what.stringify}}
         end
       end
