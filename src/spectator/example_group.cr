@@ -15,6 +15,8 @@ module Spectator
     include Enumerable(ExampleComponent)
     include Iterable(ExampleComponent)
 
+    @example_count = 0
+
     # Retrieves the children in the group.
     # This only returns the direct descends (non-recursive).
     # The children must be set (with `#children=`) prior to calling this method.
@@ -51,7 +53,9 @@ module Spectator
     end
 
     # Number of examples in this group and all sub-groups.
-    getter example_count = 0
+    def example_count : Int
+      @example_count
+    end
 
     # Retrieves an example by its index.
     # This recursively searches for an example.
@@ -116,7 +120,7 @@ module Spectator
     end
 
     # Checks whether all examples in the group have been run.
-    def finished?
+    def finished? : Bool
       children.all?(&.finished?)
     end
   end

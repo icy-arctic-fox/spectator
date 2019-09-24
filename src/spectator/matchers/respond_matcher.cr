@@ -9,7 +9,7 @@ module Spectator::Matchers
     # Short text about the matcher's purpose.
     # This explains what condition satisfies the matcher.
     # The description is used when the one-liner syntax is used.
-    def description
+    def description : String
       "responds to #{label}"
     end
 

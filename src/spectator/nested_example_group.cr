@@ -23,7 +23,7 @@ module Spectator
     end
 
     # Indicates wheter the group references a type.
-    def symbolic?
+    def symbolic? : Bool
       @what.is_a?(Symbol)
     end
 

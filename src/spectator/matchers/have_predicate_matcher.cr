@@ -17,7 +17,7 @@ module Spectator::Matchers
     # Short text about the matcher's purpose.
     # This explains what condition satisfies the matcher.
     # The description is used when the one-liner syntax is used.
-    def description
+    def description : String
       "has #{expected.label}"
     end
 
@@ -48,7 +48,7 @@ module Spectator::Matchers
     #
     # The message should typically only contain the test expression labels.
     # Actual values should be returned by `#values`.
-    private def failure_message(actual)
+    private def failure_message(actual) : String
       "#{actual.label} does not have #{expected.label}"
     end
 
@@ -59,7 +59,7 @@ module Spectator::Matchers
     #
     # The message should typically only contain the test expression labels.
     # Actual values should be returned by `#values`.
-    private def failure_message_when_negated(actual)
+    private def failure_message_when_negated(actual) : String
       "#{actual.label} has #{expected.label}"
     end
 
@@ -76,7 +76,7 @@ module Spectator::Matchers
     end
 
     # Checks if all predicate methods from the snapshot of them are satisified.
-    private def match?(snapshot)
+    private def match?(snapshot) : Bool
       # Test each predicate and immediately return false if one is false.
       {% for attribute in ExpectedType.keys %}
       return false unless snapshot[{{attribute.symbolize}}]

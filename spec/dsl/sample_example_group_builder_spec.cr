@@ -291,7 +291,7 @@ describe Spectator::DSL::SampleExampleGroupBuilder do
       factory = Spectator::DSL::ExampleFactory.new(SpyExample)
       symbol = :test
       count = 3
-      expected = Array.new(SAMPLE_VALUES_COLLECTION.size * count) { |i| SAMPLE_VALUES_COLLECTION[i / count] }
+      expected = Array.new(SAMPLE_VALUES_COLLECTION.size * count) { |i| SAMPLE_VALUES_COLLECTION[i // count] }
       create_proc = ->(s : SampleValueCollection) { s.create }
       builder = Spectator::DSL::SampleExampleGroupBuilder.new("foobar", SampleValueCollection, create_proc, "value", symbol)
       count.times { builder.add_child(factory) }

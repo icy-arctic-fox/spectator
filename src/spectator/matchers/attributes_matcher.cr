@@ -20,7 +20,7 @@ module Spectator::Matchers
     # Short text about the matcher's purpose.
     # This explains what condition satisfies the matcher.
     # The description is used when the one-liner syntax is used.
-    def description
+    def description : String
       "has attributes #{expected.label}"
     end
 
@@ -39,7 +39,7 @@ module Spectator::Matchers
     def negated_match(actual : TestExpression(T)) : MatchData forall T
       snapshot = snapshot_values(actual.value)
       if match?(snapshot)
-        FailedMatchData.new("#{actual.label} has attributes #{expected.label}", **values(snapshot))
+        FailedMatchData.new("#{actual.label} has attributes #{expected.label}", **negated_values(snapshot))
       else
         SuccessfulMatchData.new
       end
@@ -74,6 +74,18 @@ module Spectator::Matchers
       {
         {% for attribute in ExpectedType.keys %}
         {{"expected " + attribute.stringify}}: expected.value[{{attribute.symbolize}}].inspect,
+        {{"actual " + attribute.stringify}}:   snapshot[{{attribute.symbolize}}].inspect,
+        {% end %}
+      }
+      {% end %}
+    end
+
+    # Produces the tuple for the failed negated match data from a snapshot of the attributes.
+    private def negated_values(snapshot)
+      {% begin %}
+      {
+        {% for attribute in ExpectedType.keys %}
+        {{"expected " + attribute.stringify}}: "Not #{expected.value[{{attribute.symbolize}}].inspect}",
         {{"actual " + attribute.stringify}}:   snapshot[{{attribute.symbolize}}].inspect,
         {% end %}
       }

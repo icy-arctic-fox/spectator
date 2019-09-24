@@ -1,15 +1,15 @@
 require "./spec_helper"
 
 class ConcretePendingExample < Spectator::PendingExample
-  def what
+  def what : Symbol | String
     "PENDING_TEST_EXAMPLE"
   end
 
-  def source
+  def source : ::Spectator::Source
     ::Spectator::Source.new(__FILE__, __LINE__)
   end
 
-  def symbolic?
+  def symbolic? : Bool
     false
   end
 
