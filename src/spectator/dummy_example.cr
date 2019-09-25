@@ -10,17 +10,17 @@ module Spectator
   # This class shouldn't be used, it's just to trick the compiler.
   private class DummyExample < RunnableExample
     # Dummy description.
-    def what
+    def what : Symbol | String
       "DUMMY"
     end
 
     # Dummy symbolic flag.
-    def symbolic?
+    def symbolic? : Bool
       false
     end
 
     # Dummy source.
-    def source
+    def source : Source
       Source.new(__FILE__, __LINE__)
     end
 

@@ -7,12 +7,12 @@ module Spectator::Matchers
     # Short text about the matcher's purpose.
     # This explains what condition satisfies the matcher.
     # The description is used when the one-liner syntax is used.
-    def description
+    def description : String
       "is empty"
     end
 
     # Checks whether the matcher is satisifed with the expression given to it.
-    private def match?(actual : TestExpression(T)) forall T
+    private def match?(actual : TestExpression(T)) : Bool forall T
       actual.value.empty?
     end
 
@@ -22,7 +22,7 @@ module Spectator::Matchers
     #
     # The message should typically only contain the test expression labels.
     # Actual values should be returned by `#values`.
-    private def failure_message(actual)
+    private def failure_message(actual) : String
       "#{actual.label} is not empty"
     end
 
@@ -33,7 +33,7 @@ module Spectator::Matchers
     #
     # The message should typically only contain the test expression labels.
     # Actual values should be returned by `#values`.
-    private def failure_message_when_negated(actual)
+    private def failure_message_when_negated(actual) : String
       "#{actual.label} is empty"
     end
   end

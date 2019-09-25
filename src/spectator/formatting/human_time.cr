@@ -25,15 +25,15 @@ module Spectator::Formatting
       return "#{seconds.round(2)} seconds" if seconds < 60
 
       int_seconds = seconds.to_i
-      minutes = int_seconds / 60
+      minutes = int_seconds // 60
       int_seconds %= 60
       return sprintf("%i:%02i", minutes, int_seconds) if minutes < 60
 
-      hours = minutes / 60
+      hours = minutes // 60
       minutes %= 60
       return sprintf("%i:%02i:%02i", hours, minutes, int_seconds) if hours < 24
 
-      days = hours / 24
+      days = hours // 24
       hours %= 24
       sprintf("%i days %i:%02i:%02i", days, hours, minutes, int_seconds)
     end
