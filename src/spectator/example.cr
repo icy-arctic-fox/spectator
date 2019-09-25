@@ -19,15 +19,15 @@ module Spectator
     protected getter test_wrapper : TestWrapper
 
     # Source where the example originated from.
-    def source
+    def source : Source
       @test_wrapper.source
     end
 
-    def what
+    def what : String | Symbol
       @test_wrapper.description
     end
 
-    def symbolic?
+    def symbolic? : Bool
       description = @test_wrapper.description
       description.starts_with?('#') || description.starts_with?('.')
     end
