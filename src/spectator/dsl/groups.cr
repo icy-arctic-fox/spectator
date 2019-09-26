@@ -25,5 +25,26 @@ module Spectator
     macro describe(what, &block)
       context({{what}}) {{block}}
     end
+
+    macro sample(what, &block)
+      {% block_arg = block.args.empty? ? :value.id : block.args.first.id %}
+      class Sample%sample < {{@type.id}}
+        def %collection
+          {{what}}
+        end
+      end
+
+      class Context%sample < {{@type.id}}
+        ::Spectator::SpecBuilder.start_sample_group({{what.stringify}})
+
+        def {{block_arg}}
+          1
+        end
+
+        {{block.body}}
+
+        ::Spectator::SpecBuilder.end_group
+      end
+    end
   end
 end
