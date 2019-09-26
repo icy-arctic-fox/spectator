@@ -5,4 +5,7 @@ require "./spectator/dsl"
 # so that the namespace isn't leaked into tests unexpectedly.
 class SpectatorTest
   include ::Spectator::DSL
+
+  def initialize(@spectator_test_values : ::Spectator::TestValues)
+  end
 end

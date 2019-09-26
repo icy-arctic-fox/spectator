@@ -1,3 +1,4 @@
+require "./typed_value_wrapper"
 require "./value_wrapper"
 
 module Spectator

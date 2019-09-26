@@ -44,7 +44,7 @@ module Spectator
     # The example will be instantiated later.
     def add_example(description : String, source : Source,
                     example_type : ::SpectatorTest.class, &runner : ::SpectatorTest ->) : Nil
-      builder = ->{ example_type.new.as(::SpectatorTest) }
+      builder = ->(values : TestValues) { example_type.new(values).as(::SpectatorTest) }
       factory = ExampleBuilder.new(description, source, builder, runner)
       @@stack.current.add_child(factory)
     end

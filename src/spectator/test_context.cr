@@ -1,6 +1,11 @@
+require "./example_hooks"
+require "./test_values"
+
 module Spectator
   class TestContext
-    def initialize(@parent : TestContext?, @hooks : ExampleHooks)
+    getter values
+
+    def initialize(@parent : TestContext?, @hooks : ExampleHooks, @values : TestValues)
       @before_all_hooks_run = false
       @after_all_hooks_run = false
     end
