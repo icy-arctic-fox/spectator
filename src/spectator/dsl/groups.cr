@@ -92,5 +92,40 @@ module Spectator
         ::Spectator::SpecBuilder.end_group
       end
     end
+
+    macro given(*assignments, &block)
+      context({{assignments.splat.stringify}}) do
+        {% for assignment in assignments %}
+          let({{assignment.target}}) { {{assignment.value}} }
+        {% end %}
+
+        {%
+          # Trick to get the contents of the block as an array of nodes.
+          # If there are multiple expressions/statements in the block,
+          # then the body will be a `Expressions` type.
+          # If there's only one expression, then the body is just that.
+          body = if block.is_a?(Nop)
+                   raise "Missing block for 'given'"
+                 elsif block.body.is_a?(Expressions)
+                   # Get the expressions, which is already an array.
+                   block.body.expressions
+                 else
+                   # Wrap the expression in an array.
+                   [block.body]
+                 end
+        %}
+
+        {% for item in body %}
+          # If the item starts with "it", then leave it as-is.
+          # Otherwise, prefix it with "it"
+          # and treat it as the one-liner "it" syntax.
+          {% if item.is_a?(Call) && item.name == :it.id %}
+            {{item}}
+          {% else %}
+            it {{item}}
+          {% end %}
+        {% end %}
+      end
+    end
   end
 end
