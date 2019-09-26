@@ -5,8 +5,8 @@ module Spectator
   # The root has no parent.
   class RootExampleGroup < ExampleGroup
     # Dummy value - this should never be used.
-    def what : Symbol | String
-      "ROOT"
+    def description : Symbol | String
+      :root
     end
 
     def source : Source

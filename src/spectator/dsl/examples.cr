@@ -3,14 +3,14 @@ require "../spec_builder"
 
 module Spectator
   module DSL
-    macro it(what, _source_file = __FILE__, _source_line = __LINE__, &block)
+    macro it(description, _source_file = __FILE__, _source_line = __LINE__, &block)
       {% if block.is_a?(Nop) %}
-        {% if what.is_a?(Call) %}
+        {% if description.is_a?(Call) %}
           def %run
-            {{what}}
+            {{description}}
           end
         {% else %}
-          {% raise "Unrecognized syntax: `it #{what}` at #{_source_file}:#{_source_line}" %}
+          {% raise "Unrecognized syntax: `it #{description}` at #{_source_file}:#{_source_line}" %}
         {% end %}
       {% else %}
         def %run
@@ -20,7 +20,7 @@ module Spectator
 
       %source = ::Spectator::Source.new({{_source_file}}, {{_source_line}})
       ::Spectator::SpecBuilder.add_example(
-        {{what.is_a?(StringLiteral) ? what : what.stringify}},
+        {{description.is_a?(StringLiteral) ? description : description.stringify}},
         %source,
         {{@type.name}}
       ) { |test| test.as({{@type.name}}).%run }

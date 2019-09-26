@@ -23,7 +23,7 @@ module Spectator
       @test_wrapper.source
     end
 
-    def what : String | Symbol
+    def description : String | Symbol
       @test_wrapper.description
     end
 
@@ -66,7 +66,7 @@ module Spectator
     def to_s(io)
       @group.to_s(io)
       io << ' ' unless symbolic? && @group.symbolic?
-      io << what
+      io << description
     end
 
     # Creates the JSON representation of the example,
