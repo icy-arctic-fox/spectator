@@ -2,19 +2,22 @@ require "../spec_builder"
 
 module Spectator
   module DSL
-    macro context(what, &block)
+    macro context(what, _source_file = __FILE__, _source_line = __LINE__, &block)
       class Context%context < {{@type.id}}
-        ::Spectator::SpecBuilder.start_group(
-          {% if what.is_a?(StringLiteral) %}
-            {% if what.starts_with?("#") || what.starts_with?(".") %}
-              {{what.id.symbolize}}
-            {% else %}
-              {{what}}
-            {% end %}
-          {% else %}
-            {{what.symbolize}}
-          {% end %}
-        )
+        {%
+          description = if what.is_a?(StringLiteral)
+                          if what.starts_with?("#") || what.starts_with?(".")
+                            what.id.symbolize
+                          else
+                            what
+                          end
+                        else
+                          what.symbolize
+                        end
+        %}
+
+        %source = ::Spectator::Source.new({{_source_file}}, {{_source_line}})
+        ::Spectator::SpecBuilder.start_group({{description}}, %source)
 
         {% if what.is_a?(Path) || what.is_a?(Generic) %}
           macro described_class
@@ -36,7 +39,7 @@ module Spectator
       context({{what}}) {{block}}
     end
 
-    macro sample(collection, count = nil, &block)
+    macro sample(collection, count = nil, _source_file = __FILE__, _source_line = __LINE__, &block)
       {% name = block.args.empty? ? :value.id : block.args.first.id %}
 
       def %collection
@@ -52,7 +55,8 @@ module Spectator
       end
 
       class Context%sample < {{@type.id}}
-        ::Spectator::SpecBuilder.start_sample_group({{collection.stringify}}, :%sample, {{name.stringify}}) do |values|
+        %source = ::Spectator::Source.new({{_source_file}}, {{_source_line}})
+        ::Spectator::SpecBuilder.start_sample_group({{collection.stringify}}, %source, :%sample, {{name.stringify}}) do |values|
           sample = {{@type.id}}.new(values)
           sample.%to_a
         end
@@ -67,7 +71,7 @@ module Spectator
       end
     end
 
-    macro random_sample(collection, count = nil, &block)
+    macro random_sample(collection, count = nil, _source_file = __FILE__, _source_line = __LINE__, &block)
       {% name = block.args.empty? ? :value.id : block.args.first.id %}
 
       def %collection
@@ -83,7 +87,8 @@ module Spectator
       end
 
       class Context%sample < {{@type.id}}
-        ::Spectator::SpecBuilder.start_sample_group({{collection.stringify}}, :%sample, {{name.stringify}}) do |values|
+        %source = ::Spectator::Source.new({{_source_file}}, {{_source_line}})
+        ::Spectator::SpecBuilder.start_sample_group({{collection.stringify}}, %source, :%sample, {{name.stringify}}) do |values|
           sample = {{@type.id}}.new(values)
           collection = sample.%to_a
           {% if count %}

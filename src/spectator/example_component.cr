@@ -6,6 +6,8 @@ module Spectator
     # TODO: Rename to description.
     abstract def what : Symbol | String
 
+    abstract def source : Source
+
     # Indicates whether the example (or group) has been completely run.
     abstract def finished? : Bool
 

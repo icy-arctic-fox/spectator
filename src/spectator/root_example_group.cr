@@ -9,6 +9,10 @@ module Spectator
       "ROOT"
     end
 
+    def source : Source
+      Source.new(__FILE__, __LINE__)
+    end
+
     # Indicates that the group is symbolic.
     def symbolic? : Bool
       true

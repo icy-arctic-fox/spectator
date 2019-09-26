@@ -8,6 +8,8 @@ module Spectator
     # This is a symbol when referencing a type.
     getter what : Symbol | String
 
+    getter source : Source
+
     # Group that this is nested in.
     getter parent : ExampleGroup
 
@@ -18,7 +20,7 @@ module Spectator
     # The parent's children must contain this group,
     # otherwise there may be unexpected behavior.
     # The *hooks* are stored to be triggered later.
-    def initialize(@what, @parent, context)
+    def initialize(@what, @source, @parent, context)
       super(context)
     end
 

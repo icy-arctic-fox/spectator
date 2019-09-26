@@ -3,12 +3,12 @@ require "./example_group_builder"
 
 module Spectator::SpecBuilder
   class NestedExampleGroupBuilder < ExampleGroupBuilder
-    def initialize(@what : String | Symbol)
+    def initialize(@what : String | Symbol, @source : Source)
     end
 
     def build(parent_group)
       context = TestContext.new(parent_group.context, build_hooks, parent_group.context.values)
-      NestedExampleGroup.new(@what, parent_group, context).tap do |group|
+      NestedExampleGroup.new(@what, @source, parent_group, context).tap do |group|
         group.children = children.map do |child|
           child.build(group).as(ExampleComponent)
         end
