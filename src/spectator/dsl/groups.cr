@@ -26,22 +26,25 @@ module Spectator
       context({{what}}) {{block}}
     end
 
-    macro sample(what, &block)
+    macro sample(collection, &block)
       {% block_arg = block.args.empty? ? :value.id : block.args.first.id %}
-      class Sample%sample < {{@type.id}}
-        def %collection
-          {{what}}
-        end
+
+      def %collection
+        {{collection}}
+      end
+
+      def %to_a
+        %collection.to_a
       end
 
       class Context%sample < {{@type.id}}
-        ::Spectator::SpecBuilder.start_sample_group({{what.stringify}}, :%sample) do |values|
-          sample = Sample%sample.new(values)
-          sample.%collection.to_a
+        ::Spectator::SpecBuilder.start_sample_group({{collection.stringify}}, :%sample) do |values|
+          sample = {{@type.id}}.new(values)
+          sample.%to_a
         end
 
         def {{block_arg}}
-          1
+          @spectator_test_values.get_value(:%sample, typeof(%to_a.first))
         end
 
         {{block.body}}
