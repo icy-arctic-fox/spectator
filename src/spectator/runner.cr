@@ -1,3 +1,5 @@
+require "./internals/harness"
+
 module Spectator
   # Main driver for executing tests and feeding results to formatters.
   class Runner

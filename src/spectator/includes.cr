@@ -11,7 +11,6 @@
 require "openssl"
 
 # First the sub-modules.
-require "./internals"
 require "./dsl"
 require "./expectations"
 require "./matchers"
