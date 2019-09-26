@@ -1,10 +1,10 @@
 require "./value_wrapper"
 
-module Spectator::Internals
+module Spectator
   # Collection of test values supplied to examples.
   # Each value is labeled by a symbol that the example knows.
   # The values also come with a name that can be given to humans.
-  struct SampleValues
+  struct TestValues
     # Creates an empty set of sample values.
     def self.empty
       new({} of Symbol => Entry)
@@ -17,9 +17,9 @@ module Spectator::Internals
     # Adds a new value by duplicating the current set and adding to it.
     # The new sample values with the additional value is returned.
     # The original set of sample values is not modified.
-    def add(id : Symbol, name : String, value : T) : SampleValues forall T
+    def add(id : Symbol, name : String, value : T) : TestValues forall T
       wrapper = TypedValueWrapper(T).new(value)
-      SampleValues.new(@values.merge({
+      TestValues.new(@values.merge({
         id => Entry.new(name, wrapper),
       }))
     end
@@ -58,7 +58,6 @@ module Spectator::Internals
     end
 
     # This must be after `Entry` is defined.
-    # Could be a Cyrstal compiler bug?
     include Enumerable(Entry)
   end
 end

@@ -1,6 +1,6 @@
 require "./value_wrapper"
 
-module Spectator::Internals
+module Spectator
   # Implementation of a value wrapper for a specific type.
   # Instances of this class should be created to wrap values.
   # Then the wrapper should be stored as a `ValueWrapper`
