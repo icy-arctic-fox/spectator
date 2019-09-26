@@ -27,7 +27,7 @@ module Spectator
     end
 
     macro sample(collection, &block)
-      {% block_arg = block.args.empty? ? :value.id : block.args.first.id %}
+      {% name = block.args.empty? ? :value.id : block.args.first.id %}
 
       def %collection
         {{collection}}
@@ -38,12 +38,12 @@ module Spectator
       end
 
       class Context%sample < {{@type.id}}
-        ::Spectator::SpecBuilder.start_sample_group({{collection.stringify}}, :%sample, {{block_arg.stringify}}) do |values|
+        ::Spectator::SpecBuilder.start_sample_group({{collection.stringify}}, :%sample, {{name.stringify}}) do |values|
           sample = {{@type.id}}.new(values)
           sample.%to_a
         end
 
-        def {{block_arg}}
+        def {{name}}
           @spectator_test_values.get_value(:%sample, typeof(%to_a.first))
         end
 
