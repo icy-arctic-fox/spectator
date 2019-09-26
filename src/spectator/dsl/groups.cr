@@ -35,7 +35,10 @@ module Spectator
       end
 
       class Context%sample < {{@type.id}}
-        ::Spectator::SpecBuilder.start_sample_group({{what.stringify}})
+        ::Spectator::SpecBuilder.start_sample_group({{what.stringify}}, :%sample) do |values|
+          sample = Sample%sample.new(values)
+          sample.%collection.to_a
+        end
 
         def {{block_arg}}
           1

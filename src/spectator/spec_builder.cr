@@ -26,8 +26,8 @@ module Spectator
     # when the group being started is finished.
     # See `SampleExampleGroupBuilder#initialize` for the arguments
     # as arguments to this method are passed directly to it.
-    def start_sample_group(*args) : Nil
-      group = SampleExampleGroupBuilder.new(*args)
+    def start_sample_group(*args, &block : TestValues -> Array(T)) : Nil forall T
+      group = SampleExampleGroupBuilder(T).new(*args, block)
       @@stack.push(group)
     end
 
