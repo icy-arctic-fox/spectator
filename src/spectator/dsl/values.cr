@@ -5,14 +5,14 @@ module Spectator
         {{block.body}}
       end
 
-      @%wrapper : ::Spectator::Internals::ValueWrapper?
+      @%wrapper : ::Spectator::ValueWrapper?
 
       def {{name.id}}
         if (wrapper = @%wrapper)
-          wrapper.as(::Spectator::Internals::TypedValueWrapper(typeof(%value))).value
+          wrapper.as(::Spectator::TypedValueWrapper(typeof(%value))).value
         else
           %value.tap do |value|
-            @%wrapper = ::Spectator::Internals::TypedValueWrapper.new(value)
+            @%wrapper = ::Spectator::TypedValueWrapper.new(value)
           end
         end
       end
