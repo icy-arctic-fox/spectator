@@ -26,7 +26,7 @@ module Spectator
       context({{what}}) {{block}}
     end
 
-    macro sample(collection, &block)
+    macro sample(collection, count = nil, &block)
       {% name = block.args.empty? ? :value.id : block.args.first.id %}
 
       def %collection
@@ -34,7 +34,11 @@ module Spectator
       end
 
       def %to_a
-        %collection.to_a
+        {% if count %}
+          %collection.first({{count}})
+        {% else %}
+          %collection.to_a
+        {% end %}
       end
 
       class Context%sample < {{@type.id}}
