@@ -8,7 +8,7 @@ module Spectator
     # and translates to a usable result.
     def run_impl : Result
       result = capture_result
-      expectations = Internals::Harness.current.expectations
+      expectations = Harness.current.expectations
       translate_result(result, expectations)
     end
 

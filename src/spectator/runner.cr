@@ -1,4 +1,4 @@
-require "./internals/harness"
+require "./harness"
 
 module Spectator
   # Main driver for executing tests and feeding results to formatters.
@@ -59,7 +59,7 @@ module Spectator
       result = if @config.dry_run? && example.is_a?(RunnableExample)
                  dry_run_result(example)
                else
-                 Internals::Harness.run(example)
+                 Harness.run(example)
                end
       @config.each_formatter(&.end_example(result))
       result

@@ -1,4 +1,4 @@
-module Spectator::Internals
+module Spectator
   # Helper class that acts as a gateway between example code and the test framework.
   # Every example must be invoked by passing it to `#run`.
   # This sets up the harness so that the example code can use it.
@@ -9,7 +9,7 @@ module Spectator::Internals
   # ```
   # Then from the example code, the harness can be accessed via `#current` like so:
   # ```
-  # harness = ::Spectator::Internals::Harness.current
+  # harness = ::Spectator::Harness.current
   # # Do something with the harness.
   # ```
   # Of course, the end-user shouldn't see this or work directly with the harness.
