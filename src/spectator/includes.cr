@@ -23,7 +23,6 @@ require "./example_component"
 require "./example"
 require "./runnable_example"
 require "./pending_example"
-require "./dummy_example"
 
 require "./example_conditions"
 require "./example_hooks"
