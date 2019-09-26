@@ -20,7 +20,7 @@ module Spectator
 
       %source = ::Spectator::Source.new({{_source_file}}, {{_source_line}})
       ::Spectator::SpecBuilder.add_example(
-        {{what.stringify}},
+        {{what.is_a?(StringLiteral) ? what : what.stringify}},
         %source,
         {{@type.name}}
       ) { |test| test.as({{@type.name}}).%run }
