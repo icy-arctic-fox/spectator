@@ -16,6 +16,16 @@ module Spectator
           {% end %}
         )
 
+        {% if what.is_a?(Path) || what.is_a?(Generic) %}
+          macro described_class
+            {{what}}
+          end
+
+          def subject(*args)
+            described_class.new(*args)
+          end
+        {% end %}
+
         {{block.body}}
 
         ::Spectator::SpecBuilder.end_group
