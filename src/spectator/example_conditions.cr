@@ -10,28 +10,32 @@ module Spectator
     # This will effectively run nothing extra while running a test.
     def self.empty
       new(
-        [] of ->,
-        [] of ->
+        [] of TestMetaMethod,
+        [] of TestMetaMethod
       )
     end
 
     # Creates a new set of conditions.
     def initialize(
-      @pre_conditions : Array(->),
-      @post_conditions : Array(->)
+      @pre_conditions : Array(TestMetaMethod),
+      @post_conditions : Array(TestMetaMethod)
     )
     end
 
     # Runs all pre-condition checks.
     # These should be run before every test.
-    def run_pre_conditions
-      @pre_conditions.each &.call
+    def run_pre_conditions(wrapper : TestWrapper, example : Example)
+      @pre_conditions.each do |hook|
+        wrapper.call(hook, example)
+      end
     end
 
     # Runs all post-condition checks.
     # These should be run after every test.
-    def run_post_conditions
-      @post_conditions.each &.call
+    def run_post_conditions(wrapper : TestWrapper, example : Example)
+      @post_conditions.each do |hook|
+        wrapper.call(hook, example)
+      end
     end
   end
 end

@@ -1,8 +1,9 @@
 require "./example_component"
+require "./test_wrapper"
 
 module Spectator
   # Base class for all types of examples.
-  # Concrete types must implement the `#run_impl, `#what`, `#instance`, and `#source` methods.
+  # Concrete types must implement the `#run_impl` method.
   abstract class Example < ExampleComponent
     @finished = false
 
@@ -15,10 +16,23 @@ module Spectator
     getter group : ExampleGroup
 
     # Retrieves the internal wrapped instance.
-    abstract def instance
+    protected getter test_wrapper : TestWrapper
 
     # Source where the example originated from.
-    abstract def source : Source
+    def source : Source
+      @test_wrapper.source
+    end
+
+    def description : String | Symbol
+      @test_wrapper.description
+    end
+
+    def symbolic? : Bool
+      description = @test_wrapper.description
+      description.starts_with?('#') || description.starts_with?('.')
+    end
+
+    abstract def run_impl
 
     protected getter sample_values : Internals::SampleValues
 
@@ -28,17 +42,14 @@ module Spectator
     # An exception is raised if an attempt is made to run it more than once.
     def run : Result
       raise "Attempted to run example more than once (#{self})" if finished?
-      @finished = true
       run_impl
+    ensure
+      @finished = true
     end
-
-    # Implementation-specific for running the example code.
-    private abstract def run_impl : Result
 
     # Creates the base of the example.
     # The group should be the example group the example belongs to.
-    # The *sample_values* are passed to the example code.
-    def initialize(@group, @sample_values)
+    def initialize(@group, @test_wrapper)
     end
 
     # Indicates there is only one example to run.
@@ -57,7 +68,7 @@ module Spectator
     def to_s(io)
       @group.to_s(io)
       io << ' ' unless symbolic? && @group.symbolic?
-      io << what
+      io << description
     end
 
     # Creates the JSON representation of the example,

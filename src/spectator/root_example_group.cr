@@ -5,8 +5,12 @@ module Spectator
   # The root has no parent.
   class RootExampleGroup < ExampleGroup
     # Dummy value - this should never be used.
-    def what : Symbol | String
-      "ROOT"
+    def description : Symbol | String
+      :root
+    end
+
+    def source : Source
+      Source.new(__FILE__, __LINE__)
     end
 
     # Indicates that the group is symbolic.
