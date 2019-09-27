@@ -3,7 +3,7 @@ module Spectator
   # This is used as the base node type for the composite design pattern.
   abstract class ExampleComponent
     # Text that describes the context or test.
-    abstract def what : String
+    abstract def what : Symbol | String
 
     # Indicates whether the example (or group) has been completely run.
     abstract def finished? : Bool

@@ -4,8 +4,12 @@ module Spectator
   # Base class for all types of examples.
   # Concrete types must implement the `#run_impl, `#what`, `#instance`, and `#source` methods.
   abstract class Example < ExampleComponent
+    @finished = false
+
     # Indicates whether the example has already been run.
-    getter? finished = false
+    def finished? : Bool
+      @finished
+    end
 
     # Group that the example belongs to.
     getter group : ExampleGroup
@@ -38,12 +42,12 @@ module Spectator
     end
 
     # Indicates there is only one example to run.
-    def example_count
+    def example_count : Int
       1
     end
 
     # Retrieve the current example.
-    def [](index : Int)
+    def [](index : Int) : Example
       self
     end
 

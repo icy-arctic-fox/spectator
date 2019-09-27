@@ -11,7 +11,7 @@ module Spectator::Formatting
     end
 
     # Status string specific to the result type.
-    private def status
+    private def status : String
       "TODO"
     end
 

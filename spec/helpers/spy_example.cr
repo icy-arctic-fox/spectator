@@ -2,17 +2,17 @@
 # This is useful for capturing what's going on when an event is running.
 class SpyExample < Spectator::RunnableExample
   # Dummy description.
-  def what
+  def what : Symbol | String
     "SPY"
   end
 
   # Dummy source.
-  def source
+  def source : ::Spectator::Source
     ::Spectator::Source.new(__FILE__, __LINE__)
   end
 
   # Dummy symbolic flag.
-  def symbolic?
+  def symbolic? : Bool
     false
   end
 

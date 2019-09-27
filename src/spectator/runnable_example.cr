@@ -8,7 +8,7 @@ module Spectator
   abstract class RunnableExample < Example
     # Runs the example, hooks, and captures the result
     # and translates to a usable result.
-    def run_impl
+    def run_impl : Result
       result = capture_result
       expectations = Internals::Harness.current.expectations
       translate_result(result, expectations)
