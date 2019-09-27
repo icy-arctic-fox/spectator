@@ -2,26 +2,26 @@ require "../spec_builder"
 
 module Spectator
   module DSL
-    macro context(description, _source_file = __FILE__, _source_line = __LINE__, &block)
+    macro context(what, _source_file = __FILE__, _source_line = __LINE__, &block)
       class Context%context < {{@type.id}}
         {%
-          description = if description.is_a?(StringLiteral)
-                          if description.starts_with?("#") || description.starts_with?(".")
-                            description.id.symbolize
+          description = if what.is_a?(StringLiteral)
+                          if what.starts_with?("#") || what.starts_with?(".")
+                            what.id.symbolize
                           else
-                            description
+                            what
                           end
                         else
-                          description.symbolize
+                          what.symbolize
                         end
         %}
 
         %source = ::Spectator::Source.new({{_source_file}}, {{_source_line}})
         ::Spectator::SpecBuilder.start_group({{description}}, %source)
 
-        {% if description.is_a?(Path) || description.is_a?(Generic) %}
+        {% if what.is_a?(Path) || what.is_a?(Generic) %}
           macro described_class
-            {{description}}
+            {{what}}
           end
 
           def subject(*args)
@@ -35,8 +35,8 @@ module Spectator
       end
     end
 
-    macro describe(description, &block)
-      context({{description}}) {{block}}
+    macro describe(what, &block)
+      context({{what}}) {{block}}
     end
 
     macro sample(collection, count = nil, _source_file = __FILE__, _source_line = __LINE__, &block)
