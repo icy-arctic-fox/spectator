@@ -28,7 +28,11 @@ module Spectator
     end
 
     macro subject(&block)
-      let(:subject) {{block}}
+      {% if block.is_a?(Nop) %}
+        self.subject
+      {% else %}
+        let(:subject) {{block}}
+      {% end %}
     end
 
     macro subject(name, &block)
