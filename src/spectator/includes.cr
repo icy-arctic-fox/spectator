@@ -11,18 +11,17 @@
 require "openssl"
 
 # First the sub-modules.
-require "./internals"
 require "./dsl"
 require "./expectations"
 require "./matchers"
 require "./formatting"
 
 # Then all of the top-level types.
+require "./spec_builder"
 require "./example_component"
 require "./example"
 require "./runnable_example"
 require "./pending_example"
-require "./dummy_example"
 
 require "./example_conditions"
 require "./example_hooks"

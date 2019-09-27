@@ -40,7 +40,7 @@ module Spectator::Expectations
     # Reports an expectation to the current harness.
     private def report(match_data : Matchers::MatchData)
       expectation = Expectation.new(match_data, @source)
-      Internals::Harness.current.report_expectation(expectation)
+      Harness.current.report_expectation(expectation)
     end
   end
 end

@@ -15,13 +15,7 @@ module Spectator
     include Enumerable(ExampleComponent)
     include Iterable(ExampleComponent)
 
-    # Creates the example group.
-    # The hooks are stored to be triggered later.
-    def initialize(@hooks : ExampleHooks, @conditions : ExampleConditions)
-      @example_count = 0
-      @before_all_hooks_run = false
-      @after_all_hooks_run = false
-    end
+    @example_count = 0
 
     # Retrieves the children in the group.
     # This only returns the direct descends (non-recursive).
@@ -39,6 +33,11 @@ module Spectator
       # Recursively count the number of examples.
       # This won't work if a sub-group hasn't had their children set (is still nil).
       @example_count = children.sum(&.example_count)
+    end
+
+    getter context
+
+    def initialize(@context : TestContext)
     end
 
     # Yields each direct descendant.
@@ -123,73 +122,6 @@ module Spectator
     # Checks whether all examples in the group have been run.
     def finished? : Bool
       children.all?(&.finished?)
-    end
-
-    # Runs all of the "before-each" and "before-all" hooks.
-    # This should run prior to every example in the group.
-    def run_before_hooks
-      run_before_all_hooks
-      run_before_each_hooks
-    end
-
-    # Runs all of the "before-all" hooks.
-    # This should run prior to any examples in the group.
-    # The hooks will be run only once.
-    # Subsequent calls to this method will do nothing.
-    protected def run_before_all_hooks : Nil
-      return if @before_all_hooks_run
-      @hooks.run_before_all
-      @before_all_hooks_run = true
-    end
-
-    # Runs all of the "before-each" hooks.
-    # This method should run prior to every example in the group.
-    protected def run_before_each_hooks : Nil
-      @hooks.run_before_each
-    end
-
-    # Runs all of the "after-all" and "after-each" hooks.
-    # This should run following every example in the group.
-    def run_after_hooks
-      run_after_each_hooks
-      run_after_all_hooks
-    end
-
-    # Runs all of the "after-all" hooks.
-    # This should run following all examples in the group.
-    # The hooks will be run only once,
-    # and only after all examples in the group have finished.
-    # Subsequent calls after the hooks have been run will do nothing.
-    protected def run_after_all_hooks(ignore_unfinished = false) : Nil
-      return if @after_all_hooks_run
-      return unless ignore_unfinished || finished?
-
-      @hooks.run_after_all
-      @after_all_hooks_run = true
-    end
-
-    # Runs all of the "after-each" hooks.
-    # This method should run following every example in the group.
-    protected def run_after_each_hooks : Nil
-      @hooks.run_after_each
-    end
-
-    # Creates a proc that runs the "around-each" hooks
-    # in addition to a block passed to this method.
-    # To call the block and all "around-each" hooks,
-    # just invoke `Proc#call` on the returned proc.
-    def wrap_around_each_hooks(&block : ->) : ->
-      @hooks.wrap_around_each(&block)
-    end
-
-    # Runs all of the pre-conditions for an example.
-    def run_pre_conditions
-      @conditions.run_pre_conditions
-    end
-
-    # Runs all of the post-conditions for an example.
-    def run_post_conditions
-      @conditions.run_post_conditions
     end
   end
 end
