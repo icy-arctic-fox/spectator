@@ -3,16 +3,17 @@ require "../test_values"
 require "../test_wrapper"
 
 module Spectator::SpecBuilder
-  class ExampleBuilder
+  abstract class ExampleBuilder
     alias FactoryMethod = TestValues -> ::SpectatorTest
 
     def initialize(@description : String, @source : Source, @builder : FactoryMethod, @runner : TestMethod)
     end
 
-    def build(group)
+    abstract def build(group) : ExampleComponent
+
+    private def build_test_wrapper(group)
       test = @builder.call(group.context.values)
-      wrapper = TestWrapper.new(@description, @source, test, @runner)
-      RunnableExample.new(group, wrapper).as(ExampleComponent)
+      TestWrapper.new(@description, @source, test, @runner)
     end
   end
 end

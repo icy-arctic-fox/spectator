@@ -45,7 +45,17 @@ module Spectator
     def add_example(description : String, source : Source,
                     example_type : ::SpectatorTest.class, &runner : ::SpectatorTest ->) : Nil
       builder = ->(values : TestValues) { example_type.new(values).as(::SpectatorTest) }
-      factory = ExampleBuilder.new(description, source, builder, runner)
+      factory = RunnableExampleBuilder.new(description, source, builder, runner)
+      @@stack.current.add_child(factory)
+    end
+
+    # Adds an example type to the current group.
+    # The class name of the example should be passed as an argument.
+    # The example will be instantiated later.
+    def add_pending_example(description : String, source : Source,
+                            example_type : ::SpectatorTest.class, &runner : ::SpectatorTest ->) : Nil
+      builder = ->(values : TestValues) { example_type.new(values).as(::SpectatorTest) }
+      factory = PendingExampleBuilder.new(description, source, builder, runner)
       @@stack.current.add_child(factory)
     end
 
