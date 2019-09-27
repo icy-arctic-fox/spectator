@@ -31,14 +31,18 @@ module Spectator
 
     def run_after_hooks(example : Example)
       run_after_each_hooks(example)
-      run_after_all_hooks
+      run_after_all_hooks(example.group)
     end
 
-    protected def run_after_all_hooks
+    protected def run_after_all_hooks(group : ExampleGroup, *, ignore_unfinished = false)
       return if @after_all_hooks_run
+      return unless ignore_unfinished || group.finished?
 
       @hooks.run_after_all
-      @parent.try &.run_after_all_hooks
+      @parent.try do |parent_context|
+        parent_group = group.as(NestedExampleGroup).parent
+        parent_context.run_after_all_hooks(parent_group, ignore_unfinished: ignore_unfinished)
+      end
     ensure
       @after_all_hooks_run = true
     end
