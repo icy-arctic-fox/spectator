@@ -45,5 +45,35 @@ module Spectator
 
       ::Spectator::SpecBuilder.add_around_each_hook { |test, proc| test.as({{@type.id}}).%hook(proc) }
     end
+
+    macro pre_condition(&block)
+      def %hook({{block.args.splat}}) : Nil
+        {{block.body}}
+      end
+
+      ::Spectator::SpecBuilder.add_pre_condition do |test, example|
+        cast_test = test.as({{@type.id}})
+        {% if block.args.empty? %}
+          cast_test.%hook
+        {% else %}
+          cast_test.%hook(example)
+        {% end %}
+      end
+    end
+
+    macro post_condition(&block)
+      def %hook({{block.args.splat}}) : Nil
+        {{block.body}}
+      end
+
+      ::Spectator::SpecBuilder.add_post_condition do |test, example|
+        cast_test = test.as({{@type.id}})
+        {% if block.args.empty? %}
+          cast_test.%hook
+        {% else %}
+          cast_test.%hook(example)
+        {% end %}
+      end
+    end
   end
 end

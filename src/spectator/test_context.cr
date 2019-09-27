@@ -5,7 +5,7 @@ module Spectator
   class TestContext
     getter values
 
-    def initialize(@parent : TestContext?, @hooks : ExampleHooks, @values : TestValues)
+    def initialize(@parent : TestContext?, @hooks : ExampleHooks, @conditions : ExampleConditions, @values : TestValues)
       @before_all_hooks_run = false
       @after_all_hooks_run = false
     end
@@ -55,6 +55,16 @@ module Spectator
       else
         wrapper
       end
+    end
+
+    def run_pre_conditions(example)
+      @parent.try &.run_pre_conditions(example)
+      @conditions.run_pre_conditions(example.test_wrapper, example)
+    end
+
+    def run_post_conditions(example)
+      @conditions.run_post_conditions(example.test_wrapper, example)
+      @parent.try &.run_post_conditions(example)
     end
   end
 end

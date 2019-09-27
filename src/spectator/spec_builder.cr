@@ -87,12 +87,12 @@ module Spectator
     end
 
     # Adds a pre-condition to run at the start of every example in the current group.
-    def add_pre_condition(&block : ->) : Nil
+    def add_pre_condition(&block : TestMetaMethod) : Nil
       @@stack.current.add_pre_condition(block)
     end
 
     # Adds a post-condition to run at the end of every example in the current group.
-    def add_post_condition(&block : ->) : Nil
+    def add_post_condition(&block : TestMetaMethod) : Nil
       @@stack.current.add_post_condition(block)
     end
 

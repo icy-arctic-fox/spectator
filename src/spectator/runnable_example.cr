@@ -25,12 +25,15 @@ module Spectator
 
     # Runs the test code and captures the result.
     private def run_example(result)
-      wrapper = test_wrapper.around_hook(group.context)
+      context = group.context
+      wrapper = test_wrapper.around_hook(context)
 
       # Capture how long it takes to run the test code.
       result.elapsed = Time.measure do
         begin
+          context.run_pre_conditions(self)
           wrapper.call
+          context.run_post_conditions(self)
         rescue ex # Catch all errors and handle them later.
           result.error = ex
         end
