@@ -34,8 +34,6 @@ module Spectator
 
     abstract def run_impl
 
-    protected getter sample_values : Internals::SampleValues
-
     # Runs the example code.
     # A result is returned, which represents the outcome of the test.
     # An example can be run only once.
