@@ -1,5 +1,5 @@
 module Spectator
-  abstract struct Double
+  abstract class Double
     macro stub(definition)
       def {{definition.name.id}}
         {{definition.block.body}}
