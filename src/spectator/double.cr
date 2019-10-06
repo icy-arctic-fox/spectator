@@ -5,7 +5,11 @@ module Spectator
 
       private class Internal
         def {{definition.name.id}}({{definition.args.splat}})
-          {{definition.block.body}}
+          {% if definition.block.is_a?(Nop) %}
+            raise "Stubbed method called without being allowed"
+          {% else %}
+            {{definition.block.body}}
+          {% end %}
         end
       end
     end
