@@ -5,7 +5,7 @@ module Spectator
         @internal.{{definition.name.id}}
       end
 
-      class Internal
+      private class Internal
         def {{definition.name.id}}
           {{definition.block.body}}
         end

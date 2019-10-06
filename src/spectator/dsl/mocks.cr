@@ -6,7 +6,7 @@ module Spectator::DSL
       Double{{name.id}}.new(@spectator_test_values)
     {% else %}
       class Double{{name.id}} < ::Spectator::Double
-        class Internal < {{@type.id}}
+        private class Internal < {{@type.id}}
         end
 
         def initialize(test_values : ::Spectator::TestValues)
