@@ -326,11 +326,12 @@ Items not marked as completed may have partial implementations.
     - [X] Dry run - for validation and checking formatted output
     - [X] Config block in `spec_helper.cr`
     - [X] Config file - `.spectator`
-- [X] Reporter and formatting
+- [ ] Reporter and formatting
     - [X] RSpec/Crystal Spec default
     - [X] JSON
     - [X] JUnit
     - [X] TAP
+    - [ ] HTML
 
 ### How it Works (in a nutshell)
 
