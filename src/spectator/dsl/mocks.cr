@@ -1,4 +1,6 @@
 require "../double"
+require "../generic_method_stub"
+require "../open_mock"
 
 module Spectator::DSL
   macro double(name, &block)
@@ -20,5 +22,14 @@ module Spectator::DSL
         {{block.body}}
       end
     {% end %}
+  end
+
+  def allow(double : ::Spectator::Double)
+    OpenMock.new(double)
+  end
+
+  macro receive(method_name, _source_file = __FILE__, _source_line = __LINE__)
+    %source = ::Spectator::Source.new({{_source_file}}, {{_source_line}})
+    ::Spectator::GenericMethodStub(Nil).new({{method_name.symbolize}}, %source)
   end
 end
