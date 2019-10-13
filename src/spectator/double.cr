@@ -25,19 +25,41 @@ module Spectator
         end
       %}
 
-      def {{name}}(*args, **options){% if definition.is_a?(TypeDeclaration) %} : {{definition.type}}{% end %}
-        call = ::Spectator::MethodCall.new({{name.symbolize}}, args, options)
-        stub = @stubs.find(&.callable?(call))
-        if stub
-          stub.as(::Spectator::GenericMethodStub(typeof(%method(*args, **options)))).call(call)
-        else
-          %method(*args, **options)
+      {% if name.ends_with?('=') && name.id != "[]=" %}
+        def {{name}}(arg)
+          call = ::Spectator::MethodCall.new({{name.symbolize}}, {arg}, NamedTuple.new)
+          stub = @stubs.find(&.callable?(call))
+          if stub
+            stub.as(::Spectator::GenericMethodStub(typeof(%method(arg)))).call(call)
+          else
+            %method(arg)
+          end
         end
-      end
+      {% else %}
+        def {{name}}(*args, **options){% if definition.is_a?(TypeDeclaration) %} : {{definition.type}}{% end %}
+          call = ::Spectator::MethodCall.new({{name.symbolize}}, args, options)
+          stub = @stubs.find(&.callable?(call))
+          if stub
+            stub.as(::Spectator::GenericMethodStub(typeof(%method(*args, **options)))).call(call)
+          else
+            %method(*args, **options)
+          end
+        end
 
-      def {{name}}(*args, **options, &block){% if definition.is_a?(TypeDeclaration) %} : {{definition.type}}{% end %}
-        %method(*args, **options, &block)
-      end
+        {% if name != "[]=" %}
+          def {{name}}(*args, **options){% if definition.is_a?(TypeDeclaration) %} : {{definition.type}}{% end %}
+            call = ::Spectator::MethodCall.new({{name.symbolize}}, args, options)
+            stub = @stubs.find(&.callable?(call))
+            if stub
+              stub.as(::Spectator::GenericMethodStub(typeof(%method(*args, **options)))).call(call)
+            else
+              %method(*args, **options) do |*yield_args|
+                yield *yield_args
+              end
+            end
+          end
+        {% end %}
+      {% end %}
 
       def %method({{params.splat}}){% if definition.is_a?(TypeDeclaration) %} : {{definition.type}}{% end %}
         {% if body && !body.is_a?(Nop) %}
