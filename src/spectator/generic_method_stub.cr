@@ -15,5 +15,9 @@ module Spectator
     def call(call : MethodCall) : ReturnType
       @proc.call
     end
+
+    def and_return(value : T) forall T
+      GenericMethodStub(T).new(@name, @source, -> { value })
+    end
   end
 end

@@ -51,7 +51,7 @@ module Spectator
             call = ::Spectator::MethodCall.new({{name.symbolize}}, args, options)
             stub = @stubs.find(&.callable?(call))
             if stub
-              stub.as(::Spectator::GenericMethodStub(typeof(%method(*args, **options)))).call(call)
+              stub.as(::Spectator::GenericMethodStub(typeof(%method(*args, **options) { |*yield_args| yield *yield_args }))).call(call)
             else
               %method(*args, **options) do |*yield_args|
                 yield *yield_args
@@ -66,6 +66,12 @@ module Spectator
           {{body.body}}
         {% else %}
           raise "Stubbed method called without being allowed"
+          # This code shouldn't be reached, but makes the compiler happy to have a matching type.
+          {% if definition.is_a?(TypeDeclaration) %}
+            %x = uninitialized {{definition.type}}
+          {% else %}
+            nil
+          {% end %}
         {% end %}
       end
     end
