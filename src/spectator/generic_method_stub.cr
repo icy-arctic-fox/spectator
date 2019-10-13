@@ -1,13 +1,19 @@
+require "./method_call"
 require "./method_stub"
 require "./source"
 
 module Spectator
-  class GenericMethodStub(ReturnType, *ArgumentTypes) < MethodStub
-    def callable?(name : Symbol, *args) : Bool
+  class GenericMethodStub(ReturnType) < MethodStub
+    def initialize(name : Symbol, source : Source, @proc : -> ReturnType)
+      super(name, source)
+    end
+
+    def callable?(call : MethodCall) : Bool
       super
     end
 
-    def call(*args)
+    def call(call : MethodCall) : ReturnType
+      @proc.call
     end
   end
 end

@@ -4,16 +4,7 @@ module Spectator
   abstract class Double
     @stubs = Deque(MethodStub).new
 
-    private macro delegate_internal(method, *args)
-      # Modified version of Object#delegate
-      {% if method.id.ends_with?('=') && method.id != "[]=" %}
-        @internal.{{method.id}} {{args.splat}}
-      {% else %}
-        @internal.{{method.id}}({{args.splat}})
-      {% end %}
-    end
-
-    macro stub(definition, &block)
+    private macro stub(definition, &block)
       {%
         name = nil
         params = nil
@@ -34,17 +25,22 @@ module Spectator
         end
       %}
 
-      def {{name}}({{params.splat}})
-        %stub = @stubs.find(&.callable?({{name.symbolize}}{% unless args.empty? %}, {{args.splat}}{% end %}))
-        if %stub
-          %stub.call({{args.splat}})
+      def {{name}}(*args, **options){% if definition.is_a?(TypeDeclaration) %} : {{definition.type}}{% end %}
+        call = ::Spectator::MethodCall.new({{name.symbolize}}, args, options)
+        stub = @stubs.find(&.callable?(call))
+        if stub
+          stub.as(::Spectator::GenericMethodStub(typeof(@internal.{{name}}(*args, **options)))).call(call)
         else
-          delegate_internal({{name}}{% unless args.empty? %}, {{args.splat}}{% end %})
+          @internal.{{name}}(*args, **options)
         end
       end
 
+      def {{name}}(*args, **options, &block){% if definition.is_a?(TypeDeclaration) %} : {{definition.type}}{% end %}
+        @internal.{{name}}(*args, **options, &block)
+      end
+
       private class Internal
-        def {{name}}({{params.splat}})
+        def {{name}}({{params.splat}}){% if definition.is_a?(TypeDeclaration) %} : {{definition.type}}{% end %}
           {% if body && !body.is_a?(Nop) %}
             {{body.body}}
           {% else %}

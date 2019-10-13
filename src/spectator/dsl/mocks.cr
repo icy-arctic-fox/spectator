@@ -30,6 +30,6 @@ module Spectator::DSL
 
   macro receive(method_name, _source_file = __FILE__, _source_line = __LINE__)
     %source = ::Spectator::Source.new({{_source_file}}, {{_source_line}})
-    ::Spectator::GenericMethodStub(Nil).new({{method_name.symbolize}}, %source)
+    ::Spectator::GenericMethodStub(Nil).new({{method_name.symbolize}}, %source, ->{ nil })
   end
 end
