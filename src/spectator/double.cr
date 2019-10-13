@@ -2,7 +2,7 @@ require "./method_stub"
 
 module Spectator
   abstract class Double
-    @stubs = Deque(MethodStub).new
+    @spectator_stubs = Deque(MethodStub).new
 
     private macro stub(definition, &block)
       {%
@@ -28,7 +28,7 @@ module Spectator
       {% if name.ends_with?('=') && name.id != "[]=" %}
         def {{name}}(arg)
           call = ::Spectator::MethodCall.new({{name.symbolize}}, {arg}, NamedTuple.new)
-          stub = @stubs.find(&.callable?(call))
+          stub = @spectator_stubs.find(&.callable?(call))
           if stub
             stub.as(::Spectator::GenericMethodStub(typeof(%method(arg)))).call(call)
           else
@@ -38,7 +38,7 @@ module Spectator
       {% else %}
         def {{name}}(*args, **options){% if definition.is_a?(TypeDeclaration) %} : {{definition.type}}{% end %}
           call = ::Spectator::MethodCall.new({{name.symbolize}}, args, options)
-          stub = @stubs.find(&.callable?(call))
+          stub = @spectator_stubs.find(&.callable?(call))
           if stub
             stub.as(::Spectator::GenericMethodStub(typeof(%method(*args, **options)))).call(call)
           else
@@ -49,7 +49,7 @@ module Spectator
         {% if name != "[]=" %}
           def {{name}}(*args, **options){% if definition.is_a?(TypeDeclaration) %} : {{definition.type}}{% end %}
             call = ::Spectator::MethodCall.new({{name.symbolize}}, args, options)
-            stub = @stubs.find(&.callable?(call))
+            stub = @spectator_stubs.find(&.callable?(call))
             if stub
               stub.as(::Spectator::GenericMethodStub(typeof(%method(*args, **options) { |*yield_args| yield *yield_args }))).call(call)
             else
@@ -77,7 +77,7 @@ module Spectator
     end
 
     protected def spectator_define_stub(stub : MethodStub) : Nil
-      @stubs << stub
+      @spectator_stubs << stub
     end
   end
 end
