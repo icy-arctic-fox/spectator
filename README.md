@@ -312,7 +312,7 @@ Items not marked as completed may have partial implementations.
 - [ ] Mocks and Doubles
     - [ ] Mocks (Stub real types) - `mock TYPE { }`
     - [X] Doubles (Stand-ins for real types) - `double NAME { }`
-    - [ ] Method stubs - `allow().to receive()`, `allow().to receive().and_return()`
+    - [X] Method stubs - `allow().to receive()`, `allow().to receive().and_return()`
     - [ ] Spies - `expect().to receive()`
     - [ ] Message expectations - `expect().to receive().at_least()`
     - [ ] Argument expectations - `expect().to receive().with()`
