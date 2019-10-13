@@ -17,7 +17,7 @@ module Spectator
     end
 
     def and_return(value : T) forall T
-      GenericMethodStub(T).new(@name, @source, -> { value })
+      GenericMethodStub(T).new(@name, @source, ->{ value })
     end
   end
 end
