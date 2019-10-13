@@ -8,16 +8,10 @@ module Spectator::DSL
       Double{{name.id}}.new(self)
     {% else %}
       class Double{{name.id}} < ::Spectator::Double
-        private class Internal
-          def initialize(@test : {{@type.id}})
-          end
-
-          forward_missing_to @test
+        def initialize(@spectator_test : {{@type.id}})
         end
 
-        def initialize(test : {{@type.id}})
-          @internal = Internal.new(test)
-        end
+        forward_missing_to @spectator_test
 
         {{block.body}}
       end

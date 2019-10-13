@@ -29,24 +29,22 @@ module Spectator
         call = ::Spectator::MethodCall.new({{name.symbolize}}, args, options)
         stub = @stubs.find(&.callable?(call))
         if stub
-          stub.as(::Spectator::GenericMethodStub(typeof(@internal.{{name}}(*args, **options)))).call(call)
+          stub.as(::Spectator::GenericMethodStub(typeof(%method(*args, **options)))).call(call)
         else
-          @internal.{{name}}(*args, **options)
+          %method(*args, **options)
         end
       end
 
       def {{name}}(*args, **options, &block){% if definition.is_a?(TypeDeclaration) %} : {{definition.type}}{% end %}
-        @internal.{{name}}(*args, **options, &block)
+        %method(*args, **options, &block)
       end
 
-      private class Internal
-        def {{name}}({{params.splat}}){% if definition.is_a?(TypeDeclaration) %} : {{definition.type}}{% end %}
-          {% if body && !body.is_a?(Nop) %}
-            {{body.body}}
-          {% else %}
-            raise "Stubbed method called without being allowed"
-          {% end %}
-        end
+      def %method({{params.splat}}){% if definition.is_a?(TypeDeclaration) %} : {{definition.type}}{% end %}
+        {% if body && !body.is_a?(Nop) %}
+          {{body.body}}
+        {% else %}
+          raise "Stubbed method called without being allowed"
+        {% end %}
       end
     end
 
