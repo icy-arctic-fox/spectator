@@ -9,6 +9,7 @@ module Spectator::DSL
     {% else %}
       class Double{{name.id}} < ::Spectator::Double
         def initialize(@spectator_test : {{@type.id}})
+          super({{name.id.symbolize}})
         end
 
         forward_missing_to @spectator_test

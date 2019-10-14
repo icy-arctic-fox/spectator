@@ -17,7 +17,7 @@ module Spectator::Matchers
     end
 
     def failure_message(actual : TestExpression(T)) : String forall T
-      "#{actual.value} did not receive #{@expected.label}"
+      "#{actual.label} did not receive #{@expected.label}"
     end
 
     def values(actual : TestExpression(T)) forall T

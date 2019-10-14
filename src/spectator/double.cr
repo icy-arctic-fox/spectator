@@ -6,6 +6,9 @@ module Spectator
     @spectator_stubs = Deque(MethodStub).new
     @spectator_stub_calls = Deque(MethodCall).new
 
+    def initialize(@spectator_double_name : Symbol)
+    end
+
     private macro stub(definition, &block)
       {%
         name = nil
@@ -76,6 +79,12 @@ module Spectator
           {% end %}
         {% end %}
       end
+    end
+
+    def to_s(io)
+      io << "Double("
+      io << @spectator_double_name
+      io << ')'
     end
 
     protected def spectator_define_stub(stub : MethodStub) : Nil
