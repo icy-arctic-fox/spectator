@@ -683,6 +683,11 @@ module Spectator
       expect {{block}}.to raise_error({{type}}, {{message}})
     end
 
+    macro have_received(method)
+      %test_value = ::Spectator::TestValue.new(({{method.id.symbolize}}), {{method.id.stringify}})
+      ::Spectator::Matchers::ReceiveMatcher.new(%test_value)
+    end
+
     # Used to create predicate matchers.
     # Any missing method that starts with 'be_' or 'have_' will be handled.
     # All other method names will be ignored and raise a compile-time error.

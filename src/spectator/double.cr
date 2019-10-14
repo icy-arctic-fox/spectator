@@ -1,8 +1,10 @@
-require "./method_stub"
+require "./generic_method_call"
+require "./generic_method_stub"
 
 module Spectator
   abstract class Double
     @spectator_stubs = Deque(MethodStub).new
+    @spectator_stub_calls = Deque(MethodCall).new
 
     private macro stub(definition, &block)
       {%
@@ -27,7 +29,7 @@ module Spectator
 
       {% if name.ends_with?('=') && name.id != "[]=" %}
         def {{name}}(arg)
-          call = ::Spectator::MethodCall.new({{name.symbolize}}, {arg}, NamedTuple.new)
+          call = ::Spectator::GenericMethodCall.new({{name.symbolize}}, {arg}, NamedTuple.new)
           stub = @spectator_stubs.find(&.callable?(call))
           if stub
             stub.as(::Spectator::GenericMethodStub(typeof(%method(arg)))).call(call)
@@ -37,7 +39,7 @@ module Spectator
         end
       {% else %}
         def {{name}}(*args, **options){% if definition.is_a?(TypeDeclaration) %} : {{definition.type}}{% end %}
-          call = ::Spectator::MethodCall.new({{name.symbolize}}, args, options)
+          call = ::Spectator::GenericMethodCall.new({{name.symbolize}}, args, options)
           stub = @spectator_stubs.find(&.callable?(call))
           if stub
             stub.as(::Spectator::GenericMethodStub(typeof(%method(*args, **options)))).call(call)
@@ -48,7 +50,7 @@ module Spectator
 
         {% if name != "[]=" %}
           def {{name}}(*args, **options){% if definition.is_a?(TypeDeclaration) %} : {{definition.type}}{% end %}
-            call = ::Spectator::MethodCall.new({{name.symbolize}}, args, options)
+            call = ::Spectator::GenericMethodCall.new({{name.symbolize}}, args, options)
             stub = @spectator_stubs.find(&.callable?(call))
             if stub
               stub.as(::Spectator::GenericMethodStub(typeof(%method(*args, **options) { |*yield_args| yield *yield_args }))).call(call)
@@ -78,6 +80,10 @@ module Spectator
 
     protected def spectator_define_stub(stub : MethodStub) : Nil
       @spectator_stubs << stub
+    end
+
+    protected def spectator_stub_calls(method : Symbol) : Array(MethodCall)
+      @spectator_stub_calls.select { |call| call.name == method }
     end
   end
 end

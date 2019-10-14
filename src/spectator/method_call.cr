@@ -1,12 +1,8 @@
 module Spectator
-  class MethodCall(T, NT)
+  abstract class MethodCall
     getter name : Symbol
 
-    getter args : T
-
-    getter options : NT
-
-    def initialize(@name : Symbol, @args : T, @options : NT)
+    def initialize(@name : Symbol)
     end
   end
 end
