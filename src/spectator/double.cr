@@ -33,6 +33,7 @@ module Spectator
       {% if name.ends_with?('=') && name.id != "[]=" %}
         def {{name}}(arg)
           call = ::Spectator::GenericMethodCall.new({{name.symbolize}}, {arg}, NamedTuple.new)
+          @spectator_stub_calls << call
           stub = @spectator_stubs.find(&.callable?(call))
           if stub
             stub.as(::Spectator::GenericMethodStub(typeof(%method(arg)))).call(call)
@@ -43,6 +44,7 @@ module Spectator
       {% else %}
         def {{name}}(*args, **options){% if definition.is_a?(TypeDeclaration) %} : {{definition.type}}{% end %}
           call = ::Spectator::GenericMethodCall.new({{name.symbolize}}, args, options)
+          @spectator_stub_calls << call
           stub = @spectator_stubs.find(&.callable?(call))
           if stub
             stub.as(::Spectator::GenericMethodStub(typeof(%method(*args, **options)))).call(call)
@@ -54,6 +56,7 @@ module Spectator
         {% if name != "[]=" %}
           def {{name}}(*args, **options){% if definition.is_a?(TypeDeclaration) %} : {{definition.type}}{% end %}
             call = ::Spectator::GenericMethodCall.new({{name.symbolize}}, args, options)
+            @spectator_stub_calls << call
             stub = @spectator_stubs.find(&.callable?(call))
             if stub
               stub.as(::Spectator::GenericMethodStub(typeof(%method(*args, **options) { |*yield_args| yield *yield_args }))).call(call)
