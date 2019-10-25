@@ -897,7 +897,7 @@ module Spectator::DSL
         # Block variant.
 
         # Create a block that returns the value.
-        let!(%value) {{block}}
+        let!({{name.id}}) {{block}}
 
         # Wrapper to hold the value.
         # This will be nil if the value hasn't been referenced yet.
@@ -913,12 +913,12 @@ module Spectator::DSL
             # Unwrap it from the wrapper variable.
             # Here we use typeof to get around the issue
             # that the macro has no idea what type the value is.
-            wrapper.unsafe_as(::Spectator::Internals::TypedValueWrapper(typeof(%value))).value
+            wrapper.unsafe_as(::Spectator::Internals::TypedValueWrapper(typeof(previous_def))).value
           else
             # The value isn't cached,
             # Construct it and store it in the wrapper.
-            %value.tap do |value|
-              @%wrapper = ::Spectator::Internals::TypedValueWrapper(typeof(%value)).new(value)
+            previous_def.tap do |value|
+              @%wrapper = ::Spectator::Internals::TypedValueWrapper(typeof(previous_def)).new(value)
             end
           end
         end
