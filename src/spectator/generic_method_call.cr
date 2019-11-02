@@ -10,6 +10,10 @@ module Spectator
       super(name)
     end
 
+    def self.create(name : Symbol, *args, **options)
+      GenericMethodCall.new(name, args, options)
+    end
+
     def to_s(io)
       io << name
       return if @args.empty? && @options.empty?
