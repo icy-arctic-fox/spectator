@@ -44,6 +44,34 @@ module Spectator::Matchers
       ReceiveMatcher.new(@expected, (2..2))
     end
 
+    def exactly(count)
+      Count.new(@expected, (count..count))
+    end
+
+    def at_least(count)
+      Count.new(@expected, (count..))
+    end
+
+    def at_most(count)
+      Count.new(@expected, (..count))
+    end
+
+    def at_least_once
+      at_least(1).times
+    end
+
+    def at_least_twice
+      at_least(2).times
+    end
+
+    def at_most_once
+      at_most(1).times
+    end
+
+    def at_most_twice
+      at_most(2).times
+    end
+
     def humanize_range(range : Range)
       if (min = range.begin)
         if (max = range.end)
@@ -61,6 +89,15 @@ module Spectator::Matchers
         else
           raise "Unexpected endless range"
         end
+      end
+    end
+
+    private struct Count
+      def initialize(@expected : TestExpression(Symbol), @range : Range)
+      end
+
+      def times
+        ReceiveMatcher.new(@expected, @range)
       end
     end
   end
