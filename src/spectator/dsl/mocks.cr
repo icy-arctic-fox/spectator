@@ -34,10 +34,12 @@ module Spectator::DSL
       {{type.id}} ::{{resolved.id}}
         include ::Spectator::Mocks::Stubs
 
+        @spectator_stubs = Deque(::Spectator::Mocks::MethodStub).new
+        @spectator_stub_calls = Deque(::Spectator::Mocks::MethodCall).new
+
         {{block.body}}
       end
     {% end %}
-    {% debug %}
   end
 
   def allow(double : ::Spectator::Mocks::Double)
