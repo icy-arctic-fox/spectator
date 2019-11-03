@@ -37,20 +37,22 @@ module Spectator::Mocks
       %}
 
       def {{name}}({{params.splat}}){% if definition.is_a?(TypeDeclaration) %} : {{definition.type}}{% end %}
-        %call = ::Spectator::Mocks::GenericMethodCall.create({{name.symbolize}}{% unless args.empty? %}, {{args.splat}}{% end %})
+        %args = ::Spectator::Mocks::Arguments.create({{args.splat}})
+        %call = ::Spectator::Mocks::GenericMethodCall.new({{name.symbolize}}, %args)
         @spectator_stub_calls << %call
         if (%stub = @spectator_stubs.find(&.callable?(%call)))
-          %stub.as(::Spectator::Mocks::GenericMethodStub(typeof(%method({{args.splat}})))).call(%call)
+          %stub.as(::Spectator::Mocks::GenericMethodStub(typeof(%method({{args.splat}})))).call(%args)
         else
           %method({{args.splat}})
         end
       end
 
       def {{name}}({{params.splat}}){% if definition.is_a?(TypeDeclaration) %} : {{definition.type}}{% end %}
-        %call = ::Spectator::Mocks::GenericMethodCall.create({{name.symbolize}}{% unless args.empty? %}, {{args.splat}}{% end %})
+        %args = ::Spectator::Mocks::Arguments.create({{args.splat}})
+        %call = ::Spectator::Mocks::GenericMethodCall.new({{name.symbolize}}, %args)
         @spectator_stub_calls << %call
         if (%stub = @spectator_stubs.find(&.callable?(%call)))
-          %stub.as(::Spectator::Mocks::GenericMethodStub(typeof(%method({{args.splat}}) { |*%yield_args| yield *%yield_args }))).call(%call)
+          %stub.as(::Spectator::Mocks::GenericMethodStub(typeof(%method({{args.splat}}) { |*%yield_args| yield *%yield_args }))).call(%args)
         else
           %method({{args.splat}}) do |*%yield_args|
             yield *%yield_args
