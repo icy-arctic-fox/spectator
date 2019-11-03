@@ -24,14 +24,13 @@ module Spectator::DSL
       end
     {% else %}
       {% resolved = name.resolve
-        type = if resolved < Reference
-          :class
-        elsif resolved < Value
-          :struct
-        else
-          :module
-        end
-      %}
+         type = if resolved < Reference
+                  :class
+                elsif resolved < Value
+                  :struct
+                else
+                  :module
+                end %}
       {{type.id}} ::{{resolved.id}}
         include ::Spectator::Mocks::Stubs
 
