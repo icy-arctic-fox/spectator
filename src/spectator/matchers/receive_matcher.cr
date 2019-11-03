@@ -9,7 +9,8 @@ module Spectator::Matchers
     end
 
     def description : String
-      "received message #{@expected.label}"
+      range = @range
+      "received message #{@expected.label} #{range ? "#{humanize_range(range)} time(s)" : "at least once"} with any arguments"
     end
 
     def match?(actual : TestExpression(T)) : Bool forall T
@@ -23,7 +24,8 @@ module Spectator::Matchers
     end
 
     def failure_message(actual : TestExpression(T)) : String forall T
-      "#{actual.label} did not receive #{@expected.label}"
+      range = @range
+      "#{actual.label} did not receive #{@expected.label} #{range ? "#{humanize_range(range)} time(s)" : "at least once"}"
     end
 
     def values(actual : TestExpression(T)) forall T
