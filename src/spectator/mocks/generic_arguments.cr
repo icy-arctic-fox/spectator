@@ -24,5 +24,19 @@ module Spectator::Mocks
         other.opts.has_key?(key) && @opts[key] === other.opts[key]
       end
     end
+
+    def to_s(io)
+      @args.each_with_index do |arg, i|
+        arg.inspect(io)
+        io << ", " if i < @args.size - 1
+      end
+      io << ", " unless @args.empty? || @opts.empty?
+      @opts.each_with_index do |key, value, i|
+        io << key
+        io << ": "
+        value.inspect(io)
+        io << ", " if 1 < @opts.size - 1
+      end
+    end
   end
 end
