@@ -17,6 +17,30 @@ module Spectator::DSL
     {% end %}
   end
 
+  macro mock(name, &block)
+    {% if block.is_a?(Nop) %}
+      {{name}}.new.tap do |%inst|
+        %inst.spectator_test = self
+      end
+    {% else %}
+      {% resolved = name.resolve
+        type = if resolved < Reference
+          :class
+        elsif resolved < Value
+          :struct
+        else
+          :module
+        end
+      %}
+      {{type.id}} ::{{resolved.id}}
+        include ::Spectator::Mocks::Stubs
+
+        {{block.body}}
+      end
+    {% end %}
+    {% debug %}
+  end
+
   def allow(double : ::Spectator::Mocks::Double)
     Mocks::OpenMock.new(double)
   end
