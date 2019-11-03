@@ -20,6 +20,10 @@ module Spectator::Mocks
         io << @args
         io << ')'
       end
+      io << " : "
+      io << ReturnType
+      io << " at "
+      io << @source
     end
   end
 end

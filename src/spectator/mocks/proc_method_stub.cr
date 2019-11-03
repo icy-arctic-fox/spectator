@@ -12,7 +12,7 @@ module Spectator::Mocks
       if (cast = result.as?(RT))
         cast
       else
-        raise "The return type of stub #{to_s} : #{ReturnType} doesn't match the expected type #{RT}"
+        raise "The return type of stub #{self} doesn't match the expected type #{RT}"
       end
     end
   end
