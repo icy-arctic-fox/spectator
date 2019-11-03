@@ -37,7 +37,7 @@ module Spectator::Mocks
       %}
 
       def {{name}}({{params.splat}}){% if definition.is_a?(TypeDeclaration) %} : {{definition.type}}{% end %}
-        %args = ::Spectator::Mocks::Arguments.create({{args.splat}})
+        %args = ::Spectator::Mocks::GenericArguments.create({{args.splat}})
         %call = ::Spectator::Mocks::GenericMethodCall.new({{name.symbolize}}, %args)
         @spectator_stub_calls << %call
         if (%stub = @spectator_stubs.find(&.callable?(%call)))
@@ -48,7 +48,7 @@ module Spectator::Mocks
       end
 
       def {{name}}({{params.splat}}){% if definition.is_a?(TypeDeclaration) %} : {{definition.type}}{% end %}
-        %args = ::Spectator::Mocks::Arguments.create({{args.splat}})
+        %args = ::Spectator::Mocks::GenericArguments.create({{args.splat}})
         %call = ::Spectator::Mocks::GenericMethodCall.new({{name.symbolize}}, %args)
         @spectator_stub_calls << %call
         if (%stub = @spectator_stubs.find(&.callable?(%call)))
