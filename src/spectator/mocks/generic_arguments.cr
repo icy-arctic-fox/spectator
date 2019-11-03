@@ -16,7 +16,7 @@ module Spectator::Mocks
       dispatcher.call(*@args, **@opts)
     end
 
-    def ===(other : Arguments(U, NU)) : Bool forall U, NU
+    def ===(other : GenericArguments(U, NU)) : Bool forall U, NU
       return false unless @args === other.args
       return false unless @opts.size === other.opts.size
 
