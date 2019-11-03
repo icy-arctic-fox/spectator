@@ -4,8 +4,12 @@ require "./value_method_stub"
 
 module Spectator::Mocks
   class NilMethodStub < GenericMethodStub(Nil)
-    def call(_args : GenericArguments(T, NT)) : Nil forall T, NT
-      nil
+    def call(_args : GenericArguments(T, NT), rt : RT.class) forall T, NT, RT
+      if (cast = nil.as?(RT))
+        cast
+      else
+        raise "The return type of stub #{to_s} : Nil doesn't match the expected type #{RT}"
+      end
     end
 
     def and_return(value : T) forall T

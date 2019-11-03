@@ -13,8 +13,6 @@ module Spectator::Mocks
       super && (!@args || @args === call.args)
     end
 
-    abstract def call(args : GenericArguments(T, NT)) : ReturnType forall T, NT
-
     def to_s(io)
       super(io)
       if @args

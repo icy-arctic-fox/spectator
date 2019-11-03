@@ -10,6 +10,8 @@ module Spectator::Mocks
       @name == call.name
     end
 
+    abstract def call(args : GenericArguments(T, NT), rt : RT.class) forall T, NT, RT
+
     def to_s(io)
       io << '#'
       io << @name

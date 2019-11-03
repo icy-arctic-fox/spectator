@@ -41,11 +41,7 @@ module Spectator::Mocks
         %call = ::Spectator::Mocks::GenericMethodCall.new({{name.symbolize}}, %args)
         @spectator_stub_calls << %call
         if (%stub = @spectator_stubs.find(&.callable?(%call)))
-          if (%cast = %stub.as?(::Spectator::Mocks::GenericMethodStub(typeof(%method({{args.splat}})))))
-            %cast.call(%args)
-          else
-            raise "The return type of stub #{%stub} doesn't match the expected type #{typeof(%method({{args.splat}}))}"
-          end
+          %stub.call(%args, typeof(%method({{args.splat}})))
         else
           %method({{args.splat}})
         end
@@ -56,11 +52,7 @@ module Spectator::Mocks
         %call = ::Spectator::Mocks::GenericMethodCall.new({{name.symbolize}}, %args)
         @spectator_stub_calls << %call
         if (%stub = @spectator_stubs.find(&.callable?(%call)))
-          if (%cast = %stub.as?(::Spectator::Mocks::GenericMethodStub(typeof(%method({{args.splat}}) { |*%yield_args| yield *%yield_args }))))
-            %cast.call(%args)
-          else
-            raise "The return type of stub #{%stub} doesn't match the expected type #{typeof(%method({{args.splat}}) { |*%ya| yield *%ya })}"
-          end
+          %stub.call(%args, typeof(%method({{args.splat}}) { |*%ya| yield *%ya }))
         else
           %method({{args.splat}}) do |*%yield_args|
             yield *%yield_args
