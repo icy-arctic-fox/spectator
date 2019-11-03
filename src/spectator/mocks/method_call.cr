@@ -1,4 +1,4 @@
-module Spectator
+module Spectator::Mocks
   abstract class MethodCall
     getter name : Symbol
 

@@ -1,4 +1,4 @@
-module Spectator
+module Spectator::Mocks
   struct OpenMock
     def initialize(@mock : Double)
     end

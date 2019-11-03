@@ -1,7 +1,7 @@
 require "./generic_method_call"
 require "./generic_method_stub"
 
-module Spectator
+module Spectator::Mocks
   abstract class Double
     @spectator_stubs = Deque(MethodStub).new
     @spectator_stub_calls = Deque(MethodCall).new
@@ -37,20 +37,20 @@ module Spectator
       %}
 
       def {{name}}({{params.splat}}){% if definition.is_a?(TypeDeclaration) %} : {{definition.type}}{% end %}
-        %call = ::Spectator::GenericMethodCall.create({{name.symbolize}}{% unless args.empty? %}, {{args.splat}}{% end %})
+        %call = ::Spectator::Mocks::GenericMethodCall.create({{name.symbolize}}{% unless args.empty? %}, {{args.splat}}{% end %})
         @spectator_stub_calls << %call
         if (%stub = @spectator_stubs.find(&.callable?(%call)))
-          %stub.as(::Spectator::GenericMethodStub(typeof(%method({{args.splat}})))).call(%call)
+          %stub.as(::Spectator::Mocks::GenericMethodStub(typeof(%method({{args.splat}})))).call(%call)
         else
           %method({{args.splat}})
         end
       end
 
       def {{name}}({{params.splat}}){% if definition.is_a?(TypeDeclaration) %} : {{definition.type}}{% end %}
-        %call = ::Spectator::GenericMethodCall.create({{name.symbolize}}{% unless args.empty? %}, {{args.splat}}{% end %})
+        %call = ::Spectator::Mocks::GenericMethodCall.create({{name.symbolize}}{% unless args.empty? %}, {{args.splat}}{% end %})
         @spectator_stub_calls << %call
         if (%stub = @spectator_stubs.find(&.callable?(%call)))
-          %stub.as(::Spectator::GenericMethodStub(typeof(%method({{args.splat}}) { |*%yield_args| yield *%yield_args }))).call(%call)
+          %stub.as(::Spectator::Mocks::GenericMethodStub(typeof(%method({{args.splat}}) { |*%yield_args| yield *%yield_args }))).call(%call)
         else
           %method({{args.splat}}) do |*%yield_args|
             yield *%yield_args

@@ -1,6 +1,6 @@
 require "./method_call"
 
-module Spectator
+module Spectator::Mocks
   class GenericMethodCall(T, NT) < MethodCall
     getter args : T
 

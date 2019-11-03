@@ -1,8 +1,8 @@
+require "../source"
 require "./method_call"
 require "./method_stub"
-require "./source"
 
-module Spectator
+module Spectator::Mocks
   class GenericMethodStub(ReturnType) < MethodStub
     def initialize(name : Symbol, source : Source, @proc : -> ReturnType)
       super(name, source)

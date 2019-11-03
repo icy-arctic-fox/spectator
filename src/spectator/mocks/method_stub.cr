@@ -1,6 +1,6 @@
-require "./source"
+require "../source"
 
-module Spectator
+module Spectator::Mocks
   abstract class MethodStub
     def initialize(@name : Symbol, @source : Source)
     end

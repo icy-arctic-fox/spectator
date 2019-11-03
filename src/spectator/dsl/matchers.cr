@@ -703,33 +703,33 @@ module Spectator
     # # Is equivalent to:
     # expect("foobar".has_back_references?).to_not be_true
     # ```
-    macro method_missing(call)
-      {% if call.name.starts_with?("be_") %}
-        # Remove `be_` prefix.
-        {% method_name = call.name[3..-1] %}
-        {% matcher = "PredicateMatcher" %}
-      {% elsif call.name.starts_with?("have_") %}
-        # Remove `have_` prefix.
-        {% method_name = call.name[5..-1] %}
-        {% matcher = "HavePredicateMatcher" %}
-      {% else %}
-        {% raise "Undefined local variable or method '#{call}'" %}
-      {% end %}
-
-      descriptor = { {{method_name}}: Tuple.new({{call.args.splat}}) }
-      label = String::Builder.new({{method_name.stringify}})
-      {% unless call.args.empty? %}
-        label << '('
-        {% for arg, index in call.args %}
-          label << {{arg}}
-          {% if index < call.args.size - 1 %}
-            label << ", "
-          {% end %}
-        {% end %}
-        label << ')'
-      {% end %}
-      test_value = ::Spectator::TestValue.new(descriptor, label.to_s)
-      ::Spectator::Matchers::{{matcher.id}}.new(test_value)
-    end
+    # macro method_missing(call)
+    #   {% if call.name.starts_with?("be_") %}
+    #     # Remove `be_` prefix.
+    #     {% method_name = call.name[3..-1] %}
+    #     {% matcher = "PredicateMatcher" %}
+    #   {% elsif call.name.starts_with?("have_") %}
+    #     # Remove `have_` prefix.
+    #     {% method_name = call.name[5..-1] %}
+    #     {% matcher = "HavePredicateMatcher" %}
+    #   {% else %}
+    #     {% raise "Undefined local variable or method '#{call}'" %}
+    #   {% end %}
+    #
+    #   descriptor = { {{method_name}}: Tuple.new({{call.args.splat}}) }
+    #   label = String::Builder.new({{method_name.stringify}})
+    #   {% unless call.args.empty? %}
+    #     label << '('
+    #     {% for arg, index in call.args %}
+    #       label << {{arg}}
+    #       {% if index < call.args.size - 1 %}
+    #         label << ", "
+    #       {% end %}
+    #     {% end %}
+    #     label << ')'
+    #   {% end %}
+    #   test_value = ::Spectator::TestValue.new(descriptor, label.to_s)
+    #   ::Spectator::Matchers::{{matcher.id}}.new(test_value)
+    # end
   end
 end

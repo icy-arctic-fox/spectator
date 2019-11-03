@@ -1,4 +1,4 @@
-module Spectator
+module Spectator::Mocks
   module Mock
     macro included
       {% for meth in @type.methods %}

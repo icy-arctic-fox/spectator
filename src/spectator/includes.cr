@@ -29,8 +29,7 @@ require "./example_group"
 require "./nested_example_group"
 require "./root_example_group"
 
-require "./mock"
-require "./double"
+require "./mocks"
 
 require "./config"
 require "./config_builder"

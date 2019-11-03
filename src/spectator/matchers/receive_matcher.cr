@@ -1,4 +1,4 @@
-require "../double"
+require "../mocks/double"
 require "./standard_matcher"
 
 module Spectator::Matchers
@@ -11,7 +11,7 @@ module Spectator::Matchers
     end
 
     def match?(actual : TestExpression(T)) : Bool forall T
-      double = actual.value.as(Double)
+      double = actual.value.as(Mocks::Double)
       calls = double.spectator_stub_calls(@expected.value)
       !calls.empty?
     end
