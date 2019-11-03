@@ -23,7 +23,7 @@ module Spectator::Matchers
     def values(actual : TestExpression(T)) forall T
       {
         expected: "1 time with any arguments",
-        received: "0 times with any arguments"
+        received: "0 times with any arguments",
       }
     end
   end
