@@ -4,7 +4,7 @@ require "./value_method_stub"
 
 module Spectator::Mocks
   class NilMethodStub < GenericMethodStub(Nil)
-    def call(_args : GenericArguments(T, NT)) : ReturnType forall T, NT
+    def call(_args : GenericArguments(T, NT)) : Nil forall T, NT
       nil
     end
 
