@@ -14,5 +14,14 @@ module Spectator::Mocks
     end
 
     abstract def call(args : GenericArguments(T, NT)) : ReturnType forall T, NT
+
+    def to_s(io)
+      super(io)
+      if @args
+        io << '('
+        io << @args
+        io << ')'
+      end
+    end
   end
 end

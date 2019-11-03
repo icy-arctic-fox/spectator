@@ -9,5 +9,10 @@ module Spectator::Mocks
     def callable?(call : GenericMethodCall(T, NT)) : Bool forall T, NT
       @name == call.name
     end
+
+    def to_s(io)
+      io << '#'
+      io << @name
+    end
   end
 end
