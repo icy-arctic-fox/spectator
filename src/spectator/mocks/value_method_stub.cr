@@ -1,4 +1,4 @@
-require "./arguments"
+require "./generic_arguments"
 require "./generic_method_stub"
 
 module Spectator::Mocks
@@ -9,10 +9,6 @@ module Spectator::Mocks
 
     def call(_args : GenericArguments(T, NT)) : ReturnType forall T, NT
       @value
-    end
-
-    def and_return(value : T) forall T
-      ValueMethodStub.new(@name, @source, value)
     end
   end
 end
