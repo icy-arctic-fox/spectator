@@ -3,7 +3,7 @@ require "./standard_matcher"
 
 module Spectator::Matchers
   struct ReceiveMatcher < StandardMatcher
-    def initialize(@expected : TestExpression(Symbol))
+    def initialize(@expected : TestExpression(Symbol), @count : Int32? = nil)
     end
 
     def description : String
@@ -13,7 +13,11 @@ module Spectator::Matchers
     def match?(actual : TestExpression(T)) : Bool forall T
       double = actual.value.as(Mocks::Double)
       calls = double.spectator_stub_calls(@expected.value)
-      !calls.empty?
+      if (count = @count)
+        count == calls.size
+      else
+        !calls.empty?
+      end
     end
 
     def failure_message(actual : TestExpression(T)) : String forall T
@@ -21,9 +25,11 @@ module Spectator::Matchers
     end
 
     def values(actual : TestExpression(T)) forall T
+      double = actual.value.as(Mocks::Double)
+      calls = double.spectator_stub_calls(@expected.value)
       {
-        expected: "1 time with any arguments",
-        received: "0 times with any arguments",
+        expected: "#{@count ? "#{@count} time(s)" : "At least once"} with any arguments",
+        received: "#{calls.size} time(s) with any arguments",
       }
     end
   end
