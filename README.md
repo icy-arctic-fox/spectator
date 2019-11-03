@@ -314,8 +314,8 @@ Items not marked as completed may have partial implementations.
     - [X] Doubles (Stand-ins for real types) - `double NAME { }`
     - [X] Method stubs - `allow().to receive()`, `allow().to receive().and_return()`
     - [ ] Spies - `expect().to receive()`
-    - [ ] Message expectations - `expect().to receive().at_least()`
-    - [ ] Argument expectations - `expect().to receive().with()`
+    - [X] Message expectations - `expect().to receive().at_least()`
+    - [X] Argument expectations - `expect().to receive().with()`
     - [ ] Message ordering - `expect().to receive().ordered`
     - [ ] Null doubles
 - [ ] Runner

@@ -38,6 +38,11 @@ module Spectator::Matchers
       }
     end
 
+    def with(*args, **opts)
+      args = Mocks::GenericArguments.new(args, opts)
+      ReceiveArgumentsMatcher.new(@expected, args, @range)
+    end
+
     def once
       ReceiveMatcher.new(@expected, (1..1))
     end
