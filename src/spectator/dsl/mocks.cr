@@ -1,6 +1,7 @@
 require "../double"
 require "../generic_method_stub"
 require "../open_mock"
+require "../stubs"
 
 module Spectator::DSL
   macro double(name, &block)
@@ -17,6 +18,30 @@ module Spectator::DSL
         {{block.body}}
       end
     {% end %}
+  end
+
+  macro mock(name, &block)
+    {% if block.is_a?(Nop) %}
+      {{name}}.new.tap do |%inst|
+        %inst.spectator_test = self
+      end
+    {% else %}
+      {% resolved = name.resolve
+        type = if resolved < Reference
+          :class
+        elsif resolved < Value
+          :struct
+        else
+          :module
+        end
+      %}
+      {{type.id}} ::{{resolved.id}}
+        include ::Spectator::Stubs
+
+        {{block.body}}
+      end
+    {% end %}
+    {% debug %}
   end
 
   def allow(double : ::Spectator::Double)
