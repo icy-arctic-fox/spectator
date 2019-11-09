@@ -3,9 +3,6 @@ require "./generic_method_stub"
 
 module Spectator::Mocks
   abstract class Double
-    @spectator_stubs = Deque(MethodStub).new
-    @spectator_stub_calls = Deque(MethodCall).new
-
     def initialize(@spectator_double_name : Symbol)
     end
 
@@ -39,8 +36,8 @@ module Spectator::Mocks
       def {{name}}({{params.splat}}){% if definition.is_a?(TypeDeclaration) %} : {{definition.type}}{% end %}
         %args = ::Spectator::Mocks::GenericArguments.create({{args.splat}})
         %call = ::Spectator::Mocks::GenericMethodCall.new({{name.symbolize}}, %args)
-        @spectator_stub_calls << %call
-        if (%stub = @spectator_stubs.find(&.callable?(%call)))
+        ::Spectator::Mocks::Registry.record_call(self, %call)
+        if (%stub = ::Spectator::Mocks::Registry.find_stub(self, %call))
           %stub.call(%args, typeof(%method({{args.splat}})))
         else
           %method({{args.splat}})
@@ -50,8 +47,8 @@ module Spectator::Mocks
       def {{name}}({{params.splat}}){% if definition.is_a?(TypeDeclaration) %} : {{definition.type}}{% end %}
         %args = ::Spectator::Mocks::GenericArguments.create({{args.splat}})
         %call = ::Spectator::Mocks::GenericMethodCall.new({{name.symbolize}}, %args)
-        @spectator_stub_calls << %call
-        if (%stub = @spectator_stubs.find(&.callable?(%call)))
+        ::Spectator::Mocks::Registry.record_call(self, %call)
+        if (%stub = ::Spectator::Mocks::Registry.find_stub(self, %call))
           %stub.call(%args, typeof(%method({{args.splat}}) { |*%ya| yield *%ya }))
         else
           %method({{args.splat}}) do |*%yield_args|
@@ -79,14 +76,6 @@ module Spectator::Mocks
       io << "Double("
       io << @spectator_double_name
       io << ')'
-    end
-
-    protected def spectator_define_stub(stub : MethodStub) : Nil
-      @spectator_stubs << stub
-    end
-
-    protected def spectator_stub_calls(method : Symbol) : Array(MethodCall)
-      @spectator_stub_calls.select { |call| call.name == method }
     end
   end
 end
