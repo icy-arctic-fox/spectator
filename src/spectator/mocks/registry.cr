@@ -12,7 +12,7 @@ module Spectator::Mocks
     @@entries = {} of Key => Entry
 
     def reset : Nil
-      @entries.clear
+      @@entries.clear
     end
 
     def add_stub(object, stub : MethodStub) : Nil

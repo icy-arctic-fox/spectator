@@ -9,6 +9,7 @@ module Spectator
     def run_impl : Result
       result = capture_result
       expectations = Harness.current.expectations
+      Mocks::Registry.reset
       translate_result(result, expectations)
     end
 
