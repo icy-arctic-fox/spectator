@@ -35,8 +35,8 @@ module Spectator::DSL
     {% end %}
   end
 
-  def allow(double : ::Spectator::Mocks::Double)
-    Mocks::Allow.new(double)
+  def allow(thing : T) forall T
+    Mocks::Allow.new(thing)
   end
 
   macro receive(method_name, _source_file = __FILE__, _source_line = __LINE__)
