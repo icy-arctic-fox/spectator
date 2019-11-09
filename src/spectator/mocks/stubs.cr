@@ -25,6 +25,12 @@ module Spectator::Mocks
         else
           raise "Unrecognized stub format"
         end
+
+        original = if @type.methods.find { |m| m.name.id == name }
+                     :previous_def
+                   else
+                     :super
+                   end.id
       %}
 
       def {{name}}({{params.splat}}){% if definition.is_a?(TypeDeclaration) %} : {{definition.type}}{% end %}
@@ -32,9 +38,9 @@ module Spectator::Mocks
         %call = ::Spectator::Mocks::GenericMethodCall.new({{name.symbolize}}, %args)
         ::Spectator::Mocks::Registry.record_call(self, %call)
         if (%stub = ::Spectator::Mocks::Registry.find_stub(self, %call))
-          %stub.call(%args, typeof(previous_def({{args.splat}})))
+          %stub.call(%args, typeof({{original}}({{args.splat}})))
         else
-          previous_def({{args.splat}})
+          {{original}}({{args.splat}})
         end
       end
 
@@ -43,9 +49,9 @@ module Spectator::Mocks
         %call = ::Spectator::Mocks::GenericMethodCall.new({{name.symbolize}}, %args)
         ::Spectator::Mocks::Registry.record_call(self, %call)
         if (%stub = ::Spectator::Mocks::Registry.find_stub(self, %call))
-          %stub.call(%args, typeof(previous_def({{args.splat}}) { |*%ya| yield *%ya }))
+          %stub.call(%args, typeof({{original}}({{args.splat}}) { |*%ya| yield *%ya }))
         else
-          previous_def({{args.splat}}) do |*%yield_args|
+          {{original}}({{args.splat}}) do |*%yield_args|
             yield *%yield_args
           end
         end
