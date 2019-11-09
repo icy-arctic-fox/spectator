@@ -18,24 +18,17 @@ module Spectator::DSL
   end
 
   macro mock(name, &block)
-    {% if block.is_a?(Nop) %}
-      {{name}}.new.tap do |%inst|
-        %inst.spectator_test = self
-      end
-    {% else %}
-      {% resolved = name.resolve
-         type = if resolved < Reference
-                  :class
-                elsif resolved < Value
-                  :struct
-                else
-                  :module
-                end %}
+    {% resolved = name.resolve
+       type = if resolved < Reference
+                :class
+              elsif resolved < Value
+                :struct
+              else
+                :module
+              end %}
+    {% begin %}
       {{type.id}} ::{{resolved.id}}
         include ::Spectator::Mocks::Stubs
-
-        @spectator_stubs = Deque(::Spectator::Mocks::MethodStub).new
-        @spectator_stub_calls = Deque(::Spectator::Mocks::MethodCall).new
 
         {{block.body}}
       end
