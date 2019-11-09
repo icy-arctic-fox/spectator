@@ -1,10 +1,12 @@
+require "./registry"
+
 module Spectator::Mocks
-  struct Allow
-    def initialize(@mock : Double)
+  struct Allow(T)
+    def initialize(@mock : T)
     end
 
     def to(stub : MethodStub) : Nil
-      @mock.spectator_define_stub(stub)
+      Registry.add_stub(@mock, stub)
     end
   end
 end
