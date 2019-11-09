@@ -36,7 +36,7 @@ module Spectator::DSL
   end
 
   def allow(double : ::Spectator::Mocks::Double)
-    Mocks::OpenMock.new(double)
+    Mocks::Allow.new(double)
   end
 
   macro receive(method_name, _source_file = __FILE__, _source_line = __LINE__)
