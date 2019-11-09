@@ -11,6 +11,10 @@ module Spectator::Mocks
 
     @@entries = {} of Key => Entry
 
+    def prepare(context : TestContext) : Nil
+      # TODO
+    end
+
     def reset : Nil
       @@entries.clear
     end
