@@ -30,8 +30,8 @@ module Spectator::Mocks
       def {{name}}({{params.splat}}){% if definition.is_a?(TypeDeclaration) %} : {{definition.type}}{% end %}
         %args = ::Spectator::Mocks::GenericArguments.create({{args.splat}})
         %call = ::Spectator::Mocks::GenericMethodCall.new({{name.symbolize}}, %args)
-        @spectator_stub_calls << %call
-        if (%stub = @spectator_stubs.find(&.callable?(%call)))
+        ::Spectator::Mocks::Registry.record_call(self, %call)
+        if (%stub = ::Spectator::Mocks::Registry.find_stub(self, %call))
           %stub.call(%args, typeof(previous_def({{args.splat}})))
         else
           previous_def({{args.splat}})
@@ -41,8 +41,8 @@ module Spectator::Mocks
       def {{name}}({{params.splat}}){% if definition.is_a?(TypeDeclaration) %} : {{definition.type}}{% end %}
         %args = ::Spectator::Mocks::GenericArguments.create({{args.splat}})
         %call = ::Spectator::Mocks::GenericMethodCall.new({{name.symbolize}}, %args)
-        @spectator_stub_calls << %call
-        if (%stub = @spectator_stubs.find(&.callable?(%call)))
+        ::Spectator::Mocks::Registry.record_call(self, %call)
+        if (%stub = ::Spectator::Mocks::Registry.find_stub(self, %call))
           %stub.call(%args, typeof(previous_def({{args.splat}}) { |*%ya| yield *%ya }))
         else
           previous_def({{args.splat}}) do |*%yield_args|

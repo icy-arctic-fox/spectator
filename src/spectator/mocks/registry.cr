@@ -9,27 +9,34 @@ module Spectator::Mocks
       getter calls = Deque(MethodCall).new
     end
 
-    @entries = {} of Key => Entry
+    @@entries = {} of Key => Entry
 
-    def reset
+    def reset : Nil
       @entries.clear
     end
 
-    def register(object)
+    def register(object) : Nil
       key = unique_key(object)
-      @entries[key] = Entry.new
+      @@entries[key] = Entry.new
     end
 
-    def stub(object, stub : MethodStub)
+    def add_stub(object, stub : MethodStub) : Nil
       key = unique_key(object)
-      @entries[key].stubs << stub
+      @@entries[key].stubs << stub
     rescue KeyError
       raise "Cannot stub unregistered mock"
     end
 
-    def record_call(object, call : MethodCall)
+    def find_stub(object, call : GenericMethodCall(T, NT)) forall T, NT
       key = unique_key(object)
-      @entries[key].calls << call
+      @@entries[key].stubs.find(&.callable?(call))
+    rescue KeyError
+      raise "Cannot stub unregistered mock"
+    end
+
+    def record_call(object, call : MethodCall) : Nil
+      key = unique_key(object)
+      @@entries[key].calls << call
     rescue KeyError
       raise "Cannot record call for unregistered mock"
     end
