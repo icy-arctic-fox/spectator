@@ -14,8 +14,7 @@ module Spectator::Matchers
     end
 
     def match?(actual : TestExpression(T)) : Bool forall T
-      double = actual.value.as(Mocks::Double)
-      calls = double.spectator_stub_calls(@expected.value).select { |call| @args === call.args }
+      calls = Mocks::Registry.calls_for(actual.value, @expected.value).select { |call| @args === call.args }
       if (range = @range)
         range.includes?(calls.size)
       else
@@ -29,8 +28,7 @@ module Spectator::Matchers
     end
 
     def values(actual : TestExpression(T)) forall T
-      double = actual.value.as(Mocks::Double)
-      calls = double.spectator_stub_calls(@expected.value)
+      calls = Mocks::Registry.calls_for(actual.value, @expected.value).select { |call| @args === call.args }
       range = @range
       {
         expected: "#{range ? "#{humanize_range(range)} time(s)" : "At least once"} with #{@args}",

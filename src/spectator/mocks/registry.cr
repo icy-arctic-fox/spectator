@@ -27,6 +27,10 @@ module Spectator::Mocks
       fetch(object).calls << call
     end
 
+    def calls_for(object, method_name : Symbol)
+      fetch(object).calls.select { |call| call.name == method_name }
+    end
+
     private def fetch(object)
       key = unique_key(object)
       if @@entries.has_key?(key)
