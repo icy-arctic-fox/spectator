@@ -34,26 +34,28 @@ module Spectator::Mocks
       %}
 
       def {{name}}({{params.splat}}){% if definition.is_a?(TypeDeclaration) %} : {{definition.type}}{% end %}
-        %args = ::Spectator::Mocks::GenericArguments.create({{args.splat}})
-        %call = ::Spectator::Mocks::GenericMethodCall.new({{name.symbolize}}, %args)
-        ::Spectator::Harness.current.mocks.record_call(self, %call)
-        if (%stub = ::Spectator::Harness.current.mocks.find_stub(self, %call))
-          %stub.call!(%args, typeof({{original}}({{args.splat}})))
-        else
-          {{original}}({{args.splat}})
+        if (%harness = ::Spectator::Harness.current?)
+          %args = ::Spectator::Mocks::GenericArguments.create({{args.splat}})
+          %call = ::Spectator::Mocks::GenericMethodCall.new({{name.symbolize}}, %args)
+          %harness.mocks.record_call(self, %call)
+          if (%stub = ::Spectator::Harness.current.mocks.find_stub(self, %call))
+            return %stub.call!(%args, typeof({{original}}({{args.splat}})))
+          end
         end
+        {{original}}({{args.splat}})
       end
 
       def {{name}}({{params.splat}}){% if definition.is_a?(TypeDeclaration) %} : {{definition.type}}{% end %}
-        %args = ::Spectator::Mocks::GenericArguments.create({{args.splat}})
-        %call = ::Spectator::Mocks::GenericMethodCall.new({{name.symbolize}}, %args)
-        ::Spectator::Harness.current.mocks.record_call(self, %call)
-        if (%stub = ::Spectator::Harness.current.mocks.find_stub(self, %call))
-          %stub.call!(%args, typeof({{original}}({{args.splat}}) { |*%ya| yield *%ya }))
-        else
-          {{original}}({{args.splat}}) do |*%yield_args|
-            yield *%yield_args
+        if (%harness = ::Spectator::Harness.current?)
+          %args = ::Spectator::Mocks::GenericArguments.create({{args.splat}})
+          %call = ::Spectator::Mocks::GenericMethodCall.new({{name.symbolize}}, %args)
+          %harness.mocks.record_call(self, %call)
+          if (%stub = ::Spectator::Harness.current.mocks.find_stub(self, %call))
+            return %stub.call!(%args, typeof({{original}}({{args.splat}}) { |*%ya| yield *%ya }))
           end
+        end
+        {{original}}({{args.splat}}) do |*%yield_args|
+          yield *%yield_args
         end
       end
     end
