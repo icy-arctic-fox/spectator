@@ -2,7 +2,7 @@ module Spectator::Mocks
   module Registry
     extend self
 
-    alias Key = Tuple(UInt64, UInt64)
+    alias Key = Tuple(String, UInt64)
 
     private struct Entry
       getter stubs = Deque(MethodStub).new
@@ -47,11 +47,11 @@ module Spectator::Mocks
     end
 
     private def unique_key(reference : Reference)
-      {reference.class.hash, reference.object_id}
+      {reference.class.name, reference.object_id}
     end
 
     private def unique_key(value : Value)
-      {value.class.hash, value.hash}
+      {value.class.name, value.hash}
     end
   end
 end
