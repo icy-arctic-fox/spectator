@@ -59,7 +59,7 @@ module Spectator
     # The example the harness is for should be passed in.
     private def initialize(@example)
       @reporter = Expectations::ExpectationReporter.new
-      @mocks = Mocks::Registry.new(@example.group.context.stubs)
+      @mocks = Mocks::Registry.new(@example.group.context)
     end
   end
 end
