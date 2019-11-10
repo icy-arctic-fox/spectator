@@ -11,11 +11,20 @@ module Spectator::Mocks
     @entries = {} of Key => Entry
 
     def initialize(context : TestContext)
-      @all_instances = context.stubs.map do |k, v|
-        entry = Entry.new
-        entry.stubs.concat(v)
-        {k, entry}
-      end.to_h
+      current_context = context
+      while current_context
+        current_context.stubs.each do |k, v|
+          stubs = if @all_instances.has_key?(k)
+            @all_instances[k].stubs
+          else
+            entry = Entry.new
+            @all_instances[k] = entry
+            entry.stubs
+          end
+          stubs.concat(v)
+        end
+        current_context = current_context.parent?
+      end
     end
 
     def reset : Nil
