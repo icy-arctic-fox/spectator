@@ -20,7 +20,9 @@ module Spectator::Mocks
     end
 
     def add_stub(object, stub : MethodStub) : Nil
-      fetch(object).stubs << stub
+      # Stubs are added in reverse order,
+      # so that later-defined stubs override previously defined ones.
+      fetch(object).stubs.unshift(stub)
     end
 
     def find_stub(object, call : GenericMethodCall(T, NT)) forall T, NT
