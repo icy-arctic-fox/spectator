@@ -8,12 +8,7 @@ module Spectator::Mocks
     end
 
     def call(_args : GenericArguments(T, NT), rt : RT.class) forall T, NT, RT
-      result = @proc.call
-      if (cast = result.as?(RT))
-        cast
-      else
-        raise "The return type of stub #{self} doesn't match the expected type #{RT}"
-      end
+      @proc.call
     end
   end
 end
