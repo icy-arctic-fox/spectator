@@ -47,7 +47,7 @@ module Spectator::Mocks
           %args = ::Spectator::Mocks::GenericArguments.create({{args.splat}})
           %call = ::Spectator::Mocks::GenericMethodCall.new({{name.symbolize}}, %args)
           %harness.mocks.record_call(self, %call)
-          if (%stub = ::Spectator::Harness.current.mocks.find_stub(self, %call))
+          if (%stub = %harness.mocks.find_stub(self, %call))
             return %stub.call!(%args, typeof({{original}}({{args.splat}})))
           end
         end
@@ -59,7 +59,7 @@ module Spectator::Mocks
           %args = ::Spectator::Mocks::GenericArguments.create({{args.splat}})
           %call = ::Spectator::Mocks::GenericMethodCall.new({{name.symbolize}}, %args)
           %harness.mocks.record_call(self, %call)
-          if (%stub = ::Spectator::Harness.current.mocks.find_stub(self, %call))
+          if (%stub = %harness.mocks.find_stub(self, %call))
             return %stub.call!(%args, typeof({{original}}({{args.splat}}) { |*%ya| yield *%ya }))
           end
         end
