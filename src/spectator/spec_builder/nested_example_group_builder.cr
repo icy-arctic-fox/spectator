@@ -7,7 +7,7 @@ module Spectator::SpecBuilder
     end
 
     def build(parent_group)
-      context = TestContext.new(parent_group.context, build_hooks, build_conditions, parent_group.context.values)
+      context = TestContext.new(parent_group.context, build_hooks, build_conditions, parent_group.context.values, @default_stubs)
       NestedExampleGroup.new(@description, @source, parent_group, context).tap do |group|
         group.children = children.map do |child|
           child.build(group).as(ExampleComponent)

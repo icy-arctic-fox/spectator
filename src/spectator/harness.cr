@@ -27,8 +27,7 @@ module Spectator
     # The *example* argument will be the example to run.
     # The result returned from `Example#run` will be returned.
     def self.run(example : Example) : Result
-      @@current = harness = new(example)
-      harness.mocks.prepare(example.group.context)
+      @@current = new(example)
       example.run
     ensure
       @@current = nil
@@ -37,7 +36,7 @@ module Spectator
     # Retrieves the current running example.
     getter example : Example
 
-    getter mocks = Mocks::Registry.new
+    getter mocks : Mocks::Registry
 
     # Retrieves the group for the current running example.
     def group
@@ -60,6 +59,7 @@ module Spectator
     # The example the harness is for should be passed in.
     private def initialize(@example)
       @reporter = Expectations::ExpectationReporter.new
+      @mocks = Mocks::Registry.new(@example.group.context.stubs)
     end
   end
 end

@@ -5,7 +5,13 @@ module Spectator
   class TestContext
     getter values
 
-    def initialize(@parent : TestContext?, @hooks : ExampleHooks, @conditions : ExampleConditions, @values : TestValues)
+    getter stubs : Hash(String, Deque(Mocks::MethodStub))
+
+    def initialize(@parent : TestContext?,
+      @hooks : ExampleHooks,
+      @conditions : ExampleConditions,
+      @values : TestValues,
+      @stubs : Hash(String, Deque(Mocks::MethodStub)))
       @before_all_hooks_run = false
       @after_all_hooks_run = false
     end

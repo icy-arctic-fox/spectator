@@ -14,6 +14,7 @@ module Spectator::SpecBuilder
     @around_each_hooks = Deque(::SpectatorTest, Proc(Nil) ->).new
     @pre_conditions = Deque(TestMetaMethod).new
     @post_conditions = Deque(TestMetaMethod).new
+    @default_stubs = {} of String => Deque(Mocks::MethodStub)
 
     def add_child(child : Child)
       @children << child
@@ -45,6 +46,12 @@ module Spectator::SpecBuilder
 
     def add_post_condition(hook : TestMetaMethod)
       @post_conditions << hook
+    end
+
+    def add_default_stub(type : T.class, stub : Mocks::MethodStub) forall T
+      key = type.name
+      @default_stubs[key] = Dequeue.new unless @default_stubs.has_key?(key)
+      @default_stubs[key] << stub
     end
 
     private def build_hooks

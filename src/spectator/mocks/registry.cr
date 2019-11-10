@@ -10,8 +10,12 @@ module Spectator::Mocks
     @all_instances = {} of String => Entry
     @entries = {} of Key => Entry
 
-    def prepare(context : TestContext) : Nil
-      # TODO
+    def initialize(default_stubs)
+      @all_instances = default_stubs.map do |k, v|
+        entry = Entry.new
+        entry.stubs.concat(v)
+        {k, entry}
+      end.to_h
     end
 
     def reset : Nil

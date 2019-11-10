@@ -96,9 +96,8 @@ module Spectator
       @@stack.current.add_post_condition(block)
     end
 
-    def add_double(id : Symbol, double_type : Double.class) : Nil
-      double_factory = DoubleFactory.new(double_type)
-      current_group.add_double(id, double_factory)
+    def add_default_stub(*args) : Nil
+      @@stack.current.add_default_stub(*args)
     end
 
     # Builds the entire spec and returns it as a test suite.
