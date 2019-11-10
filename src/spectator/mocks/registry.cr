@@ -1,7 +1,5 @@
 module Spectator::Mocks
-  module Registry
-    extend self
-
+  class Registry
     alias Key = Tuple(String, UInt64)
 
     private struct Entry
@@ -9,14 +7,14 @@ module Spectator::Mocks
       getter calls = Deque(MethodCall).new
     end
 
-    @@entries = {} of Key => Entry
+    @entries = {} of Key => Entry
 
     def prepare(context : TestContext) : Nil
       # TODO
     end
 
     def reset : Nil
-      @@entries.clear
+      @entries.clear
     end
 
     def add_stub(object, stub : MethodStub) : Nil
@@ -39,10 +37,10 @@ module Spectator::Mocks
 
     private def fetch(object)
       key = unique_key(object)
-      if @@entries.has_key?(key)
-        @@entries[key]
+      if @entries.has_key?(key)
+        @entries[key]
       else
-        @@entries[key] = Entry.new
+        @entries[key] = Entry.new
       end
     end
 
