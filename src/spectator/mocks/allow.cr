@@ -6,7 +6,7 @@ module Spectator::Mocks
     end
 
     def to(stub : MethodStub) : Nil
-      Registry.add_stub(@mock, stub)
+      Harness.current.mocks.add_stub(@mock, stub)
     end
   end
 end

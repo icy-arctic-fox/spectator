@@ -14,7 +14,7 @@ module Spectator::Matchers
     end
 
     def match?(actual : TestExpression(T)) : Bool forall T
-      calls = Mocks::Registry.calls_for(actual.value, @expected.value)
+      calls = Harness.current.mocks.calls_for(actual.value, @expected.value)
       if (range = @range)
         range.includes?(calls.size)
       else
@@ -28,7 +28,7 @@ module Spectator::Matchers
     end
 
     def values(actual : TestExpression(T)) forall T
-      calls = Mocks::Registry.calls_for(actual.value, @expected.value)
+      calls = Harness.current.mocks.calls_for(actual.value, @expected.value)
       range = @range
       {
         expected: "#{range ? "#{humanize_range(range)} time(s)" : "At least once"} with any arguments",

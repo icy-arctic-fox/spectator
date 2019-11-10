@@ -7,11 +7,9 @@ module Spectator
     # Runs the example, hooks, and captures the result
     # and translates to a usable result.
     def run_impl : Result
-      Mocks.run(group.context) do
-        result = capture_result
-        expectations = Harness.current.expectations
-        translate_result(result, expectations)
-      end
+      result = capture_result
+      expectations = Harness.current.expectations
+      translate_result(result, expectations)
     end
 
     # Runs all hooks and the example code.
