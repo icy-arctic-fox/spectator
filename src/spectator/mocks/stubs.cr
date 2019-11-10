@@ -1,6 +1,6 @@
 module Spectator::Mocks
   module Stubs
-    private macro stub(definition, &block)
+    private macro stub(definition, _file = __FILE__, _line = __LINE__, &block)
       {%
         name = nil
         params = nil
@@ -32,6 +32,15 @@ module Spectator::Mocks
                      :super
                    end.id
       %}
+
+      {% if body && !body.is_a?(Nop) %}
+        %source = ::Spectator::Source.new({{_file}}, {{_line}})
+        %proc = ->{
+          {{body.body}}
+        }
+        %ds = ::Spectator::Mocks::ProcMethodStub.new({{name.symbolize}}, %source, %proc)
+        ::Spectator::SpecBuilder.add_default_stub({{@type.name}}, %ds)
+      {% end %}
 
       def {{name}}({{params.splat}}){% if definition.is_a?(TypeDeclaration) %} : {{definition.type}}{% end %}
         if (%harness = ::Spectator::Harness.current?)
