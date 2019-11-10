@@ -51,7 +51,7 @@ module Spectator::SpecBuilder
     def add_default_stub(type : T.class, stub : Mocks::MethodStub) forall T
       key = type.name
       @default_stubs[key] = Deque(Mocks::MethodStub).new unless @default_stubs.has_key?(key)
-      @default_stubs[key] << stub
+      @default_stubs[key].unshift(stub)
     end
 
     private def build_hooks
