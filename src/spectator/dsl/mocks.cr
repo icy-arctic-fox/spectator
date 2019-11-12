@@ -43,6 +43,6 @@ module Spectator::DSL
 
   macro receive(method_name, _source_file = __FILE__, _source_line = __LINE__)
     %source = ::Spectator::Source.new({{_source_file}}, {{_source_line}})
-    ::Spectator::Mocks::NilMethodStub.new({{method_name.symbolize}}, %source)
+    ::Spectator::Mocks::NilMethodStub.new({{method_name.id.symbolize}}, %source)
   end
 end
