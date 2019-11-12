@@ -15,12 +15,12 @@ module Spectator::Mocks
       while current_context
         current_context.stubs.each do |k, v|
           stubs = if @all_instances.has_key?(k)
-            @all_instances[k].stubs
-          else
-            entry = Entry.new
-            @all_instances[k] = entry
-            entry.stubs
-          end
+                    @all_instances[k].stubs
+                  else
+                    entry = Entry.new
+                    @all_instances[k] = entry
+                    entry.stubs
+                  end
           stubs.concat(v)
         end
         current_context = current_context.parent?
