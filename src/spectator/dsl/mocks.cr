@@ -49,4 +49,13 @@ module Spectator::DSL
     %source = ::Spectator::Source.new({{_source_file}}, {{_source_line}})
     ::Spectator::Mocks::NilMethodStub.new({{method_name.id.symbolize}}, %source)
   end
+
+  macro receive_messages(_source_file = __FILE__, _source_line = __LINE__, **stubs)
+    %source = ::Spectator::Source.new({{_source_file}}, {{_source_line}})
+    %stubs = [] of ::Spectator::Mocks::MethodStub
+    {% for name, value in stubs %}
+    %stubs << ::Spectator::Mocks::ValueMethodStub.new({{name.id.symbolize}}, %source, {{value}})
+    {% end %}
+    %stubs
+  end
 end

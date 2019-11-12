@@ -8,5 +8,11 @@ module Spectator::Mocks
     def to(stub : MethodStub) : Nil
       Harness.current.mocks.add_stub(@mock, stub)
     end
+
+    def to(stubs : Enumerable(MethodStub)) : Nil
+      stubs.each do |stub|
+        Harness.current.mocks.add_stub(@mock, stub)
+      end
+    end
   end
 end
