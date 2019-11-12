@@ -1,5 +1,6 @@
 require "./generic_method_call"
 require "./generic_method_stub"
+require "./unexpected_message_error"
 
 module Spectator::Mocks
   abstract class Double
@@ -61,7 +62,7 @@ module Spectator::Mocks
         {% if body && !body.is_a?(Nop) %}
           {{body.body}}
         {% else %}
-          raise "Stubbed method called without being allowed"
+          raise ::Spectator::Mocks::UnexpectedMessageError.new("#{self} received unexpected message {{name}}")
           # This code shouldn't be reached, but makes the compiler happy to have a matching return type.
           {% if definition.is_a?(TypeDeclaration) %}
             %x = uninitialized {{definition.type}}
