@@ -73,6 +73,10 @@ module Spectator::Mocks
       end
     end
 
+    macro method_missing(call)
+      raise ::Spectator::Mocks::UnexpectedMessageError.new("#{self} received unexpected message {{call.name}}")
+    end
+
     def to_s(io)
       io << "Double("
       io << @spectator_double_name
