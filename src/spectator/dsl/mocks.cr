@@ -3,14 +3,12 @@ require "../mocks"
 module Spectator::DSL
   macro double(name, &block)
     {% if block.is_a?(Nop) %}
-      Double{{name.id}}.new(self)
+      Double{{name.id}}.new
     {% else %}
       class Double{{name.id}} < ::Spectator::Mocks::Double
-        def initialize(@spectator_test : {{@type.id}})
+        def initialize
           super({{name.id.symbolize}})
         end
-
-        forward_missing_to @spectator_test
 
         {{block.body}}
       end
