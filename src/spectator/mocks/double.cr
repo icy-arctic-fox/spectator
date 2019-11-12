@@ -4,7 +4,7 @@ require "./unexpected_message_error"
 
 module Spectator::Mocks
   abstract class Double
-    def initialize(@spectator_double_name : Symbol)
+    def initialize(@spectator_double_name : Symbol, @null = false)
     end
 
     private macro stub(definition, &block)
@@ -74,6 +74,8 @@ module Spectator::Mocks
     end
 
     macro method_missing(call)
+      return self if @null
+
       raise ::Spectator::Mocks::UnexpectedMessageError.new("#{self} received unexpected message {{call.name}}")
     end
 

@@ -10,8 +10,34 @@ module Spectator::DSL
       end
     {% else %}
       class Double{{name.id}} < ::Spectator::Mocks::Double
-        def initialize
-          super({{name.id.symbolize}})
+        def initialize(null = false)
+          super({{name.id.symbolize}}, null)
+        end
+
+        def as_null_object
+          Double{{name.id}}.new(true)
+        end
+
+        {{block.body}}
+      end
+    {% end %}
+  end
+
+  macro null_double(name, **stubs, &block)
+    {% if block.is_a?(Nop) %}
+      Double{{name.id}}.new(true).tap do |%double|
+        {% for name, value in stubs %}
+        allow(%double).to receive({{name.id}}).and_return({{value}})
+        {% end %}
+      end
+    {% else %}
+      class Double{{name.id}} < ::Spectator::Mocks::Double
+        def initialize(null = true)
+          super({{name.id.symbolize}}, null)
+        end
+
+        def as_null_object
+          Double{{name.id}}.new(true)
         end
 
         {{block.body}}
