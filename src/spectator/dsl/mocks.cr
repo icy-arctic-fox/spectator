@@ -1,9 +1,13 @@
 require "../mocks"
 
 module Spectator::DSL
-  macro double(name, &block)
+  macro double(name, **stubs, &block)
     {% if block.is_a?(Nop) %}
-      Double{{name.id}}.new
+      Double{{name.id}}.new.tap do |%double|
+        {% for name, value in stubs %}
+        allow(%double).to receive({{name.id}}).and_return({{value}})
+        {% end %}
+      end
     {% else %}
       class Double{{name.id}} < ::Spectator::Mocks::Double
         def initialize
