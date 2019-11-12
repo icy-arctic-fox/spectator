@@ -24,11 +24,19 @@ module Spectator::Expectations
       report(match_data)
     end
 
+    def to(stub : Mocks::MethodStub) : Nil
+      raise NotImplementedError.new("`expect(double).to receive(message)` syntax not implemented yet")
+    end
+
     # Asserts that some criteria defined by the matcher is not satisfied.
     # This is effectively the opposite of `#to`.
     def to_not(matcher) : Nil
       match_data = matcher.negated_match(@actual)
       report(match_data)
+    end
+
+    def to_not(stub : Mocks::MethodStub) : Nil
+      raise NotImplementedError.new("`expect(double).to_not receive(message)` syntax not implemented yet")
     end
 
     # ditto
