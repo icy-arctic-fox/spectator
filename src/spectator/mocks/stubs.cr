@@ -2,11 +2,13 @@ module Spectator::Mocks
   module Stubs
     private macro stub(definition, _file = __FILE__, _line = __LINE__, &block)
       {%
+        receiver = nil
         name = nil
         params = nil
         args = nil
         body = nil
         if definition.is_a?(Call) # stub foo { :bar }
+          receiver = definition.receiver.id
           named = false
           name = definition.name.id
           params = definition.args
@@ -31,6 +33,12 @@ module Spectator::Mocks
                    else
                      :super
                    end.id
+        receiver = if receiver == :self.id
+                     original = :previous_def.id
+                     "self."
+                   else
+                     ""
+                   end.id
       %}
 
       {% if body && !body.is_a?(Nop) %}
@@ -42,7 +50,7 @@ module Spectator::Mocks
         ::Spectator::SpecBuilder.add_default_stub({{@type.name}}, %ds)
       {% end %}
 
-      def {{name}}({{params.splat}}){% if definition.is_a?(TypeDeclaration) %} : {{definition.type}}{% end %}
+      def {{receiver}}{{name}}({{params.splat}}){% if definition.is_a?(TypeDeclaration) %} : {{definition.type}}{% end %}
         if (%harness = ::Spectator::Harness.current?)
           %args = ::Spectator::Mocks::GenericArguments.create({{args.splat}})
           %call = ::Spectator::Mocks::GenericMethodCall.new({{name.symbolize}}, %args)
@@ -54,7 +62,7 @@ module Spectator::Mocks
         {{original}}({{args.splat}})
       end
 
-      def {{name}}({{params.splat}}){% if definition.is_a?(TypeDeclaration) %} : {{definition.type}}{% end %}
+      def {{receiver}}{{name}}({{params.splat}}){% if definition.is_a?(TypeDeclaration) %} : {{definition.type}}{% end %}
         if (%harness = ::Spectator::Harness.current?)
           %args = ::Spectator::Mocks::GenericArguments.create({{args.splat}})
           %call = ::Spectator::Mocks::GenericMethodCall.new({{name.symbolize}}, %args)
