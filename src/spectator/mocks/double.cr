@@ -4,7 +4,7 @@ require "./unexpected_message_error"
 
 module Spectator::Mocks
   abstract class Double
-    def initialize(@spectator_double_name : Symbol, @null = false)
+    def initialize(@spectator_double_name : String, @null = false)
     end
 
     private macro stub(definition, &block)
