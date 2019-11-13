@@ -2,16 +2,17 @@ require "../mocks"
 
 module Spectator::DSL
   macro double(name, **stubs, &block)
+    {% safe_name = name.id.symbolize.gsub(/\W/, "_").id %}
     {% if block.is_a?(Nop) %}
-      Double{{name.id}}.new.tap do |%double|
+      Double{{safe_name}}.new.tap do |%double|
         {% for name, value in stubs %}
         allow(%double).to receive({{name.id}}).and_return({{value}})
         {% end %}
       end
     {% else %}
-      class Double{{name.id}} < ::Spectator::Mocks::Double
+      class Double{{safe_name}} < ::Spectator::Mocks::Double
         def initialize(null = false)
-          super({{name.id.symbolize}}, null)
+          super({{name.id.stringify}}, null)
         end
 
         def as_null_object
@@ -24,16 +25,17 @@ module Spectator::DSL
   end
 
   macro null_double(name, **stubs, &block)
+    {% safe_name = name.id.symbolize.gsub(/\W/, "_").id %}
     {% if block.is_a?(Nop) %}
-      Double{{name.id}}.new(true).tap do |%double|
+      Double{{safe_name}}.new(true).tap do |%double|
         {% for name, value in stubs %}
         allow(%double).to receive({{name.id}}).and_return({{value}})
         {% end %}
       end
     {% else %}
-      class Double{{name.id}} < ::Spectator::Mocks::Double
+      class Double{{safe_name}} < ::Spectator::Mocks::Double
         def initialize(null = true)
-          super({{name.id.symbolize}}, null)
+          super({{name.id.stringify}}, null)
         end
 
         def as_null_object
