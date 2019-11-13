@@ -15,10 +15,7 @@ module Spectator::DSL
   end
 
   macro create_double(type_name, name, **stubs)
-    {%
-      type = type_name.resolve?
-      raise "Could not find a double labeled #{name}" unless type
-    %}
+    {% type_name.resolve? || raise("Could not find a double labeled #{name}") %}
 
     {{type_name}}.new.tap do |%double|
       {% for name, value in stubs %}
@@ -57,10 +54,7 @@ module Spectator::DSL
   end
 
   macro create_null_double(type_name, name, **stubs)
-    {%
-      type = type_name.resolve?
-      raise "Could not find a double labeled #{name}" unless type
-    %}
+    {% type_name.resolve? || raise("Could not find a double labeled #{name}") %}
 
     {{type_name}}.new(true).tap do |%double|
       {% for name, value in stubs %}
