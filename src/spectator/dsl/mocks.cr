@@ -2,15 +2,19 @@ require "../mocks"
 
 module Spectator::DSL
   macro double(name, **stubs, &block)
-    {%
-      safe_name = name.id.symbolize.gsub(/\W/, "_").id
-      type_name = "Double#{safe_name}".id
-    %}
-
-    {% if block.is_a?(Nop) %}
-      create_double({{type_name}}, {{name}}, {{stubs.double_splat}})
+    {% if name.is_a?(StringLiteral) %}
+      anonymous_double({{name}}, {{stubs.double_splat}})
     {% else %}
-      define_double({{type_name}}, {{name}}, {{stubs.double_splat}}) {{block}}
+      {%
+        safe_name = name.id.symbolize.gsub(/\W/, "_").id
+        type_name = "Double#{safe_name}".id
+      %}
+
+      {% if block.is_a?(Nop) %}
+        create_double({{type_name}}, {{name}}, {{stubs.double_splat}})
+      {% else %}
+        define_double({{type_name}}, {{name}}, {{stubs.double_splat}}) {{block}}
+      {% end %}
     {% end %}
   end
 
@@ -40,16 +44,24 @@ module Spectator::DSL
     end
   end
 
-  macro null_double(name, **stubs, &block)
-    {%
-      safe_name = name.id.symbolize.gsub(/\W/, "_").id
-      type_name = "Double#{safe_name}".id
-    %}
+  def anonymous_double(name : String, **stubs)
+    Mocks::AnonymousDouble.new(name, stubs)
+  end
 
-    {% if block.is_a?(Nop) %}
-      create_null_double({{type_name}}, {{name}}, {{stubs.double_splat}})
+  macro null_double(name, **stubs, &block)
+    {% if name.is_a?(StringLiteral) %}
+      anonymous_null_double({{name}}, {{stubs.double_splat}})
     {% else %}
-      define_null_double({{type_name}}, {{name}}, {{stubs.double_splat}}) {{block}}
+      {%
+        safe_name = name.id.symbolize.gsub(/\W/, "_").id
+        type_name = "Double#{safe_name}".id
+      %}
+
+      {% if block.is_a?(Nop) %}
+        create_null_double({{type_name}}, {{name}}, {{stubs.double_splat}})
+      {% else %}
+        define_null_double({{type_name}}, {{name}}, {{stubs.double_splat}}) {{block}}
+      {% end %}
     {% end %}
   end
 
@@ -77,6 +89,10 @@ module Spectator::DSL
 
       {{block.body}}
     end
+  end
+
+  def anonymous_null_double(name : Strings, **stubs)
+    AnonymousNullDouble.new(name, stubs)
   end
 
   macro mock(name, &block)
