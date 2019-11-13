@@ -2,31 +2,39 @@ require "../mocks"
 
 module Spectator::DSL
   macro double(name, **stubs, &block)
+    {%
+      safe_name = name.id.symbolize.gsub(/\W/, "_").id
+      type_name = "Double#{safe_name}".id
+    %}
+
     {% if block.is_a?(Nop) %}
-      create_double({{name}}, {{stubs.double_splat}})
+      create_double({{type_name}}, {{name}}, {{stubs.double_splat}})
     {% else %}
-      define_double({{name}}, {{stubs.double_splat}}) {{block}}
+      define_double({{type_name}}, {{name}}, {{stubs.double_splat}}) {{block}}
     {% end %}
   end
 
-  macro create_double(name, **stubs)
-    {% safe_name = name.id.symbolize.gsub(/\W/, "_").id %}
-    Double{{safe_name}}.new.tap do |%double|
+  macro create_double(type_name, name, **stubs)
+    {%
+      type = type_name.resolve?
+      raise "Could not find a double labeled #{name}" unless type
+    %}
+
+    {{type_name}}.new.tap do |%double|
       {% for name, value in stubs %}
       allow(%double).to receive({{name.id}}).and_return({{value}})
       {% end %}
     end
   end
 
-  macro define_double(name, **stubs, &block)
-    {% safe_name = name.id.symbolize.gsub(/\W/, "_").id %}
-    class Double{{safe_name}} < ::Spectator::Mocks::Double
+  macro define_double(type_name, name, **stubs, &block)
+    class {{type_name}} < ::Spectator::Mocks::Double
       def initialize(null = false)
         super({{name.id.stringify}}, null)
       end
 
       def as_null_object
-        Double{{safe_name}}.new(true)
+        {{type_name}}.new(true)
       end
 
       # TODO: Do something with **stubs?
@@ -36,31 +44,39 @@ module Spectator::DSL
   end
 
   macro null_double(name, **stubs, &block)
+    {%
+      safe_name = name.id.symbolize.gsub(/\W/, "_").id
+      type_name = "Double#{safe_name}".id
+    %}
+
     {% if block.is_a?(Nop) %}
-      create_null_double({{name}}, {{stubs.double_splat}})
+      create_null_double({{type_name}}, {{name}}, {{stubs.double_splat}})
     {% else %}
-      define_null_double({{name}}, {{stubs.double_splat}}) {{block}}
+      define_null_double({{type_name}}, {{name}}, {{stubs.double_splat}}) {{block}}
     {% end %}
   end
 
-  macro create_null_double(name, **stubs)
-    {% safe_name = name.id.symbolize.gsub(/\W/, "_").id %}
-    Double{{safe_name}}.new(true).tap do |%double|
+  macro create_null_double(type_name, name, **stubs)
+    {%
+      type = type_name.resolve?
+      raise "Could not find a double labeled #{name}" unless type
+    %}
+
+    {{type_name}}.new(true).tap do |%double|
       {% for name, value in stubs %}
       allow(%double).to receive({{name.id}}).and_return({{value}})
       {% end %}
     end
   end
 
-  macro define_null_double(name, **stubs, &block)
-    {% safe_name = name.id.symbolize.gsub(/\W/, "_").id %}
-    class Double{{safe_name}} < ::Spectator::Mocks::Double
+  macro define_null_double(type_name, name, **stubs, &block)
+    class {{type_name}} < ::Spectator::Mocks::Double
       def initialize(null = true)
         super({{name.id.stringify}}, null)
       end
 
       def as_null_object
-        Double{{safe_name}}.new(true)
+        {{type_name}}.new(true)
       end
 
       # TODO: Do something with **stubs?
