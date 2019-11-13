@@ -2,49 +2,71 @@ require "../mocks"
 
 module Spectator::DSL
   macro double(name, **stubs, &block)
-    {% safe_name = name.id.symbolize.gsub(/\W/, "_").id %}
     {% if block.is_a?(Nop) %}
-      Double{{safe_name}}.new.tap do |%double|
-        {% for name, value in stubs %}
-        allow(%double).to receive({{name.id}}).and_return({{value}})
-        {% end %}
-      end
+      create_double({{name}}, {{stubs.double_splat}})
     {% else %}
-      class Double{{safe_name}} < ::Spectator::Mocks::Double
-        def initialize(null = false)
-          super({{name.id.stringify}}, null)
-        end
-
-        def as_null_object
-          Double{{name.id}}.new(true)
-        end
-
-        {{block.body}}
-      end
+      define_double({{name}}, {{stubs.double_splat}}) {{block}}
     {% end %}
   end
 
-  macro null_double(name, **stubs, &block)
+  macro create_double(name, **stubs)
     {% safe_name = name.id.symbolize.gsub(/\W/, "_").id %}
+    Double{{safe_name}}.new.tap do |%double|
+      {% for name, value in stubs %}
+      allow(%double).to receive({{name.id}}).and_return({{value}})
+      {% end %}
+    end
+  end
+
+  macro define_double(name, **stubs, &block)
+    {% safe_name = name.id.symbolize.gsub(/\W/, "_").id %}
+    class Double{{safe_name}} < ::Spectator::Mocks::Double
+      def initialize(null = false)
+        super({{name.id.stringify}}, null)
+      end
+
+      def as_null_object
+        Double{{safe_name}}.new(true)
+      end
+
+      # TODO: Do something with **stubs?
+
+      {{block.body}}
+    end
+  end
+
+  macro null_double(name, **stubs, &block)
     {% if block.is_a?(Nop) %}
-      Double{{safe_name}}.new(true).tap do |%double|
-        {% for name, value in stubs %}
-        allow(%double).to receive({{name.id}}).and_return({{value}})
-        {% end %}
-      end
+      create_null_double({{name}}, {{stubs.double_splat}})
     {% else %}
-      class Double{{safe_name}} < ::Spectator::Mocks::Double
-        def initialize(null = true)
-          super({{name.id.stringify}}, null)
-        end
-
-        def as_null_object
-          Double{{name.id}}.new(true)
-        end
-
-        {{block.body}}
-      end
+      define_null_double({{name}}, {{stubs.double_splat}}) {{block}}
     {% end %}
+  end
+
+  macro create_null_double(name, **stubs)
+    {% safe_name = name.id.symbolize.gsub(/\W/, "_").id %}
+    Double{{safe_name}}.new(true).tap do |%double|
+      {% for name, value in stubs %}
+      allow(%double).to receive({{name.id}}).and_return({{value}})
+      {% end %}
+    end
+  end
+
+  macro define_null_double(name, **stubs, &block)
+    {% safe_name = name.id.symbolize.gsub(/\W/, "_").id %}
+    class Double{{safe_name}} < ::Spectator::Mocks::Double
+      def initialize(null = true)
+        super({{name.id.stringify}}, null)
+      end
+
+      def as_null_object
+        Double{{safe_name}}.new(true)
+      end
+
+      # TODO: Do something with **stubs?
+
+      {{block.body}}
+    end
   end
 
   macro mock(name, &block)
