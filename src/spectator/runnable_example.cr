@@ -20,6 +20,7 @@ module Spectator
         context.run_before_hooks(self)
         run_example(result)
         context.run_after_hooks(self)
+        run_deferred(result)
       end
     end
 
@@ -34,6 +35,17 @@ module Spectator
           context.run_pre_conditions(self)
           wrapper.call
           context.run_post_conditions(self)
+        rescue ex # Catch all errors and handle them later.
+          result.error = ex
+        end
+      end
+    end
+
+    # Runs the deferred blocks of code and captures the result.
+    private def run_deferred(result)
+      result.elapsed += Time.measure do
+        begin
+          Harness.current.run_deferred
         rescue ex # Catch all errors and handle them later.
           result.error = ex
         end
