@@ -8,8 +8,15 @@ module Spectator::Mocks
     end
 
     macro method_missing(call)
-      @values.fetch({{call.name.symbolize}}) do
-        raise ::Spectator::Mocks::UnexpectedMessageError.new("#{self} received unexpected message {{call.name}}")
+      args = ::Spectator::Mocks::GenericArguments.create({{call.args.splat}})
+      call = ::Spectator::Mocks::GenericMethodCall.new({{call.name.symbolize}}, args)
+      ::Spectator::Harness.current.mocks.record_call(self, call)
+      if (stub = ::Spectator::Harness.current.mocks.find_stub(self, call))
+        stub.call!(args, typeof(@values.fetch({{call.name.symbolize}}) { raise }))
+      else
+        @values.fetch({{call.name.symbolize}}) do
+          raise ::Spectator::Mocks::UnexpectedMessageError.new("#{self} received unexpected message {{call.name}}")
+        end
       end
     end
   end
