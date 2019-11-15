@@ -16,7 +16,7 @@ class Object
   # ```
   # require "spectator/should"
   # ```
-  def should(matcher : ::Spectator::Matchers::Matcher)
+  def should(matcher)
     # First argument of the `Expectation` initializer is the expression label.
     # However, since this isn't a macro and we can't "look behind" this method call
     # to see what it was invoked on, the argument is an empty string.
@@ -28,7 +28,7 @@ class Object
 
   # Works the same as `#should` except the condition is inverted.
   # When `#should` succeeds, this method will fail, and vice-versa.
-  def should_not(matcher : ::Spectator::Matchers::Matcher)
+  def should_not(matcher)
     actual = ::Spectator::TestValue.new(self)
     source = ::Spectator::Source.new(__FILE__, __LINE__)
     ::Spectator::Expectations::ExpectationPartial.new(actual, source).to_not(matcher)
@@ -38,7 +38,7 @@ end
 struct Proc(*T, R)
   # Extension method to create an expectation for a block of code (proc).
   # Depending on the matcher, the proc may be executed multiple times.
-  def should(matcher : ::Spectator::Matchers::Matcher)
+  def should(matcher)
     actual = ::Spectator::TestBlock.new(self)
     source = ::Spectator::Source.new(__FILE__, __LINE__)
     ::Spectator::Expectations::ExpectationPartial.new(actual, source).to(matcher)
@@ -46,7 +46,7 @@ struct Proc(*T, R)
 
   # Works the same as `#should` except the condition is inverted.
   # When `#should` succeeds, this method will fail, and vice-versa.
-  def should_not(matcher : ::Spectator::Matchers::Matcher)
+  def should_not(matcher)
     actual = ::Spectator::TestBlock.new(self)
     source = ::Spectator::Source.new(__FILE__, __LINE__)
     ::Spectator::Expectations::BlockExpectationPartial.new(actual, source).to_not(matcher)
