@@ -4,8 +4,10 @@ require "./method_call"
 require "./method_stub"
 
 module Spectator::Mocks
-  abstract class GenericMethodStub(ReturnType) < MethodStub
-    def initialize(name, source, @args : Arguments? = nil)
+  abstract class GenericMethodStub(ReturnType, T, NT) < MethodStub
+    getter! arguments : GenericArguments(T, NT)
+
+    def initialize(name, source, @args : GenericArguments(T, NT) = nil)
       super(name, source)
     end
 

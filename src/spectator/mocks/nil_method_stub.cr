@@ -3,7 +3,7 @@ require "./generic_method_stub"
 require "./value_method_stub"
 
 module Spectator::Mocks
-  class NilMethodStub < GenericMethodStub(Nil)
+  class NilMethodStub < GenericMethodStub(Nil, Tuple, NamedTuple)
     def call(_args : GenericArguments(T, NT), _rt : RT.class) forall T, NT, RT
       nil
     end
