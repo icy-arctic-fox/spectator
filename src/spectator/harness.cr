@@ -55,11 +55,23 @@ module Spectator
       @reporter.expectations
     end
 
+    # Marks a block of code to run later.
+    def defer(&block : ->) : Nil
+      @deferred << block
+    end
+
+    # Runs all deferred blocks.
+    def run_deferred : Nil
+      @deferred.each(&.call)
+      @deferred.clear
+    end
+
     # Creates a new harness.
     # The example the harness is for should be passed in.
     private def initialize(@example)
       @reporter = Expectations::ExpectationReporter.new
-      @mocks = Mocks::Registry.new(@example.group.context)
+      @mocks    = Mocks::Registry.new(@example.group.context)
+      @deferred = Deque(->).new
     end
   end
 end
