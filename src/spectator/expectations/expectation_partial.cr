@@ -24,8 +24,14 @@ module Spectator::Expectations
       report(match_data)
     end
 
-    def to(stub : Mocks::MethodStub) : Nil
-      raise NotImplementedError.new("`expect(double).to receive(message)` syntax not implemented yet")
+    def to(stub : Mocks::GenericMethodStub(RT, T, NT)) : Nil forall RT, T, NT
+      value = TestValue.new(stub.name, stub.to_s)
+      matcher = if stub.arguments?
+        Matchers::ReceiveArgumentsMatcher.new(value, stub.arguments)
+      else
+        Matchers::ReceiveMatcher.new(value)
+      end
+      to_eventually(matcher)
     end
 
     # Asserts that some criteria defined by the matcher is not satisfied.
