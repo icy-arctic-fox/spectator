@@ -35,7 +35,7 @@ module Spectator::Mocks
         io << key
         io << ": "
         value.inspect(io)
-        io << ", " if 1 < @opts.size - 1
+        io << ", " if i < @opts.size - 1
       end
     end
   end
