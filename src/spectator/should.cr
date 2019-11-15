@@ -33,6 +33,18 @@ class Object
     source = ::Spectator::Source.new(__FILE__, __LINE__)
     ::Spectator::Expectations::ExpectationPartial.new(actual, source).to_not(matcher)
   end
+
+  # Works the same as `#should` except that the condition check is postphoned.
+  # The expectation is checked after the example finishes and all hooks have run.
+  def should_eventually(matcher)
+    ::Spectator::Harness.current.defer { should(matcher) }
+  end
+
+  # Works the same as `#should_not` except that the condition check is postphoned.
+  # The expectation is checked after the example finishes and all hooks have run.
+  def should_never(matcher)
+    ::Spectator::Harness.current.defer { should_not(matcher) }
+  end
 end
 
 struct Proc(*T, R)
