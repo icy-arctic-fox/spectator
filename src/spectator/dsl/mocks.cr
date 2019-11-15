@@ -91,7 +91,7 @@ module Spectator::DSL
     end
   end
 
-  def anonymous_null_double(name : Strings, **stubs)
+  def anonymous_null_double(name : String, **stubs)
     AnonymousNullDouble.new(name, stubs)
   end
 

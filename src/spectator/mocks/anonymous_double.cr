@@ -4,7 +4,7 @@ module Spectator::Mocks
     end
 
     def as_null_object
-      AnonymousNullDouble.new(@values)
+      AnonymousNullDouble.new(@name, @values)
     end
 
     macro method_missing(call)
