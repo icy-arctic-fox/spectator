@@ -41,6 +41,11 @@ module Spectator::Mocks
       fetch_type(type).stubs.unshift(stub)
     end
 
+    def stubbed?(object, method_name : Symbol) : Bool
+      fetch_instance(object).stubs.any? { |stub| stub.name == method_name } ||
+        fetch_type(object.class).stubs.any? { |stub| stub.name == method_name }
+    end
+
     def find_stub(object, call : GenericMethodCall(T, NT)) forall T, NT
       fetch_instance(object).stubs.find(&.callable?(call)) ||
         fetch_type(object.class).stubs.find(&.callable?(call))
