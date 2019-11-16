@@ -5,6 +5,7 @@ module Spectator::Mocks
     private struct Entry
       getter stubs = Deque(MethodStub).new
       getter calls = Deque(MethodCall).new
+      getter expected = Set(Symbol).new
     end
 
     @all_instances = {} of String => Entry
@@ -62,6 +63,14 @@ module Spectator::Mocks
 
     def calls_for_type(type, method_name : Symbol)
       fetch_type(type).calls.select { |call| call.name == method_name }
+    end
+
+    def expected?(object, method_name : Symbol) : Bool
+      fetch_instance(object).expected.includes?(method_name)
+    end
+
+    def expect(object, method_name : Symbol) : Nil
+      fetch_instance(object).expected.add(method_name)
     end
 
     private def fetch_instance(object)

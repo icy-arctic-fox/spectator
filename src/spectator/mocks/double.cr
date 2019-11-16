@@ -62,7 +62,10 @@ module Spectator::Mocks
         {% if body && !body.is_a?(Nop) %}
           {{body.body}}
         {% else %}
-          raise ::Spectator::Mocks::UnexpectedMessageError.new("#{self} received unexpected message {{name}}")
+          unless ::Spectator::Harness.current.mocks.expected?(self, {{name.symbolize}})
+            raise ::Spectator::Mocks::UnexpectedMessageError.new("#{self} received unexpected message {{name}}")
+          end
+
           # This code shouldn't be reached, but makes the compiler happy to have a matching return type.
           {% if definition.is_a?(TypeDeclaration) %}
             %x = uninitialized {{definition.type}}
@@ -75,6 +78,7 @@ module Spectator::Mocks
 
     macro method_missing(call)
       return self if @null
+      return self if ::Spectator::Harness.current.mocks.expected?(self, {{call.name.symbolize}})
 
       raise ::Spectator::Mocks::UnexpectedMessageError.new("#{self} received unexpected message {{call.name}}")
     end

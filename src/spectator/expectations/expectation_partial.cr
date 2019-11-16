@@ -25,6 +25,7 @@ module Spectator::Expectations
     end
 
     def to(stub : Mocks::MethodStub) : Nil
+      Harness.current.mocks.expect(@actual.value, stub.name)
       value = TestValue.new(stub.name, stub.to_s)
       matcher = if (arguments = stub.arguments?)
                   Matchers::ReceiveArgumentsMatcher.new(value, arguments)
