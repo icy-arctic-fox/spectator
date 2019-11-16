@@ -31,6 +31,10 @@ module Spectator::Expectations
       to_eventually(matcher)
     end
 
+    def to(stubs : Enumerable(Mocks::MethodStub)) : Nil
+      stubs.each { |stub| to(stub) }
+    end
+
     # Asserts that some criteria defined by the matcher is not satisfied.
     # This is effectively the opposite of `#to`.
     def to_not(matcher) : Nil
@@ -42,6 +46,10 @@ module Spectator::Expectations
       value = TestValue.new(stub.name, stub.to_s)
       matcher = Matchers::ReceiveMatcher.new(value, stub.arguments?)
       to_never(matcher)
+    end
+
+    def to_not(stubs : Enumerable(Mocks::MethodStub)) : Nil
+      stubs.each { |stub| to_not(stub) }
     end
 
     # ditto
