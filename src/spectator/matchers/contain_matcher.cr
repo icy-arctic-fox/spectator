@@ -13,7 +13,7 @@ module Spectator::Matchers
 
     # Checks whether the matcher is satisifed with the expression given to it.
     private def match?(actual : TestExpression(T)) : Bool forall T
-      !!expected.value.all? do |item|
+      expected.value.all? do |item|
         actual.value.includes?(item)
       end
     end

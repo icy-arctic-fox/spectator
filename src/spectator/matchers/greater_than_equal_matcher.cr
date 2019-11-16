@@ -13,7 +13,7 @@ module Spectator::Matchers
 
     # Checks whether the matcher is satisifed with the expression given to it.
     private def match?(actual : TestExpression(T)) : Bool forall T
-      !!(actual.value >= expected.value)
+      actual.value >= expected.value
     end
 
     # Message displayed when the matcher isn't satisifed.
