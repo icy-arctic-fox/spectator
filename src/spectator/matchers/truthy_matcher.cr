@@ -114,7 +114,7 @@ module Spectator::Matchers
       {
         expected: @truthy ? "Not false or nil" : "false or nil",
         actual:   actual.value.inspect,
-        truthy:   !!actual.value.inspect,
+        truthy:   (!!actual.value).inspect,
       }
     end
 
@@ -124,7 +124,7 @@ module Spectator::Matchers
       {
         expected: @truthy ? "false or nil" : "Not false or nil",
         actual:   actual.value.inspect,
-        truthy:   !!actual.value.inspect,
+        truthy:   (!!actual.value).inspect,
       }
     end
 
