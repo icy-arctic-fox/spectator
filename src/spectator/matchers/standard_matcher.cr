@@ -66,7 +66,7 @@ module Spectator::Matchers
     # The message should typically only contain the test expression labels.
     # Actual values should be returned by `#values`.
     private def failure_message_when_negated(actual : TestExpression(T)) : String forall T
-      {% raise "Negation with #{@type.name} is not supported." %}
+      raise "Negation with #{self.class} is not supported."
     end
 
     # Checks whether the matcher is satisifed with the expression given to it.
