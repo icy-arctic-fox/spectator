@@ -27,7 +27,7 @@ module Spectator::Matchers
       if match?(actual)
         SuccessfulMatchData.new
       else
-        FailedMatchData.new(failure_message(actual), **values(actual))
+        FailedMatchData.new(failure_message(actual), values(actual).to_a)
       end
     end
 
@@ -42,7 +42,7 @@ module Spectator::Matchers
       if does_not_match?(actual)
         SuccessfulMatchData.new
       else
-        FailedMatchData.new(failure_message_when_negated(actual), **negated_values(actual))
+        FailedMatchData.new(failure_message_when_negated(actual), negated_values(actual).to_a)
       end
     end
 
