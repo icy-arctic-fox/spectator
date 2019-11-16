@@ -2,7 +2,7 @@ require "./arguments"
 require "./generic_method_stub"
 
 module Spectator::Mocks
-  class ProcMethodStub(ReturnType, T, NT) < GenericMethodStub(ReturnType, T, NT)
+  class ProcMethodStub(ReturnType) < GenericMethodStub(ReturnType)
     def initialize(name, source, @proc : -> ReturnType, args = nil)
       super(name, source, args)
     end

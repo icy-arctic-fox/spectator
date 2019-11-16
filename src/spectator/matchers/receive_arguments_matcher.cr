@@ -2,10 +2,10 @@ require "../mocks"
 require "./standard_matcher"
 
 module Spectator::Matchers
-  struct ReceiveArgumentsMatcher(T, NT) < StandardMatcher
+  struct ReceiveArgumentsMatcher < StandardMatcher
     alias Range = ::Range(Int32, Int32) | ::Range(Nil, Int32) | ::Range(Int32, Nil)
 
-    def initialize(@expected : TestExpression(Symbol), @args : Mocks::GenericArguments(T, NT), @range : Range? = nil)
+    def initialize(@expected : TestExpression(Symbol), @args : Mocks::Arguments, @range : Range? = nil)
     end
 
     def description : String
