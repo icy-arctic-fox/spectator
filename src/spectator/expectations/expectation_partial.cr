@@ -28,10 +28,10 @@ module Spectator::Expectations
       Mocks::Allow.new(@actual.value).to(stub)
       value = TestValue.new(stub.name, stub.to_s)
       matcher = if (arguments = stub.arguments?)
-        Matchers::ReceiveArgumentsMatcher.new(value, arguments)
-      else
-        Matchers::ReceiveMatcher.new(value)
-      end
+                  Matchers::ReceiveArgumentsMatcher.new(value, arguments)
+                else
+                  Matchers::ReceiveMatcher.new(value)
+                end
       to_eventually(matcher)
     end
 
@@ -45,10 +45,10 @@ module Spectator::Expectations
     def to_not(stub : Mocks::MethodStub) : Nil
       value = TestValue.new(stub.name, stub.to_s)
       matcher = if (arguments = stub.arguments?)
-        Matchers::ReceiveArgumentsMatcher.new(value, arguments)
-      else
-        Matchers::ReceiveMatcher.new(value)
-      end
+                  Matchers::ReceiveArgumentsMatcher.new(value, arguments)
+                else
+                  Matchers::ReceiveMatcher.new(value)
+                end
       to_never(matcher)
     end
 
