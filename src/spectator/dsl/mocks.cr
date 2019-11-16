@@ -113,7 +113,7 @@ module Spectator::DSL
     {% end %}
   end
 
-  def allow(thing : T) forall T
+  def allow(thing)
     Mocks::Allow.new(thing)
   end
 

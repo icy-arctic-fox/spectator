@@ -8,7 +8,7 @@ module Spectator::Mocks
       nil
     end
 
-    def and_return(value : T) forall T
+    def and_return(value)
       ValueMethodStub.new(@name, @source, value, @args)
     end
 
