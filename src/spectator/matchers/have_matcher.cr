@@ -23,17 +23,17 @@ module Spectator::Matchers
 
     # Checks if a `String` matches the expected values.
     # The `includes?` method is used for this check.
-    private def match_string?(value)
-      expected.value.all? do |item|
+    private def match_string?(value) : Bool
+      !!expected.value.all? do |item|
         value.includes?(item)
       end
     end
 
     # Checks if an `Enumerable` matches the expected values.
     # The `===` operator is used on every item.
-    private def match_enumerable?(value)
+    private def match_enumerable?(value) : Bool
       array = value.to_a
-      expected.value.all? do |item|
+      !!expected.value.all? do |item|
         array.any? do |element|
           item === element
         end
