@@ -1,20 +1,21 @@
-require "../mocks/double"
+require "../mocks"
 require "./standard_matcher"
 
 module Spectator::Matchers
   struct ReceiveMatcher < StandardMatcher
     alias Range = ::Range(Int32, Int32) | ::Range(Nil, Int32) | ::Range(Int32, Nil)
 
-    def initialize(@expected : TestExpression(Symbol), @range : Range? = nil)
+    def initialize(@expected : TestExpression(Symbol), @args : Mocks::Arguments? = nil, @range : Range? = nil)
     end
 
     def description : String
       range = @range
-      "received message #{@expected.label} #{range ? "#{humanize_range(range)} time(s)" : "at least once"} with any arguments"
+      "received message #{@expected.label} #{range ? "#{humanize_range(range)} time(s)" : "At least once"} with #{@args || "any arguments"}"
     end
 
     def match?(actual : TestExpression(T)) : Bool forall T
       calls = Harness.current.mocks.calls_for(actual.value, @expected.value)
+      calls.select! { |call| @args === call.args } if @args
       if (range = @range)
         range.includes?(calls.size)
       else
@@ -24,29 +25,30 @@ module Spectator::Matchers
 
     def failure_message(actual : TestExpression(T)) : String forall T
       range = @range
-      "#{actual.label} did not receive #{@expected.label} #{range ? "#{humanize_range(range)} time(s)" : "at least once"}"
+      "#{actual.label} did not receive #{@expected.label} #{range ? "#{humanize_range(range)} time(s)" : "at least once"} with #{@args || "any arguments"}"
     end
 
     def values(actual : TestExpression(T)) forall T
       calls = Harness.current.mocks.calls_for(actual.value, @expected.value)
+      calls.select! { |call| @args === call.args } if @args
       range = @range
       {
-        expected: "#{range ? "#{humanize_range(range)} time(s)" : "At least once"} with any arguments",
-        received: "#{calls.size} time(s) with any arguments",
+        expected: "#{range ? "#{humanize_range(range)} time(s)" : "At least once"} with #{@args || "any arguments"}",
+        received: "#{calls.size} time(s)",
       }
     end
 
     def with(*args, **opts)
       args = Mocks::GenericArguments.new(args, opts)
-      ReceiveArgumentsMatcher.new(@expected, args, @range)
+      ReceiveMatcher.new(@expected, args, @range)
     end
 
     def once
-      ReceiveMatcher.new(@expected, (1..1))
+      ReceiveMatcher.new(@expected, @args, (1..1))
     end
 
     def twice
-      ReceiveMatcher.new(@expected, (2..2))
+      ReceiveMatcher.new(@expected, @args, (2..2))
     end
 
     def exactly(count)
@@ -98,11 +100,11 @@ module Spectator::Matchers
     end
 
     private struct Count
-      def initialize(@expected : TestExpression(Symbol), @range : Range)
+      def initialize(@expected : TestExpression(Symbol), @args : Mocks::Arguments?, @range : Range)
       end
 
       def times
-        ReceiveMatcher.new(@expected, @range)
+        ReceiveMatcher.new(@expected, @args, @range)
       end
     end
   end

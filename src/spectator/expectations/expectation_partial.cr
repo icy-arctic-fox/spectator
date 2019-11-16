@@ -27,11 +27,7 @@ module Spectator::Expectations
     def to(stub : Mocks::MethodStub) : Nil
       Harness.current.mocks.expect(@actual.value, stub.name)
       value = TestValue.new(stub.name, stub.to_s)
-      matcher = if (arguments = stub.arguments?)
-                  Matchers::ReceiveArgumentsMatcher.new(value, arguments)
-                else
-                  Matchers::ReceiveMatcher.new(value)
-                end
+      matcher = Matchers::ReceiveMatcher.new(value, stub.arguments?)
       to_eventually(matcher)
     end
 
@@ -44,11 +40,7 @@ module Spectator::Expectations
 
     def to_not(stub : Mocks::MethodStub) : Nil
       value = TestValue.new(stub.name, stub.to_s)
-      matcher = if (arguments = stub.arguments?)
-                  Matchers::ReceiveArgumentsMatcher.new(value, arguments)
-                else
-                  Matchers::ReceiveMatcher.new(value)
-                end
+      matcher = Matchers::ReceiveMatcher.new(value, stub.arguments?)
       to_never(matcher)
     end
 
