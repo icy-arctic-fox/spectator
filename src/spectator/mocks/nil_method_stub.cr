@@ -8,8 +8,16 @@ module Spectator::Mocks
       nil
     end
 
+    def and_return
+      self
+    end
+
     def and_return(value)
       ValueMethodStub.new(@name, @source, value, @args)
+    end
+
+    def and_return(*values)
+      MultiValueMethodStub.new(@name, @source, values.to_a, @args)
     end
 
     def with(*args : *T, **opts : **NT) forall T, NT
