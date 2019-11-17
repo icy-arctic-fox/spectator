@@ -52,15 +52,15 @@ module Spectator::Matchers
     end
 
     def exactly(count)
-      Count.new(@expected, (count..count))
+      Count.new(@expected, @args, (count..count))
     end
 
     def at_least(count)
-      Count.new(@expected, (count..))
+      Count.new(@expected, @args, (count..))
     end
 
     def at_most(count)
-      Count.new(@expected, (..count))
+      Count.new(@expected, @args, (..count))
     end
 
     def at_least_once
