@@ -28,12 +28,27 @@ module Spectator::Matchers
       "#{actual.label} did not receive #{@expected.label} #{range ? "#{humanize_range(range)} time(s)" : "at least once"} with #{@args || "any arguments"}"
     end
 
+    def failure_message_when_negated(actual : TestExpression(T)) : String forall T
+      range = @range
+      "#{actual.label} received #{@expected.label} #{range ? "#{humanize_range(range)} time(s)" : "at least once"} with #{@args || "any arguments"}"
+    end
+
     def values(actual : TestExpression(T)) forall T
       calls = Harness.current.mocks.calls_for_type(T, @expected.value)
       calls.select! { |call| @args === call.args } if @args
       range = @range
       {
         expected: "#{range ? "#{humanize_range(range)} time(s)" : "At least once"} with #{@args || "any arguments"}",
+        received: "#{calls.size} time(s)",
+      }
+    end
+
+    def negated_values(actual : TestExpression(T)) forall T
+      calls = Harness.current.mocks.calls_for_type(T, @expected.value)
+      calls.select! { |call| @args === call.args } if @args
+      range = @range
+      {
+        expected: "#{range ? "Not #{humanize_range(range)} time(s)" : "Never"} with #{@args || "any arguments"}",
         received: "#{calls.size} time(s)",
       }
     end
