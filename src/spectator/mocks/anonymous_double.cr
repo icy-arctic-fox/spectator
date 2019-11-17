@@ -12,11 +12,7 @@ module Spectator::Mocks
       call = ::Spectator::Mocks::GenericMethodCall.new({{call.name.symbolize}}, args)
       ::Spectator::Harness.current.mocks.record_call(self, call)
       if (stub = ::Spectator::Harness.current.mocks.find_stub(self, call))
-        {% if call.block.is_a?(Nop) %}
-          stub.call!(args, typeof(@values.fetch({{call.name.symbolize}}) { raise }))
-        {% else %}
-          stub.call!(args, typeof(@values.fetch({{call.name.symbolize}}) { raise })) { |*ya| yield *ya }
-        {% end %}
+        stub.call!(args, typeof(@values.fetch({{call.name.symbolize}}) { raise }))
       else
         @values.fetch({{call.name.symbolize}}) do
           return nil if ::Spectator::Harness.current.mocks.expected?(self, {{call.name.symbolize}})

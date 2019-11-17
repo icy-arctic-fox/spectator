@@ -45,12 +45,12 @@ module Spectator::Mocks
         end
       end
 
-      def {{name}}({{params.splat}} &block){% if definition.is_a?(TypeDeclaration) %} : {{definition.type}}{% end %}
+      def {{name}}({{params.splat}}){% if definition.is_a?(TypeDeclaration) %} : {{definition.type}}{% end %}
         %args = ::Spectator::Mocks::GenericArguments.create({{args.splat}})
         %call = ::Spectator::Mocks::GenericMethodCall.new({{name.symbolize}}, %args)
         ::Spectator::Harness.current.mocks.record_call(self, %call)
         if (%stub = ::Spectator::Harness.current.mocks.find_stub(self, %call))
-          %stub.call!(%args, typeof(%method({{args.splat}}) { |*%ya| yield *%ya })) { |*%ya| yield *%ya }
+          %stub.call!(%args, typeof(%method({{args.splat}}) { |*%ya| yield *%ya }))
         else
           %method({{args.splat}}) do |*%yield_args|
             yield *%yield_args
