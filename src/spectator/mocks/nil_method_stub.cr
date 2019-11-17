@@ -36,6 +36,10 @@ module Spectator::Mocks
       ExceptionMethodStub.new(@name, @source, exception_type.new(*args), @args)
     end
 
+    def and_yield(*yield_args)
+      YieldMethodStub.new(@name, @source, yield_args, @args)
+    end
+
     def with(*args : *T, **opts : **NT) forall T, NT
       args = GenericArguments.new(args, opts)
       NilMethodStub.new(@name, @source, args)

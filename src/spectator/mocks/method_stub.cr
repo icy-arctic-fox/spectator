@@ -16,8 +16,21 @@ module Spectator::Mocks
 
     abstract def call(args : GenericArguments(T, NT), rt : RT.class) forall T, NT, RT
 
+    def call(args : GenericArguments(T, NT), rt : RT.class, &) forall T, NT, RT
+      call(args, rt)
+    end
+
     def call!(args : GenericArguments(T, NT), rt : RT.class) : RT forall T, NT, RT
       value = call(args, rt)
+      if value.is_a?(RT)
+        value.as(RT)
+      else
+        raise TypeCastError.new("The return type of stub #{self} doesn't match the expected type #{RT}")
+      end
+    end
+
+    def call!(args : GenericArguments(T, NT), rt : RT.class) : RT forall T, NT, RT
+      value = call(args, rt) { |*ya| yield *ya }
       if value.is_a?(RT)
         value.as(RT)
       else
