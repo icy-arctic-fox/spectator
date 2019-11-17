@@ -121,6 +121,11 @@ module Spectator::DSL
     Mocks::AllowAnyInstance(T).new
   end
 
+  macro expect_any_instance_of(type, _source_file = __FILE__, _source_line = __LINE__)
+    %source = ::Spectator::Source.new({{_source_file}}, {{_source_line}})
+    ::Spectator::Mocks::ExpectAnyInstance({{type}}).new(%source)
+  end
+
   macro receive(method_name, _source_file = __FILE__, _source_line = __LINE__)
     %source = ::Spectator::Source.new({{_source_file}}, {{_source_line}})
     ::Spectator::Mocks::NilMethodStub.new({{method_name.id.symbolize}}, %source)

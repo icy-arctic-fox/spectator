@@ -61,16 +61,21 @@ module Spectator::Mocks
       fetch_instance(object).calls.select { |call| call.name == method_name }
     end
 
-    def calls_for_type(type, method_name : Symbol)
+    def calls_for_type(type : T.class, method_name : Symbol) forall T
       fetch_type(type).calls.select { |call| call.name == method_name }
     end
 
     def expected?(object, method_name : Symbol) : Bool
-      fetch_instance(object).expected.includes?(method_name)
+      fetch_instance(object).expected.includes?(method_name) ||
+        fetch_type(object.class).expected.includes?(method_name)
     end
 
     def expect(object, method_name : Symbol) : Nil
       fetch_instance(object).expected.add(method_name)
+    end
+
+    def expect(type : T.class, method_name : Symbol) : Nil forall T
+      fetch_type(type).expected.add(method_name)
     end
 
     private def fetch_instance(object)
