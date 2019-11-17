@@ -1,7 +1,7 @@
 require "../mocks"
 
 module Spectator::DSL
-  macro double(name, **stubs, &block)
+  macro double(name = "Anonymous", **stubs, &block)
     {% if name.is_a?(StringLiteral) %}
       anonymous_double({{name}}, {{stubs.double_splat}})
     {% else %}
@@ -44,7 +44,7 @@ module Spectator::DSL
     end
   end
 
-  def anonymous_double(name : String, **stubs)
+  def anonymous_double(name = "Anonymous", **stubs)
     Mocks::AnonymousDouble.new(name, stubs)
   end
 
@@ -91,7 +91,7 @@ module Spectator::DSL
     end
   end
 
-  def anonymous_null_double(name : String, **stubs)
+  def anonymous_null_double(name = "Anonymous", **stubs)
     AnonymousNullDouble.new(name, stubs)
   end
 
