@@ -20,6 +20,22 @@ module Spectator::Mocks
       MultiValueMethodStub.new(@name, @source, values.to_a, @args)
     end
 
+    def and_raise(exception_type : Exception.class)
+      ExceptionMethodStub.new(@name, @source, exception_type.new, @args)
+    end
+
+    def and_raise(exception : Exception)
+      ExceptionMethodStub.new(@name, @source, exception, @args)
+    end
+
+    def and_raise(message : String)
+      ExceptionMethodStub.new(@name, @source, Exception.new(message), @args)
+    end
+
+    def and_raise(exception_type : Exception.class, *args) forall T
+      ExceptionMethodStub.new(@name, @source, exception_type.new(*args), @args)
+    end
+
     def with(*args : *T, **opts : **NT) forall T, NT
       args = GenericArguments.new(args, opts)
       NilMethodStub.new(@name, @source, args)
