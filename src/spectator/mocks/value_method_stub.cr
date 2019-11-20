@@ -7,7 +7,7 @@ module Spectator::Mocks
       super(name, source, args)
     end
 
-    def call(_args : GenericArguments(T2, NT2), rt : RT.class) forall T2, NT2, RT
+    def call(_args : GenericArguments(T2, NT2)) forall T2, NT2
       @value
     end
   end
