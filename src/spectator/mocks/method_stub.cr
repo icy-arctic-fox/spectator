@@ -14,10 +14,10 @@ module Spectator::Mocks
       @name == call.name
     end
 
-    abstract def call(args : GenericArguments(T, NT)) forall T, NT
+    abstract def call(args : GenericArguments(T, NT), &original : -> RT) forall T, NT, RT
 
     def call!(args : GenericArguments(T, NT), &original : -> RT) : RT forall T, NT, RT
-      value = call(args)
+      value = call(args, &original)
       if value.is_a?(RT)
         value.as(RT)
       else

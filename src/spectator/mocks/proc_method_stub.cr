@@ -11,7 +11,7 @@ module Spectator::Mocks
       ProcMethodStub.new(name, source, block, args)
     end
 
-    def call(_args : GenericArguments(T2, NT2)) forall T2, NT2
+    def call(_args : GenericArguments(T, NT), &_original : -> RT) forall T, NT, RT
       @proc.call
     end
   end

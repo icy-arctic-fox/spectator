@@ -10,7 +10,7 @@ module Spectator::Mocks
       raise ArgumentError.new("Values must have at least one item") if @values.size < 1
     end
 
-    def call(_args : GenericArguments(T2, NT2)) forall T2, NT2
+    def call(_args : GenericArguments(T, NT), &_original : -> RT) forall T, NT, RT
       value = @values[@index]
       @index += 1 if @index < @values.size - 1
       value
