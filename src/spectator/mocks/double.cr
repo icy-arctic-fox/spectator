@@ -39,7 +39,7 @@ module Spectator::Mocks
         %call = ::Spectator::Mocks::GenericMethodCall.new({{name.symbolize}}, %args)
         ::Spectator::Harness.current.mocks.record_call(self, %call)
         if (%stub = ::Spectator::Harness.current.mocks.find_stub(self, %call))
-          %stub.call!(%args, typeof(%method({{args.splat}})))
+          %stub.call!(%args) { %method({{args.splat}}) }
         else
           %method({{args.splat}})
         end
@@ -50,7 +50,7 @@ module Spectator::Mocks
         %call = ::Spectator::Mocks::GenericMethodCall.new({{name.symbolize}}, %args)
         ::Spectator::Harness.current.mocks.record_call(self, %call)
         if (%stub = ::Spectator::Harness.current.mocks.find_stub(self, %call))
-          %stub.call!(%args, typeof(%method({{args.splat}}) { |*%ya| yield *%ya }))
+          %stub.call!(%args) { %method({{args.splat}}) { |*%ya| yield *%ya } }
         else
           %method({{args.splat}}) do |*%yield_args|
             yield *%yield_args
