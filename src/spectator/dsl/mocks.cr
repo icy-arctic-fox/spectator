@@ -126,9 +126,13 @@ module Spectator::DSL
     ::Spectator::Mocks::ExpectAnyInstance({{type}}).new(%source)
   end
 
-  macro receive(method_name, _source_file = __FILE__, _source_line = __LINE__)
+  macro receive(method_name, _source_file = __FILE__, _source_line = __LINE__, &block)
     %source = ::Spectator::Source.new({{_source_file}}, {{_source_line}})
-    ::Spectator::Mocks::NilMethodStub.new({{method_name.id.symbolize}}, %source)
+    {% if block.is_a?(Nop) %}
+      ::Spectator::Mocks::NilMethodStub.new({{method_name.id.symbolize}}, %source)
+    {% else %}
+      ::Spectator::Mocks::ProcMethodStub.create({{method_name.id.symbolize}}, %source) { {{block.body}} }
+    {% end %}
   end
 
   macro receive_messages(_source_file = __FILE__, _source_line = __LINE__, **stubs)

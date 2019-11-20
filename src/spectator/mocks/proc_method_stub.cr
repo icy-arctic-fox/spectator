@@ -7,6 +7,10 @@ module Spectator::Mocks
       super(name, source, args)
     end
 
+    def self.create(name, source, args = nil, &block : -> T) forall T
+      ProcMethodStub.new(name, source, block, args)
+    end
+
     def call(_args : GenericArguments(T2, NT2), rt : RT.class) forall T2, NT2, RT
       @proc.call
     end
