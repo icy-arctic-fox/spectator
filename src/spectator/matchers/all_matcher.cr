@@ -26,7 +26,7 @@ module Spectator::Matchers
         match_data = matcher.match(element)
         break match_data unless match_data.matched?
       end
-      found ? found : SuccessfulMatchData.new
+      found || SuccessfulMatchData.new
     end
 
     # Negated matching for this matcher is not supported.
