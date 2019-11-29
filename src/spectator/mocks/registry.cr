@@ -5,7 +5,7 @@ module Spectator::Mocks
     private struct Entry
       getter stubs = Deque(MethodStub).new
       getter calls = Deque(MethodCall).new
-      getter expected = Set(Symbol).new
+      getter expected = Set(MethodStub).new
     end
 
     @all_instances = {} of String => Entry
@@ -65,17 +65,17 @@ module Spectator::Mocks
       fetch_type(type).calls.select { |call| call.name == method_name }
     end
 
-    def expected?(object, method_name : Symbol) : Bool
-      fetch_instance(object).expected.includes?(method_name) ||
-        fetch_type(object.class).expected.includes?(method_name)
+    def expected?(object, call : GenericMethodCall(T, NT)) : Bool forall T, NT
+      fetch_instance(object).expected.any?(&.callable?(call)) ||
+        fetch_type(object.class).expected.any?(&.callable?(call))
     end
 
-    def expect(object, method_name : Symbol) : Nil
-      fetch_instance(object).expected.add(method_name)
+    def expect(object, stub : MethodStub) : Nil
+      fetch_instance(object).expected.add(stub)
     end
 
-    def expect(type : T.class, method_name : Symbol) : Nil forall T
-      fetch_type(type).expected.add(method_name)
+    def expect(type : T.class, stub : MethodStub) : Nil forall T
+      fetch_type(type).expected.add(stub)
     end
 
     private def fetch_instance(object)

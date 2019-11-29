@@ -17,7 +17,7 @@ module Spectator::Mocks
         end
       else
         @values.fetch({{call.name.symbolize}}) do
-          return nil if ::Spectator::Harness.current.mocks.expected?(self, {{call.name.symbolize}})
+          return nil if ::Spectator::Harness.current.mocks.expected?(self, call)
           raise ::Spectator::Mocks::UnexpectedMessageError.new("#{self} received unexpected message {{call.name}}")
         end
       end

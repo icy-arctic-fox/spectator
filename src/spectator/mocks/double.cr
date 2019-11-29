@@ -62,7 +62,9 @@ module Spectator::Mocks
         {% if body && !body.is_a?(Nop) %}
           {{body.body}}
         {% else %}
-          unless ::Spectator::Harness.current.mocks.expected?(self, {{name.symbolize}})
+          %args = ::Spectator::Mocks::GenericArguments.create({{params.splat}})
+          %call = ::Spectator::Mocks::GenericMethodCall.new({{name.symbolize}}, %args)
+          unless ::Spectator::Harness.current.mocks.expected?(self, %call)
             raise ::Spectator::Mocks::UnexpectedMessageError.new("#{self} received unexpected message {{name}}")
           end
 
@@ -77,8 +79,12 @@ module Spectator::Mocks
     end
 
     macro method_missing(call)
+      args = ::Spectator::Mocks::GenericArguments.create({{call.args.splat}})
+      call = ::Spectator::Mocks::GenericMethodCall.new({{call.name.symbolize}}, args)
+      ::Spectator::Harness.current.mocks.record_call(self, call)
+
       return self if @null
-      return self if ::Spectator::Harness.current.mocks.expected?(self, {{call.name.symbolize}})
+      return self if ::Spectator::Harness.current.mocks.expected?(self, call)
 
       raise ::Spectator::Mocks::UnexpectedMessageError.new("#{self} received unexpected message {{call.name}}")
     end
