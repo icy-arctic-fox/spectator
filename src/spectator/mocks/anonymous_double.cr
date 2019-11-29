@@ -13,7 +13,7 @@ module Spectator::Mocks
       ::Spectator::Harness.current.mocks.record_call(self, call)
       if (stub = ::Spectator::Harness.current.mocks.find_stub(self, call))
         stub.call!(args) do
-          @values.fetch({{call.name.symbolize}}) { raise "Consistency error - method stubbed with no implementation" }
+          @values.fetch({{call.name.symbolize}}) { raise "Consistency error - method stubbed with no implementation"; nil }
         end
       else
         @values.fetch({{call.name.symbolize}}) do
