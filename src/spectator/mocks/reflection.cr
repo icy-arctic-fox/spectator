@@ -16,7 +16,6 @@ module Spectator::Mocks
         )
         ::Spectator::Mocks::TypeRegistry.add({{@type.id.stringify}}, {{meth.name.symbolize}}, %source, %args)
       {% end %}
-      {% debug %}
     end
   end
 end
