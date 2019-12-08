@@ -34,6 +34,11 @@ module Spectator::Mocks
         %args = ::Spectator::Mocks::GenericArguments.create({{args.splat}})
         %call = ::Spectator::Mocks::GenericMethodCall.new({{name.symbolize}}, %args)
         ::Spectator::Harness.current.mocks.record_call(self, %call)
+
+        unless ::Spectator::Mocks::TypeRegistry.exists?(T.to_s, %call)
+          raise ::Spectator::Mocks::UnexpectedMessageError.new("#{self} received unexpected message {{name}} - #{T} does not respond to #{%call}")
+        end
+
         if (%stub = ::Spectator::Harness.current.mocks.find_stub(self, %call))
           %stub.call!(%args) { %method({{args.splat}}) }
         else
@@ -45,6 +50,11 @@ module Spectator::Mocks
         %args = ::Spectator::Mocks::GenericArguments.create({{args.splat}})
         %call = ::Spectator::Mocks::GenericMethodCall.new({{name.symbolize}}, %args)
         ::Spectator::Harness.current.mocks.record_call(self, %call)
+
+        unless ::Spectator::Mocks::TypeRegistry.exists?(T.to_s, %call)
+          raise ::Spectator::Mocks::UnexpectedMessageError.new("#{self} received unexpected message {{name}} - #{T} does not respond to #{%call}")
+        end
+
         if (%stub = ::Spectator::Harness.current.mocks.find_stub(self, %call))
           %stub.call!(%args) { %method({{args.splat}}) { |*%ya| yield *%ya } }
         else
@@ -78,6 +88,10 @@ module Spectator::Mocks
       args = ::Spectator::Mocks::GenericArguments.create({{call.args.splat}})
       call = ::Spectator::Mocks::GenericMethodCall.new({{call.name.symbolize}}, args)
       ::Spectator::Harness.current.mocks.record_call(self, call)
+
+      unless ::Spectator::Mocks::TypeRegistry.exists?(T.to_s, call)
+        raise ::Spectator::Mocks::UnexpectedMessageError.new("#{self} received unexpected message {{call.name}} - #{T} does not respond to #{call}")
+      end
 
       return self if @null
       return self if ::Spectator::Harness.current.mocks.expected?(self, call)
