@@ -1,5 +1,5 @@
 module Spectator::Mocks
-  class VerifyingDouble(T)
+  abstract class VerifyingDouble(T)
     def initialize(@null = false)
     end
 
