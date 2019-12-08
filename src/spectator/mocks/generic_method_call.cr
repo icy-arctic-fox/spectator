@@ -8,5 +8,12 @@ module Spectator::Mocks
     def initialize(name : Symbol, @args : GenericArguments(T, NT))
       super(name)
     end
+
+    def to_s(io)
+      super
+      io << '('
+      io << @args
+      io << ')'
+    end
   end
 end
