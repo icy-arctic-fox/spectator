@@ -1,11 +1,12 @@
 require "./spectator/includes"
+require "./spectator_test"
 
 # Module that contains all functionality related to Spectator.
 module Spectator
   extend self
 
   # Current version of the Spectator library.
-  VERSION = "0.8.4"
+  VERSION = "0.9.0"
 
   # Top-level describe method.
   # All specs in a file must be wrapped in this call.
@@ -23,7 +24,7 @@ module Spectator
   # NOTE: Inside the block, the `Spectator` prefix is no longer needed.
   # Actually, prefixing methods and macros with `Spectator`
   # most likely won't work and can cause compiler errors.
-  macro describe(what, &block)
+  macro describe(description, &block)
     # This macro creates the foundation for all specs.
     # Every group of examples is defined a separate module - `SpectatorExamples`.
     # There's multiple reasons for this.
@@ -32,30 +33,21 @@ module Spectator
     # We don't want the spec code to accidentally pickup types and values from the `Spectator` module.
     # Another reason is that we need a root module to put all examples and groups in.
     # And lastly, the spec DSL needs to be given to the block of code somehow.
-    # The DSL is included in the `SpectatorExamples` module.
+    # The DSL is included in the `SpectatorTest` class.
     #
     # For more information on how the DSL works, see the `DSL` module.
 
-    # Root-level module that contains all examples and example groups.
-    module SpectatorExamples
-      # Include the DSL for creating groups, example, and more.
-      include ::Spectator::DSL::StructureDSL
-
-      # Placeholder initializer.
-      # This is needed because examples and groups call super in their initializer.
-      # Those initializers pass the sample values upward through their hierarchy.
-      def initialize(_sample_values : ::Spectator::Internals::SampleValues)
-      end
-
-      # Pass off the "what" argument and block to `DSL::StructureDSL.describe`.
+    # Root-level class that contains all examples and example groups.
+    class SpectatorTest
+      # Pass off the description argument and block to `DSL::StructureDSL.describe`.
       # That method will handle creating a new group for this spec.
-      describe({{what}}) {{block}}
+      describe({{description}}) {{block}}
     end
   end
 
   # ditto
-  macro context(what, &block)
-    describe({{what}}) {{block}}
+  macro context(description, &block)
+    describe({{description}}) {{block}}
   end
 
   # Flag indicating whether Spectator should automatically run tests.
@@ -109,7 +101,7 @@ module Spectator
   # Builds the tests and runs the framework.
   private def run
     # Build the test suite and run it.
-    suite = ::Spectator::DSL::Builder.build(config.example_filter)
+    suite = ::Spectator::SpecBuilder.build(config.example_filter)
     Runner.new(suite, config).run
   rescue ex
     # Catch all unhandled exceptions here.

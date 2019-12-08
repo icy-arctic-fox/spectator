@@ -63,12 +63,12 @@ module Spectator::Matchers
     end
 
     # Specifies what the resulting value of the expression must be.
-    def to(value : T) forall T
+    def to(value)
       ChangeExactMatcher.new(@expression, @expected, value)
     end
 
     # Specifies what the resulting value of the expression should change by.
-    def by(amount : T) forall T
+    def by(amount)
       ChangeExactMatcher.new(@expression, @expected, @expected + value)
     end
 

@@ -28,7 +28,7 @@ module Spectator::Formatting
     # Produces a single character output based on a result.
     def end_example(result)
       @previous_hierarchy.size.times { @io.print INDENT }
-      @io.puts result.call(Color) { result.example.what }
+      @io.puts result.call(Color) { result.example.description }
     end
 
     # Produces a list of groups making up the hierarchy for an example.
@@ -56,7 +56,7 @@ module Spectator::Formatting
     private def print_sub_hierarchy(index, sub_hierarchy)
       sub_hierarchy.each do |group|
         index.times { @io.print INDENT }
-        @io.puts group.what
+        @io.puts group.description
         index += 1
       end
     end

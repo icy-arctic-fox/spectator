@@ -1,3 +1,5 @@
+require "./harness"
+
 module Spectator
   # Main driver for executing tests and feeding results to formatters.
   class Runner
@@ -35,7 +37,7 @@ module Spectator
         result = run_example(example).as(Result)
         results << result
         if @config.fail_fast? && result.is_a?(FailedResult)
-          example.group.run_after_all_hooks(ignore_unfinished: true)
+          example.group.context.run_after_all_hooks(example.group, ignore_unfinished: true)
           break
         end
       end
@@ -57,7 +59,7 @@ module Spectator
       result = if @config.dry_run? && example.is_a?(RunnableExample)
                  dry_run_result(example)
                else
-                 Internals::Harness.run(example)
+                 Harness.run(example)
                end
       @config.each_formatter(&.end_example(result))
       result

@@ -24,11 +24,32 @@ module Spectator::Expectations
       report(match_data)
     end
 
+    def to(stub : Mocks::MethodStub) : Nil
+      Harness.current.mocks.expect(@actual.value, stub)
+      value = TestValue.new(stub.name, stub.to_s)
+      matcher = Matchers::ReceiveMatcher.new(value, stub.arguments?)
+      to_eventually(matcher)
+    end
+
+    def to(stubs : Enumerable(Mocks::MethodStub)) : Nil
+      stubs.each { |stub| to(stub) }
+    end
+
     # Asserts that some criteria defined by the matcher is not satisfied.
     # This is effectively the opposite of `#to`.
     def to_not(matcher) : Nil
       match_data = matcher.negated_match(@actual)
       report(match_data)
+    end
+
+    def to_not(stub : Mocks::MethodStub) : Nil
+      value = TestValue.new(stub.name, stub.to_s)
+      matcher = Matchers::ReceiveMatcher.new(value, stub.arguments?)
+      to_never(matcher)
+    end
+
+    def to_not(stubs : Enumerable(Mocks::MethodStub)) : Nil
+      stubs.each { |stub| to_not(stub) }
     end
 
     # ditto
@@ -37,10 +58,28 @@ module Spectator::Expectations
       to_not(matcher)
     end
 
+    # Asserts that some criteria defined by the matcher is eventually satisfied.
+    # The expectation is checked after the example finishes and all hooks have run.
+    def to_eventually(matcher) : Nil
+      Harness.current.defer { to(matcher) }
+    end
+
+    # Asserts that some criteria defined by the matcher is never satisfied.
+    # The expectation is checked after the example finishes and all hooks have run.
+    def to_never(matcher) : Nil
+      Harness.current.defer { to_not(matcher) }
+    end
+
+    # ditto
+    @[AlwaysInline]
+    def never_to(matcher) : Nil
+      to_never(matcher)
+    end
+
     # Reports an expectation to the current harness.
     private def report(match_data : Matchers::MatchData)
       expectation = Expectation.new(match_data, @source)
-      Internals::Harness.current.report_expectation(expectation)
+      Harness.current.report_expectation(expectation)
     end
   end
 end
