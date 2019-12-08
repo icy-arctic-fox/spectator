@@ -31,6 +31,7 @@ module Spectator::DSL
   macro define_double(type_name, name, **stubs, &block)
     {% begin %}
       {% if (name.is_a?(Path) || name.is_a?(Generic)) && (resolved = name.resolve?) %}
+        verify_double({{name}})
         class {{type_name}} < ::Spectator::Mocks::VerifyingDouble(::{{resolved.id}})
       {% else %}
         class {{type_name}} < ::Spectator::Mocks::Double
@@ -115,6 +116,26 @@ module Spectator::DSL
         include ::Spectator::Mocks::Stubs
 
         {{block.body}}
+      end
+    {% end %}
+  end
+
+  macro verify_double(name, &block)
+    {% resolved = name.resolve
+       type = if resolved < Reference
+                :class
+              elsif resolved < Value
+                :struct
+              else
+                :module
+              end %}
+    {% begin %}
+      {{type.id}} ::{{resolved.id}}
+        include ::Spectator::Mocks::Reflection
+
+        macro finished
+          _spectator_reflect
+        end
       end
     {% end %}
   end
