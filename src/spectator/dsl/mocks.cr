@@ -29,10 +29,15 @@ module Spectator::DSL
   end
 
   macro define_double(type_name, name, **stubs, &block)
-    class {{type_name}} < ::Spectator::Mocks::Double
-      def initialize(null = false)
-        super({{name.id.stringify}}, null)
-      end
+    {% begin %}
+      {% if (name.is_a?(Path) || name.is_a?(Generic)) && (resolved = name.resolve?) %}
+        class {{type_name}} < ::Spectator::Mocks::VerifyingDouble(::{{resolved.id}})
+      {% else %}
+        class {{type_name}} < ::Spectator::Mocks::Double
+          def initialize(null = false)
+            super({{name.id.stringify}}, null)
+          end
+      {% end %}
 
       def as_null_object
         {{type_name}}.new(true)
@@ -42,6 +47,7 @@ module Spectator::DSL
 
       {{block.body}}
     end
+    {% end %}
   end
 
   def anonymous_double(name = "Anonymous", **stubs)
