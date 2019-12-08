@@ -1,17 +1,17 @@
 module Spectator
   module DSL
     macro let(name, &block)
-      def %value
-        {{block.body}}
-      end
-
       @%wrapper : ::Spectator::ValueWrapper?
 
       def {{name.id}}
+        {{block.body}}
+      end
+
+      def {{name.id}}
         if (wrapper = @%wrapper)
-          wrapper.as(::Spectator::TypedValueWrapper(typeof(%value))).value
+          wrapper.as(::Spectator::TypedValueWrapper(typeof(previous_def))).value
         else
-          %value.tap do |value|
+          previous_def.tap do |value|
             @%wrapper = ::Spectator::TypedValueWrapper.new(value)
           end
         end

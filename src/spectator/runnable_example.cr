@@ -20,7 +20,7 @@ module Spectator
         context.run_before_hooks(self)
         run_example(result)
         context.run_after_hooks(self)
-        run_deferred(result)
+        run_deferred(result) unless result.error
       end
     end
 

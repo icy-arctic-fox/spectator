@@ -27,7 +27,7 @@ module Spectator::Matchers
     # ```
     # expect(0).to be < 1
     # ```
-    def <(value : ExpectedType) forall ExpectedType
+    def <(value)
       expected = TestValue.new(value)
       LessThanMatcher.new(expected)
     end
@@ -37,7 +37,7 @@ module Spectator::Matchers
     # ```
     # expect(0).to be <= 1
     # ```
-    def <=(value : ExpectedType) forall ExpectedType
+    def <=(value)
       expected = TestValue.new(value)
       LessThanEqualMatcher.new(expected)
     end
@@ -47,7 +47,7 @@ module Spectator::Matchers
     # ```
     # expect(2).to be > 1
     # ```
-    def >(value : ExpectedType) forall ExpectedType
+    def >(value)
       expected = TestValue.new(value)
       GreaterThanMatcher.new(expected)
     end
@@ -57,7 +57,7 @@ module Spectator::Matchers
     # ```
     # expect(2).to be >= 1
     # ```
-    def >=(value : ExpectedType) forall ExpectedType
+    def >=(value)
       expected = TestValue.new(value)
       GreaterThanEqualMatcher.new(expected)
     end
@@ -67,7 +67,7 @@ module Spectator::Matchers
     # ```
     # expect(0).to be == 0
     # ```
-    def ==(value : ExpectedType) forall ExpectedType
+    def ==(value)
       expected = TestValue.new(value)
       EqualityMatcher.new(expected)
     end
@@ -77,7 +77,7 @@ module Spectator::Matchers
     # ```
     # expect(0).to be != 1
     # ```
-    def !=(value : ExpectedType) forall ExpectedType
+    def !=(value)
       expected = TestValue.new(value)
       InequalityMatcher.new(expected)
     end
@@ -114,7 +114,7 @@ module Spectator::Matchers
       {
         expected: @truthy ? "Not false or nil" : "false or nil",
         actual:   actual.value.inspect,
-        truthy:   !!actual.value.inspect,
+        truthy:   (!!actual.value).inspect,
       }
     end
 
@@ -124,7 +124,7 @@ module Spectator::Matchers
       {
         expected: @truthy ? "false or nil" : "Not false or nil",
         actual:   actual.value.inspect,
-        truthy:   !!actual.value.inspect,
+        truthy:   (!!actual.value).inspect,
       }
     end
 

@@ -18,8 +18,8 @@ module Spectator
     # Adds a new value by duplicating the current set and adding to it.
     # The new sample values with the additional value is returned.
     # The original set of sample values is not modified.
-    def add(id : Symbol, name : String, value : T) : TestValues forall T
-      wrapper = TypedValueWrapper(T).new(value)
+    def add(id : Symbol, name : String, value) : TestValues
+      wrapper = TypedValueWrapper.new(value)
       TestValues.new(@values.merge({
         id => Entry.new(name, wrapper),
       }))

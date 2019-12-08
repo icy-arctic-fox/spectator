@@ -15,6 +15,10 @@ module Spectator::Matchers
     getter values : Array(Tuple(Symbol, String))
 
     # Creates the match data.
+    def initialize(@failure_message, @values)
+    end
+
+    # Creates the match data.
     def initialize(@failure_message, **values)
       @values = values.to_a
     end

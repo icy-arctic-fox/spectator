@@ -24,11 +24,32 @@ module Spectator::Expectations
       report(match_data)
     end
 
+    def to(stub : Mocks::MethodStub) : Nil
+      Harness.current.mocks.expect(@actual.value, stub)
+      value = TestValue.new(stub.name, stub.to_s)
+      matcher = Matchers::ReceiveMatcher.new(value, stub.arguments?)
+      to_eventually(matcher)
+    end
+
+    def to(stubs : Enumerable(Mocks::MethodStub)) : Nil
+      stubs.each { |stub| to(stub) }
+    end
+
     # Asserts that some criteria defined by the matcher is not satisfied.
     # This is effectively the opposite of `#to`.
     def to_not(matcher) : Nil
       match_data = matcher.negated_match(@actual)
       report(match_data)
+    end
+
+    def to_not(stub : Mocks::MethodStub) : Nil
+      value = TestValue.new(stub.name, stub.to_s)
+      matcher = Matchers::ReceiveMatcher.new(value, stub.arguments?)
+      to_never(matcher)
+    end
+
+    def to_not(stubs : Enumerable(Mocks::MethodStub)) : Nil
+      stubs.each { |stub| to_not(stub) }
     end
 
     # ditto

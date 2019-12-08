@@ -1,3 +1,5 @@
+require "./mocks/registry"
+
 module Spectator
   # Helper class that acts as a gateway between example code and the test framework.
   # Every example must be invoked by passing it to `#run`.
@@ -34,6 +36,8 @@ module Spectator
     # Retrieves the current running example.
     getter example : Example
 
+    getter mocks : Mocks::Registry
+
     # Retrieves the group for the current running example.
     def group
       example.group
@@ -66,6 +70,7 @@ module Spectator
     # The example the harness is for should be passed in.
     private def initialize(@example)
       @reporter = Expectations::ExpectationReporter.new
+      @mocks = Mocks::Registry.new(@example.group.context)
       @deferred = Deque(->).new
     end
   end

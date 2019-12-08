@@ -57,12 +57,12 @@ module Spectator::Matchers
     end
 
     # Specifies what the initial value of the expression must be.
-    def from(value : T) forall T
+    def from(value)
       ChangeExactMatcher.new(@expression, value, @expected)
     end
 
     # Specifies how much the initial value should change by.
-    def by(amount : T) forall T
+    def by(amount)
       ChangeExactMatcher.new(@expression, @expected - amount, @expected)
     end
 

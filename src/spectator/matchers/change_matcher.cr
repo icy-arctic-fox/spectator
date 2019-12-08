@@ -49,27 +49,27 @@ module Spectator::Matchers
     end
 
     # Specifies what the initial value of the expression must be.
-    def from(value : T) forall T
+    def from(value)
       ChangeFromMatcher.new(@expression, value)
     end
 
     # Specifies what the resulting value of the expression must be.
-    def to(value : T) forall T
+    def to(value)
       ChangeToMatcher.new(@expression, value)
     end
 
     # Specifies that t he resulting value must be some amount different.
-    def by(amount : T) forall T
+    def by(amount)
       ChangeRelativeMatcher.new(@expression, "by #{amount}") { |before, after| amount == after - before }
     end
 
     # Specifies that the resulting value must be at least some amount different.
-    def by_at_least(minimum : T) forall T
+    def by_at_least(minimum)
       ChangeRelativeMatcher.new(@expression, "by at least #{minimum}") { |before, after| minimum <= after - before }
     end
 
     # Specifies that the resulting value must be at most some amount different.
-    def by_at_most(maximum : T) forall T
+    def by_at_most(maximum)
       ChangeRelativeMatcher.new(@expression, "by at most #{maximum}") { |before, after| maximum >= after - before }
     end
 

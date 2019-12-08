@@ -96,6 +96,10 @@ module Spectator
       @@stack.current.add_post_condition(block)
     end
 
+    def add_default_stub(*args) : Nil
+      @@stack.current.add_default_stub(*args)
+    end
+
     # Builds the entire spec and returns it as a test suite.
     # This should be called only once after the entire spec has been defined.
     protected def build(filter : ExampleFilter) : TestSuite

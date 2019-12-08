@@ -35,6 +35,10 @@ module Spectator
       @example_count = children.sum(&.example_count)
     end
 
+    def double(id, sample_values)
+      @doubles[id].build(sample_values)
+    end
+
     getter context
 
     def initialize(@context : TestContext)

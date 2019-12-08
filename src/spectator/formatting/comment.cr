@@ -13,7 +13,7 @@ module Spectator::Formatting
     end
 
     # Creates a colorized version of the comment.
-    def self.color(text : T) forall T
+    def self.color(text)
       Color.comment(new(text))
     end
   end
