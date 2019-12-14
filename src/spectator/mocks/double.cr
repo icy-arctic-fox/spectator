@@ -62,7 +62,7 @@ module Spectator::Mocks
         {% if body && !body.is_a?(Nop) %}
           {{body.body}}
         {% else %}
-          %args = ::Spectator::Mocks::GenericArguments.create({{params.splat}})
+          %args = ::Spectator::Mocks::GenericArguments.create({{args.splat}})
           %call = ::Spectator::Mocks::GenericMethodCall.new({{name.symbolize}}, %args)
           unless ::Spectator::Harness.current.mocks.expected?(self, %call)
             raise ::Spectator::Mocks::UnexpectedMessageError.new("#{self} received unexpected message {{name}}")
