@@ -32,7 +32,7 @@ module Spectator::Mocks
 
       def {{name}}({{params.splat}}){% if definition.is_a?(TypeDeclaration) %} : {{definition.type}}{% end %}
         %args = ::Spectator::Mocks::GenericArguments.create({{args.splat}})
-        %call = ::Spectator::Mocks::GenericMethodCall.new({{name.symbolize}}, %args)
+        %call = ::Spectator::Mocks::MethodCall.new({{name.symbolize}}, %args)
         ::Spectator::Harness.current.mocks.record_call(self, %call)
 
         unless ::Spectator::Mocks::TypeRegistry.exists?(T.to_s, %call)
@@ -48,7 +48,7 @@ module Spectator::Mocks
 
       def {{name}}({{params.splat}}){% if definition.is_a?(TypeDeclaration) %} : {{definition.type}}{% end %}
         %args = ::Spectator::Mocks::GenericArguments.create({{args.splat}})
-        %call = ::Spectator::Mocks::GenericMethodCall.new({{name.symbolize}}, %args)
+        %call = ::Spectator::Mocks::MethodCall.new({{name.symbolize}}, %args)
         ::Spectator::Harness.current.mocks.record_call(self, %call)
 
         unless ::Spectator::Mocks::TypeRegistry.exists?(T.to_s, %call)
@@ -69,7 +69,7 @@ module Spectator::Mocks
           {{body.body}}
         {% else %}
           %args = ::Spectator::Mocks::GenericArguments.create({{args.splat}})
-          %call = ::Spectator::Mocks::GenericMethodCall.new({{name.symbolize}}, %args)
+          %call = ::Spectator::Mocks::MethodCall.new({{name.symbolize}}, %args)
           unless ::Spectator::Harness.current.mocks.expected?(self, %call)
             raise ::Spectator::Mocks::UnexpectedMessageError.new("#{self} received unexpected message {{name}}")
           end
@@ -86,7 +86,7 @@ module Spectator::Mocks
 
     macro method_missing(call)
       args = ::Spectator::Mocks::GenericArguments.create({{call.args.splat}})
-      call = ::Spectator::Mocks::GenericMethodCall.new({{call.name.symbolize}}, args)
+      call = ::Spectator::Mocks::MethodCall.new({{call.name.symbolize}}, args)
       ::Spectator::Harness.current.mocks.record_call(self, call)
 
       unless ::Spectator::Mocks::TypeRegistry.exists?(T.to_s, call)
