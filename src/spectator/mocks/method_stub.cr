@@ -1,5 +1,5 @@
 require "../source"
-require "./generic_method_call"
+require "./method_call"
 
 module Spectator::Mocks
   abstract class MethodStub
@@ -10,7 +10,7 @@ module Spectator::Mocks
     def initialize(@name, @source)
     end
 
-    def callable?(call : GenericMethodCall(T, NT)) : Bool forall T, NT
+    def callable?(call : MethodCall) : Bool
       @name == call.name
     end
 

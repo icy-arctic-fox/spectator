@@ -16,7 +16,7 @@ module Spectator::Mocks
       list << NilMethodStub.new(method_name, source, args)
     end
 
-    def exists?(type_name : String, call : GenericMethodCall(T, NT)) : Bool forall T, NT
+    def exists?(type_name : String, call : MethodCall) : Bool
       key = {type_name, call.name}
       list = @@entries.fetch(key) { return false }
       list.any?(&.callable?(call))

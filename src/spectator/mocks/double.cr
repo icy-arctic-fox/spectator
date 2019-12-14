@@ -1,5 +1,5 @@
-require "./generic_method_call"
 require "./generic_method_stub"
+require "./method_call"
 require "./unexpected_message_error"
 
 module Spectator::Mocks
@@ -36,7 +36,7 @@ module Spectator::Mocks
 
       def {{name}}({{params.splat}}){% if definition.is_a?(TypeDeclaration) %} : {{definition.type}}{% end %}
         %args = ::Spectator::Mocks::GenericArguments.create({{args.splat}})
-        %call = ::Spectator::Mocks::GenericMethodCall.new({{name.symbolize}}, %args)
+        %call = ::Spectator::Mocks::MethodCall.new({{name.symbolize}}, %args)
         ::Spectator::Harness.current.mocks.record_call(self, %call)
         if (%stub = ::Spectator::Harness.current.mocks.find_stub(self, %call))
           %stub.call!(%args) { %method({{args.splat}}) }
@@ -47,7 +47,7 @@ module Spectator::Mocks
 
       def {{name}}({{params.splat}}){% if definition.is_a?(TypeDeclaration) %} : {{definition.type}}{% end %}
         %args = ::Spectator::Mocks::GenericArguments.create({{args.splat}})
-        %call = ::Spectator::Mocks::GenericMethodCall.new({{name.symbolize}}, %args)
+        %call = ::Spectator::Mocks::MethodCall.new({{name.symbolize}}, %args)
         ::Spectator::Harness.current.mocks.record_call(self, %call)
         if (%stub = ::Spectator::Harness.current.mocks.find_stub(self, %call))
           %stub.call!(%args) { %method({{args.splat}}) { |*%ya| yield *%ya } }
@@ -62,8 +62,8 @@ module Spectator::Mocks
         {% if body && !body.is_a?(Nop) %}
           {{body.body}}
         {% else %}
-          %args = ::Spectator::Mocks::GenericArguments.create({{params.splat}})
-          %call = ::Spectator::Mocks::GenericMethodCall.new({{name.symbolize}}, %args)
+          %args = ::Spectator::Mocks::GenericArguments.create({{args.splat}})
+          %call = ::Spectator::Mocks::MethodCall.new({{name.symbolize}}, %args)
           unless ::Spectator::Harness.current.mocks.expected?(self, %call)
             raise ::Spectator::Mocks::UnexpectedMessageError.new("#{self} received unexpected message {{name}}")
           end
@@ -80,7 +80,7 @@ module Spectator::Mocks
 
     macro method_missing(call)
       args = ::Spectator::Mocks::GenericArguments.create({{call.args.splat}})
-      call = ::Spectator::Mocks::GenericMethodCall.new({{call.name.symbolize}}, args)
+      call = ::Spectator::Mocks::MethodCall.new({{call.name.symbolize}}, args)
       ::Spectator::Harness.current.mocks.record_call(self, call)
 
       return self if @null

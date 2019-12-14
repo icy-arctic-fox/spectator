@@ -11,7 +11,7 @@ module Spectator::Mocks
       super(name, source)
     end
 
-    def callable?(call : GenericMethodCall(T, NT)) : Bool forall T, NT
+    def callable?(call : MethodCall) : Bool
       super && (!@args || @args === call.args)
     end
 

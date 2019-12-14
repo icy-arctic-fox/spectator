@@ -47,7 +47,7 @@ module Spectator::Mocks
         fetch_type(object.class).stubs.any? { |stub| stub.name == method_name }
     end
 
-    def find_stub(object, call : GenericMethodCall(T, NT)) forall T, NT
+    def find_stub(object, call : MethodCall)
       fetch_instance(object).stubs.find(&.callable?(call)) ||
         fetch_type(object.class).stubs.find(&.callable?(call))
     end
@@ -65,7 +65,7 @@ module Spectator::Mocks
       fetch_type(type).calls.select { |call| call.name == method_name }
     end
 
-    def expected?(object, call : GenericMethodCall(T, NT)) : Bool forall T, NT
+    def expected?(object, call : MethodCall) : Bool
       fetch_instance(object).expected.any?(&.callable?(call)) ||
         fetch_type(object.class).expected.any?(&.callable?(call))
     end
