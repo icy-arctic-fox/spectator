@@ -7,10 +7,19 @@ module Spectator::Mocks
         %source = ::Spectator::Source.new({{meth.filename}}, {{meth.line_number}})
         %args = ::Spectator::Mocks::GenericArguments.create(
           {% for arg, i in meth.args %}
+            {% matcher = if arg.restriction
+                           if arg.restriction == :self.id
+                             @type.id
+                           else
+                             arg.restriction
+                           end
+                         else
+                           "::Spectator::Anything.new".id
+                         end %}
             {% if meth.splat_index && i == meth.splat_index %}
-              *{{arg.restriction || "::Spectator::Anything.new".id}}{% if i < meth.args.size %},{% end %}
+              *{{matcher}}{% if i < meth.args.size %},{% end %}
             {% else %}
-              {{arg.restriction || "::Spectator::Anything.new".id}}{% if i < meth.args.size %},{% end %}
+              {{matcher}}{% if i < meth.args.size %},{% end %}
             {% end %}
           {% end %}
         )
