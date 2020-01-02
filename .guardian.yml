@@ -1,0 +1,5 @@
+files: ./**/*.cr
+run: time crystal spec --error-trace
+---
+files: ./shard.yml
+run: shards
