@@ -46,6 +46,7 @@ module Spectator
     # Reports the outcome of an expectation.
     # An exception will be raised when a failing result is given.
     def report_expectation(expectation : Expectations::Expectation) : Nil
+      @example.description = expectation.description unless @example.test_wrapper.description?
       @reporter.report(expectation)
     end
 
