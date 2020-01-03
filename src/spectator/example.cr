@@ -23,7 +23,7 @@ module Spectator
       @test_wrapper.source
     end
 
-    def description : String | Symbol
+    def description : String | Symbol?
       @test_wrapper.description
     end
 

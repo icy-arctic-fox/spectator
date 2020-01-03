@@ -17,6 +17,11 @@ module Spectator
     def initialize(@description : String, @source : Source, @test : ::SpectatorTest, @runner : TestMethod)
     end
 
+    # Creates a wrapper for the test.
+    def initialize(description : Nil, @source : Source, @test : ::SpectatorTest, @runner : TestMethod)
+      @description = @source.to_s
+    end
+
     def run
       call(@runner)
     end
