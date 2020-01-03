@@ -30,21 +30,21 @@ module Spectator::Matchers
       before, after = change(actual)
       if expected_before == before
         if before == after
-          FailedMatchData.new("#{actual.label} did not change #{expression.label}",
+          FailedMatchData.new(description, "#{actual.label} did not change #{expression.label}",
             before: before.inspect,
             after: after.inspect
           )
         elsif expected_after == after
-          SuccessfulMatchData.new
+          SuccessfulMatchData.new(description)
         else
-          FailedMatchData.new("#{actual.label} did not change #{expression.label} to #{expected_after.inspect}",
+          FailedMatchData.new(description, "#{actual.label} did not change #{expression.label} to #{expected_after.inspect}",
             before: before.inspect,
             after: after.inspect,
             expected: expected_after.inspect
           )
         end
       else
-        FailedMatchData.new("#{expression.label} was not initially #{expected_before.inspect}",
+        FailedMatchData.new(description, "#{expression.label} was not initially #{expected_before.inspect}",
           expected: expected_before.inspect,
           actual: before.inspect,
         )
@@ -57,15 +57,15 @@ module Spectator::Matchers
       before, after = change(actual)
       if expected_before == before
         if expected_after == after
-          FailedMatchData.new("#{actual.label} changed #{expression.label} from #{expected_before.inspect} to #{expected_after.inspect}",
+          FailedMatchData.new(description, "#{actual.label} changed #{expression.label} from #{expected_before.inspect} to #{expected_after.inspect}",
             before: before.inspect,
             after: after.inspect
           )
         else
-          SuccessfulMatchData.new
+          SuccessfulMatchData.new(description)
         end
       else
-        FailedMatchData.new("#{expression.label} was not initially #{expected_before.inspect}",
+        FailedMatchData.new(description, "#{expression.label} was not initially #{expected_before.inspect}",
           expected: expected_before.inspect,
           actual: before.inspect,
         )

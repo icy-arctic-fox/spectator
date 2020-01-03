@@ -25,9 +25,9 @@ module Spectator::Matchers
     # Additionally, `#failure_message` and `#values` are called for a failed match.
     def match(actual : TestExpression(T)) : MatchData forall T
       if match?(actual)
-        SuccessfulMatchData.new
+        SuccessfulMatchData.new(description)
       else
-        FailedMatchData.new(failure_message(actual), values(actual).to_a)
+        FailedMatchData.new(description, failure_message(actual), values(actual).to_a)
       end
     end
 
@@ -39,10 +39,11 @@ module Spectator::Matchers
     # Otherwise, a `FailedMatchData` instance is returned.
     # Additionally, `#failure_message_when_negated` and `#negated_values` are called for a failed match.
     def negated_match(actual : TestExpression(T)) : MatchData forall T
+      # TODO: Invert description.
       if does_not_match?(actual)
-        SuccessfulMatchData.new
+        SuccessfulMatchData.new(description)
       else
-        FailedMatchData.new(failure_message_when_negated(actual), negated_values(actual).to_a)
+        FailedMatchData.new(description, failure_message_when_negated(actual), negated_values(actual).to_a)
       end
     end
 

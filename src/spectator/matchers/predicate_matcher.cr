@@ -24,9 +24,9 @@ module Spectator::Matchers
     def match(actual : TestExpression(T)) : MatchData forall T
       snapshot = snapshot_values(actual.value)
       if match?(snapshot)
-        SuccessfulMatchData.new
+        SuccessfulMatchData.new(description)
       else
-        FailedMatchData.new("#{actual.label} is not #{expected.label}", **values(snapshot))
+        FailedMatchData.new(description, "#{actual.label} is not #{expected.label}", **values(snapshot))
       end
     end
 
@@ -35,9 +35,9 @@ module Spectator::Matchers
     def negated_match(actual : TestExpression(T)) : MatchData forall T
       snapshot = snapshot_values(actual.value)
       if match?(snapshot)
-        FailedMatchData.new("#{actual.label} is #{expected.label}", **values(snapshot))
+        FailedMatchData.new(description, "#{actual.label} is #{expected.label}", **values(snapshot))
       else
-        SuccessfulMatchData.new
+        SuccessfulMatchData.new(description)
       end
     end
 

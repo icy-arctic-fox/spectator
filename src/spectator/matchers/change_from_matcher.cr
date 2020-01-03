@@ -27,18 +27,18 @@ module Spectator::Matchers
     def match(actual : TestExpression(T)) : MatchData forall T
       before, after = change(actual)
       if expected != before
-        FailedMatchData.new("#{expression.label} was not initially #{expected}",
+        FailedMatchData.new(description, "#{expression.label} was not initially #{expected}",
           expected: expected.inspect,
           actual: before.inspect,
         )
       elsif before == after
-        FailedMatchData.new("#{actual.label} did not change #{expression.label} from #{expected}",
+        FailedMatchData.new(description, "#{actual.label} did not change #{expression.label} from #{expected}",
           before: before.inspect,
           after: after.inspect,
           expected: "Not #{expected.inspect}"
         )
       else
-        SuccessfulMatchData.new
+        SuccessfulMatchData.new(description)
       end
     end
 
@@ -47,14 +47,14 @@ module Spectator::Matchers
     def negated_match(actual : TestExpression(T)) : MatchData forall T
       before, after = change(actual)
       if expected != before
-        FailedMatchData.new("#{expression.label} was not initially #{expected}",
+        FailedMatchData.new(description, "#{expression.label} was not initially #{expected}",
           expected: expected.inspect,
           actual: before.inspect
         )
       elsif before == after
-        SuccessfulMatchData.new
+        SuccessfulMatchData.new(description)
       else
-        FailedMatchData.new("#{actual.label} changed #{expression.label} from #{expected}",
+        FailedMatchData.new(description, "#{actual.label} changed #{expression.label} from #{expected}",
           before: before.inspect,
           after: after.inspect,
           expected: expected.inspect

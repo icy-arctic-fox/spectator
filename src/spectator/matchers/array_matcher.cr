@@ -31,7 +31,7 @@ module Spectator::Matchers
       when Int # Content differs.
         failed_content_mismatch(expected_elements, actual_elements, index, actual.label)
       when true # Contents are identical.
-        SuccessfulMatchData.new
+        SuccessfulMatchData.new(description)
       else # Size differs.
         failed_size_mismatch(expected_elements, actual_elements, actual.label)
       end
@@ -45,11 +45,11 @@ module Spectator::Matchers
 
       case compare_arrays(expected_elements, actual_elements)
       when Int # Contents differ.
-        SuccessfulMatchData.new
+        SuccessfulMatchData.new(description)
       when true # Contents are identical.
         failed_content_identical(expected_elements, actual_elements, actual.label)
       else # Size differs.
-        SuccessfulMatchData.new
+        SuccessfulMatchData.new(description)
       end
     end
 
@@ -85,7 +85,7 @@ module Spectator::Matchers
 
     # Produces match data for a failure when the array sizes differ.
     private def failed_size_mismatch(expected_elements, actual_elements, actual_label)
-      FailedMatchData.new("#{actual_label} does not contain exactly #{expected.label} (size mismatch)",
+      FailedMatchData.new(description, "#{actual_label} does not contain exactly #{expected.label} (size mismatch)",
         expected: expected_elements.inspect,
         actual: actual_elements.inspect,
         "expected size": expected_elements.size.to_s,
@@ -95,7 +95,7 @@ module Spectator::Matchers
 
     # Produces match data for a failure when the array content is mismatched.
     private def failed_content_mismatch(expected_elements, actual_elements, index, actual_label)
-      FailedMatchData.new("#{actual_label} does not contain exactly #{expected.label} (element mismatch)",
+      FailedMatchData.new(description, "#{actual_label} does not contain exactly #{expected.label} (element mismatch)",
         expected: expected_elements[index].inspect,
         actual: actual_elements[index].inspect,
         index: index.to_s
@@ -104,7 +104,7 @@ module Spectator::Matchers
 
     # Produces match data for a failure when the arrays are identical, but they shouldn't be (negation).
     private def failed_content_identical(expected_elements, actual_elements, actual_label)
-      FailedMatchData.new("#{actual_label} contains exactly #{expected.label}",
+      FailedMatchData.new(description, "#{actual_label} contains exactly #{expected.label}",
         expected: "Not #{expected_elements.inspect}",
         actual: actual_elements.inspect
       )

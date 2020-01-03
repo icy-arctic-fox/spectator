@@ -25,14 +25,14 @@ module Spectator::Matchers
     def match(actual : TestExpression(T)) : MatchData forall T
       before, after = change(actual)
       if before == after
-        FailedMatchData.new("#{actual.label} did not change #{expression.label}",
+        FailedMatchData.new(description, "#{actual.label} did not change #{expression.label}",
           before: before.inspect,
           after: after.inspect
         )
       elsif @evaluator.call(before, after)
-        SuccessfulMatchData.new
+        SuccessfulMatchData.new(description)
       else
-        FailedMatchData.new("#{actual.label} did not change #{expression.label} #{@relativity}",
+        FailedMatchData.new(description, "#{actual.label} did not change #{expression.label} #{@relativity}",
           before: before.inspect,
           after: after.inspect
         )

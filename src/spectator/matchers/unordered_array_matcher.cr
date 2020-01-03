@@ -25,9 +25,9 @@ module Spectator::Matchers
       missing, extra = array_diff(expected_elements, actual_elements)
 
       if missing.empty? && extra.empty?
-        SuccessfulMatchData.new
+        SuccessfulMatchData.new(description)
       else
-        FailedMatchData.new("#{actual_label} does not contain #{expected.label} (unordered)",
+        FailedMatchData.new(description, "#{actual_label} does not contain #{expected.label} (unordered)",
           expected: expected_elements.inspect,
           actual: actual_elements.inspect,
           missing: missing.inspect,
@@ -44,12 +44,12 @@ module Spectator::Matchers
       missing, extra = array_diff(expected_elements, actual_elements)
 
       if missing.empty? && extra.empty?
-        FailedMatchData.new("#{actual_label} contains #{expected.label} (unordered)",
+        FailedMatchData.new(description, "#{actual_label} contains #{expected.label} (unordered)",
           expected: "Not #{expected_elements.inspect}",
           actual: actual_elements.inspect,
         )
       else
-        SuccessfulMatchData.new
+        SuccessfulMatchData.new(description)
       end
     end
 

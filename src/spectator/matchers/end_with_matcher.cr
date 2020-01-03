@@ -44,9 +44,9 @@ module Spectator::Matchers
     # This method expects (and uses) the `#ends_with?` method on the value.
     private def match_ends_with(actual_value, actual_label)
       if actual_value.ends_with?(expected.value)
-        SuccessfulMatchData.new
+        SuccessfulMatchData.new(description)
       else
-        FailedMatchData.new("#{actual_label} does not end with #{expected.label} (using #ends_with?)",
+        FailedMatchData.new(description, "#{actual_label} does not end with #{expected.label} (using #ends_with?)",
           expected: expected.value.inspect,
           actual: actual_value.inspect
         )
@@ -60,9 +60,9 @@ module Spectator::Matchers
       last = list.last
 
       if expected.value === last
-        SuccessfulMatchData.new
+        SuccessfulMatchData.new(description)
       else
-        FailedMatchData.new("#{actual_label} does not end with #{expected.label} (using expected === last)",
+        FailedMatchData.new(description, "#{actual_label} does not end with #{expected.label} (using expected === last)",
           expected: expected.value.inspect,
           actual: last.inspect,
           list: list.inspect
@@ -74,12 +74,12 @@ module Spectator::Matchers
     # This method expects (and uses) the `#ends_with?` method on the value.
     private def negated_match_ends_with(actual)
       if actual.value.ends_with?(expected.value)
-        FailedMatchData.new("#{actual.label} ends with #{expected.label} (using #ends_with?)",
+        FailedMatchData.new(description, "#{actual.label} ends with #{expected.label} (using #ends_with?)",
           expected: expected.value.inspect,
           actual: actual.value.inspect
         )
       else
-        SuccessfulMatchData.new
+        SuccessfulMatchData.new(description)
       end
     end
 
@@ -90,13 +90,13 @@ module Spectator::Matchers
       last = list.last
 
       if expected.value === last
-        FailedMatchData.new("#{actual.label} ends with #{expected.label} (using expected === last)",
+        FailedMatchData.new(description, "#{actual.label} ends with #{expected.label} (using expected === last)",
           expected: expected.value.inspect,
           actual: last.inspect,
           list: list.inspect
         )
       else
-        SuccessfulMatchData.new
+        SuccessfulMatchData.new(description)
       end
     end
   end
