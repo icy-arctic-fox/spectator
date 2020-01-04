@@ -7,13 +7,6 @@ module Spectator::Matchers
   # Each key in the tuple is a predicate (without the '?' and 'has_' prefix) to test.
   # Each value is a a `Tuple` of arguments to pass to the predicate method.
   struct HavePredicateMatcher(ExpectedType) < ValueMatcher(ExpectedType)
-    # Expected value and label.
-    private getter expected
-
-    # Creates the matcher with a expected values.
-    def initialize(@expected : TestValue(ExpectedType))
-    end
-
     # Short text about the matcher's purpose.
     # This explains what condition satisfies the matcher.
     # The description is used when the one-liner syntax is used.
