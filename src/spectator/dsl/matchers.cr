@@ -716,8 +716,8 @@ module Spectator
         {% raise "Undefined local variable or method '#{call}'" %}
       {% end %}
 
-      descriptor = { {{method_name}}: Tuple.new({{call.args.splat}}) }
-      label = String::Builder.new({{method_name.stringify}})
+      descriptor = { {{method_name}}: ::Tuple.new({{call.args.splat}}) }
+      label = ::String::Builder.new({{method_name.stringify}})
       {% unless call.args.empty? %}
         label << '('
         {% for arg, index in call.args %}
