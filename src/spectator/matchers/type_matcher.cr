@@ -8,7 +8,7 @@ module Spectator::Matchers
     # This explains what condition satisfies the matcher.
     # The description is used when the one-liner syntax is used.
     def description : String
-      "is as #{Expected}"
+      "is a #{Expected}"
     end
 
     # Checks whether the matcher is satisifed with the expression given to it.
