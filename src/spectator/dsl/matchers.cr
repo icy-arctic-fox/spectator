@@ -122,6 +122,32 @@ module Spectator
       be_a({{expected}})
     end
 
+    # Indicates that some value should be of a specified type.
+    # The value's runtime class is checked.
+    # A type name or type union should be used for *expected*.
+    #
+    # Examples:
+    # ```
+    # expect(123).to be_instance_of(Int32)
+    # ```
+    macro be_instance_of(expected)
+      ::Spectator::Matchers::InstanceMatcher({{expected}}).new
+    end
+
+    # Indicates that some value should be of a specified type.
+    # The value's runtime class is checked.
+    # A type name or type union should be used for *expected*.
+    # This method is identical to `#be_an_instance_of`,
+    # and exists just to improve grammar.
+    #
+    # Examples:
+    # ```
+    # expect(123).to be_an_instance_of(Int32)
+    # ```
+    macro be_an_instance_of(expected)
+      be_instance_of({{expected}})
+    end
+
     # Indicates that some value should respond to a method call.
     # One or more method names can be provided.
     #
