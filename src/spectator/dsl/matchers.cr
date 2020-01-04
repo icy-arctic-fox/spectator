@@ -94,6 +94,34 @@ module Spectator
       be_a({{expected}})
     end
 
+    # Indicates that some value should be of a specified type.
+    # The `Object#is_a?` method is used for this check.
+    # A type name or type union should be used for *expected*.
+    # This method is identical to `#be_a`,
+    # and exists just to improve grammar.
+    #
+    # Examples:
+    # ```
+    # expect(123).to be_kind_of(Int)
+    # ```
+    macro be_kind_of(expected)
+      be_a({{expected}})
+    end
+
+    # Indicates that some value should be of a specified type.
+    # The `Object#is_a?` method is used for this check.
+    # A type name or type union should be used for *expected*.
+    # This method is identical to `#be_a`,
+    # and exists just to improve grammar.
+    #
+    # Examples:
+    # ```
+    # expect(123).to be_a_kind_of(Int)
+    # ```
+    macro be_a_kind_of(expected)
+      be_a({{expected}})
+    end
+
     # Indicates that some value should respond to a method call.
     # One or more method names can be provided.
     #
