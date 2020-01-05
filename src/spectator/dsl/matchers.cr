@@ -520,22 +520,23 @@ module Spectator
       have_value({{expected}})
     end
 
-    # Indicates that some set should contain some values in exact order.
+    # Indicates that some set should contain some values in any order.
     #
     # Example:
     # ```
-    # expect([1, 2, 3]).to contain_exactly(1, 2, 3)
+    # expect([1, 2, 3]).to contain_exactly(3, 2, 1)
     # ```
     macro contain_exactly(*expected)
       %test_value = ::Spectator::TestValue.new({{expected}}, {{expected.stringify}})
       ::Spectator::Matchers::ArrayMatcher.new(%test_value)
     end
 
-    # Indicates that some set should contain the same values in exact order as another set.
+    # Indicates that some set should contain the same values in any order as another set.
+    # This is the same as `#contain_exactly`, but takes an array as an argument.
     #
     # Example:
     # ```
-    # expect([1, 2, 3]).to match_array([1, 2, 3])
+    # expect([1, 2, 3]).to match_array([3, 2, 1])
     # ```
     macro match_array(expected)
       %test_value = ::Spectator::TestValue.new({{expected}}, {{expected.stringify}})
