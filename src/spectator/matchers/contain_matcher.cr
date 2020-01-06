@@ -18,6 +18,13 @@ module Spectator::Matchers
       end
     end
 
+    # If the expectation is negated, then this method is called instead of `#match?`.
+    private def does_not_match?(actual : TestExpression(T)) : Bool forall T
+      !expected.value.any? do |item|
+        actual.value.includes?(item)
+      end
+    end
+
     # Message displayed when the matcher isn't satisifed.
     #
     # This is only called when `#match?` returns false.
