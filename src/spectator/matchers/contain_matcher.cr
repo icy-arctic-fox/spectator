@@ -25,7 +25,7 @@ module Spectator::Matchers
     # The message should typically only contain the test expression labels.
     # Actual values should be returned by `#values`.
     private def failure_message(actual) : String
-      "#{actual.label} does not match #{expected.label}"
+      "#{actual.label} does not contain #{expected.label}"
     end
 
     # Message displayed when the matcher isn't satisifed and is negated.
