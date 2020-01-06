@@ -454,6 +454,27 @@ module Spectator
       ::Spectator::Matchers::ContainMatcher.new(%test_value)
     end
 
+    # Indicates that some range (or collection) should contain another value.
+    # This is typically used on a `Range` (although any `Enumerable` works).
+    # The `includes?` method is used.
+    #
+    # Examples:
+    # ```
+    # expect(1..10).to contain(5)
+    # expect((1..)).to contain(100)
+    # expect(..100).to contain(50)
+    # ```
+    #
+    # Additionally, multiple arguments can be specified.
+    # ```
+    # expect(1..10).to contain(2, 3)
+    # expect(..100).to contain(0, 50)
+    # ```
+    macro cover(*expected)
+      %test_value = ::Spectator::TestValue.new({{expected}}, {{expected.splat.stringify}})
+      ::Spectator::Matchers::ContainMatcher.new(%test_value)
+    end
+
     # Indicates that some value or set should contain another value.
     # This is similar to `#contain`, but uses a different method for matching.
     # Typically a `String` or `Array` (any `Enumerable` works) is checked against.
