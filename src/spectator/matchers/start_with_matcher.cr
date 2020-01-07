@@ -76,7 +76,7 @@ module Spectator::Matchers
     private def negated_match_starts_with(actual_value, actual_label)
       if actual_value.starts_with?(expected.value)
         FailedMatchData.new(description, "#{actual_label} starts with #{expected.label} (using #starts_with?)",
-          expected: expected.value.inspect,
+          expected: "Not #{expected.value.inspect}",
           actual: actual_value.inspect
         )
       else
@@ -92,7 +92,7 @@ module Spectator::Matchers
 
       if expected.value === first
         FailedMatchData.new(description, "#{actual_label} starts with #{expected.label} (using expected === first)",
-          expected: expected.value.inspect,
+          expected: "Not #{expected.value.inspect}",
           actual: first.inspect,
           list: list.inspect
         )

@@ -77,7 +77,7 @@ module Spectator::Matchers
     private def negated_match_ends_with(actual_value, actual_label)
       if actual_value.ends_with?(expected.value)
         FailedMatchData.new(description, "#{actual_label} ends with #{expected.label} (using #ends_with?)",
-          expected: expected.value.inspect,
+          expected: "Not #{expected.value.inspect}",
           actual: actual_value.inspect
         )
       else
@@ -93,7 +93,7 @@ module Spectator::Matchers
 
       if expected.value === last
         FailedMatchData.new(description, "#{actual_label} ends with #{expected.label} (using expected === last)",
-          expected: expected.value.inspect,
+          expected: "Not #{expected.value.inspect}",
           actual: last.inspect,
           list: list.inspect
         )
