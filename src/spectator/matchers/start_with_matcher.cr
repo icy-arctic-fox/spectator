@@ -22,7 +22,8 @@ module Spectator::Matchers
 
     # Actually performs the test against the expression.
     def match(actual : TestExpression(T)) : MatchData forall T
-      if (value = actual.value).responds_to?(:starts_with?)
+      value = actual.value
+      if value.is_a?(String) || value.responds_to?(:starts_with?)
         match_starts_with(value, actual.label)
       else
         match_first(value, actual.label)
@@ -32,7 +33,8 @@ module Spectator::Matchers
     # Performs the test against the expression, but inverted.
     # A successful match with `#match` should normally fail for this method, and vice-versa.
     def negated_match(actual : TestExpression(T)) : MatchData forall T
-      if (value = actual.value).responds_to?(:starts_with?)
+      value = actual.value
+      if value.is_a?(String) || value.responds_to?(:starts_with?)
         negated_match_starts_with(value, actual.label)
       else
         negated_match_first(value, actual.label)
