@@ -90,6 +90,11 @@ module Spectator::Matchers
       end
     end
 
+    def with_message(message : T) forall T
+      value = TestValue.new(message)
+      ExceptionMatcher(ExceptionType, T).new(value)
+    end
+
     # Runs a block of code and returns the exception it threw.
     # If no exception was thrown, *nil* is returned.
     private def capture_exception
