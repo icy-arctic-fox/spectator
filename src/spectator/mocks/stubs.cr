@@ -12,13 +12,19 @@ module Spectator::Mocks
           named = false
           name = definition.name.id
           params = definition.args
+          if params.last.is_a?(Call)
+            body = params.last.block
+            params[-1] = params.last.name
+          end
           args = params.map do |p|
             n = p.is_a?(TypeDeclaration) ? p.var : p.id
             r = named ? "#{n}: #{n}".id : n
             named = true if n.starts_with?('*')
             r
           end
-          body = definition.block.is_a?(Nop) ? block : definition.block
+          unless body
+            body = definition.block.is_a?(Nop) ? block : definition.block
+          end
         elsif definition.is_a?(TypeDeclaration) # stub foo : Symbol
           name = definition.var
           params = [] of MacroId

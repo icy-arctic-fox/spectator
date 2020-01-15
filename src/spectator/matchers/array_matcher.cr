@@ -5,7 +5,7 @@ require "./unordered_array_matcher"
 
 module Spectator::Matchers
   # Matcher for checking that the contents of one array (or similar type)
-  # has the exact same contents as another and in the same order.
+  # has the exact same contents as another but may be in any order.
   struct ArrayMatcher(ExpectedType) < Matcher
     # Expected value and label.
     private getter expected
@@ -25,15 +25,19 @@ module Spectator::Matchers
     def match(actual : TestExpression(T)) : MatchData forall T
       actual_elements = actual.value.to_a
       expected_elements = expected.value.to_a
-      index = compare_arrays(expected_elements, actual_elements)
+      missing, extra = compare_arrays(expected_elements, actual_elements)
 
-      case index
-      when Int # Content differs.
-        failed_content_mismatch(expected_elements, actual_elements, index, actual.label)
-      when true # Contents are identical.
-        SuccessfulMatchData.new
-      else # Size differs.
-        failed_size_mismatch(expected_elements, actual_elements, actual.label)
+      if missing.empty? && extra.empty?
+        # Contents are identical.
+        SuccessfulMatchData.new(description)
+      else
+        # Content differs.
+        FailedMatchData.new(description, "#{actual.label} does not contain exactly #{expected.label}",
+          expected: expected_elements.inspect,
+          actual: actual_elements.inspect,
+          missing: missing.empty? ? "None" : missing.inspect,
+          extra: extra.empty? ? "None" : extra.inspect
+        )
       end
     end
 
@@ -42,14 +46,17 @@ module Spectator::Matchers
     def negated_match(actual : TestExpression(T)) : MatchData forall T
       actual_elements = actual.value.to_a
       expected_elements = expected.value.to_a
+      missing, extra = compare_arrays(expected_elements, actual_elements)
 
-      case compare_arrays(expected_elements, actual_elements)
-      when Int # Contents differ.
-        SuccessfulMatchData.new
-      when true # Contents are identical.
-        failed_content_identical(expected_elements, actual_elements, actual.label)
-      else # Size differs.
-        SuccessfulMatchData.new
+      if missing.empty? && extra.empty?
+        # Contents are identical.
+        FailedMatchData.new(description, "#{actual.label} contains exactly #{expected.label}",
+          expected: "Not #{expected_elements.inspect}",
+          actual: actual_elements.inspect
+        )
+      else
+        # Content differs.
+        SuccessfulMatchData.new(description)
       end
     end
 
@@ -65,49 +72,41 @@ module Spectator::Matchers
       UnorderedArrayMatcher.new(expected)
     end
 
-    # Compares two arrays to determine whether they contain the same elements, and in the same order.
-    # If the arrays are the same, then `true` is returned.
-    # If they are different, `false` or an integer is returned.
-    # `false` is returned when the sizes of the arrays don't match.
-    # An integer is returned, that is the index of the mismatched elements in the arrays.
+    # Compares two arrays to determine whether they contain the same elements, but in any order.
+    # A tuple of two arrays is returned.
+    # The first array is the missing elements (present in expected, missing in actual).
+    # The second array array is the extra elements (not present in expected, present in actual).
     private def compare_arrays(expected_elements, actual_elements)
-      if expected_elements.size == actual_elements.size
-        index = 0
-        expected_elements.zip(actual_elements) do |expected_element, actual_element|
-          return index unless expected_element == actual_element
-          index += 1
+      # Produce hashes where the array elements are the keys, and the values are the number of occurances.
+      expected_hash = expected_elements.group_by(&.itself).map { |k, v| {k, v.size} }.to_h
+      actual_hash = actual_elements.group_by(&.itself).map { |k, v| {k, v.size} }.to_h
+
+      {
+        hash_count_difference(expected_hash, actual_hash),
+        hash_count_difference(actual_hash, expected_hash),
+      }
+    end
+
+    # Expects two hashes, with values as counts for keys.
+    # Produces an array of differences with elements repeated if needed.
+    private def hash_count_difference(first, second)
+      # Subtract the number of occurances from the other array.
+      # A duplicate hash is used here because the original can't be modified,
+      # since it there's a two-way comparison.
+      #
+      # Then reject elements that have zero (or less) occurances.
+      # Lastly, expand to the correct number of elements.
+      first.map do |element, count|
+        if second_count = second[element]?
+          {element, count - second_count}
+        else
+          {element, count}
         end
-        true
-      else
-        false
-      end
-    end
-
-    # Produces match data for a failure when the array sizes differ.
-    private def failed_size_mismatch(expected_elements, actual_elements, actual_label)
-      FailedMatchData.new("#{actual_label} does not contain exactly #{expected.label} (size mismatch)",
-        expected: expected_elements.inspect,
-        actual: actual_elements.inspect,
-        "expected size": expected_elements.size.to_s,
-        "actual size": actual_elements.size.to_s
-      )
-    end
-
-    # Produces match data for a failure when the array content is mismatched.
-    private def failed_content_mismatch(expected_elements, actual_elements, index, actual_label)
-      FailedMatchData.new("#{actual_label} does not contain exactly #{expected.label} (element mismatch)",
-        expected: expected_elements[index].inspect,
-        actual: actual_elements[index].inspect,
-        index: index.to_s
-      )
-    end
-
-    # Produces match data for a failure when the arrays are identical, but they shouldn't be (negation).
-    private def failed_content_identical(expected_elements, actual_elements, actual_label)
-      FailedMatchData.new("#{actual_label} contains exactly #{expected.label}",
-        expected: "Not #{expected_elements.inspect}",
-        actual: actual_elements.inspect
-      )
+      end.reject do |(_, count)|
+        count <= 0
+      end.map do |(element, count)|
+        Array.new(count, element)
+      end.flatten
     end
   end
 end

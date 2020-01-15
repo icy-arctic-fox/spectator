@@ -8,13 +8,19 @@ module Spectator
   # Used to instantiate tests and run them.
   struct TestWrapper
     # Description the user provided for the test.
-    getter description
+    def description
+      @description || @source.to_s
+    end
 
     # Location of the test in source code.
     getter source
 
     # Creates a wrapper for the test.
-    def initialize(@description : String, @source : Source, @test : ::SpectatorTest, @runner : TestMethod)
+    def initialize(@description : String?, @source : Source, @test : ::SpectatorTest, @runner : TestMethod)
+    end
+
+    def description?
+      !@description.nil?
     end
 
     def run

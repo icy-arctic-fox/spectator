@@ -16,6 +16,12 @@ module Spectator::Matchers
       expected.value === actual.value
     end
 
+    # Overload that takes a regex so that the operands are flipped.
+    # This mimics RSpec's behavior.
+    private def match?(actual : TestExpression(Regex)) : Bool forall T
+      actual.value === expected.value
+    end
+
     # Message displayed when the matcher isn't satisifed.
     #
     # This is only called when `#match?` returns false.

@@ -7,13 +7,6 @@ module Spectator::Matchers
   # Each key in the tuple is a predicate (without the '?' and 'has_' prefix) to test.
   # Each value is a a `Tuple` of arguments to pass to the predicate method.
   struct HavePredicateMatcher(ExpectedType) < ValueMatcher(ExpectedType)
-    # Expected value and label.
-    private getter expected
-
-    # Creates the matcher with a expected values.
-    def initialize(@expected : TestValue(ExpectedType))
-    end
-
     # Short text about the matcher's purpose.
     # This explains what condition satisfies the matcher.
     # The description is used when the one-liner syntax is used.
@@ -25,9 +18,9 @@ module Spectator::Matchers
     def match(actual : TestExpression(T)) : MatchData forall T
       snapshot = snapshot_values(actual.value)
       if match?(snapshot)
-        SuccessfulMatchData.new
+        SuccessfulMatchData.new(description)
       else
-        FailedMatchData.new("#{actual.label} does not have #{expected.label}", **values(snapshot))
+        FailedMatchData.new(description, "#{actual.label} does not have #{expected.label}", **values(snapshot))
       end
     end
 
@@ -36,9 +29,9 @@ module Spectator::Matchers
     def negated_match(actual : TestExpression(T)) : MatchData forall T
       snapshot = snapshot_values(actual.value)
       if match?(snapshot)
-        FailedMatchData.new("#{actual.label} has #{expected.label}", **values(snapshot))
+        FailedMatchData.new(description, "#{actual.label} has #{expected.label}", **values(snapshot))
       else
-        SuccessfulMatchData.new
+        SuccessfulMatchData.new(description)
       end
     end
 

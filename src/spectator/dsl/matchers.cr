@@ -94,6 +94,60 @@ module Spectator
       be_a({{expected}})
     end
 
+    # Indicates that some value should be of a specified type.
+    # The `Object#is_a?` method is used for this check.
+    # A type name or type union should be used for *expected*.
+    # This method is identical to `#be_a`,
+    # and exists just to improve grammar.
+    #
+    # Examples:
+    # ```
+    # expect(123).to be_kind_of(Int)
+    # ```
+    macro be_kind_of(expected)
+      be_a({{expected}})
+    end
+
+    # Indicates that some value should be of a specified type.
+    # The `Object#is_a?` method is used for this check.
+    # A type name or type union should be used for *expected*.
+    # This method is identical to `#be_a`,
+    # and exists just to improve grammar.
+    #
+    # Examples:
+    # ```
+    # expect(123).to be_a_kind_of(Int)
+    # ```
+    macro be_a_kind_of(expected)
+      be_a({{expected}})
+    end
+
+    # Indicates that some value should be of a specified type.
+    # The value's runtime class is checked.
+    # A type name or type union should be used for *expected*.
+    #
+    # Examples:
+    # ```
+    # expect(123).to be_instance_of(Int32)
+    # ```
+    macro be_instance_of(expected)
+      ::Spectator::Matchers::InstanceMatcher({{expected}}).new
+    end
+
+    # Indicates that some value should be of a specified type.
+    # The value's runtime class is checked.
+    # A type name or type union should be used for *expected*.
+    # This method is identical to `#be_an_instance_of`,
+    # and exists just to improve grammar.
+    #
+    # Examples:
+    # ```
+    # expect(123).to be_an_instance_of(Int32)
+    # ```
+    macro be_an_instance_of(expected)
+      be_instance_of({{expected}})
+    end
+
     # Indicates that some value should respond to a method call.
     # One or more method names can be provided.
     #
@@ -400,6 +454,27 @@ module Spectator
       ::Spectator::Matchers::ContainMatcher.new(%test_value)
     end
 
+    # Indicates that some range (or collection) should contain another value.
+    # This is typically used on a `Range` (although any `Enumerable` works).
+    # The `includes?` method is used.
+    #
+    # Examples:
+    # ```
+    # expect(1..10).to contain(5)
+    # expect((1..)).to contain(100)
+    # expect(..100).to contain(50)
+    # ```
+    #
+    # Additionally, multiple arguments can be specified.
+    # ```
+    # expect(1..10).to contain(2, 3)
+    # expect(..100).to contain(0, 50)
+    # ```
+    macro cover(*expected)
+      %test_value = ::Spectator::TestValue.new({{expected}}, {{expected.splat.stringify}})
+      ::Spectator::Matchers::ContainMatcher.new(%test_value)
+    end
+
     # Indicates that some value or set should contain another value.
     # This is similar to `#contain`, but uses a different method for matching.
     # Typically a `String` or `Array` (any `Enumerable` works) is checked against.
@@ -466,22 +541,23 @@ module Spectator
       have_value({{expected}})
     end
 
-    # Indicates that some set should contain some values in exact order.
+    # Indicates that some set should contain some values in any order.
     #
     # Example:
     # ```
-    # expect([1, 2, 3]).to contain_exactly(1, 2, 3)
+    # expect([1, 2, 3]).to contain_exactly(3, 2, 1)
     # ```
     macro contain_exactly(*expected)
       %test_value = ::Spectator::TestValue.new({{expected}}, {{expected.stringify}})
       ::Spectator::Matchers::ArrayMatcher.new(%test_value)
     end
 
-    # Indicates that some set should contain the same values in exact order as another set.
+    # Indicates that some set should contain the same values in any order as another set.
+    # This is the same as `#contain_exactly`, but takes an array as an argument.
     #
     # Example:
     # ```
-    # expect([1, 2, 3]).to match_array([1, 2, 3])
+    # expect([1, 2, 3]).to match_array([3, 2, 1])
     # ```
     macro match_array(expected)
       %test_value = ::Spectator::TestValue.new({{expected}}, {{expected.stringify}})
@@ -716,8 +792,8 @@ module Spectator
         {% raise "Undefined local variable or method '#{call}'" %}
       {% end %}
 
-      descriptor = { {{method_name}}: Tuple.new({{call.args.splat}}) }
-      label = String::Builder.new({{method_name.stringify}})
+      descriptor = { {{method_name}}: ::Tuple.new({{call.args.splat}}) }
+      label = ::String::Builder.new({{method_name.stringify}})
       {% unless call.args.empty? %}
         label << '('
         {% for arg, index in call.args %}

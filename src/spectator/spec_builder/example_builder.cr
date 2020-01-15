@@ -6,7 +6,7 @@ module Spectator::SpecBuilder
   abstract class ExampleBuilder
     alias FactoryMethod = TestValues -> ::SpectatorTest
 
-    def initialize(@description : String, @source : Source, @builder : FactoryMethod, @runner : TestMethod)
+    def initialize(@description : String?, @source : Source, @builder : FactoryMethod, @runner : TestMethod)
     end
 
     abstract def build(group) : ExampleComponent

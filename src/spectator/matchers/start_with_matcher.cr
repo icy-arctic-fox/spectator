@@ -22,7 +22,8 @@ module Spectator::Matchers
 
     # Actually performs the test against the expression.
     def match(actual : TestExpression(T)) : MatchData forall T
-      if (value = actual.value).responds_to?(:starts_with?)
+      value = actual.value
+      if value.is_a?(String) || value.responds_to?(:starts_with?)
         match_starts_with(value, actual.label)
       else
         match_first(value, actual.label)
@@ -32,7 +33,8 @@ module Spectator::Matchers
     # Performs the test against the expression, but inverted.
     # A successful match with `#match` should normally fail for this method, and vice-versa.
     def negated_match(actual : TestExpression(T)) : MatchData forall T
-      if (value = actual.value).responds_to?(:starts_with?)
+      value = actual.value
+      if value.is_a?(String) || value.responds_to?(:starts_with?)
         negated_match_starts_with(value, actual.label)
       else
         negated_match_first(value, actual.label)
@@ -43,9 +45,9 @@ module Spectator::Matchers
     # This method expects (and uses) the `#starts_with?` method on the value.
     private def match_starts_with(actual_value, actual_label)
       if actual_value.starts_with?(expected.value)
-        SuccessfulMatchData.new
+        SuccessfulMatchData.new(description)
       else
-        FailedMatchData.new("#{actual_label} does not start with #{expected.label} (using #starts_with?)",
+        FailedMatchData.new(description, "#{actual_label} does not start with #{expected.label} (using #starts_with?)",
           expected: expected.value.inspect,
           actual: actual_value.inspect
         )
@@ -59,9 +61,9 @@ module Spectator::Matchers
       first = list.first
 
       if expected.value === first
-        SuccessfulMatchData.new
+        SuccessfulMatchData.new(description)
       else
-        FailedMatchData.new("#{actual_label} does not start with #{expected.label} (using expected === first)",
+        FailedMatchData.new(description, "#{actual_label} does not start with #{expected.label} (using expected === first)",
           expected: expected.value.inspect,
           actual: first.inspect,
           list: list.inspect
@@ -73,12 +75,12 @@ module Spectator::Matchers
     # This method expects (and uses) the `#starts_with?` method on the value.
     private def negated_match_starts_with(actual_value, actual_label)
       if actual_value.starts_with?(expected.value)
-        FailedMatchData.new("#{actual_label} starts with #{expected.label} (using #starts_with?)",
-          expected: expected.value.inspect,
+        FailedMatchData.new(description, "#{actual_label} starts with #{expected.label} (using #starts_with?)",
+          expected: "Not #{expected.value.inspect}",
           actual: actual_value.inspect
         )
       else
-        SuccessfulMatchData.new
+        SuccessfulMatchData.new(description)
       end
     end
 
@@ -89,13 +91,13 @@ module Spectator::Matchers
       first = list.first
 
       if expected.value === first
-        FailedMatchData.new("#{actual_label} starts with #{expected.label} (using expected === first)",
-          expected: expected.value.inspect,
+        FailedMatchData.new(description, "#{actual_label} starts with #{expected.label} (using expected === first)",
+          expected: "Not #{expected.value.inspect}",
           actual: first.inspect,
           list: list.inspect
         )
       else
-        SuccessfulMatchData.new
+        SuccessfulMatchData.new(description)
       end
     end
   end

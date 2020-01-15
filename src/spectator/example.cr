@@ -6,6 +6,9 @@ module Spectator
   # Concrete types must implement the `#run_impl` method.
   abstract class Example < ExampleComponent
     @finished = false
+    @description : String? = nil
+
+    protected setter description
 
     # Indicates whether the example has already been run.
     def finished? : Bool
@@ -24,10 +27,12 @@ module Spectator
     end
 
     def description : String | Symbol
-      @test_wrapper.description
+      @description || @test_wrapper.description
     end
 
     def symbolic? : Bool
+      return false unless @test_wrapper.description?
+
       description = @test_wrapper.description
       description.starts_with?('#') || description.starts_with?('.')
     end

@@ -44,6 +44,10 @@ module Spectator::Expectations
       values?.not_nil!
     end
 
+    def description
+      @match_data.description
+    end
+
     # Creates the JSON representation of the expectation.
     def to_json(json : ::JSON::Builder)
       json.object do

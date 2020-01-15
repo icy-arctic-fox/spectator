@@ -17,13 +17,28 @@ module Spectator::Mocks
           named = false
           name = definition.name.id
           params = definition.args
+
+          # Possibly a weird compiler bug, but syntax like this:
+          # stub instance.==(other) { true }
+          # Results in `other` being the call `other { true }`.
+          # This works around the issue by pulling out the block
+          # and setting the parameter to just the name.
+          if params.last.is_a?(Call)
+            body = params.last.block
+            params[-1] = params.last.name
+          end
+
           args = params.map do |p|
             n = p.is_a?(TypeDeclaration) ? p.var : p.id
             r = named ? "#{n}: #{n}".id : n
             named = true if n.starts_with?('*')
             r
           end
-          body = definition.block.is_a?(Nop) ? block : definition.block
+
+          # The unless is here because `||=` can't be used in macros @_@
+          unless body
+            body = definition.block.is_a?(Nop) ? block : definition.block
+          end
         elsif definition.is_a?(TypeDeclaration) # stub foo : Symbol
           name = definition.var
           params = [] of MacroId

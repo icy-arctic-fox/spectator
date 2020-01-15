@@ -1,28 +1,18 @@
-require "./value_matcher"
+require "./matcher"
 
 module Spectator::Matchers
-  # Matcher that tests whether a value, such as a `String` or `Array`, contains one or more values.
-  # The values are checked with the `includes?` method.
-  struct ContainMatcher(ExpectedType) < ValueMatcher(ExpectedType)
+  # Matcher that tests a value is of a specified type.
+  struct InstanceMatcher(Expected) < StandardMatcher
     # Short text about the matcher's purpose.
     # This explains what condition satisfies the matcher.
     # The description is used when the one-liner syntax is used.
     def description : String
-      "contains #{expected.label}"
+      "is an instance of #{Expected}"
     end
 
     # Checks whether the matcher is satisifed with the expression given to it.
     private def match?(actual : TestExpression(T)) : Bool forall T
-      expected.value.all? do |item|
-        actual.value.includes?(item)
-      end
-    end
-
-    # If the expectation is negated, then this method is called instead of `#match?`.
-    private def does_not_match?(actual : TestExpression(T)) : Bool forall T
-      !expected.value.any? do |item|
-        actual.value.includes?(item)
-      end
+      actual.value.class == Expected
     end
 
     # Message displayed when the matcher isn't satisifed.
@@ -32,7 +22,7 @@ module Spectator::Matchers
     # The message should typically only contain the test expression labels.
     # Actual values should be returned by `#values`.
     private def failure_message(actual) : String
-      "#{actual.label} does not contain #{expected.label}"
+      "#{actual.label} is not an instance of #{Expected}"
     end
 
     # Message displayed when the matcher isn't satisifed and is negated.
@@ -43,15 +33,24 @@ module Spectator::Matchers
     # The message should typically only contain the test expression labels.
     # Actual values should be returned by `#values`.
     private def failure_message_when_negated(actual) : String
-      "#{actual.label} contains #{expected.label}"
+      "#{actual.label} is an instance of #{Expected}"
     end
 
     # Additional information about the match failure.
     # The return value is a NamedTuple with Strings for each value.
     private def values(actual)
       {
-        subset:   expected.value.inspect,
-        superset: actual.value.inspect,
+        expected: Expected.to_s,
+        actual:   actual.value.class.inspect,
+      }
+    end
+
+    # Additional information about the match failure when negated.
+    # The return value is a NamedTuple with Strings for each value.
+    private def negated_values(actual)
+      {
+        expected: "Not #{Expected}",
+        actual:   actual.value.class.inspect,
       }
     end
   end
