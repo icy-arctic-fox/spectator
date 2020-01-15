@@ -19,11 +19,18 @@ module Spectator
     end
 
     macro let!(name, &block)
-      # TODO: Doesn't work with late-defined values (let).
-      @%value = {{yield}}
+      @%wrapper : ::Spectator::ValueWrapper?
+
+      def %wrapper
+        {{block.body}}
+      end
+
+      before_each do
+        @%wrapper = ::Spectator::TypedValueWrapper.new(%wrapper)
+      end
 
       def {{name.id}}
-        @%value
+        @%wrapper.as(::Spectator::TypedValueWrapper(typeof(%wrapper))).value
       end
     end
 
