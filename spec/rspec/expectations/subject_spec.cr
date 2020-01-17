@@ -1,4 +1,5 @@
 require "../../spec_helper"
+
 class Base; end
 
 Spectator.describe "Subject" do
