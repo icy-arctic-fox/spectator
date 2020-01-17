@@ -24,11 +24,11 @@ module Spectator
             {{what}}
           end
 
-          def subject(*args)
+          def _spectator_implicit_subject(*args)
             described_class.new(*args)
           end
         {% else %}
-          def subject
+          def _spectator_implicit_subject(*args)
             {{what}}
           end
         {% end %}

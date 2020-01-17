@@ -6,6 +6,14 @@ require "./spectator/dsl"
 class SpectatorTest
   include ::Spectator::DSL
 
+  def _spectator_implicit_subject
+    nil
+  end
+
+  def subject
+    _spectator_implicit_subject
+  end
+
   def initialize(@spectator_test_values : ::Spectator::TestValues)
   end
 end
