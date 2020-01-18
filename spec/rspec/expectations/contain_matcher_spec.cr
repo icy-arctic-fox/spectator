@@ -27,17 +27,16 @@ Spectator.describe "`contain` matcher" do
       it { is_expected.not_to contain(43, 100) }
 
       # deliberate failures
-      # TODO: Add support for expected failures.
-      xit { is_expected.to contain(4) }
-      xit { is_expected.to contain(be_even) }
-      xit { is_expected.not_to contain(1) }
-      xit { is_expected.not_to contain(3) }
-      xit { is_expected.not_to contain(7) }
-      xit { is_expected.not_to contain(1, 3, 7) }
+      it_fails { is_expected.to contain(4) }
+      it_fails { is_expected.to contain(be_even) }
+      it_fails { is_expected.not_to contain(1) }
+      it_fails { is_expected.not_to contain(3) }
+      it_fails { is_expected.not_to contain(7) }
+      it_fails { is_expected.not_to contain(1, 3, 7) }
 
       # both of these should fail since it contains 1 but not 9
-      xit { is_expected.to contain(1, 9) }
-      xit { is_expected.not_to contain(1, 9) }
+      it_fails { is_expected.to contain(1, 9) }
+      it_fails { is_expected.not_to contain(1, 9) }
     end
   end
 
@@ -49,11 +48,10 @@ Spectator.describe "`contain` matcher" do
       it { is_expected.not_to contain("foo", "bar") }
 
       # deliberate failures
-      # TODO: Add support for expected failures.
-      xit { is_expected.to contain("foo") }
-      xit { is_expected.not_to contain("str") }
-      xit { is_expected.to contain("str", "foo") }
-      xit { is_expected.not_to contain("str", "foo") }
+      it_fails { is_expected.to contain("foo") }
+      it_fails { is_expected.not_to contain("str") }
+      it_fails { is_expected.to contain("str", "foo") }
+      it_fails { is_expected.not_to contain("str", "foo") }
     end
   end
 
@@ -64,34 +62,33 @@ Spectator.describe "`contain` matcher" do
       subject { {:a => 7, :b => 5} }
 
       # Hash syntax is changed here from `:a => 7` to `a: 7`.
-      xit { is_expected.to contain(:a) }
-      xit { is_expected.to contain(:b, :a) }
+      # it { is_expected.to contain(:a) }
+      # it { is_expected.to contain(:b, :a) }
 
       # TODO: This hash-like syntax isn't supported.
       # it { is_expected.to contain(a: 7) }
       # it { is_expected.to contain(b: 5, a: 7) }
-      xit { is_expected.not_to contain(:c) }
-      xit { is_expected.not_to contain(:c, :d) }
+      # it { is_expected.not_to contain(:c) }
+      # it { is_expected.not_to contain(:c, :d) }
       # it { is_expected.not_to contain(d: 2) }
       # it { is_expected.not_to contain(a: 5) }
       # it { is_expected.not_to contain(b: 7, a: 5) }
 
       # deliberate failures
-      # TODO: Add support for expected failures.
-      xit { is_expected.not_to contain(:a) }
-      xit { is_expected.not_to contain(:b, :a) }
+      # it { is_expected.not_to contain(:a) }
+      # it { is_expected.not_to contain(:b, :a) }
       # it { is_expected.not_to contain(a: 7) }
       # it { is_expected.not_to contain(a: 7, b: 5) }
-      xit { is_expected.to contain(:c) }
-      xit { is_expected.to contain(:c, :d) }
+      # it { is_expected.to contain(:c) }
+      # it { is_expected.to contain(:c, :d) }
       # it { is_expected.to contain(d: 2) }
       # it { is_expected.to contain(a: 5) }
       # it { is_expected.to contain(a: 5, b: 7) }
 
       # Mixed cases--the hash contains one but not the other.
       # All 4 of these cases should fail.
-      xit { is_expected.to contain(:a, :d) }
-      xit { is_expected.not_to contain(:a, :d) }
+      # it { is_expected.to contain(:a, :d) }
+      # it { is_expected.not_to contain(:a, :d) }
       # it { is_expected.to contain(a: 7, d: 3) }
       # it { is_expected.not_to contain(a: 7, d: 3) }
     end

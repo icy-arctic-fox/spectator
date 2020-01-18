@@ -12,16 +12,15 @@ Spectator.describe "`respond_to` matcher" do
       it { is_expected.not_to respond_to(:compact, :flatten) }
 
       # deliberate failures
-      # TODO: Add support for expected failures.
-      xit { is_expected.to respond_to(:to_model) }
-      xit { is_expected.to respond_to(:compact, :flatten) }
-      xit { is_expected.not_to respond_to(:size) }
-      xit { is_expected.not_to respond_to(:hash, :class, :to_s) }
+      it_fails { is_expected.to respond_to(:to_model) }
+      it_fails { is_expected.to respond_to(:compact, :flatten) }
+      it_fails { is_expected.not_to respond_to(:size) }
+      it_fails { is_expected.not_to respond_to(:hash, :class, :to_s) }
 
       # mixed examples--String responds to :length but not :flatten
       # both specs should fail
-      xit { is_expected.to respond_to(:size, :flatten) }
-      xit { is_expected.not_to respond_to(:size, :flatten) }
+      it_fails { is_expected.to respond_to(:size, :flatten) }
+      it_fails { is_expected.not_to respond_to(:size, :flatten) }
     end
   end
 

@@ -10,9 +10,8 @@ Spectator.describe "`end_with` matcher" do
       it { is_expected.not_to end_with "stringy" }
 
       # deliberate failures
-      # TODO: Add support for expected failures.
-      xit { is_expected.not_to end_with "string" }
-      xit { is_expected.to end_with "stringy" }
+      it_fails { is_expected.not_to end_with "string" }
+      it_fails { is_expected.to end_with "stringy" }
     end
   end
 
@@ -25,9 +24,8 @@ Spectator.describe "`end_with` matcher" do
       # it { is_expected.not_to end_with 0, 1, 2, 3, 4, 5 }
 
       # deliberate failures
-      # TODO: Add support for expected failures.
-      xit { is_expected.not_to end_with 4 }
-      xit { is_expected.to end_with 3 }
+      it_fails { is_expected.not_to end_with 4 }
+      it_fails { is_expected.to end_with 3 }
     end
   end
 end

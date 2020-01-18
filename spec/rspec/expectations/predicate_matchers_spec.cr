@@ -11,8 +11,7 @@ Spectator.describe "Predicate matchers" do
 
     describe 7 do
       # deliberate failure
-      # TODO: Add support for expected failures.
-      xit { is_expected.to be_zero }
+      it_fails { is_expected.to be_zero }
     end
   end
 
@@ -23,8 +22,7 @@ Spectator.describe "Predicate matchers" do
 
     describe [] of Int32 do
       # deliberate failure
-      # TODO: Add support for expected failures.
-      xit { is_expected.not_to be_empty }
+      it_fails { is_expected.not_to be_empty }
     end
   end
 
@@ -35,8 +33,7 @@ Spectator.describe "Predicate matchers" do
       it { is_expected.to have_key(:foo) }
 
       # deliberate failure
-      # TODO: Add support for expected failures.
-      xit { is_expected.to have_key(:bar) }
+      it_fails { is_expected.to have_key(:bar) }
     end
   end
 
@@ -58,8 +55,7 @@ Spectator.describe "Predicate matchers" do
         subject { {"foo" => 7, "bar" => 5} }
 
         # deliberate failure
-        # TODO: Add support for expected failures.
-        xit { is_expected.not_to have_all_string_keys }
+        it_fails { is_expected.not_to have_all_string_keys }
       end
     end
   end
@@ -76,9 +72,8 @@ Spectator.describe "Predicate matchers" do
       it { is_expected.not_to be_multiple_of(7) }
 
       # deliberate failures
-      # TODO: Add support for expected failures.
-      xit { is_expected.not_to be_multiple_of(4) }
-      xit { is_expected.to be_multiple_of(5) }
+      it_fails { is_expected.not_to be_multiple_of(4) }
+      it_fails { is_expected.to be_multiple_of(5) }
     end
   end
 

@@ -26,8 +26,7 @@ Spectator.describe "`change` matcher" do
       end
 
       # deliberate failure
-      # TODO: Add support for expected failures.
-      xit "should increment the count by 2" do
+      it_fails "should increment the count by 2" do
         expect { Counter.increment }.to change { Counter.count }.by(2)
       end
     end
@@ -36,12 +35,11 @@ Spectator.describe "`change` matcher" do
   context "expect no change" do
     describe "Counter#increment" do # TODO: Allow multiple arguments to context/describe.
     # deliberate failures
-    # TODO: Add support for expected failures.
-      xit "should not increment the count by 1 (using not_to)" do
+      it_fails "should not increment the count by 1 (using not_to)" do
         expect { Counter.increment }.not_to change { Counter.count }
       end
 
-      xit "should not increment the count by 1 (using to_not)" do
+      it_fails "should not increment the count by 1 (using to_not)" do
         expect { Counter.increment }.to_not change { Counter.count }
       end
     end

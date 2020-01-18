@@ -10,9 +10,8 @@ Spectator.describe "`start_with` matcher" do
       it { is_expected.not_to start_with "that" }
 
       # deliberate failures
-      # TODO: Add support for expected failures.
-      xit { is_expected.not_to start_with "this" }
-      xit { is_expected.to start_with "that" }
+      it_fails { is_expected.not_to start_with "this" }
+      it_fails { is_expected.to start_with "that" }
     end
   end
 
@@ -25,9 +24,8 @@ Spectator.describe "`start_with` matcher" do
       # it { is_expected.not_to start_with(0, 1, 2, 3, 4, 5) }
 
       # deliberate failures
-      # TODO: Add support for expected failures.
-      xit { is_expected.not_to start_with 0 }
-      xit { is_expected.to start_with 3 }
+      it_fails { is_expected.not_to start_with 0 }
+      it_fails { is_expected.to start_with 3 }
     end
   end
 end
