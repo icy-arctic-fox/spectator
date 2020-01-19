@@ -15,16 +15,15 @@ Spectator.describe "`cover` matcher" do
       it { is_expected.not_to cover(11, 12) }
 
       # deliberate failures
-      # TODO: Add support for expected failures.
-      xit { is_expected.to cover(11) }
-      xit { is_expected.not_to cover(4) }
-      xit { is_expected.not_to cover(6) }
-      xit { is_expected.not_to cover(8) }
-      xit { is_expected.not_to cover(4, 6, 8) }
+      it_fails { is_expected.to cover(11) }
+      it_fails { is_expected.not_to cover(4) }
+      it_fails { is_expected.not_to cover(6) }
+      it_fails { is_expected.not_to cover(8) }
+      it_fails { is_expected.not_to cover(4, 6, 8) }
 
       # both of these should fail since it covers 5 but not 11
-      xit { is_expected.to cover(5, 11) }
-      xit { is_expected.not_to cover(5, 11) }
+      it_fails { is_expected.to cover(5, 11) }
+      it_fails { is_expected.not_to cover(5, 11) }
     end
   end
 end

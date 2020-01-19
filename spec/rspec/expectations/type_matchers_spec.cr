@@ -40,19 +40,18 @@ Spectator.describe "Type matchers" do
       it { is_expected.not_to be_a(String) }
 
       # deliberate failures
-      # TODO: Add support for expected failures.
-      xit { is_expected.not_to be_kind_of(Derived) }
-      xit { is_expected.not_to be_a_kind_of(Derived) }
-      xit { is_expected.not_to be_a(Derived) }
-      xit { is_expected.not_to be_kind_of(Base) }
-      xit { is_expected.not_to be_a_kind_of(Base) }
-      xit { is_expected.not_to be_an(Base) }
-      xit { is_expected.not_to be_kind_of(MyModule) }
-      xit { is_expected.not_to be_a_kind_of(MyModule) }
-      xit { is_expected.not_to be_a(MyModule) }
-      xit { is_expected.to be_kind_of(String) }
-      xit { is_expected.to be_a_kind_of(String) }
-      xit { is_expected.to be_a(String) }
+      it_fails { is_expected.not_to be_kind_of(Derived) }
+      it_fails { is_expected.not_to be_a_kind_of(Derived) }
+      it_fails { is_expected.not_to be_a(Derived) }
+      it_fails { is_expected.not_to be_kind_of(Base) }
+      it_fails { is_expected.not_to be_a_kind_of(Base) }
+      it_fails { is_expected.not_to be_an(Base) }
+      it_fails { is_expected.not_to be_kind_of(MyModule) }
+      it_fails { is_expected.not_to be_a_kind_of(MyModule) }
+      it_fails { is_expected.not_to be_a(MyModule) }
+      it_fails { is_expected.to be_kind_of(String) }
+      it_fails { is_expected.to be_a_kind_of(String) }
+      it_fails { is_expected.to be_a(String) }
     end
 
     context "be_(an_)instance_of matcher" do
@@ -87,14 +86,14 @@ Spectator.describe "Type matchers" do
         it { is_expected.not_to be_an_instance_of(String) }
 
         # deliberate failures
-        xit { is_expected.not_to be_instance_of(Derived) }
-        xit { is_expected.not_to be_an_instance_of(Derived) }
-        xit { is_expected.to be_instance_of(Base) }
-        xit { is_expected.to be_an_instance_of(Base) }
-        xit { is_expected.to be_instance_of(MyModule) }
-        xit { is_expected.to be_an_instance_of(MyModule) }
-        xit { is_expected.to be_instance_of(String) }
-        xit { is_expected.to be_an_instance_of(String) }
+        it_fails { is_expected.not_to be_instance_of(Derived) }
+        it_fails { is_expected.not_to be_an_instance_of(Derived) }
+        it_fails { is_expected.to be_instance_of(Base) }
+        it_fails { is_expected.to be_an_instance_of(Base) }
+        it_fails { is_expected.to be_instance_of(MyModule) }
+        it_fails { is_expected.to be_an_instance_of(MyModule) }
+        it_fails { is_expected.to be_instance_of(String) }
+        it_fails { is_expected.to be_an_instance_of(String) }
       end
     end
   end

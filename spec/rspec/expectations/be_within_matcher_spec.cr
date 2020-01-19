@@ -15,11 +15,10 @@ Spectator.describe "`be_within` matcher" do
       it { is_expected.not_to be_within(0.5).of(26.9) }
 
       # deliberate failures
-      # TODO: Add support for expected failures.
-      xit { is_expected.not_to be_within(0.5).of(28) }
-      xit { is_expected.not_to be_within(0.5).of(27) }
-      xit { is_expected.to be_within(0.5).of(28.1) }
-      xit { is_expected.to be_within(0.5).of(26.9) }
+      it_fails { is_expected.not_to be_within(0.5).of(28) }
+      it_fails { is_expected.not_to be_within(0.5).of(27) }
+      it_fails { is_expected.to be_within(0.5).of(28.1) }
+      it_fails { is_expected.to be_within(0.5).of(26.9) }
     end
   end
 end

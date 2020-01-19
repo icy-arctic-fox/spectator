@@ -11,10 +11,9 @@ Spectator.describe "`all` matcher" do
       it { is_expected.to all(be < 10) }
 
       # deliberate failures
-      # TODO: Add support for expected failures.
-      xit { is_expected.to all(be_even) }
-      xit { is_expected.to all(be_a(String)) }
-      xit { is_expected.to all(be > 2) }
+      it_fails { is_expected.to all(be_even) }
+      it_fails { is_expected.to all(be_a(String)) }
+      it_fails { is_expected.to all(be > 2) }
     end
   end
 
@@ -29,7 +28,6 @@ Spectator.describe "`all` matcher" do
       xit { is_expected.to all(start_with("s")) } # .or contain("y") ) }
 
       # deliberate failures
-      # TODO: Add support for expected failures.
       # TODO: Add support for compound matchers.
       xit { is_expected.to all(contain("foo")) }  # .and contain("bar") ) }
       xit { is_expected.to all(be_a(String)) }    # .and start_with("a") ) }

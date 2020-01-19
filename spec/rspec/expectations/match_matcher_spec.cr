@@ -10,9 +10,8 @@ Spectator.describe "`match` matcher" do
       it { is_expected.not_to match(/foo/) }
 
       # deliberate failures
-      # TODO: Add support for expected failures.
-      xit { is_expected.not_to match(/str/) }
-      xit { is_expected.to match(/foo/) }
+      it_fails { is_expected.not_to match(/str/) }
+      it_fails { is_expected.to match(/foo/) }
     end
   end
 
@@ -22,9 +21,8 @@ Spectator.describe "`match` matcher" do
       it { is_expected.not_to match("drinks") }
 
       # deliberate failures
-      # TODO: Add support for expected failures.
-      xit { is_expected.not_to match("food") }
-      xit { is_expected.to match("drinks") }
+      it_fails { is_expected.not_to match("food") }
+      it_fails { is_expected.to match("drinks") }
     end
   end
 end

@@ -24,14 +24,13 @@ Spectator.describe "`have_attributes` matcher" do
       # it { is_expected.not_to have_attributes(age: (a_value < 30) ) }
 
       # deliberate failures
-      # TODO: Add support for expected failures.
-      xit { is_expected.to have_attributes(name: "Bob") }
-      xit { is_expected.to have_attributes(name: 10) }
+      it_fails { is_expected.to have_attributes(name: "Bob") }
+      it_fails { is_expected.to have_attributes(name: 10) }
 
       # fails if any of the attributes don't match
-      xit { is_expected.to have_attributes(name: "Bob", age: 32) }
-      xit { is_expected.to have_attributes(name: "Jim", age: 10) }
-      xit { is_expected.to have_attributes(name: "Bob", age: 10) }
+      it_fails { is_expected.to have_attributes(name: "Bob", age: 32) }
+      it_fails { is_expected.to have_attributes(name: "Jim", age: 10) }
+      it_fails { is_expected.to have_attributes(name: "Bob", age: 10) }
     end
   end
 end

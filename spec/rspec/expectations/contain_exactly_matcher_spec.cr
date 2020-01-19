@@ -14,8 +14,7 @@ Spectator.describe "`contain_exactly` matcher" do
       it { is_expected.to contain_exactly(3, 2, 1) }
 
       # deliberate failures
-      # TODO: Add support for expected failures.
-      xit { is_expected.to contain_exactly(1, 2, 1) }
+      it_fails { is_expected.to contain_exactly(1, 2, 1) }
     end
   end
 
@@ -25,8 +24,7 @@ Spectator.describe "`contain_exactly` matcher" do
       it { is_expected.to_not contain_exactly(1, 2) }
 
       # deliberate failures
-      # TODO: Add support for expected failures.
-      xit { is_expected.to_not contain_exactly(1, 3, 2) }
+      it_fails { is_expected.to_not contain_exactly(1, 3, 2) }
     end
   end
 end

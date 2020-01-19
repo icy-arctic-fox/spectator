@@ -12,12 +12,11 @@ Spectator.describe "`be` matchers" do
     specify { expect(false).not_to be_truthy }
 
     # deliberate failures
-    # TODO: Add support for expected failures.
-    pending { expect(true).not_to be_truthy }
-    pending { expect(7).not_to be_truthy }
-    pending { expect("foo").not_to be_truthy }
-    pending { expect(nil).to be_truthy }
-    pending { expect(false).to be_truthy }
+    specify_fails { expect(true).not_to be_truthy }
+    specify_fails { expect(7).not_to be_truthy }
+    specify_fails { expect("foo").not_to be_truthy }
+    specify_fails { expect(nil).to be_truthy }
+    specify_fails { expect(false).to be_truthy }
   end
 
   context "be_falsey matcher" do
@@ -28,12 +27,11 @@ Spectator.describe "`be` matchers" do
     specify { expect("foo").not_to be_falsey }
 
     # deliberate failures
-    # TODO: Add support for expected failures.
-    pending { expect(nil).not_to be_falsey }
-    pending { expect(false).not_to be_falsey }
-    pending { expect(true).to be_falsey }
-    pending { expect(7).to be_falsey }
-    pending { expect("foo").to be_falsey }
+    specify_fails { expect(nil).not_to be_falsey }
+    specify_fails { expect(false).not_to be_falsey }
+    specify_fails { expect(true).to be_falsey }
+    specify_fails { expect(7).to be_falsey }
+    specify_fails { expect("foo").to be_falsey }
   end
 
   context "be_nil matcher" do
@@ -44,12 +42,11 @@ Spectator.describe "`be` matchers" do
     specify { expect("foo").not_to be_nil }
 
     # deliberate failures
-    # TODO: Add support for expected failures.
-    pending { expect(nil).not_to be_nil }
-    pending { expect(false).to be_nil }
-    pending { expect(true).to be_nil }
-    pending { expect(7).to be_nil }
-    pending { expect("foo").to be_nil }
+    specify_fails { expect(nil).not_to be_nil }
+    specify_fails { expect(false).to be_nil }
+    specify_fails { expect(true).to be_nil }
+    specify_fails { expect(7).to be_nil }
+    specify_fails { expect("foo").to be_nil }
   end
 
   context "be matcher" do
@@ -60,11 +57,10 @@ Spectator.describe "`be` matchers" do
     specify { expect(false).not_to be }
 
     # deliberate failures
-    # TODO: Add support for expected failures.
-    pending { expect(true).not_to be }
-    pending { expect(7).not_to be }
-    pending { expect("foo").not_to be }
-    pending { expect(nil).to be }
-    pending { expect(false).to be }
+    specify_fails { expect(true).not_to be }
+    specify_fails { expect(7).not_to be }
+    specify_fails { expect("foo").not_to be }
+    specify_fails { expect(nil).to be }
+    specify_fails { expect(false).to be }
   end
 end

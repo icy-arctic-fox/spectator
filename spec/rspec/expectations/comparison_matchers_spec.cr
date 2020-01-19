@@ -12,11 +12,10 @@ Spectator.describe "Comparison matchers" do
       it { is_expected.to be >= 17 }
 
       # deliberate failures
-      # TODO: Add support for expected failures.
-      xit { is_expected.to be < 15 }
-      xit { is_expected.to be > 20 }
-      xit { is_expected.to be <= 17 }
-      xit { is_expected.to be >= 19 }
+      it_fails { is_expected.to be < 15 }
+      it_fails { is_expected.to be > 20 }
+      it_fails { is_expected.to be <= 17 }
+      it_fails { is_expected.to be >= 19 }
       # it { is_expected.to be < 'a' } # Removed because Crystal doesn't support Int32#<(Char)
     end
 
@@ -24,7 +23,6 @@ Spectator.describe "Comparison matchers" do
       it { is_expected.to be < 'b' }
 
       # deliberate failures
-      # TODO: Add support for expected failures.
       # it { is_expected.to be < 18 } # Removed because Crystal doesn't support Char#<(Int32)
     end
   end
@@ -37,11 +35,10 @@ Spectator.describe "Comparison matchers" do
       it { is_expected.to be >= "Banana" }
 
       # deliberate failures
-      # TODO: Add support for expected failures.
-      xit { is_expected.to be < "Cranberry" }
-      xit { is_expected.to be > "Zuchini" }
-      xit { is_expected.to be <= "Potato" }
-      xit { is_expected.to be >= "Tomato" }
+      it_fails { is_expected.to be < "Cranberry" }
+      it_fails { is_expected.to be > "Zuchini" }
+      it_fails { is_expected.to be <= "Potato" }
+      it_fails { is_expected.to be >= "Tomato" }
     end
   end
 end
