@@ -11,8 +11,7 @@ Spectator.describe "One-liner syntax" do
       #   subject.should be_empty
       # end
 
-      # TODO: Define `should` method on example to be `is_expected`.
-      # it { should be_empty }
+      it { should be_empty }
       # or
       it { is_expected.to be_empty }
     end
@@ -22,8 +21,8 @@ Spectator.describe "One-liner syntax" do
     describe Array(Int32) do
       describe "with 3 items" do
         subject { [1, 2, 3] }
-        # TODO: Define `should_not` method on example to be `is_expected.not_to`.
-        # it { should_not be_empty }
+
+        it { should_not be_empty }
         # or
         it { is_expected.not_to be_empty }
       end

@@ -184,6 +184,22 @@ module Spectator
       is_expected.to_not eq({{expected}})
     end
 
+    macro should(matcher)
+      is_expected.to({{matcher}})
+    end
+
+    macro should_not(matcher)
+      is_expected.to_not({{matcher}})
+    end
+
+    macro should_eventuall(matcher)
+      is_expected.to_eventually({{matcher}})
+    end
+
+    macro should_never(matcher)
+      is_expected.to_never({{matcher}})
+    end
+
     # Immediately fail the current test.
     # A reason can be passed,
     # which is reported in the output.
