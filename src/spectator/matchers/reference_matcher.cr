@@ -13,7 +13,13 @@ module Spectator::Matchers
 
     # Checks whether the matcher is satisifed with the expression given to it.
     private def match?(actual : TestExpression(T)) : Bool forall T
-      expected.value.same?(actual.value)
+      value = expected.value
+      if value.responds_to?(:same)
+        value.same?(actual.value)
+      else
+        # Value type (struct) comparison.
+        actual.value.class == value.class && actual.value == value
+      end
     end
 
     # Message displayed when the matcher isn't satisifed.

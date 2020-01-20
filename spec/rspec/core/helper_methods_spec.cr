@@ -8,7 +8,7 @@ Spectator.describe "Arbitrary helper methods" do
       end
 
       it "has access to methods define in its group" do
-        expect(help).to eq(:available) # TODO: `be` matcher with value (no same? method).
+        expect(help).to be(:available)
       end
     end
   end
@@ -21,7 +21,7 @@ Spectator.describe "Arbitrary helper methods" do
 
       describe "in a nested group" do
         it "has access to methods defined in its parent group" do
-          expect(help).to eq(:available) # TODO: `be` matcher with value (no same? method).
+          expect(help).to be(:available)
         end
       end
     end

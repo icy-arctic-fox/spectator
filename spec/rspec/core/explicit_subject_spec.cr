@@ -115,11 +115,11 @@ Spectator.describe "Explicit Subject" do
       end
 
       it "the subject and named helpers return the same object" do
-        expect(global_count).to eq(subject) # TODO: `be` matcher with value (no same? method).
+        expect(global_count).to be(subject)
       end
 
       it "is set to the block return value (i.e. the global $count)" do
-        expect(global_count).to eq(@@count) # TODO: `be` matcher with value (no same? method).
+        expect(global_count).to be(@@count)
       end
     end
   end
