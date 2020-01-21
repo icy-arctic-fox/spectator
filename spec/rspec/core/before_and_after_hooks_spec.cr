@@ -19,7 +19,7 @@ Spectator.describe "`before` and `after` hooks" do
       describe "initialize in before_each" do
         it "has 0 widgets" do
           widgets = @thing.as(Thing).widgets # Must cast since compile type is Thing?
-          expect(widgets.size).to eq(0) # Use size instead of count.
+          expect(widgets.size).to eq(0)      # Use size instead of count.
         end
 
         it "can accept new widgets" do
@@ -28,8 +28,8 @@ Spectator.describe "`before` and `after` hooks" do
         end
 
         it "does not share state across examples" do
-          widgets = @thing.as(Thing).widgets  # Must cast since compile type is Thing?
-          expect(widgets.size).to eq(0) # Use size instead of count.
+          widgets = @thing.as(Thing).widgets # Must cast since compile type is Thing?
+          expect(widgets.size).to eq(0)      # Use size instead of count.
         end
       end
     end
@@ -55,7 +55,7 @@ Spectator.describe "`before` and `after` hooks" do
 
         it "has 0 widgets" do
           widgets = @@thing.as(Thing).widgets # Must cast since compile type is Thing?
-          expect(widgets.size).to eq(0) # Use size instead of count.
+          expect(widgets.size).to eq(0)       # Use size instead of count.
         end
 
         it "can accept new widgets" do
@@ -64,8 +64,8 @@ Spectator.describe "`before` and `after` hooks" do
         end
 
         it "shares state across examples" do
-          widgets = @@thing.as(Thing).widgets  # Must cast since compile type is Thing?
-          expect(widgets.size).to eq(1) # Use size instead of count.
+          widgets = @@thing.as(Thing).widgets # Must cast since compile type is Thing?
+          expect(widgets.size).to eq(1)       # Use size instead of count.
         end
       end
     end
