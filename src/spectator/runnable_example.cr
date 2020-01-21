@@ -19,6 +19,7 @@ module Spectator
       ResultCapture.new.tap do |result|
         context.run_before_hooks(self)
         run_example(result)
+        @finished = true
         context.run_after_hooks(self)
         run_deferred(result) unless result.error
       end

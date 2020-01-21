@@ -104,8 +104,7 @@ Spectator.describe "`before` and `after` hooks" do
         @@order << :after_all
       end
 
-      xit "gets run in order" do
-        # TODO: The after_all hook isn't evaluated yet because the group hasn't "finished."
+      it "gets run in order" do
         expect(@@order).to_eventually eq(%i[before_all before_each after_each after_all])
       end
     end
