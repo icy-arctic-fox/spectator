@@ -15,6 +15,9 @@ before_script:
 spec:
   script:
   - crystal spec --error-on-warnings
+
+style:
+  script:
   - bin/ameba
   - crystal tool format --check
 
