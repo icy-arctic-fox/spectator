@@ -40,7 +40,6 @@ module Spectator::Mocks
                      :super
                    end.id
         receiver = if receiver == :self.id
-                     original = :previous_def.id
                      "self."
                    else
                      ""
