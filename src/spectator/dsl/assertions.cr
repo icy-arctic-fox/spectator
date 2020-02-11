@@ -192,7 +192,7 @@ module Spectator
       is_expected.to_not({{matcher}})
     end
 
-    macro should_eventuall(matcher)
+    macro should_eventually(matcher)
       is_expected.to_eventually({{matcher}})
     end
 
