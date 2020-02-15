@@ -34,15 +34,18 @@ module Spectator::Mocks
           raise "Unrecognized stub format"
         end
 
-        original = if @type.methods.find { |m| m.name.id == name }
-                     :previous_def
-                   else
-                     :super
-                   end.id
+        t = @type
         receiver = if receiver == :self.id
+                     t = t.class
                      "self."
                    else
                      ""
+                   end.id
+        original = if (name == :new.id && receiver == "self.".id) ||
+                      (t.superclass.has_method?(name) && !t.overrides?(t.superclass, name))
+                     :super
+                   else
+                     :previous_def
                    end.id
       %}
 
