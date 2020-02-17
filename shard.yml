@@ -6,11 +6,11 @@ description: |
 authors:
   - Michael Miller <icy.arctic.fox@gmail.com>
 
-crystal: 0.32.1
+crystal: 0.33.0
 
 license: MIT
 
 development_dependencies:
   ameba:
     github: crystal-ameba/ameba
-    version: ~> 0.10
+    version: ~> 0.11.0
