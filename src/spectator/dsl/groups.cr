@@ -24,17 +24,7 @@ module Spectator
             {{what}}
           end
 
-          @%wrapper : ::Spectator::TypedValueWrapper({{what}})?
-
-          def subject(*args)
-            if (wrapper = @%wrapper)
-              wrapper.value
-            else
-              described_class.new(*args).tap do |value|
-                @%wrapper = ::Spectator::TypedValueWrapper.new(value)
-              end
-            end
-          end
+          subject { described_class.new }
         {% else %}
           def _spectator_implicit_subject(*args)
             {{what}}
