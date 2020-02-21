@@ -13,6 +13,7 @@ module Spectator::Matchers
 
     # Returns a new matcher, with the same bounds, but uses an inclusive range.
     def inclusive
+      label = expected.label
       new_range = Range.new(range.begin, range.end, exclusive: false)
       expected = TestValue.new(new_range, label)
       RangeMatcher.new(expected)
@@ -20,6 +21,7 @@ module Spectator::Matchers
 
     # Returns a new matcher, with the same bounds, but uses an exclusive range.
     def exclusive
+      label = expected.label
       new_range = Range.new(range.begin, range.end, exclusive: true)
       expected = TestValue.new(new_range, label)
       RangeMatcher.new(expected)
