@@ -342,10 +342,10 @@ module Spectator
     # expect(100).to be_between(97, 101).exclusive # 97, 98, 99, or 100 (not 101)
     # ```
     macro be_between(min, max)
-      %range = Range.new({{min}}, {{max}}))
+      %range = Range.new({{min}}, {{max}})
       %label = [{{min.stringify}}, {{max.stringify}}].join(" to ")
       %test_value = ::Spectator::TestValue.new(%range, %label)
-      :Spectator::Matchers::RangeMatcher.new(%test_value)
+      ::Spectator::Matchers::RangeMatcher.new(%test_value)
     end
 
     # Indicates that some value should be within a delta of an expected value.
