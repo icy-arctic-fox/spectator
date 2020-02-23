@@ -19,12 +19,18 @@ module Spectator
         %source = ::Spectator::Source.new({{_source_file}}, {{_source_line}})
         ::Spectator::SpecBuilder.start_group({{description}}, %source)
 
-        {% if (what.is_a?(Path) || what.is_a?(Generic)) && what.resolve? %}
+        {% if (what.is_a?(Path) || what.is_a?(Generic)) && (described_type = what.resolve?) %}
           macro described_class
-            {{what}}
+            {{described_type.name}}
           end
 
-          subject { described_class.new }
+          subject do
+            {% if described_type < Reference || described_type < Value %}
+              described_class.new
+            {% else %}
+              described_class
+            {% end %}
+          end
         {% else %}
           def _spectator_implicit_subject(*args)
             {{what}}
