@@ -39,7 +39,7 @@ module Spectator
     end
 
     macro around_each(&block)
-      def %hook({{block.args.splat}}) : Nil
+      def %hook({{block.args.first || :example.id}}) : Nil
         {{block.body}}
       end
 
