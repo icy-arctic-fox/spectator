@@ -19,7 +19,9 @@ module Spectator
         %source = ::Spectator::Source.new({{_source_file}}, {{_source_line}})
         ::Spectator::SpecBuilder.start_group({{description}}, %source)
 
-        {% if (what.is_a?(Path) || what.is_a?(Generic)) && (described_type = what.resolve?) %}
+        # Oddly, `#resolve?` can return a constant's value, which isn't a TypeNode.
+        # Ensure `described_class` and `subject` are only set for real types (is a `TypeNode`).
+        {% if (what.is_a?(Path) || what.is_a?(Generic)) && (described_type = what.resolve?).is_a?(TypeNode) %}
           macro described_class
             {{described_type.name}}
           end
