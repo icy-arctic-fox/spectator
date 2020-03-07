@@ -280,6 +280,7 @@ Items not marked as completed may have partial implementations.
     - [ ] Aliasing - custom example group types with preset attributes
     - [X] Pending tests - `pending`
     - [ ] Shared examples - `behaves_like`, `include_examples`
+    - [X] Deferred expectations - `to_eventually`, `to_never`
 - [ ] Matchers
     - [X] Equality matchers - `eq`, `ne`, `be ==`, `be !=`
     - [X] Comparison matchers - `be <`, `be <=`, `be >`, `be >=`, `be_within[.of]`, `be_close`
