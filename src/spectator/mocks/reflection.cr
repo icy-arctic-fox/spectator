@@ -16,11 +16,7 @@ module Spectator::Mocks
                          else
                            "::Spectator::Anything.new".id
                          end %}
-            {% if meth.splat_index && i == meth.splat_index %}
-              *{{matcher}}{% if i < meth.args.size %},{% end %}
-            {% else %}
-              {{matcher}}{% if i < meth.args.size %},{% end %}
-            {% end %}
+            {{matcher}}{% if i < meth.args.size %},{% end %}
           {% end %}
         )
         ::Spectator::Mocks::TypeRegistry.add({{@type.id.stringify}}, {{meth.name.symbolize}}, %source, %args)
