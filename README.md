@@ -239,7 +239,7 @@ Spectator supports multiple options for running tests.
 Tests can be filtered by their location and name.
 Additionally, tests can be randomized.
 Spectator can be configured with command-line arguments,
-a config block in a `spec_helper.cr` file, and `.spectator` config file.
+a configure block in a `spec_helper.cr` file, and `.spectator` configuration file.
 
 ```crystal
 Spectator.configure do |config|
@@ -248,6 +248,29 @@ Spectator.configure do |config|
   config.profile    # Display slowest tests.
 end
 ```
+
+### Mocks and Doubles
+
+Spectator supports an extensive mocking feature set via two types - mocks and doubles.
+Mocks are used to override behavior in existing types.
+Doubles are objects that stand-in when there are no type restrictions.
+Stubs can be defined on both that control how methods behave.
+
+```crystal
+double :my_double do
+  stub foo : Int32
+  stub bar(arg) { arg.to_s }
+end
+
+it "does a thing" do
+  dbl = double(:my_double)
+  allow(dbl).to receive(:foo).and_return(42)
+  expect(dbl.foo).to eq(42)
+  expect(dbl.bar(42)).to eq("42")
+end
+```
+
+For details on mocks and doubles, see the [wiki](https://gitlab.com/arctic-fox/spectator/-/wikis/Mocks-and-Doubles).
 
 ### Output
 
