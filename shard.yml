@@ -1,5 +1,5 @@
 name: spectator
-version: 0.9.11
+version: 0.9.13
 description: |
   A feature-rich spec testing framework for Crystal with similarities to RSpec.
 
