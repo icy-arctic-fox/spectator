@@ -50,12 +50,9 @@ module Spectator::Mocks
       %}
 
       {% if body && !body.is_a?(Nop) %}
-        %source = ::Spectator::Source.new({{_file}}, {{_line}})
-        %proc = ->{
+        def {{receiver}}%method({{params.splat}}){% if definition.is_a?(TypeDeclaration) %} : {{definition.type}}{% end %}
           {{body.body}}
-        }
-        %ds = ::Spectator::Mocks::ProcMethodStub.new({{name.symbolize}}, %source, %proc)
-        ::Spectator::SpecBuilder.add_default_stub({{@type.name}}, %ds)
+        end
       {% end %}
 
       def {{receiver}}{{name}}({{params.splat}}){% if definition.is_a?(TypeDeclaration) %} : {{definition.type}}{% end %}
@@ -66,8 +63,15 @@ module Spectator::Mocks
           if (%stub = %harness.mocks.find_stub(self, %call))
             return %stub.call!(%args) { {{original}}({{args.splat}}) }
           end
+
+          {% if body && !body.is_a?(Nop) %}
+            %method({{args.splat}})
+          {% else %}
+            {{original}}({{args.splat}})
+          {% end %}
+        else
+          {{original}}({{args.splat}})
         end
-        {{original}}({{args.splat}})
       end
 
       def {{receiver}}{{name}}({{params.splat}}){% if definition.is_a?(TypeDeclaration) %} : {{definition.type}}{% end %}
@@ -78,9 +82,18 @@ module Spectator::Mocks
           if (%stub = %harness.mocks.find_stub(self, %call))
             return %stub.call!(%args) { {{original}}({{args.splat}}) { |*%ya| yield *%ya } }
           end
-        end
-        {{original}}({{args.splat}}) do |*%yield_args|
-          yield *%yield_args
+
+          {% if body && !body.is_a?(Nop) %}
+            %method({{args.splat}}) { {{original}}({{args.splat}}) { |*%ya| yield *%ya } }
+          {% else %}
+            {{original}}({{args.splat}}) do |*%yield_args|
+              yield *%yield_args
+            end
+          {% end %}
+        else
+          {{original}}({{args.splat}}) do |*%yield_args|
+            yield *%yield_args
+          end
         end
       end
     end
