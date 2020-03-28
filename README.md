@@ -361,10 +361,10 @@ Items not marked as completed may have partial implementations.
 ### How it Works (in a nutshell)
 
 This shard makes extensive use of the Crystal macro system to build classes and modules.
-Each `describe` and `context` block creates a new module nested in its parent.
-The `it` block creates an example class.
-An instance of the example class is created to run the test.
-Each example class includes a context module, which contains all test values and hooks.
+Each `describe` and `context` block creates a new class that inherits its parent.
+The `it` block creates an method.
+An instance of the group class is created to run the test.
+Each group class includes all test values and hooks.
 
 Contributing
 ------------
@@ -379,11 +379,6 @@ Please make sure to run `crystal tool format` before submitting.
 The CI build checks for properly formatted code.
 [Ameba](https://crystal-ameba.github.io/) is run to check for code style.
 
-Tests must be written for any new functionality.
-Macros that create types are not as easy to test,
-so they are exempt for the current time.
-However, please test all code locally with an example spec file.
-
 Documentation is automatically generated and published to GitLab pages.
 It can be found here: https://arctic-fox.gitlab.io/spectator
 
@@ -391,7 +386,17 @@ This project is developed on [GitLab](https://gitlab.com/arctic-fox/spectator),
 and mirrored to [GitHub](https://github.com/icy-arctic-fox/spectator).
 Issues and PRs/MRs are accepted on both.
 
-Contributors
-------------
+### Testing
 
-- [arctic-fox](https://gitlab.com/arctic-fox) Michael Miller - creator, maintainer
+Tests must be written for any new functionality.
+
+The `spec/` directory contains feature tests as well as unit tests.
+These demonstrate small bits of functionality.
+The feature tests are grouped into sub directories based on their type, they are:
+
+- docs/ - Example snippets from Spectator's documentation.
+- rspec/ - Examples from RSpec's documentation modified slightly to work with Spectator.
+  See: https://relishapp.com/rspec/
+  Additional sub directories in this directory represent the modules/projects of RSpec.
+
+The other directories are for unit testing various parts of Spectator.
