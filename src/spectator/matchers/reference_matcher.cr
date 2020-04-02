@@ -14,7 +14,7 @@ module Spectator::Matchers
     # Checks whether the matcher is satisifed with the expression given to it.
     private def match?(actual : TestExpression(T)) : Bool forall T
       value = expected.value
-      if value.responds_to?(:same?)
+      if value && value.responds_to?(:same?)
         value.same?(actual.value)
       else
         # Value type (struct) comparison.
