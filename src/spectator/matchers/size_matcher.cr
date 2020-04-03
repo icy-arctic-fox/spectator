@@ -13,7 +13,10 @@ module Spectator::Matchers
 
     # Checks whether the matcher is satisifed with the expression given to it.
     private def match?(actual : TestExpression(T)) : Bool forall T
-      expected.value == actual.value.size
+      actual_value = actual.value
+      return unexpected(actual_value, actual.label) unless actual_value.responds_to?(:size?)
+
+      expected.value == actual_value.size
     end
 
     # Message displayed when the matcher isn't satisifed.
@@ -53,6 +56,10 @@ module Spectator::Matchers
         expected: "Not #{expected.value.inspect}",
         actual:   actual.value.size.inspect,
       }
+    end
+
+    private def unexpected(value, label)
+      raise "#{label} must respond to `#size`. #{label}: #{value.inspect}"
     end
   end
 end

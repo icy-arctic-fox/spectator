@@ -13,7 +13,10 @@ module Spectator::Matchers
 
     # Checks whether the matcher is satisifed with the expression given to it.
     private def match?(actual : TestExpression(T)) : Bool forall T
-      actual.value.has_key?(expected.value)
+      actual_value = actual.value
+      return unexpected(actual_value, actual.label) unless actual_value.responds_to?(:has_key?)
+
+      actual_value.has_key?(expected.value)
     end
 
     # Message displayed when the matcher isn't satisifed.
@@ -46,6 +49,10 @@ module Spectator::Matchers
         key:    expected.value.inspect,
         actual: set.inspect,
       }
+    end
+
+    private def unexpected(value, label)
+      raise "#{label} is not hash-like (must respond to `#has_key?`). #{label}: #{value.inspect}"
     end
   end
 end

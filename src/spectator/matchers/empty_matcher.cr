@@ -13,7 +13,10 @@ module Spectator::Matchers
 
     # Checks whether the matcher is satisifed with the expression given to it.
     private def match?(actual : TestExpression(T)) : Bool forall T
-      actual.value.empty?
+      actual_value = actual.value
+      return unexpected(actual_value, actual.label) unless actual_value.responds_to?(:empty?)
+
+      actual_value.empty?
     end
 
     # Message displayed when the matcher isn't satisifed.
@@ -35,6 +38,10 @@ module Spectator::Matchers
     # Actual values should be returned by `#values`.
     private def failure_message_when_negated(actual) : String
       "#{actual.label} is empty"
+    end
+
+    private def unexpected(value, label)
+      raise "#{label} is not a collection (must respond to `#empty?`). #{label}: #{value.inspect}"
     end
   end
 end

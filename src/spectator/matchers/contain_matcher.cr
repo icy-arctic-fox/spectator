@@ -13,15 +13,21 @@ module Spectator::Matchers
 
     # Checks whether the matcher is satisifed with the expression given to it.
     private def match?(actual : TestExpression(T)) : Bool forall T
+      actual_value = actual.value
+      return unexpected(actual_value, actual.label) unless actual_value.responds_to?(:includes?)
+
       expected.value.all? do |item|
-        actual.value.includes?(item)
+        actual_value.includes?(item)
       end
     end
 
     # If the expectation is negated, then this method is called instead of `#match?`.
     private def does_not_match?(actual : TestExpression(T)) : Bool forall T
+      actual_value = actual.value
+      return unexpected(actual_value, actual.label) unless actual_value.responds_to?(:includes?)
+
       !expected.value.any? do |item|
-        actual.value.includes?(item)
+        actual_value.includes?(item)
       end
     end
 
@@ -53,6 +59,10 @@ module Spectator::Matchers
         subset:   expected.value.inspect,
         superset: actual.value.inspect,
       }
+    end
+
+    private def unexpected(value, label)
+      raise "#{label} is not a collection (must respond to `#includes?`). #{label}: #{value.inspect}"
     end
   end
 end
