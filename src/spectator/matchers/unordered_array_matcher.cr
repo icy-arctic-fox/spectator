@@ -27,7 +27,7 @@ module Spectator::Matchers
       if missing.empty? && extra.empty?
         SuccessfulMatchData.new(description)
       else
-        FailedMatchData.new(description, "#{actual_label} does not contain #{expected.label} (unordered)",
+        FailedMatchData.new(description, "#{actual.label} does not contain #{expected.label} (unordered)",
           expected: expected_elements.inspect,
           actual: actual_elements.inspect,
           missing: missing.inspect,
@@ -44,7 +44,7 @@ module Spectator::Matchers
       missing, extra = array_diff(expected_elements, actual_elements)
 
       if missing.empty? && extra.empty?
-        FailedMatchData.new(description, "#{actual_label} contains #{expected.label} (unordered)",
+        FailedMatchData.new(description, "#{actual.label} contains #{expected.label} (unordered)",
           expected: "Not #{expected_elements.inspect}",
           actual: actual_elements.inspect,
         )
@@ -57,7 +57,7 @@ module Spectator::Matchers
     # Returns a tuple of arrays - missing from *actual* and extra in *actual*.
     private def array_diff(expected, actual)
       extra = actual.dup
-      missing = [] of ExpectedType
+      missing = expected.class.new # Creates an empty array of the expected element type.
 
       # OPTIMIZE: Not very efficient at finding the difference.
       expected.each do |item|
