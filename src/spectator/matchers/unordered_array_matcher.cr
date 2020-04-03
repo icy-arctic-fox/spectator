@@ -20,7 +20,10 @@ module Spectator::Matchers
 
     # Actually performs the test against the expression.
     def match(actual : TestExpression(T)) : MatchData forall T
-      actual_elements = actual.value.to_a
+      actual_value = actual.value
+      return unexpected(actual_value, actual.label) unless actual_value.responds_to?(:to_a)
+
+      actual_elements = actual_value.to_a
       expected_elements = expected.value.to_a
       missing, extra = array_diff(expected_elements, actual_elements)
 
@@ -39,7 +42,10 @@ module Spectator::Matchers
     # Performs the test against the expression, but inverted.
     # A successful match with `#match` should normally fail for this method, and vice-versa.
     def negated_match(actual : TestExpression(T)) : MatchData forall T
-      actual_elements = actual.value.to_a
+      actual_value = actual.value
+      return unexpected(actual_value, actual.label) unless actual_value.responds_to?(:to_a)
+
+      actual_elements = actual_value.to_a
       expected_elements = expected.value.to_a
       missing, extra = array_diff(expected_elements, actual_elements)
 
@@ -70,6 +76,10 @@ module Spectator::Matchers
       end
 
       {missing, extra}
+    end
+
+    private def unexpected(value, label)
+      raise "#{label} is not a collection (must respond to `#to_a`). #{label}: #{value.inspect}"
     end
   end
 end
