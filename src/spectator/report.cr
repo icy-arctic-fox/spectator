@@ -42,6 +42,9 @@ module Spectator
           @failed_count += 1
         when PendingResult
           @pending_count += 1
+        when Result
+          # This case isn't possible, but gets the compiler to stop complaining.
+          nil
         end
       end
     end

@@ -75,6 +75,8 @@ module Spectator
           builder.randomize
           parts = method.split(':', 2)
           builder.seed = parts[1].to_i if parts.size > 1
+        else
+          nil
         end
       end
     end
