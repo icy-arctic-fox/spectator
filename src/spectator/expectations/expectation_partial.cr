@@ -64,10 +64,26 @@ module Spectator::Expectations
       Harness.current.defer { to(matcher) }
     end
 
+    def to_eventually(stub : Mocks::MethodStub) : Nil
+      to(stub)
+    end
+
+    def to_eventually(stubs : Enumerable(Mocks::MethodStub)) : Nil
+      to(stub)
+    end
+
     # Asserts that some criteria defined by the matcher is never satisfied.
     # The expectation is checked after the example finishes and all hooks have run.
     def to_never(matcher) : Nil
       Harness.current.defer { to_not(matcher) }
+    end
+
+    def to_never(stub : Mocks::MethodStub) : Nil
+      to_not(stub)
+    end
+
+    def to_never(stub : Enumerable(Mocks::MethodStub)) : Nil
+      to_not(stub)
     end
 
     # ditto
