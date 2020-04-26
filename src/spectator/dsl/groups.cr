@@ -23,7 +23,7 @@ module Spectator
         # Ensure `described_class` and `subject` are only set for real types (is a `TypeNode`).
         {% if (what.is_a?(Path) || what.is_a?(Generic)) && (described_type = what.resolve?).is_a?(TypeNode) %}
           macro described_class
-            {{described_type.name}}
+            {{what}}
           end
 
           subject do
