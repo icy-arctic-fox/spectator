@@ -61,16 +61,16 @@ module Spectator::Mocks
           %call = ::Spectator::Mocks::MethodCall.new({{name.symbolize}}, %args)
           %harness.mocks.record_call(self, %call)
           if (%stub = %harness.mocks.find_stub(self, %call))
-            return %stub.call!(%args) { {{original}}({{args.splat}}) }
+            return %stub.call!(%args) { {{original}} }
           end
 
           {% if body && !body.is_a?(Nop) %}
             %method({{args.splat}})
           {% else %}
-            {{original}}({{args.splat}})
+            {{original}}
           {% end %}
         else
-          {{original}}({{args.splat}})
+          {{original}}
         end
       end
 
@@ -80,18 +80,18 @@ module Spectator::Mocks
           %call = ::Spectator::Mocks::MethodCall.new({{name.symbolize}}, %args)
           %harness.mocks.record_call(self, %call)
           if (%stub = %harness.mocks.find_stub(self, %call))
-            return %stub.call!(%args) { {{original}}({{args.splat}}) { |*%ya| yield *%ya } }
+            return %stub.call!(%args) { {{original}} { |*%ya| yield *%ya } }
           end
 
           {% if body && !body.is_a?(Nop) %}
-            %method({{args.splat}}) { {{original}}({{args.splat}}) { |*%ya| yield *%ya } }
+            %method({{args.splat}}) { {{original}} { |*%ya| yield *%ya } }
           {% else %}
-            {{original}}({{args.splat}}) do |*%yield_args|
+            {{original}} do |*%yield_args|
               yield *%yield_args
             end
           {% end %}
         else
-          {{original}}({{args.splat}}) do |*%yield_args|
+          {{original}} do |*%yield_args|
             yield *%yield_args
           end
         end
