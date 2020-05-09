@@ -55,7 +55,7 @@ module Spectator::Matchers
       lower = center - diff
       upper = center + diff
       range = Range.new(lower, upper)
-      test_value = TestValue.new(range, "#{center} +/- #{expected.label}")
+      test_value = TestValue.new(range, "#{center} ± #{expected.label}")
       RangeMatcher.new(test_value)
     end
   end
