@@ -1,3 +1,5 @@
+require "../../spec_helper"
+
 class Phonebook
   def find(name)
     # Some expensive lookup call.
