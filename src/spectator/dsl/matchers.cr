@@ -548,7 +548,7 @@ module Spectator
     # expect([1, 2, 3]).to contain_exactly(3, 2, 1)
     # ```
     macro contain_exactly(*expected)
-      %test_value = ::Spectator::TestValue.new({{expected}}, {{expected.stringify}})
+      %test_value = ::Spectator::TestValue.new(({{expected}}).to_a, {{expected.stringify}})
       ::Spectator::Matchers::ArrayMatcher.new(%test_value)
     end
 
@@ -560,7 +560,7 @@ module Spectator
     # expect([1, 2, 3]).to match_array([3, 2, 1])
     # ```
     macro match_array(expected)
-      %test_value = ::Spectator::TestValue.new({{expected}}, {{expected.stringify}})
+      %test_value = ::Spectator::TestValue.new(({{expected}}).to_a, {{expected.stringify}})
       ::Spectator::Matchers::ArrayMatcher.new(%test_value)
     end
 
@@ -582,7 +582,7 @@ module Spectator
     # expect([1, 2, 3]).to have_size_of(%i[x y z])
     # ```
     macro have_size_of(expected)
-      %test_value = ::Spectator::TestValue.new(({{expected}}), {{expected.stringify}})
+      %test_value = ::Spectator::TestValue.new({{expected}}, {{expected.stringify}})
       ::Spectator::Matchers::SizeOfMatcher.new(%test_value)
     end
 

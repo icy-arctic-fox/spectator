@@ -11,7 +11,7 @@ module Spectator::Matchers
     private getter expected
 
     # Creates the matcher with an expected value.
-    def initialize(@expected : TestValue(ExpectedType))
+    def initialize(@expected : TestValue(Array(ExpectedType)))
     end
 
     # Short text about the matcher's purpose.
@@ -27,7 +27,7 @@ module Spectator::Matchers
       return unexpected(actual_value, actual.label) unless actual_value.responds_to?(:to_a)
 
       actual_elements = actual_value.to_a
-      expected_elements = expected.value.to_a
+      expected_elements = expected.value
       missing, extra = compare_arrays(expected_elements, actual_elements)
 
       if missing.empty? && extra.empty?
@@ -51,7 +51,7 @@ module Spectator::Matchers
       return unexpected(actual_value, actual.label) unless actual_value.responds_to?(:to_a)
 
       actual_elements = actual_value.to_a
-      expected_elements = expected.value.to_a
+      expected_elements = expected.value
       missing, extra = compare_arrays(expected_elements, actual_elements)
 
       if missing.empty? && extra.empty?
