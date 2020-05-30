@@ -61,7 +61,7 @@ module Spectator
       # { |__arg0| __arg0.foo }
       # ```
       # The hack used here is to check if it looks like a compiler-generated block.
-      {% if block.args == ["__arg0".id] && block.body.is_a?(Call) && block.body.id =~ /^__arg0\./ %}
+      {% if block.args.size == 1 && block.args[0] =~ /^__arg\d+$/ && block.body.is_a?(Call) && block.body.id =~ /^__arg\d+\./ %}
         # Extract the method name to make it clear to the user what is tested.
         # The raw block can't be used because it's not clear to the user.
         {% method_name = block.body.id.split('.')[1..-1].join('.') %}
