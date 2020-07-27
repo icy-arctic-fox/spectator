@@ -61,7 +61,7 @@ module Spectator
     private def seed_option(parser, builder)
       parser.on("--seed INTEGER", "Set the seed for the random number generator (implies -r)") do |seed|
         builder.randomize
-        builder.seed = seed.to_i
+        builder.seed = seed.to_u64
       end
     end
 
@@ -74,7 +74,7 @@ module Spectator
         when /^rand/
           builder.randomize
           parts = method.split(':', 2)
-          builder.seed = parts[1].to_i if parts.size > 1
+          builder.seed = parts[1].to_u64 if parts.size > 1
         else
           nil
         end
