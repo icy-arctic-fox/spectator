@@ -90,8 +90,12 @@ module Spectator
       @dry_run
     end
 
+    # Seed used for random number generation.
+    getter! seed : UInt64?
+
     # Sets the seed for the random number generator.
     def seed=(seed)
+      @seed = seed
       @random = Random.new(seed)
     end
 

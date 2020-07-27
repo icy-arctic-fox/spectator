@@ -19,6 +19,9 @@ module Spectator
     # Indicates whether tests are run in a random order.
     getter? randomize : Bool
 
+    # Random seed used for number generation.
+    getter! random_seed : UInt64?
+
     # Indicates whether profiling information should be displayed.
     getter? profile : Bool
 
@@ -33,6 +36,7 @@ module Spectator
       @dry_run = builder.dry_run?
       @random = builder.random
       @randomize = builder.randomize?
+      @random_seed = builder.seed?
       @profile = builder.profile?
       @example_filter = builder.example_filter
     end
