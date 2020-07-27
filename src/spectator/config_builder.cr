@@ -11,6 +11,11 @@ module Spectator
     # Random number generator to use.
     protected getter random = Random::DEFAULT
 
+    def initialize
+      @seed = seed = @random.rand(UInt64)
+      @random.new_seed(seed)
+    end
+
     @primary_formatter : Formatting::Formatter?
     @additional_formatters = [] of Formatting::Formatter
     @fail_fast = false
