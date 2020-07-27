@@ -50,6 +50,7 @@ module Spectator::Formatting
       @io.puts Runtime.new(report.runtime)
       @io.puts StatsCounter.new(report).color
       if (seed = report.random_seed?)
+        @io.puts
         @io.puts RandomSeedText.new(seed)
       end
     end
