@@ -49,6 +49,9 @@ module Spectator::Formatting
     private def stats(report)
       @io.puts Runtime.new(report.runtime)
       @io.puts StatsCounter.new(report).color
+      if (seed = report.random_seed?)
+        @io.puts RandomSeedText.new(seed)
+      end
     end
 
     # Produces the skipped tests text if fail-fast is enabled and tests were omitted.
