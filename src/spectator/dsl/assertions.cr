@@ -207,7 +207,7 @@ module Spectator
       raise ExampleFailed.new(reason)
     end
 
-    # ditto
+    # :ditto:
     @[AlwaysInline]
     def fail
       fail("Example failed")

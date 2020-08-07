@@ -518,7 +518,7 @@ module Spectator
       ::Spectator::Matchers::HaveKeyMatcher.new(%test_value)
     end
 
-    # ditto
+    # :ditto:
     macro has_key(expected)
       have_key({{expected}})
     end
@@ -536,7 +536,7 @@ module Spectator
       ::Spectator::Matchers::HaveValueMatcher.new(%test_value)
     end
 
-    # ditto
+    # :ditto:
     macro has_value(expected)
       have_value({{expected}})
     end

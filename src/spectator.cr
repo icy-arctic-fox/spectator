@@ -45,7 +45,7 @@ module Spectator
     end
   end
 
-  # ditto
+  # :ditto:
   macro context(description, &block)
     describe({{description}}) {{block}}
   end

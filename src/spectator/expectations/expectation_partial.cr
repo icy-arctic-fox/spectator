@@ -52,7 +52,7 @@ module Spectator::Expectations
       stubs.each { |stub| to_not(stub) }
     end
 
-    # ditto
+    # :ditto:
     @[AlwaysInline]
     def not_to(matcher) : Nil
       to_not(matcher)
@@ -86,7 +86,7 @@ module Spectator::Expectations
       to_not(stub)
     end
 
-    # ditto
+    # :ditto:
     @[AlwaysInline]
     def never_to(matcher) : Nil
       to_never(matcher)
