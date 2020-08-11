@@ -450,8 +450,13 @@ module Spectator
     # expect(%i[a b c]).to contain(:a, :b)
     # ```
     macro contain(*expected)
-      %test_value = ::Spectator::TestValue.new({{expected}}, {{expected.splat.stringify}})
-      ::Spectator::Matchers::ContainMatcher.new(%test_value)
+      {% if expected.id.starts_with?("{*") %}
+        %test_value = ::Spectator::TestValue.new({{expected.id[2...-1]}}, {{expected.splat.stringify}})
+        ::Spectator::Matchers::ContainMatcher.new(%test_value)
+      {% else %}
+        %test_value = ::Spectator::TestValue.new({{expected}}, {{expected.splat.stringify}})
+        ::Spectator::Matchers::ContainMatcher.new(%test_value)
+      {% end %}
     end
 
     # Indicates that some range (or collection) should contain another value.
@@ -471,8 +476,13 @@ module Spectator
     # expect(..100).to contain(0, 50)
     # ```
     macro cover(*expected)
-      %test_value = ::Spectator::TestValue.new({{expected}}, {{expected.splat.stringify}})
-      ::Spectator::Matchers::ContainMatcher.new(%test_value)
+      {% if expected.id.starts_with?("{*") %}
+        %test_value = ::Spectator::TestValue.new({{expected.id[2...-1]}}, {{expected.splat.stringify}})
+        ::Spectator::Matchers::ContainMatcher.new(%test_value)
+      {% else %}
+        %test_value = ::Spectator::TestValue.new({{expected}}, {{expected.splat.stringify}})
+        ::Spectator::Matchers::ContainMatcher.new(%test_value)
+      {% end %}
     end
 
     # Indicates that some value or set should contain another value.
@@ -501,8 +511,13 @@ module Spectator
     # expect(%w[FOO BAR BAZ]).to have(/foo/i, String)
     # ```
     macro have(*expected)
-      %test_value = ::Spectator::TestValue.new({{expected}}, {{expected.splat.stringify}})
-      ::Spectator::Matchers::HaveMatcher.new(%test_value)
+      {% if expected.id.starts_with?("{*") %}
+        %test_value = ::Spectator::TestValue.new({{expected.id[2...-1]}}, {{expected.splat.stringify}})
+        ::Spectator::Matchers::HaveMatcher.new(%test_value)
+      {% else %}
+        %test_value = ::Spectator::TestValue.new({{expected}}, {{expected.splat.stringify}})
+        ::Spectator::Matchers::HaveMatcher.new(%test_value)
+      {% end %}
     end
 
     # Indicates that some set, such as a `Hash`, has a given key.
@@ -548,8 +563,13 @@ module Spectator
     # expect([1, 2, 3]).to contain_exactly(3, 2, 1)
     # ```
     macro contain_exactly(*expected)
-      %test_value = ::Spectator::TestValue.new(({{expected}}).to_a, {{expected.stringify}})
-      ::Spectator::Matchers::ArrayMatcher.new(%test_value)
+      {% if expected.id.starts_with?("{*") %}
+        %test_value = ::Spectator::TestValue.new(({{expected.id[2...-1]}}).to_a, {{expected.stringify}})
+        ::Spectator::Matchers::ArrayMatcher.new(%test_value)
+      {% else %}
+        %test_value = ::Spectator::TestValue.new(({{expected}}).to_a, {{expected.stringify}})
+        ::Spectator::Matchers::ArrayMatcher.new(%test_value)
+      {% end %}
     end
 
     # Indicates that some set should contain the same values in any order as another set.
@@ -597,8 +617,13 @@ module Spectator
     # expect(%i[a b c]).to have_attributes(size: 1..5, first: Symbol)
     # ```
     macro have_attributes(**expected)
-      %test_value = ::Spectator::TestValue.new({{expected}}, {{expected.double_splat.stringify}})
-      ::Spectator::Matchers::AttributesMatcher.new(%test_value)
+      {% if expected.id.starts_with?("{**") %}
+        %test_value = ::Spectator::TestValue.new({{expected.id[3...-1]}}, {{expected.double_splat.stringify}})
+        ::Spectator::Matchers::AttributesMatcher.new(%test_value)
+      {% else %}
+        %test_value = ::Spectator::TestValue.new({{expected}}, {{expected.double_splat.stringify}})
+        ::Spectator::Matchers::AttributesMatcher.new(%test_value)
+      {% end %}
     end
 
     # Verifies that all elements of a collection satisfy some matcher.
