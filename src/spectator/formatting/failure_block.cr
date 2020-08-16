@@ -77,7 +77,8 @@ module Spectator::Formatting
     # Produces the stack trace for an errored result.
     private def error_stacktrace(indent)
       error = @result.error
-      indent.line(Color.error(LabeledText.new("Error", error)))
+      first_line = error.message.try(&.lines).try(&.first)
+      indent.line(Color.error(LabeledText.new("Error", first_line)))
       indent.line
       indent.increase do
         loop do
