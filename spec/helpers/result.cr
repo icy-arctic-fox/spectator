@@ -1,6 +1,6 @@
 module Spectator::SpecHelpers
   # Information about an example compiled and run at runtime.
-  class Result
+  struct Result
     # Status of the example after running.
     enum Outcome
       Success
