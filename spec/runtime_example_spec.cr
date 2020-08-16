@@ -20,6 +20,10 @@ Spectator.describe "Runtime compilation" do
     expect(passing_example).to be_successful
   end
 
+  it "can retrieve expectations" do
+    expect(passing_example.expectations).to_not be_empty
+  end
+
   given_example failing_example do
     it "does something" do
       expect(true).to be_false

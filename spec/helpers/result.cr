@@ -15,8 +15,11 @@ module Spectator::SpecHelpers
     # Status of the example after running.
     getter outcome : Outcome
 
+    # List of expectations ran in the example.
+    getter expectations : Array(Expectation)
+
     # Creates the result.
-    def initialize(@name, @outcome)
+    def initialize(@name, @outcome, @expectations)
     end
 
     # Checks if the example was successful.
@@ -43,16 +46,21 @@ module Spectator::SpecHelpers
     def self.from_json_any(object : JSON::Any)
       name = object["name"].as_s
       outcome = parse_outcome_string(object["result"].as_s)
-      new(name, outcome)
+      expectations = if (list = object["expectations"].as_a?)
+                       list.map { |e| Expectation.from_json_any(e) }
+                     else
+                       [] of Expectation
+                     end
+      new(name, outcome, expectations)
     end
 
     # Converts a result string, such as "fail" to an enum value.
     private def self.parse_outcome_string(string)
       case string
       when /success/i then Outcome::Success
-      when /fail/i then Outcome::Failure
-      when /error/i then Outcome::Error
-      else Outcome::Unknown
+      when /fail/i    then Outcome::Failure
+      when /error/i   then Outcome::Error
+      else                 Outcome::Unknown
       end
     end
   end
