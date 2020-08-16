@@ -26,3 +26,21 @@ macro given_example(id, &block)
     ).result
   end
 end
+
+# Defines an example ("it" block) that is lazily compiled.
+# The "it" block must be omitted, as the block provided to this macro will be wrapped in one.
+# When the expectation is referenced with *id*, it will be compiled and the result retrieved.
+# The value returned by *id* will be a `Spectator::SpecHelpers::Expectation`.
+# This allows an expectation to be inspected.
+# Only the last expectation performed will be returned.
+# An error is raised if no expectations ran.
+macro given_expectation(id, &block)
+  let({{id}}) do
+    result = ::Spectator::SpecHelpers::Example.new(
+      {{__FILE__}},
+      {{id.id.stringify}},
+      {{"it do\n" + block.body.stringify + "\nend"}}
+    ).result
+    result.expectations.last || raise("No expectations found from {{id.id}}")
+  end
+end

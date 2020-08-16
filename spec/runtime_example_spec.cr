@@ -28,6 +28,10 @@ Spectator.describe "Runtime compilation" do
     it "does something" do
       expect(true).to be_false
     end
+
+    it "doesn't run" do
+      expect(true).to be_false
+    end
   end
 
   it "detects failed examples" do
@@ -42,5 +46,13 @@ Spectator.describe "Runtime compilation" do
 
   it "raises on compilation errors" do
     expect { malformed_example }.to raise_error(/compilation/i)
+  end
+
+  given_expectation satisfied_expectation do
+    expect(true).to be_true
+  end
+
+  it "can compile and retrieve expectations" do
+    expect(satisfied_expectation).to be_satisfied
   end
 end
