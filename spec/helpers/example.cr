@@ -43,7 +43,7 @@ module Spectator::SpecHelpers
     # The *dir* is the directory of the file being written to.
     # This is needed to resolve the relative path to the spec_helper.cr file.
     private def write(io, dir)
-      spec_helper_path = Path[@spec_helper_path].relative_to(dir)
+      spec_helper_path = Path[@spec_helper_path].relative_to(dir) # ameba:disable Lint/UselessAssign
       ECR.embed(__DIR__ + "/example.ecr", io)
     end
 
