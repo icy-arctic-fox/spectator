@@ -10,23 +10,25 @@ cache:
 
 before_script:
   - crystal -v # Print out Crystal version for debugging
-  - shards
 
 spec:
   script:
-  - crystal spec --error-on-warnings
+    - shards
+    - crystal spec --error-on-warnings
 
 style:
   script:
-  - bin/ameba
-  - crystal tool format --check
+    - shards
+    - bin/ameba
+    - crystal tool format --check
 
 nightly:
   image: "crystallang/crystal:nightly"
   allow_failure: true
   script:
-  - crystal spec --error-on-warnings
-  - crystal tool format --check
+    - shards --ignore-crystal-version
+    - crystal spec --error-on-warnings
+    - crystal tool format --check
 
 pages:
   stage: deploy

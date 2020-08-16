@@ -1,5 +1,5 @@
 name: spectator
-version: 0.9.20
+version: 0.9.22
 description: |
   A feature-rich spec testing framework for Crystal with similarities to RSpec.
 
@@ -13,4 +13,4 @@ license: MIT
 development_dependencies:
   ameba:
     github: crystal-ameba/ameba
-    version: ~> 0.12.0
+    version: ~> 0.13.1

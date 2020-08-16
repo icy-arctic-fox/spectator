@@ -11,6 +11,11 @@ module Spectator
     # Random number generator to use.
     protected getter random = Random::DEFAULT
 
+    def initialize
+      @seed = seed = @random.rand(UInt16).to_u64
+      @random.new_seed(seed)
+    end
+
     @primary_formatter : Formatting::Formatter?
     @additional_formatters = [] of Formatting::Formatter
     @fail_fast = false
@@ -90,8 +95,12 @@ module Spectator
       @dry_run
     end
 
+    # Seed used for random number generation.
+    getter! seed : UInt64?
+
     # Sets the seed for the random number generator.
     def seed=(seed)
+      @seed = seed
       @random = Random.new(seed)
     end
 

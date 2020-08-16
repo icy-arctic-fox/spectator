@@ -25,7 +25,8 @@ module Spectator
 
       # Generate a report and pass it along to the formatter.
       remaining = @suite.size - results.size
-      report = Report.new(results, elapsed, remaining, @config.fail_blank?)
+      seed = (@config.random_seed? if @config.randomize?)
+      report = Report.new(results, elapsed, remaining, @config.fail_blank?, seed)
       @config.each_formatter(&.end_suite(report, profile(report)))
 
       !report.failed?

@@ -25,12 +25,16 @@ module Spectator
     # This will be greater than zero only in fail-fast mode.
     getter remaining_count
 
+    # Random seed used to determine test ordering.
+    getter! random_seed : UInt64?
+
     # Creates the report.
     # The *results* are from running the examples in the test suite.
     # The *runtime* is the total time it took to execute the suite.
     # The *remaining_count* is the number of tests skipped due to fail-fast.
     # The *fail_blank* flag indicates whether it is a failure if there were no tests run.
-    def initialize(@results : Array(Result), @runtime, @remaining_count = 0, @fail_blank = false)
+    # The *random_seed* is the seed used for random number generation.
+    def initialize(@results : Array(Result), @runtime, @remaining_count = 0, @fail_blank = false, @random_seed = nil)
       @results.each do |result|
         case result
         when SuccessfulResult
