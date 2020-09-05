@@ -20,7 +20,7 @@ module Spectator
     # The *source* tracks where the example exists in source code.
     # The example will be assigned to *group* if it is provided.
     def initialize(@delegate : ContextDelegate,
-      name : String | Symbol? = nil, source : Source? = nil, group : ExampleGroup? = nil)
+                   name : String | Symbol? = nil, source : Source? = nil, group : ExampleGroup? = nil)
       super(name, source, group)
     end
 
