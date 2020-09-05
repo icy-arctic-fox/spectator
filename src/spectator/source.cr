@@ -1,3 +1,5 @@
+require "json"
+
 module Spectator
   # Define the file and line number something originated from.
   struct Source
