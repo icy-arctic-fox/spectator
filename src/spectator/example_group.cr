@@ -1,3 +1,5 @@
+require "./example_node"
+
 module Spectator
   # Collection of examples and sub-groups.
   class ExampleGroup < ExampleNode
