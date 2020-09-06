@@ -1,4 +1,4 @@
-require "./context_delegate"
+require "./example_context_delegate"
 require "./example_group"
 require "./example_node"
 require "./result"
@@ -19,7 +19,7 @@ module Spectator
     # It can be a `Symbol` to describe a type.
     # The *source* tracks where the example exists in source code.
     # The example will be assigned to *group* if it is provided.
-    def initialize(@delegate : ContextDelegate,
+    def initialize(@delegate : ExampleContextDelegate,
                    name : String | Symbol? = nil, source : Source? = nil, group : ExampleGroup? = nil)
       super(name, source, group)
     end

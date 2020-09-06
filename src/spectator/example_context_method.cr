@@ -6,5 +6,6 @@ module Spectator
   # The context is passed as an argument.
   # The proc should downcast the context instance to the desired type
   # and call a method on that context.
-  alias ContextMethod = Context ->
+  # The current example is also passed as an argument.
+  alias ExampleContextMethod = Example, Context ->
 end
