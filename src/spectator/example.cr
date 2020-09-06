@@ -1,12 +1,12 @@
 require "./context_delegate"
-require "./example_base"
 require "./example_group"
+require "./example_node"
 require "./result"
 require "./source"
 
 module Spectator
   # Standard example that runs a test case.
-  class Example < ExampleBase
+  class Example < ExampleNode
     # Indicates whether the example already ran.
     getter? finished : Bool = false
 
@@ -29,6 +29,11 @@ module Spectator
     # The result will also be stored in `#result`.
     def run : Result
       raise NotImplementedError.new("#run")
+    end
+
+    # Exposes information about the example useful for debugging.
+    def inspect(io)
+      raise NotImplementedError.new("#inspect")
     end
   end
 end
