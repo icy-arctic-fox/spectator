@@ -1,55 +1,66 @@
-require "../spec_builder"
-
-module Spectator
-  module DSL
-    macro context(what, _source_file = __FILE__, _source_line = __LINE__, &block)
-      class Context%context < {{@type.id}}
-        {%
-          description = if what.is_a?(StringLiteral)
-                          if what.starts_with?("#") || what.starts_with?(".")
-                            what.id.symbolize
-                          else
-                            what
-                          end
-                        else
-                          what.symbolize
-                        end
-        %}
+module Spectator::DSL
+  # DSL methods and macros for creating example groups.
+  # This module should be included as a mix-in.
+  module Groups
+    # Defines a new example group.
+    # The *what* argument is a name or description of the group.
+    # If it isn't a string literal, then it is symbolized for `ExampleNode#name`.
+    macro example_group(what, *, _source_file = __FILE__, _source_line = __LINE__, &block)
+      # Example group {{name.stringify}}
+      # Source: {{_source_file}}:{{_source_line}}
+      class Group%group < {{@type.id}}
+        _spectator_group_subject({{what}})
 
         %source = ::Spectator::Source.new({{_source_file}}, {{_source_line}})
-        ::Spectator::SpecBuilder.start_group({{description}}, %source)
-
-        # Oddly, `#resolve?` can return a constant's value, which isn't a TypeNode.
-        # Ensure `described_class` and `subject` are only set for real types (is a `TypeNode`).
-        {% if (what.is_a?(Path) || what.is_a?(Generic)) && (described_type = what.resolve?).is_a?(TypeNode) %}
-          macro described_class
-            {{what}}
-          end
-
-          subject do
-            {% if described_type < Reference || described_type < Value %}
-              described_class.new
-            {% else %}
-              described_class
-            {% end %}
-          end
-        {% else %}
-          def _spectator_implicit_subject(*args)
-            {{what}}
-          end
-        {% end %}
+        ::Spectator::DSL::Builder.start_group({{what.is_a?(StringLiteral) ? what : what.stringify}}, %source)
 
         {{block.body}}
 
-        ::Spectator::SpecBuilder.end_group
+        ::Spectator::DSL::Builder.end_group
       end
     end
 
-    macro describe(what, &block)
-      context({{what}}) {{block}}
+    macro describe(what, *, _source_file = __FILE__, _source_line = __LINE__, &block)
+      example_group({{what}}, _source_file: {{_source_file}}, _source_line: {{_source_line}}) {{block}}
     end
 
-    macro sample(collection, count = nil, _source_file = __FILE__, _source_line = __LINE__, &block)
+    macro context(what, *, _source_file = __FILE__, _source_line = __LINE__, &block)
+      example_group({{what}}, _source_file: {{_source_file}}, _source_line: {{_source_line}}) {{block}}
+    end
+
+    # Defines the implicit subject for the test context.
+    # If *what* is a type, then the `described_class` method will be defined.
+    # Additionally, the implicit subject is set to an instance of *what* if it's not a module.
+    #
+    # There is no common macro type that has the `#resolve?` method.
+    # Also, `#responds_to?` can't be used in macros.
+    # So the large if statement in this macro is used to look for type signatures.
+    private macro _spectator_group_subject(what)
+      {% if (what.is_a?(Generic) ||
+              what.is_a?(Path) ||
+              what.is_a?(TypeNode) ||
+              what.is_a?(Union)) &&
+              (described_type = what.resolve?).is_a?(TypeNode) %}
+        private def described_class
+          {{described_type}}
+        end
+
+        private def _spectator_implicit_subject
+          {% if described_type < Reference || described_type < Value %}
+            described_class.new
+          {% else %}
+            described_class
+          {% end %}
+        end
+      {% else %}
+        private def _spectator_implicit_subject
+          {{what}}
+        end
+      {% end %}
+    end
+  end
+
+  macro sample(collection, count = nil, _source_file = __FILE__, _source_line = __LINE__, &block)
       {% name = block.args.empty? ? :value.id : block.args.first.id %}
 
       def %collection
@@ -81,7 +92,7 @@ module Spectator
       end
     end
 
-    macro random_sample(collection, count = nil, _source_file = __FILE__, _source_line = __LINE__, &block)
+  macro random_sample(collection, count = nil, _source_file = __FILE__, _source_line = __LINE__, &block)
       {% name = block.args.empty? ? :value.id : block.args.first.id %}
 
       def %collection
@@ -118,7 +129,7 @@ module Spectator
       end
     end
 
-    macro given(*assignments, &block)
+  macro given(*assignments, &block)
       context({{assignments.splat.stringify}}) do
         {% for assignment in assignments %}
           let({{assignment.target}}) { {{assignment.value}} }
@@ -150,5 +161,4 @@ module Spectator
         {% end %}
       end
     end
-  end
 end
