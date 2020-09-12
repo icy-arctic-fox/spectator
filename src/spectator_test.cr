@@ -16,4 +16,10 @@ class SpectatorTest
 
   def initialize(@spectator_test_values : ::Spectator::TestValues)
   end
+
+  # Prevent leaking internal values since their types may differ.
+  # Workaround for: https://gitlab.com/arctic-fox/spectator/-/issues/53
+  def inspect(io)
+    io << self.class
+  end
 end
