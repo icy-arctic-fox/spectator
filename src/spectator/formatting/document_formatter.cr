@@ -11,7 +11,7 @@ module Spectator::Formatting
 
     private INDENT = "  "
 
-    @previous_hierarchy = [] of NestedExampleGroup
+    @previous_hierarchy = [] of ExampleGroup
 
     # Creates the formatter.
     # By default, output is sent to STDOUT.
@@ -34,9 +34,9 @@ module Spectator::Formatting
 
     # Produces a list of groups making up the hierarchy for an example.
     private def group_hierarchy(example)
-      hierarchy = [] of NestedExampleGroup
+      hierarchy = [] of ExampleGroup
       group = example.group
-      while group.is_a?(NestedExampleGroup)
+      while group.is_a?(ExampleGroup)
         hierarchy << group
         group = group.parent
       end
