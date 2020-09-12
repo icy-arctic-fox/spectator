@@ -1,5 +1,5 @@
 require "./spectator/includes"
-require "./spectator_test"
+require "./spectator_context"
 
 # Module that contains all functionality related to Spectator.
 module Spectator
@@ -38,7 +38,7 @@ module Spectator
     # For more information on how the DSL works, see the `DSL` module.
 
     # Root-level class that contains all examples and example groups.
-    class SpectatorTest
+    class SpectatorContext
       # Pass off the description argument and block to `DSL::StructureDSL.describe`.
       # That method will handle creating a new group for this spec.
       describe({{description}}) {{block}}
