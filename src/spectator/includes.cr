@@ -4,12 +4,6 @@
 # Including all files with a wildcard would accidentally enable should-syntax.
 # Unfortunately, that leads to the existence of this file to include everything but that file.
 
-# FIXME: Temporary (hopefully) require statement to workaround Crystal issue #7060.
-# https://github.com/crystal-lang/crystal/issues/7060
-# The primary issue seems to be around OpenSSL.
-# By explicitly including it before Spectator functionality, we workaround the issue.
-require "openssl"
-
 # First the sub-modules.
 require "./dsl"
 require "./expectations"
