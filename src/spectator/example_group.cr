@@ -22,6 +22,11 @@ module Spectator
       @nodes.each { |node| yield node }
     end
 
+    # Checks if all examples and sub-groups have finished.
+    def finished? : Bool
+      @nodes.all?(&.finished?)
+    end
+
     # Adds the specified *node* to the group.
     # Assigns the node to this group.
     # If the node already belongs to a group,
