@@ -1,3 +1,5 @@
+require "./result"
+
 module Spectator
   # Abstract class for all results by examples
   abstract class FinishedResult < Result

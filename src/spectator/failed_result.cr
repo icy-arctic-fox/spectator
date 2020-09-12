@@ -1,4 +1,4 @@
-require "./result"
+require "./finished_result"
 
 module Spectator
   # Outcome that indicates running an example was a failure.

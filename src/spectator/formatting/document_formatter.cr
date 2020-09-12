@@ -1,3 +1,4 @@
+require "../example_group"
 require "./formatter"
 require "./suite_summary"
 

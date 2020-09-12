@@ -1,4 +1,5 @@
 require "option_parser"
+require "./config_source"
 
 module Spectator
   # Generates configuration from the command-line arguments.

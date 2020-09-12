@@ -1,3 +1,5 @@
+require "./example_filter"
+
 module Spectator
   # Filter that combines multiple other filters.
   class CompositeExampleFilter < ExampleFilter
