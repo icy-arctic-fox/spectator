@@ -1,3 +1,6 @@
+require "../source"
+require "./builder"
+
 module Spectator::DSL
   # DSL methods and macros for creating example groups.
   # This module should be included as a mix-in.
@@ -6,7 +9,7 @@ module Spectator::DSL
     # The *what* argument is a name or description of the group.
     # If it isn't a string literal, then it is symbolized for `ExampleNode#name`.
     macro example_group(what, *, _source_file = __FILE__, _source_line = __LINE__, &block)
-      # Example group {{name.stringify}}
+      # Example group: {{what.stringify}}
       # Source: {{_source_file}}:{{_source_line}}
       class Group%group < {{@type.id}}
         _spectator_group_subject({{what}})
