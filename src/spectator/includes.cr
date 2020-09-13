@@ -7,4 +7,3 @@
 require "./config"
 require "./config_builder"
 require "./dsl"
-require "./spec_builder"
