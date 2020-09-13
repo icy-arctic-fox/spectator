@@ -1,4 +1,6 @@
-require "./dsl/*"
+# require "./dsl/*"
+require "./dsl/builder"
+require "./dsl/groups"
 
 module Spectator
   # Namespace containing methods representing the spec domain specific language.

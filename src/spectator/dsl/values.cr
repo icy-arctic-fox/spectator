@@ -1,6 +1,8 @@
-module Spectator
-  module DSL
-    macro let(name, &block)
+module Spectator::DSL
+  module Values
+  end
+
+  macro let(name, &block)
       @%wrapper : ::Spectator::ValueWrapper?
 
       def {{name.id}}
@@ -18,7 +20,7 @@ module Spectator
       end
     end
 
-    macro let!(name, &block)
+  macro let!(name, &block)
       @%wrapper : ::Spectator::ValueWrapper?
 
       def %wrapper
@@ -34,7 +36,7 @@ module Spectator
       end
     end
 
-    macro subject(&block)
+  macro subject(&block)
       {% if block.is_a?(Nop) %}
         self.subject
       {% else %}
@@ -42,7 +44,7 @@ module Spectator
       {% end %}
     end
 
-    macro subject(name, &block)
+  macro subject(name, &block)
       let({{name.id}}) {{block}}
 
       def subject
@@ -50,16 +52,15 @@ module Spectator
       end
     end
 
-    macro subject!(&block)
+  macro subject!(&block)
       let!(:subject) {{block}}
     end
 
-    macro subject!(name, &block)
+  macro subject!(name, &block)
       let!({{name.id}}) {{block}}
 
       def subject
         {{name.id}}
       end
     end
-  end
 end
