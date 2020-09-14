@@ -13,5 +13,9 @@ module Spectator::DSL
     def end_group(*args)
       @@builder.end_group(*args)
     end
+
+    def add_example(*args, &block : Example, Context ->)
+      @@builder.add_example(*args, &block)
+    end
   end
 end

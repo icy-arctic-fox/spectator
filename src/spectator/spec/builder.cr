@@ -1,4 +1,5 @@
 require "../example"
+require "../example_context_method"
 require "../example_group"
 
 module Spectator
@@ -36,6 +37,16 @@ module Spectator
       raise "Can't pop root group" if root?
 
       @group_stack.pop
+    end
+
+    def add_example(name, source, context, &block : Example, Context ->)
+      {% if flag?(:spectator_debug) %}
+        puts "Add example: #{name} @ #{source}"
+        puts "Context: #{context}"
+      {% end %}
+      delegate = ExampleContextDelegate.new(context, block)
+      Example.new(delegate, name, source, current_group)
+      # The example is added to the current group by `Example` initializer.
     end
 
     def build

@@ -1,5 +1,6 @@
 # require "./dsl/*"
 require "./dsl/builder"
+require "./dsl/examples"
 require "./dsl/groups"
 
 module Spectator

@@ -2,6 +2,7 @@ require "./spectator_context"
 require "./spectator/dsl"
 
 class SpectatorTestContext < SpectatorContext
+  include ::Spectator::DSL::Examples
   include ::Spectator::DSL::Groups
 
   # Initial implicit subject for tests.
