@@ -3,12 +3,30 @@ require "./builder"
 
 module Spectator::DSL
   module Examples
-    macro example(what = nil, *, _source_file = __FILE__, _source_line = __LINE__, &block)
+    macro define_example(name)
+      macro {{name.id}}(what = nil)
+        def %test
+          \{{yield}}
+        end
+
+        %source = ::Spectator::Source.new(__FILE__, __LINE__)
+        ::Spectator::DSL::Builder.add_example(
+          \{{what.is_a?(StringLiteral) || what.is_a?(NilLiteral) ? what : what.stringify}},
+          %source,
+          \{{@type.name}}.new
+        ) { |example, context| context.as(\{{@type.name}}).%test }
+      end
+    end
+
+    define_example(:example)
+
+    macro it(what = nil, *, _source_file = __FILE__, _source_line = __LINE__, &block)
+      {% puts "#{_source_file}:#{_source_line}" %}
       def %test
-        {{block.body}}
+        {{yield}}
       end
 
-      %source = ::Spectator::Source.new({{_source_file}}, {{_source_line}})
+      %source = ::Spectator::Source.new(__FILE__, __LINE__)
       ::Spectator::DSL::Builder.add_example(
         {{what.is_a?(StringLiteral | NilLiteral) ? what : what.stringify}},
         %source,
@@ -16,12 +34,18 @@ module Spectator::DSL
       ) { |example, context| context.as({{@type.name}}).%test }
     end
 
-    macro it(what = nil, *, _source_file = __FILE__, _source_line = __LINE__, &block)
-      example({{what}}, _source_file: {{_source_file}}, _source_line: {{_source_line}}) {{block}}
-    end
-
     macro specify(what = nil, *, _source_file = __FILE__, _source_line = __LINE__, &block)
-      example({{what}}, _source_file: {{_source_file}}, _source_line: {{_source_line}}) {{block}}
+      {% puts "#{_source_file}:#{_source_line}" %}
+      def %test
+        {{yield}}
+      end
+
+      %source = ::Spectator::Source.new(__FILE__, __LINE__)
+      ::Spectator::DSL::Builder.add_example(
+        {{what.is_a?(StringLiteral | NilLiteral) ? what : what.stringify}},
+        %source,
+        {{@type.name}}.new
+      ) { |example, context| context.as({{@type.name}}).%test }
     end
   end
     macro it(description = nil, _source_file = __FILE__, _source_line = __LINE__, &block)

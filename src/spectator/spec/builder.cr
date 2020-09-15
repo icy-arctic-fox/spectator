@@ -42,7 +42,6 @@ module Spectator
     def add_example(name, source, context, &block : Example, Context ->)
       {% if flag?(:spectator_debug) %}
         puts "Add example: #{name} @ #{source}"
-        puts "Context: #{context}"
       {% end %}
       delegate = ExampleContextDelegate.new(context, block)
       Example.new(delegate, name, source, current_group)

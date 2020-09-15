@@ -8,19 +8,13 @@ module Spectator::DSL
     # Defines a new example group.
     # The *what* argument is a name or description of the group.
     # If it isn't a string literal, then it is symbolized for `ExampleNode#name`.
-    macro example_group(what, *, _source_file = __FILE__, _source_line = __LINE__, &block)
+
+
       # Example group: {{what.stringify}}
       # Source: {{_source_file}}:{{_source_line}}
-      class Group%group < {{@type.id}}
-        _spectator_group_subject({{what}})
-
-        %source = ::Spectator::Source.new({{_source_file}}, {{_source_line}})
-        ::Spectator::DSL::Builder.start_group({{what.is_a?(StringLiteral) ? what : what.stringify}}, %source)
-
-        {{block.body}}
-
-        ::Spectator::DSL::Builder.end_group
-      end
+    macro example_group(what, *, _source_file = __FILE__, _source_line = __LINE__, &block)
+      class Group%group < {{@type.id}}; _spectator_group_subject({{what}}); ::Spectator::DSL::Builder.start_group({{what.is_a?(StringLiteral) ? what : what.stringify}}, ::Spectator::Source.new(__FILE__, __LINE__)); {{block.body}}; ::Spectator::DSL::Builder.end_group; end
+      {% debug(false) %}
     end
 
     macro describe(what, *, _source_file = __FILE__, _source_line = __LINE__, &block)

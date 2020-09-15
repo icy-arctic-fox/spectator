@@ -25,23 +25,8 @@ module Spectator
   # Actually, prefixing methods and macros with `Spectator`
   # most likely won't work and can cause compiler errors.
   macro describe(description, &block)
-    # This macro creates the foundation for all specs.
-    # Every group of examples is defined a separate module - `SpectatorExamples`.
-    # There's multiple reasons for this.
-    #
-    # The first reason is to provide namespace isolation.
-    # We don't want the spec code to accidentally pickup types and values from the `Spectator` module.
-    # Another reason is that we need a root module to put all examples and groups in.
-    # And lastly, the spec DSL needs to be given to the block of code somehow.
-    # The DSL is included in the `SpectatorTest` class.
-    #
-    # For more information on how the DSL works, see the `DSL` module.
-
-    # Root-level class that contains all examples and example groups.
     class ::SpectatorTestContext
-      # Pass off the description argument and block to `DSL::StructureDSL.describe`.
-      # That method will handle creating a new group for this spec.
-      describe({{description}}) {{block}}
+      example_group({{description}}) {{block}}
     end
   end
 
