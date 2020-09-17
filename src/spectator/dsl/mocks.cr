@@ -2,7 +2,7 @@ require "../mocks"
 
 module Spectator::DSL
   macro double(name = "Anonymous", **stubs, &block)
-    {% if name.is_a?(StringLiteral) %}
+    {% if name.is_a?(StringLiteral) || name.is_a?(StringInterpolation) %}
       anonymous_double({{name}}, {{stubs.double_splat}})
     {% else %}
       {%
@@ -56,7 +56,7 @@ module Spectator::DSL
   end
 
   macro null_double(name, **stubs, &block)
-    {% if name.is_a?(StringLiteral) %}
+    {% if name.is_a?(StringLiteral) || name.is_a?(StringInterpolation) %}
       anonymous_null_double({{name}}, {{stubs.double_splat}})
     {% else %}
       {%

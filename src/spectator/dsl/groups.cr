@@ -5,7 +5,7 @@ module Spectator
     macro context(what, _source_file = __FILE__, _source_line = __LINE__, &block)
       class Context%context < {{@type.id}}
         {%
-          description = if what.is_a?(StringLiteral)
+          description = if what.is_a?(StringLiteral) || what.is_a?(StringInterpolation)
                           if what.starts_with?("#") || what.starts_with?(".")
                             what.id.symbolize
                           else

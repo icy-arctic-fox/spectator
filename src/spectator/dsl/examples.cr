@@ -20,7 +20,7 @@ module Spectator
 
       %source = ::Spectator::Source.new({{_source_file}}, {{_source_line}})
       ::Spectator::SpecBuilder.add_example(
-        {{description.is_a?(StringLiteral) || description.is_a?(NilLiteral) ? description : description.stringify}},
+        {{description.is_a?(StringLiteral) || description.is_a?(StringInterpolation) || description.is_a?(NilLiteral) ? description : description.stringify}},
         %source,
         {{@type.name}}
       ) { |test| test.as({{@type.name}}).%run }
@@ -47,7 +47,7 @@ module Spectator
 
       %source = ::Spectator::Source.new({{_source_file}}, {{_source_line}})
       ::Spectator::SpecBuilder.add_pending_example(
-        {{description.is_a?(StringLiteral) || description.is_a?(NilLiteral) ? description : description.stringify}},
+        {{description.is_a?(StringLiteral) || description.is_a?(StringInterpolation) || description.is_a?(NilLiteral) ? description : description.stringify}},
         %source,
         {{@type.name}}
       ) { |test| test.as({{@type.name}}).%run }
