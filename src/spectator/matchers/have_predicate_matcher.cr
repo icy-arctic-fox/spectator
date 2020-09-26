@@ -20,7 +20,7 @@ module Spectator::Matchers
       if match?(snapshot)
         SuccessfulMatchData.new(description)
       else
-        FailedMatchData.new(description, "#{actual.label} does not have #{expected.label}", **values(snapshot))
+        FailedMatchData.new(description, "#{actual.label} does not have #{expected.label}", values(snapshot).to_a)
       end
     end
 
@@ -29,7 +29,7 @@ module Spectator::Matchers
     def negated_match(actual : TestExpression(T)) : MatchData forall T
       snapshot = snapshot_values(actual.value)
       if match?(snapshot)
-        FailedMatchData.new(description, "#{actual.label} has #{expected.label}", **values(snapshot))
+        FailedMatchData.new(description, "#{actual.label} has #{expected.label}", values(snapshot).to_a)
       else
         SuccessfulMatchData.new(description)
       end
