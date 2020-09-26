@@ -5,25 +5,30 @@ module Spectator::DSL
   # DSL methods and macros for creating example groups.
   # This module should be included as a mix-in.
   module Groups
-    # Defines a new example group.
-    # The *what* argument is a name or description of the group.
-    # If it isn't a string literal, then it is symbolized for `ExampleNode#name`.
+    macro define_example_group(name)
+      # Defines a new example group.
+      # The *what* argument is a name or description of the group.
+      # If it isn't a string literal, then it is symbolized for `ExampleNode#name`.
+      macro {{name.id}}(what, &block)
+        class Group%group < \{{@type.id}}; _spectator_group_subject(\{{what}})
+          # TODO: Handle string interpolation in examples and groups.
+          ::Spectator::DSL::Builder.start_group(
+            \{{what.is_a?(StringLiteral) ? what : what.stringify}},
+            ::Spectator::Source.new(__FILE__, __LINE__)
+          )
 
+          \{{block.body}}
 
-      # Example group: {{what.stringify}}
-      # Source: {{_source_file}}:{{_source_line}}
-    macro example_group(what, *, _source_file = __FILE__, _source_line = __LINE__, &block)
-      class Group%group < {{@type.id}}; _spectator_group_subject({{what}}); ::Spectator::DSL::Builder.start_group({{what.is_a?(StringLiteral) ? what : what.stringify}}, ::Spectator::Source.new(__FILE__, __LINE__)); {{block.body}}; ::Spectator::DSL::Builder.end_group; end
-      {% debug(false) %}
+          ::Spectator::DSL::Builder.end_group
+        end
+      end
     end
 
-    macro describe(what, *, _source_file = __FILE__, _source_line = __LINE__, &block)
-      example_group({{what}}, _source_file: {{_source_file}}, _source_line: {{_source_line}}) {{block}}
-    end
+    define_example_group :example_group
 
-    macro context(what, *, _source_file = __FILE__, _source_line = __LINE__, &block)
-      example_group({{what}}, _source_file: {{_source_file}}, _source_line: {{_source_line}}) {{block}}
-    end
+    define_example_group :describe
+
+    define_example_group :context
 
     # Defines the implicit subject for the test context.
     # If *what* is a type, then the `described_class` method will be defined.

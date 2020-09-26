@@ -18,35 +18,11 @@ module Spectator::DSL
       end
     end
 
-    define_example(:example)
+    define_example :example
 
-    macro it(what = nil, *, _source_file = __FILE__, _source_line = __LINE__, &block)
-      {% puts "#{_source_file}:#{_source_line}" %}
-      def %test
-        {{yield}}
-      end
+    define_example :it
 
-      %source = ::Spectator::Source.new(__FILE__, __LINE__)
-      ::Spectator::DSL::Builder.add_example(
-        {{what.is_a?(StringLiteral | NilLiteral) ? what : what.stringify}},
-        %source,
-        {{@type.name}}.new
-      ) { |example, context| context.as({{@type.name}}).%test }
-    end
-
-    macro specify(what = nil, *, _source_file = __FILE__, _source_line = __LINE__, &block)
-      {% puts "#{_source_file}:#{_source_line}" %}
-      def %test
-        {{yield}}
-      end
-
-      %source = ::Spectator::Source.new(__FILE__, __LINE__)
-      ::Spectator::DSL::Builder.add_example(
-        {{what.is_a?(StringLiteral | NilLiteral) ? what : what.stringify}},
-        %source,
-        {{@type.name}}.new
-      ) { |example, context| context.as({{@type.name}}).%test }
-    end
+    define_example :specify
   end
     macro it(description = nil, _source_file = __FILE__, _source_line = __LINE__, &block)
       {% if block.is_a?(Nop) %}
