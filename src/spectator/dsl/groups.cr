@@ -13,8 +13,8 @@ module Spectator::DSL
         class Group%group < \{{@type.id}}; _spectator_group_subject(\{{what}})
           # TODO: Handle string interpolation in examples and groups.
           ::Spectator::DSL::Builder.start_group(
-            \{{what.is_a?(StringLiteral) ? what : what.stringify}},
             ::Spectator::Source.new(__FILE__, __LINE__)
+            _spectator_group_name(\{{what}}),
           )
 
           \{{block.body}}
@@ -22,6 +22,27 @@ module Spectator::DSL
           ::Spectator::DSL::Builder.end_group
         end
       end
+    end
+
+    # Inserts the correct representation of a group's name.
+    # If *what* appears to be a type name, it will be symbolized.
+    # If it's a string, then it is dropped in as-is.
+    # For anything else, it is stringified.
+    # This is intended to be used to convert a description from the spec DSL to `ExampleNode#name`.
+    private macro _spectator_group_name(what)
+      {% if (what.is_a?(Generic) ||
+              what.is_a?(Path) ||
+              what.is_a?(TypeNode) ||
+              what.is_a?(Union)) &&
+              (described_type = what.resolve?).is_a?(TypeNode) %}
+        {{what.symbolize}}
+      {% elsif what.is_a?(StringLiteral) ||
+                 what.is_a?(StringInterpolation) ||
+                 what.is_a?(NilLiteral) %}
+        {{what}}
+      {% else %}
+        {{what.stringify}}
+      {% end %}
     end
 
     define_example_group :example_group
