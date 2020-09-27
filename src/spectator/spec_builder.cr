@@ -1,13 +1,13 @@
-require "../example"
-require "../example_context_method"
-require "../example_group"
+require "./example"
+require "./example_context_method"
+require "./example_group"
 
 module Spectator
   # Progressively builds a test spec.
   #
   # A stack is used to track the current example group.
   # Adding an example or group will nest it under the group at the top of the stack.
-  class Spec::Builder
+  class SpecBuilder
     # Stack tracking the current group.
     # The bottom of the stack (first element) is the root group.
     # The root group should never be removed.
@@ -86,7 +86,9 @@ module Spectator
     # Raises an error if there were not symmetrical calls to `#start_group` and `#end_group`.
     # This would indicate a logical error somewhere in Spectator or an extension of it.
     def build : Spec
-      raise NotImplementedError.new("#build")
+      raise "Mismatched start and end groups" unless root?
+
+      Spec.new(root_group)
     end
 
     # Checks if the current group is the root group.

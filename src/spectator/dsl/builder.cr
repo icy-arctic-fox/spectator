@@ -1,4 +1,5 @@
-require "../spec/builder"
+require "../spec"
+require "../spec_builder"
 
 module Spectator::DSL
   # Incrementally builds up a test spec from the DSL.
@@ -7,7 +8,7 @@ module Spectator::DSL
     extend self
 
     # Underlying spec builder.
-    @@builder = Spec::Builder.new
+    @@builder = SpecBuilder.new
 
     # Defines a new example group and pushes it onto the group stack.
     # Examples and groups defined after calling this method will be nested under the new group.
