@@ -23,8 +23,8 @@ module Spectator::DSL
     # This is intended to be used to convert a description from the spec DSL to `ExampleNode#name`.
     private macro _spectator_example_name(what)
       {% if what.is_a?(StringLiteral) ||
-                 what.is_a?(StringInterpolation) ||
-                 what.is_a?(NilLiteral) %}
+              what.is_a?(StringInterpolation) ||
+              what.is_a?(NilLiteral) %}
         {{what}}
       {% else %}
         {{what.stringify}}
