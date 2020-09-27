@@ -17,7 +17,7 @@ module Spectator::Mocks
     abstract def call(args : GenericArguments(T, NT), &original : -> RT) forall T, NT, RT
 
     def call!(args : GenericArguments(T, NT), &original : -> RT) : RT forall T, NT, RT
-      value = call(args, &original)
+      value = call(args) { |*ya| yield *ya }
       if value.is_a?(RT)
         value.as(RT)
       else
