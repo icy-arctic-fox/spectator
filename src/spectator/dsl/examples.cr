@@ -24,32 +24,6 @@ module Spectator::DSL
 
     define_example :specify
   end
-    macro it(description = nil, _source_file = __FILE__, _source_line = __LINE__, &block)
-      {% if block.is_a?(Nop) %}
-        {% if description.is_a?(Call) %}
-          def %run
-            {{description}}
-          end
-        {% else %}
-          {% raise "Unrecognized syntax: `it #{description}` at #{_source_file}:#{_source_line}" %}
-        {% end %}
-      {% else %}
-        def %run
-          {{block.body}}
-        end
-      {% end %}
-
-      %source = ::Spectator::Source.new({{_source_file}}, {{_source_line}})
-      ::Spectator::SpecBuilder.add_example(
-        {{description.is_a?(StringLiteral) || description.is_a?(StringInterpolation) || description.is_a?(NilLiteral) ? description : description.stringify}},
-        %source,
-        {{@type.name}}
-      ) { |test| test.as({{@type.name}}).%run }
-    end
-
-    macro specify(description = nil, &block)
-      it({{description}}) {{block}}
-    end
 
     macro pending(description = nil, _source_file = __FILE__, _source_line = __LINE__, &block)
       {% if block.is_a?(Nop) %}
