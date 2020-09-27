@@ -8,13 +8,15 @@ module Spectator::DSL
     macro define_example_group(name)
       # Defines a new example group.
       # The *what* argument is a name or description of the group.
-      # If it isn't a string literal, then it is symbolized for `ExampleNode#name`.
+      #
+      # TODO: Handle string interpolation in example and group names.
       macro {{name.id}}(what, &block)
-        class Group%group < \{{@type.id}}; _spectator_group_subject(\{{what}})
-          # TODO: Handle string interpolation in examples and groups.
+        class Group%group < \{{@type.id}}
+          _spectator_group_subject(\{{what}})
+
           ::Spectator::DSL::Builder.start_group(
-            ::Spectator::Source.new(__FILE__, __LINE__)
             _spectator_group_name(\{{what}}),
+            ::Spectator::Source.new(\{{block.filename}}, \{{block.line_number}})
           )
 
           \{{block.body}}

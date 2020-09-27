@@ -4,15 +4,14 @@ require "./builder"
 module Spectator::DSL
   module Examples
     macro define_example(name)
-      macro {{name.id}}(what = nil)
+      macro {{name.id}}(what = nil, &block)
         def %test
-          \{{yield}}
+          \{{block.body}}
         end
 
-        %source = ::Spectator::Source.new(__FILE__, __LINE__)
         ::Spectator::DSL::Builder.add_example(
-          \{{what.is_a?(StringLiteral) || what.is_a?(NilLiteral) ? what : what.stringify}},
-          %source,
+          \{{what.is_a?(StringLiteral) || what.is_a?(StringInterpolation) || what.is_a?(NilLiteral) ? what : what.stringify}},
+          ::Spectator::Source.new(\{{block.filename}}, \{{block.line_number}}),
           \{{@type.name}}.new
         ) { |example, context| context.as(\{{@type.name}}).%test }
       end
@@ -25,7 +24,7 @@ module Spectator::DSL
     define_example :specify
   end
 
-    macro pending(description = nil, _source_file = __FILE__, _source_line = __LINE__, &block)
+  macro pending(description = nil, _source_file = __FILE__, _source_line = __LINE__, &block)
       {% if block.is_a?(Nop) %}
         {% if description.is_a?(Call) %}
           def %run
@@ -48,11 +47,11 @@ module Spectator::DSL
       ) { |test| test.as({{@type.name}}).%run }
     end
 
-    macro skip(description = nil, &block)
+  macro skip(description = nil, &block)
       pending({{description}}) {{block}}
     end
 
-    macro xit(description = nil, &block)
+  macro xit(description = nil, &block)
       pending({{description}}) {{block}}
     end
 end
