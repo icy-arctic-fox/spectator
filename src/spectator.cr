@@ -93,8 +93,8 @@ module Spectator
 
   # Builds the tests and runs the framework.
   private def run
-    # Build the test suite and run it.
-    # suite = ::Spectator::SpecBuilder.build(config.example_filter)
+    # Build the test spec and run it.
+    spec = ::Spectator::DSL::Builder.build
     # Runner.new(suite, config).run
     true
   rescue ex
