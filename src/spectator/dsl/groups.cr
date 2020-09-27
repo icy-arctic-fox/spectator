@@ -47,12 +47,6 @@ module Spectator::DSL
       {% end %}
     end
 
-    define_example_group :example_group
-
-    define_example_group :describe
-
-    define_example_group :context
-
     # Defines the implicit subject for the test context.
     # If *what* is a type, then the `described_class` method will be defined.
     # Additionally, the implicit subject is set to an instance of *what* if it's not a module.
@@ -83,6 +77,12 @@ module Spectator::DSL
         end
       {% end %}
     end
+
+    define_example_group :example_group
+
+    define_example_group :describe
+
+    define_example_group :context
   end
 
   macro sample(collection, count = nil, _source_file = __FILE__, _source_line = __LINE__, &block)
