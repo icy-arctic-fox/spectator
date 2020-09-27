@@ -33,5 +33,14 @@ module Spectator::DSL
     def add_example(*args, &block : Example, Context ->)
       @@builder.add_example(*args, &block)
     end
+
+    # Constructs the test spec.
+    # Returns the spec instance.
+    #
+    # Raises an error if there were not symmetrical calls to `#start_group` and `#end_group`.
+    # This would indicate a logical error somewhere in Spectator or an extension of it.
+    def build : Spec
+      @@builder.build
+    end
   end
 end
