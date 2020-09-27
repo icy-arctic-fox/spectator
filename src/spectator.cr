@@ -8,6 +8,14 @@ module Spectator
   # Current version of the Spectator library.
   VERSION = {{ `shards version #{__DIR__}`.stringify.chomp }}
 
+  # Inserts code to produce a debug message.
+  # The code will only be injected when `spectator_debug` is defined (`-Dspectator_debug`).
+  macro debug_out(message)
+    {% if flag?(:spectator_debug) %}
+      STDERR.puts {{message}}
+    {% end %}
+  end
+
   # Top-level describe method.
   # All specs in a file must be wrapped in this call.
   # This takes an argument and a block.
