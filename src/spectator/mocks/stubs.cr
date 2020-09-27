@@ -84,7 +84,7 @@ module Spectator::Mocks
           end
 
           {% if body && !body.is_a?(Nop) %}
-            %method({{args.splat}}) { {{original}} { |*%ya| yield *%ya } }
+            %method({{args.splat}}) { |*%ya| yield *%ya }
           {% else %}
             {{original}} do |*%yield_args|
               yield *%yield_args
