@@ -103,7 +103,7 @@ module Spectator
     # But if an exception occurs outside an example,
     # it's likely the fault of the test framework (Spectator).
     # So we display a helpful error that could be reported and return non-zero.
-    display_error_stack(ex)
+    display_framework_error(ex)
     false
   end
 
@@ -147,22 +147,11 @@ module Spectator
   # Displays a complete error stack.
   # Prints an error and everything that caused it.
   # Stacktrace is included.
-  private def display_error_stack(error) : Nil
-    puts
-    puts "Encountered an unexpected error in framework"
-    # Loop while there's a cause for the error.
-    # Print each error in the stack.
-    loop do
-      display_error(error)
-      error = error.cause
-      break unless error
-    end
-  end
-
-  # Display a single error and its stacktrace.
-  private def display_error(error) : Nil
-    puts
-    puts "Caused by: #{error.message}"
-    puts error.backtrace.join("\n")
+  private def display_framework_error(error) : Nil
+    STDERR.puts
+    STDERR.puts "!> Spectator encountered an unexpected error."
+    STDERR.puts "!> This is probably a bug and should be reported."
+    STDERR.puts
+    error.inspect_with_backtrace(STDERR)
   end
 end
