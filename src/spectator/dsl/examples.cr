@@ -5,6 +5,8 @@ module Spectator::DSL
   module Examples
     macro define_example(name)
       macro {{name.id}}(what = nil, &block)
+        \{% raise "Cannot use '{{name.id}}' inside of a test block" if @def %}
+
         def %test
           \{{block.body}}
         end

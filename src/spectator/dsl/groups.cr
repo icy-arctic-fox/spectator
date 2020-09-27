@@ -11,6 +11,8 @@ module Spectator::DSL
       #
       # TODO: Handle string interpolation in example and group names.
       macro {{name.id}}(what, &block)
+        \{% raise "Cannot use '{{name.id}}' inside of a test block" if @def %}
+
         class Group%group < \{{@type.id}}
           _spectator_group_subject(\{{what}})
 
