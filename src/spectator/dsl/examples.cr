@@ -10,11 +10,25 @@ module Spectator::DSL
         end
 
         ::Spectator::DSL::Builder.add_example(
-          \{{what.is_a?(StringLiteral) || what.is_a?(StringInterpolation) || what.is_a?(NilLiteral) ? what : what.stringify}},
+          _spectator_example_name(\{{what}}),
           ::Spectator::Source.new(\{{block.filename}}, \{{block.line_number}}),
           \{{@type.name}}.new
         ) { |example, context| context.as(\{{@type.name}}).%test }
       end
+    end
+
+    # Inserts the correct representation of a example's name.
+    # If *what* is a string, then it is dropped in as-is.
+    # For anything else, it is stringified.
+    # This is intended to be used to convert a description from the spec DSL to `ExampleNode#name`.
+    private macro _spectator_example_name(what)
+      {% if what.is_a?(StringLiteral) ||
+                 what.is_a?(StringInterpolation) ||
+                 what.is_a?(NilLiteral) %}
+        {{what}}
+      {% else %}
+        {{what.stringify}}
+      {% end %}
     end
 
     define_example :example
