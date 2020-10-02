@@ -1,6 +1,6 @@
 module Spectator::Mocks
   module Stubs
-    private macro stub(definition, _file = __FILE__, _line = __LINE__, &block)
+    private macro stub(definition, *types, _file = __FILE__, _line = __LINE__, &block)
       {%
         receiver = nil
         name = nil
@@ -30,6 +30,21 @@ module Spectator::Mocks
           params = [] of MacroId
           args = [] of MacroId
           body = block
+        elsif definition.is_a?(SymbolLiteral) # stub :foo, arg : Int32
+          name = definition.id
+          named = false
+          params = types
+          if params.last.is_a?(Call)
+            body = params.last.block
+            params[-1] = params.last.name
+          end
+          args = params.map do |p|
+            n = p.is_a?(TypeDeclaration) ? p.var : p.id
+            r = named ? "#{n}: #{n}".id : n
+            named = true if n.starts_with?('*')
+            r
+          end
+          body = block unless body
         else
           raise "Unrecognized stub format"
         end
