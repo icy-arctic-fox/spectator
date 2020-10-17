@@ -1,3 +1,7 @@
+require "./example"
+require "./example_group"
+require "./example_node"
+
 module Spectator
   # Iterates through all examples in a group and its nested groups.
   class ExampleIterator
@@ -5,12 +9,12 @@ module Spectator
 
     # Stack that contains the iterators for each group.
     # A stack is used to track where in the tree this iterator is.
-    @stack : Array(Iterator(ExampleComponent))
+    @stack : Array(Iterator(ExampleNode))
 
     # Creates a new iterator.
     # The *group* is the example group to iterate through.
-    def initialize(@group : Iterable(ExampleComponent))
-      iter = @group.each.as(Iterator(ExampleComponent))
+    def initialize(@group : ExampleGroup)
+      iter = @group.each.as(Iterator(ExampleNode))
       @stack = [iter]
     end
 
@@ -22,8 +26,7 @@ module Spectator
       # b. the stack is empty.
       until @stack.empty?
         # Retrieve the next "thing".
-        # This could be an `Example`,
-        # or a group.
+        # This could be an `Example` or a group.
         item = advance
         # Return the item if it's an example.
         # Otherwise, advance and check the next one.
@@ -36,7 +39,7 @@ module Spectator
     # Restart the iterator at the beginning.
     def rewind
       # Same code as `#initialize`, but return self.
-      iter = @group.each.as(Iterator(ExampleComponent))
+      iter = @group.each.as(Iterator(ExampleNode))
       @stack = [iter]
       self
     end

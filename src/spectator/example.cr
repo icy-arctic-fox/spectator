@@ -28,7 +28,7 @@ module Spectator
     # Returns the result of the execution.
     # The result will also be stored in `#result`.
     def run : Result
-      Spectator.debug_out("Running example #{example}")
+      Spectator.debug_out("Running example #{self}")
       @delegate.call(self)
       raise NotImplementedError.new("#run")
     end

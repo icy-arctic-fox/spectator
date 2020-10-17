@@ -95,7 +95,7 @@ module Spectator
   private def run
     # Build the test spec and run it.
     spec = ::Spectator::DSL::Builder.build
-    # Runner.new(suite, config).run
+    spec.run
     true
   rescue ex
     # Catch all unhandled exceptions here.

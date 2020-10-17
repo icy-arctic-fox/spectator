@@ -4,6 +4,7 @@ module Spectator
   # Collection of examples and sub-groups.
   class ExampleGroup < ExampleNode
     include Enumerable(ExampleNode)
+    include Iterable(ExampleNode)
 
     @nodes = [] of ExampleNode
 
@@ -20,6 +21,11 @@ module Spectator
     # Yields each node (example and sub-group).
     def each
       @nodes.each { |node| yield node }
+    end
+
+    # Returns an iterator for each (example and sub-group).
+    def each
+      @nodes.each
     end
 
     # Checks if all examples and sub-groups have finished.
