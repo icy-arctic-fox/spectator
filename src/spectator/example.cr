@@ -1,6 +1,8 @@
 require "./example_context_delegate"
 require "./example_group"
 require "./example_node"
+require "./pass_result"
+require "./pending_result"
 require "./result"
 require "./source"
 
@@ -11,8 +13,7 @@ module Spectator
     getter? finished : Bool = false
 
     # Retrieves the result of the last time the example ran.
-    # TODO: Make result not nil and default to pending.
-    getter! result : Result
+    getter result : Result = PendingResult.new
 
     # Creates the example.
     # The *delegate* contains the test context and method that runs the test case.
@@ -30,8 +31,11 @@ module Spectator
     # The result will also be stored in `#result`.
     def run : Result
       Log.debug { "Running example #{self}" }
-      @delegate.call(self)
-      raise NotImplementedError.new("#run")
+      elapsed = Time.measure do
+        @delegate.call(self)
+      end
+      @finished = true
+      @result = PassResult.new(elapsed)
     end
 
     # Exposes information about the example useful for debugging.
@@ -47,7 +51,7 @@ module Spectator
         io << s
       end
 
-      # TODO: Add result.
+      io << result
     end
   end
 end

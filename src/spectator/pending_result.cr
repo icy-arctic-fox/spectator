@@ -5,19 +5,18 @@ module Spectator
   # A pending result means the example is not ready to run yet.
   # This can happen when the functionality to be tested is not implemented yet.
   class PendingResult < Result
-    # Calls the `pending` method on *interface*.
-    def call(interface)
-      interface.pending
+    # Creates the result.
+    # *elapsed* is the length of time it took to run the example.
+    def initialize(elapsed = Time::Span::ZERO)
+      super
     end
 
-    # Calls the `pending` method on *interface*
-    # and passes the yielded value.
-    def call(interface)
-      value = yield self
-      interface.pending(value)
+    # Calls the `pending` method on the *visitor*.
+    def accept(visitor)
+      visitor.pending
     end
 
-    # One-word descriptor of the result.
+    # One-word description of the result.
     def to_s(io)
       io << "pending"
     end
