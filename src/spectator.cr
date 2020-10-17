@@ -91,8 +91,9 @@ module Spectator
 
   # Builds the tests and runs the framework.
   private def run
-    # Build the test spec and run it.
-    spec = ::Spectator::DSL::Builder.build
+    # Build the spec and run it.
+    # DSL::Builder.config = config # TODO: Set config.
+    spec = DSL::Builder.build
     spec.run
     true
   rescue ex

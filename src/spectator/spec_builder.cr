@@ -1,3 +1,5 @@
+require "./config"
+require "./config_builder"
 require "./example"
 require "./example_context_method"
 require "./example_group"
@@ -16,6 +18,9 @@ module Spectator
     # The top of the stack (last element) is the current group.
     # New examples should be added to the current group.
     @group_stack : Deque(ExampleGroup)
+
+    # Configuration for the spec.
+    @config : Config?
 
     # Creates a new spec builder.
     # A root group is pushed onto the group stack.
@@ -82,6 +87,12 @@ module Spectator
       # The example is added to the current group by `Example` initializer.
     end
 
+    # Sets the configuration of the spec.
+    # This configuration controls how examples run.
+    def config=(config)
+      @config = config
+    end
+
     # Constructs the test spec.
     # Returns the spec instance.
     #
@@ -90,7 +101,7 @@ module Spectator
     def build : Spec
       raise "Mismatched start and end groups" unless root?
 
-      Spec.new(root_group)
+      Spec.new(root_group, config)
     end
 
     # Checks if the current group is the root group.
@@ -107,6 +118,12 @@ module Spectator
     # This is the group that new examples should be added to.
     private def current_group
       @group_stack.last
+    end
+
+    # Retrieves the configuration.
+    # If one wasn't previously set, a default configuration is used.
+    private def config
+      @config || ConfigBuilder.new.build
     end
   end
 end

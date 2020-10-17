@@ -35,6 +35,13 @@ module Spectator::DSL
       @@builder.add_example(*args, &block)
     end
 
+    # Sets the configuration of the spec.
+    #
+    # See `Spec::Builder#config=` for usage details.
+    def config=(config)
+      @@builder.config = config
+    end
+
     # Constructs the test spec.
     # Returns the spec instance.
     #

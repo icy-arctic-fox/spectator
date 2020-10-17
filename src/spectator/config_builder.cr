@@ -1,3 +1,7 @@
+require "./composite_example_filter"
+require "./example_filter"
+require "./null_example_filter"
+
 module Spectator
   # Mutable configuration used to produce a final configuration.
   # Use the setters in this class to incrementally build a configuration.
