@@ -1,5 +1,8 @@
+require "log"
 require "./spectator/includes"
 require "./spectator_test_context"
+
+Log.setup_from_env
 
 # Module that contains all functionality related to Spectator.
 module Spectator
@@ -8,13 +11,8 @@ module Spectator
   # Current version of the Spectator library.
   VERSION = {{ `shards version #{__DIR__}`.stringify.chomp }}
 
-  # Inserts code to produce a debug message.
-  # The code will only be injected when `spectator_debug` is defined (`-Dspectator_debug`).
-  macro debug(message)
-    {% if flag?(:spectator_debug) %}
-      STDERR.puts {{message}}
-    {% end %}
-  end
+  # Logger for Spectator internals.
+  Log = ::Log.for(self)
 
   # Top-level describe method.
   # All specs in a file must be wrapped in this call.
@@ -103,7 +101,7 @@ module Spectator
     # But if an exception occurs outside an example,
     # it's likely the fault of the test framework (Spectator).
     # So we display a helpful error that could be reported and return non-zero.
-    display_framework_error(ex)
+    Log.fatal(exception: ex) { "Spectator encountered an unexpected error" }
     false
   end
 
@@ -142,16 +140,5 @@ module Spectator
   # Applies configuration options from the command-line arguments
   private def apply_command_line_args : Nil
     CommandLineArgumentsConfigSource.new.apply_to(@@config_builder)
-  end
-
-  # Displays a complete error stack.
-  # Prints an error and everything that caused it.
-  # Stacktrace is included.
-  private def display_framework_error(error) : Nil
-    STDERR.puts
-    STDERR.puts "!> Spectator encountered an unexpected error."
-    STDERR.puts "!> This is probably a bug and should be reported."
-    STDERR.puts
-    error.inspect_with_backtrace(STDERR)
   end
 end
