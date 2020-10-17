@@ -10,7 +10,7 @@ module Spectator
 
   # Inserts code to produce a debug message.
   # The code will only be injected when `spectator_debug` is defined (`-Dspectator_debug`).
-  macro debug_out(message)
+  macro debug(message)
     {% if flag?(:spectator_debug) %}
       STDERR.puts {{message}}
     {% end %}

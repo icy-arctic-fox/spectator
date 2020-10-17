@@ -36,7 +36,7 @@ module Spectator
     # The newly created group is returned.
     # It shouldn't be used outside of this class until a matching `#end_group` is called.
     def start_group(name, source = nil) : ExampleGroup
-      Spectator.debug_out("Start group: #{name.inspect} @ #{source}")
+      Spectator.debug("Start group: #{name.inspect} @ #{source}")
       ExampleGroup.new(name, source, current_group).tap do |group|
         @group_stack << group
       end
@@ -49,7 +49,7 @@ module Spectator
     # At this point, it is safe to use the group.
     # All of its examples and sub-groups have been populated.
     def end_group : ExampleGroup
-      Spectator.debug_out("End group: #{current_group}")
+      Spectator.debug("End group: #{current_group}")
       raise "Can't pop root group" if root?
 
       @group_stack.pop
@@ -74,7 +74,7 @@ module Spectator
     #
     # The newly created example is returned.
     def add_example(name, source, context, &block : Example, Context ->) : Example
-      Spectator.debug_out("Add example: #{name} @ #{source}")
+      Spectator.debug("Add example: #{name} @ #{source}")
       delegate = ExampleContextDelegate.new(context, block)
       Example.new(delegate, name, source, current_group)
       # The example is added to the current group by `Example` initializer.
