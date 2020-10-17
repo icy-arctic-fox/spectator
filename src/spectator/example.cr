@@ -11,6 +11,7 @@ module Spectator
     getter? finished : Bool = false
 
     # Retrieves the result of the last time the example ran.
+    # TODO: Make result not nil and default to pending.
     getter! result : Result
 
     # Creates the example.
@@ -35,7 +36,18 @@ module Spectator
 
     # Exposes information about the example useful for debugging.
     def inspect(io)
-      raise NotImplementedError.new("#inspect")
+      # Full example name.
+      io << '"'
+      to_s(io)
+      io << '"'
+
+      # Add source if it's available.
+      if (s = source)
+        io << " @ "
+        io << s
+      end
+
+      # TODO: Add result.
     end
   end
 end
