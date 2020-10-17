@@ -13,7 +13,7 @@ module Spectator::DSL
       macro {{name.id}}(what, &block)
         \{% raise "Cannot use '{{name.id}}' inside of a test block" if @def %}
 
-        class Group%group < \{{@type.id}}
+        class Group\%group < \{{@type.id}}
           _spectator_group_subject(\{{what}})
 
           ::Spectator::DSL::Builder.start_group(

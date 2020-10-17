@@ -7,7 +7,7 @@ module Spectator::DSL
       macro {{name.id}}(what = nil, &block)
         \{% raise "Cannot use '{{name.id}}' inside of a test block" if @def %}
 
-        def %test
+        def \%test
           \{{block.body}}
         end
 
@@ -15,7 +15,7 @@ module Spectator::DSL
           _spectator_example_name(\{{what}}),
           ::Spectator::Source.new(\{{block.filename}}, \{{block.line_number}}),
           \{{@type.name}}.new
-        ) { |example, context| context.as(\{{@type.name}}).%test }
+        ) { |example, context| context.as(\{{@type.name}}).\%test }
       end
     end
 
