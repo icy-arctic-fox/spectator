@@ -37,7 +37,7 @@ module Spectator
       @fail_blank = builder.fail_blank?
       @dry_run = builder.dry_run?
       @randomize = builder.randomize?
-      @random_seed = builder.seed
+      @random_seed = builder.random_seed
       @profile = builder.profile?
       @example_filter = builder.example_filter
     end

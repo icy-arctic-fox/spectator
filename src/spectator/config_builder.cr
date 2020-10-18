@@ -14,7 +14,7 @@ module Spectator
     end
 
     # Seed used for random number generation.
-    property seed : UInt64 = Random.rand(UInt64)
+    property random_seed : UInt64 = Random.rand(UInt64)
 
     @primary_formatter : Formatting::Formatter?
     @additional_formatters = [] of Formatting::Formatter
