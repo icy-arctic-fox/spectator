@@ -2,6 +2,7 @@
 require "./dsl/builder"
 require "./dsl/examples"
 require "./dsl/groups"
+require "./dsl/top"
 
 module Spectator
   # Namespace containing methods representing the spec domain specific language.

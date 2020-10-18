@@ -7,39 +7,13 @@ Log.setup_from_env
 # Module that contains all functionality related to Spectator.
 module Spectator
   extend self
+  include DSL::Top
 
   # Current version of the Spectator library.
   VERSION = {{ `shards version #{__DIR__}`.stringify.chomp }}
 
   # Logger for Spectator internals.
   Log = ::Log.for(self)
-
-  # Top-level describe method.
-  # All specs in a file must be wrapped in this call.
-  # This takes an argument and a block.
-  # The argument is what your spec is describing.
-  # It can be any Crystal expression,
-  # but is typically a class name or feature string.
-  # The block should contain all of the specs for what is being described.
-  # Example:
-  # ```
-  # Spectator.describe Foo do
-  #   # Your specs for `Foo` go here.
-  # end
-  # ```
-  # NOTE: Inside the block, the `Spectator` prefix is no longer needed.
-  # Actually, prefixing methods and macros with `Spectator`
-  # most likely won't work and can cause compiler errors.
-  macro describe(description, &block)
-    class ::SpectatorTestContext
-      example_group({{description}}) {{block}}
-    end
-  end
-
-  # :ditto:
-  macro context(description, &block)
-    describe({{description}}) {{block}}
-  end
 
   # Flag indicating whether Spectator should automatically run tests.
   # This should be left alone (set to true) in typical usage.
