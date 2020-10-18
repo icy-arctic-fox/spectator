@@ -31,15 +31,15 @@ module Spectator
     # Creates a new configuration.
     # Properties are pulled from *source*.
     # Typically, *source* is a `ConfigBuilder`.
-    def initialize(builder)
-      @formatters = builder.formatters
-      @fail_fast = builder.fail_fast?
-      @fail_blank = builder.fail_blank?
-      @dry_run = builder.dry_run?
-      @randomize = builder.randomize?
-      @random_seed = builder.random_seed
-      @profile = builder.profile?
-      @example_filter = builder.example_filter
+    def initialize(source)
+      @formatters = source.formatters
+      @fail_fast = source.fail_fast?
+      @fail_blank = source.fail_blank?
+      @dry_run = source.dry_run?
+      @randomize = source.randomize?
+      @random_seed = source.random_seed
+      @profile = source.profile?
+      @example_filter = source.example_filter
     end
 
     # Shuffles the items in an array using the configured random settings.
