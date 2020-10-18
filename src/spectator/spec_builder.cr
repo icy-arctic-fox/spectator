@@ -30,6 +30,17 @@ module Spectator
       @group_stack.push(root_group)
     end
 
+    # Constructs the test spec.
+    # Returns the spec instance.
+    #
+    # Raises an error if there were not symmetrical calls to `#start_group` and `#end_group`.
+    # This would indicate a logical error somewhere in Spectator or an extension of it.
+    def build : Spec
+      raise "Mismatched start and end groups" unless root?
+
+      Spec.new(root_group, config)
+    end
+
     # Defines a new example group and pushes it onto the group stack.
     # Examples and groups defined after calling this method will be nested under the new group.
     # The group will be finished and popped off the stack when `#end_example` is called.
@@ -87,21 +98,19 @@ module Spectator
       # The example is added to the current group by `Example` initializer.
     end
 
+    # Builds the configuration to use for the spec.
+    # A `ConfigBuilder` is yielded to the block provided to this method.
+    # That builder will be used to create the configuration.
+    def config
+      builder = ConfigBuilder.new
+      yield builder
+      @config = builder.build
+    end
+
     # Sets the configuration of the spec.
     # This configuration controls how examples run.
     def config=(config)
       @config = config
-    end
-
-    # Constructs the test spec.
-    # Returns the spec instance.
-    #
-    # Raises an error if there were not symmetrical calls to `#start_group` and `#end_group`.
-    # This would indicate a logical error somewhere in Spectator or an extension of it.
-    def build : Spec
-      raise "Mismatched start and end groups" unless root?
-
-      Spec.new(root_group, config)
     end
 
     # Checks if the current group is the root group.
@@ -122,8 +131,8 @@ module Spectator
 
     # Retrieves the configuration.
     # If one wasn't previously set, a default configuration is used.
-    private def config
-      @config || ConfigBuilder.new.build
+    private def config : Config
+      @config || ConfigBuilder.default
     end
   end
 end

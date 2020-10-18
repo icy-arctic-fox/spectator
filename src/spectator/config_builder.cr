@@ -1,4 +1,5 @@
 require "./composite_example_filter"
+require "./config"
 require "./example_filter"
 require "./null_example_filter"
 
@@ -12,14 +13,6 @@ module Spectator
       new.build
     end
 
-    # Random number generator to use.
-    protected getter random = Random::DEFAULT
-
-    def initialize
-      @seed = seed = @random.rand(UInt16).to_u64
-      @random.new_seed(seed)
-    end
-
     @primary_formatter : Formatting::Formatter?
     @additional_formatters = [] of Formatting::Formatter
     @fail_fast = false
@@ -28,6 +21,11 @@ module Spectator
     @randomize = false
     @profile = false
     @filters = [] of ExampleFilter
+
+    # Creates a configuration.
+    def build : Config
+      Config.new(self)
+    end
 
     # Sets the primary formatter to use for reporting test progress and results.
     def formatter=(formatter : Formatting::Formatter)
@@ -105,7 +103,6 @@ module Spectator
     # Sets the seed for the random number generator.
     def seed=(seed)
       @seed = seed
-      @random = Random.new(seed)
     end
 
     # Randomizes test execution order.
@@ -152,11 +149,6 @@ module Spectator
       else
         CompositeExampleFilter.new(@filters)
       end
-    end
-
-    # Creates a configuration.
-    def build : Config
-      Config.new(self)
     end
   end
 end

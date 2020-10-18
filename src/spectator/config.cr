@@ -16,19 +16,16 @@ module Spectator
     # Examples won't run, but the output will show that they did.
     getter? dry_run : Bool
 
-    # Random number generator to use for everything.
-    getter random : Random
-
-    # Indicates whether tests are run in a random order.
+    # Indicates whether examples run in a random order.
     getter? randomize : Bool
 
-    # Random seed used for number generation.
+    # Seed used for random number generation.
     getter! random_seed : UInt64?
 
-    # Indicates whether profiling information should be displayed.
+    # Indicates whether timing information should be displayed.
     getter? profile : Bool
 
-    # Filter that determines which examples to run.
+    # Filter determining examples to run.
     getter example_filter : ExampleFilter
 
     # Creates a new configuration.
@@ -37,7 +34,6 @@ module Spectator
       @fail_fast = builder.fail_fast?
       @fail_blank = builder.fail_blank?
       @dry_run = builder.dry_run?
-      @random = builder.random
       @randomize = builder.randomize?
       @random_seed = builder.seed?
       @profile = builder.profile?
