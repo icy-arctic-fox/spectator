@@ -16,16 +16,8 @@ module Spectator
     # Generates a list of examples to run.
     # The order of the examples are also sorted based on the configuration.
     private def examples
-      ExampleIterator.new(@root).to_a.tap do |examples|
-        if @config.randomize?
-          random = if (seed = @config.random_seed)
-            Random.new(seed)
-          else
-            Random.new
-          end
-          examples.shuffle!(random)
-        end
-      end
+      examples = ExampleIterator.new(@root).to_a
+      @config.shuffle!(examples)
     end
 
     private struct Runner

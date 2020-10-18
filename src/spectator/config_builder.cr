@@ -13,6 +13,9 @@ module Spectator
       new.build
     end
 
+    # Seed used for random number generation.
+    property seed : UInt64 = Random.rand(UInt64)
+
     @primary_formatter : Formatting::Formatter?
     @additional_formatters = [] of Formatting::Formatter
     @fail_fast = false
@@ -95,14 +98,6 @@ module Spectator
     # In this mode, no tests are run, but output acts like they were.
     protected def dry_run?
       @dry_run
-    end
-
-    # Seed used for random number generation.
-    getter! seed : UInt64?
-
-    # Sets the seed for the random number generator.
-    def seed=(seed)
-      @seed = seed
     end
 
     # Randomizes test execution order.
