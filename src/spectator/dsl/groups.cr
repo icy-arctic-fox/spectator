@@ -38,7 +38,7 @@ module Spectator::DSL
               what.is_a?(Path) ||
               what.is_a?(TypeNode) ||
               what.is_a?(Union)) &&
-              (described_type = what.resolve?).is_a?(TypeNode) %}
+              what.resolve?.is_a?(TypeNode) %}
         {{what.symbolize}}
       {% elsif what.is_a?(StringLiteral) ||
                  what.is_a?(StringInterpolation) ||

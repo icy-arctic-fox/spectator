@@ -54,7 +54,8 @@ module Spectator
 
         # Add padding between the node names
         # only if the names don't appear to be symbolic.
-        io << ' ' unless !group.name? || # Skip blank group names (like the root group).
+        # Skip blank group names (like the root group).
+        io << ' ' unless !group.name? || # ameba:disable Style/NegatedConditionsInUnless
                          (group.name?.is_a?(Symbol) && name.is_a?(String) &&
                          (name.starts_with?('#') || name.starts_with?('.')))
       end
