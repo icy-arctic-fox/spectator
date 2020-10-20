@@ -4,6 +4,7 @@
 # Including all files with a wildcard would accidentally enable should-syntax.
 # Unfortunately, that leads to the existence of this file to include everything but that file.
 
-require "./config"
+require "./command_line_arguments_config_source"
 require "./config_builder"
+require "./config"
 require "./dsl"

@@ -66,7 +66,7 @@ module Spectator
   # Builds the tests and runs the framework.
   private def run
     # Build the spec and run it.
-    # DSL::Builder.config = config # TODO: Set config.
+    DSL::Builder.config = config
     spec = DSL::Builder.build
     spec.run
     true
@@ -109,11 +109,11 @@ module Spectator
   private def apply_config_file(file_path = CONFIG_FILE_PATH) : Nil
     return unless File.exists?(file_path)
     args = File.read(file_path).lines
-    CommandLineArgumentsConfigSource.new(args).apply_to(@@config_builder)
+    CommandLineArgumentsConfigSource.new(args).apply(@@config_builder)
   end
 
   # Applies configuration options from the command-line arguments
   private def apply_command_line_args : Nil
-    CommandLineArgumentsConfigSource.new.apply_to(@@config_builder)
+    CommandLineArgumentsConfigSource.new.apply(@@config_builder)
   end
 end
