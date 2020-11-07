@@ -65,12 +65,16 @@ module Spectator::Mocks
       %}
 
       {% if body && !body.is_a?(Nop) %}
-        def {{receiver}}%method({{params.splat}}){% if return_type != :undefined %} : {{return_type.id}}{% elsif definition.is_a?(TypeDeclaration) %} : {{definition.type}}{% end %}
+        def {{receiver}}%method({{params.splat}}){% if return_type.is_a?(ArrayLiteral) %} : {{return_type.type}}{% elsif return_type != :undefined %} : {{return_type.id}}{% elsif definition.is_a?(TypeDeclaration) %} : {{definition.type}}{% end %}
           {{body.body}}
+        end
+      {% elsif return_type.is_a?(ArrayLiteral) %}
+        def {{receiver}}%method({{params.splat}}) : {{return_type.type}}
+          {{return_type.splat}}
         end
       {% end %}
 
-      def {{receiver}}{{name}}({{params.splat}}){% if return_type != :undefined %} : {{return_type.id}}{% elsif definition.is_a?(TypeDeclaration) %} : {{definition.type}}{% end %}
+      def {{receiver}}{{name}}({{params.splat}}){% if return_type.is_a?(ArrayLiteral) %} : {{return_type.type}}{% elsif return_type != :undefined %} : {{return_type.id}}{% elsif definition.is_a?(TypeDeclaration) %} : {{definition.type}}{% end %}
         if (%harness = ::Spectator::Harness.current?)
           %args = ::Spectator::Mocks::GenericArguments.create({{args.splat}})
           %call = ::Spectator::Mocks::MethodCall.new({{name.symbolize}}, %args)
@@ -79,7 +83,7 @@ module Spectator::Mocks
             return %stub.call!(%args) { {{original}} }
           end
 
-          {% if body && !body.is_a?(Nop) %}
+          {% if body && !body.is_a?(Nop) || return_type.is_a?(ArrayLiteral) %}
             %method({{args.splat}})
           {% else %}
             {{original}}
@@ -89,7 +93,7 @@ module Spectator::Mocks
         end
       end
 
-      def {{receiver}}{{name}}({{params.splat}}){% if return_type != :undefined %} : {{return_type.id}}{% elsif definition.is_a?(TypeDeclaration) %} : {{definition.type}}{% end %}
+      def {{receiver}}{{name}}({{params.splat}}){% if return_type.is_a?(ArrayLiteral) %} : {{return_type.type}}{% elsif return_type != :undefined %} : {{return_type.id}}{% elsif definition.is_a?(TypeDeclaration) %} : {{definition.type}}{% end %}
         if (%harness = ::Spectator::Harness.current?)
           %args = ::Spectator::Mocks::GenericArguments.create({{args.splat}})
           %call = ::Spectator::Mocks::MethodCall.new({{name.symbolize}}, %args)
@@ -98,7 +102,7 @@ module Spectator::Mocks
             return %stub.call!(%args) { {{original}} { |*%ya| yield *%ya } }
           end
 
-          {% if body && !body.is_a?(Nop) %}
+          {% if body && !body.is_a?(Nop) || return_type.is_a?(ArrayLiteral) %}
             %method({{args.splat}}) { |*%ya| yield *%ya }
           {% else %}
             {{original}} do |*%yield_args|

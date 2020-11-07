@@ -64,7 +64,7 @@ module Spectator::Mocks
         end
       %}
 
-      def {{name}}({{params.splat}}){% if return_type != :undefined %} : {{return_type.id}}{% elsif definition.is_a?(TypeDeclaration) %} : {{definition.type}}{% end %}
+      def {{name}}({{params.splat}}){% if return_type.is_a?(ArrayLiteral) %} : {{return_type.type}}{% elsif return_type != :undefined %} : {{return_type.id}}{% elsif definition.is_a?(TypeDeclaration) %} : {{definition.type}}{% end %}
         %args = ::Spectator::Mocks::GenericArguments.create({{args.splat}})
         %call = ::Spectator::Mocks::MethodCall.new({{name.symbolize}}, %args)
         ::Spectator::Harness.current.mocks.record_call(self, %call)
@@ -75,7 +75,7 @@ module Spectator::Mocks
         end
       end
 
-      def {{name}}({{params.splat}}){% if return_type != :undefined %} : {{return_type.id}}{% elsif definition.is_a?(TypeDeclaration) %} : {{definition.type}}{% end %}
+      def {{name}}({{params.splat}}){% if return_type.is_a?(ArrayLiteral) %} : {{return_type.type}}{% elsif return_type != :undefined %} : {{return_type.id}}{% elsif definition.is_a?(TypeDeclaration) %} : {{definition.type}}{% end %}
         %args = ::Spectator::Mocks::GenericArguments.create({{args.splat}})
         %call = ::Spectator::Mocks::MethodCall.new({{name.symbolize}}, %args)
         ::Spectator::Harness.current.mocks.record_call(self, %call)
@@ -88,9 +88,11 @@ module Spectator::Mocks
         end
       end
 
-      def %method({{params.splat}}){% if return_type != :undefined %} : {{return_type.id}}{% elsif definition.is_a?(TypeDeclaration) %} : {{definition.type}}{% end %}
+      def %method({{params.splat}}){% if return_type.is_a?(ArrayLiteral) %} : {{return_type.type}}{% elsif return_type != :undefined %} : {{return_type.id}}{% elsif definition.is_a?(TypeDeclaration) %} : {{definition.type}}{% end %}
         {% if body && !body.is_a?(Nop) %}
           {{body.body}}
+        {% elsif return_type.is_a?(ArrayLiteral) %}
+          {{return_type.splat}}
         {% else %}
           %args = ::Spectator::Mocks::GenericArguments.create({{args.splat}})
           %call = ::Spectator::Mocks::MethodCall.new({{name.symbolize}}, %args)
