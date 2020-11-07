@@ -42,9 +42,8 @@ module Spectator
     # The result will also be stored in `#result`.
     def run : Result
       runner = Runner.new(self, @delegate)
-      @result = runner.run
-    ensure
       @finished = true
+      @result = runner.run
     end
 
     # Exposes information about the example useful for debugging.
@@ -63,7 +62,8 @@ module Spectator
       io << result
     end
 
-    # Responsible for executing example code and reporting results.
+    # Logic dedicated to running an example and necessary hooks.
+    # This type does not directly modify or mutate state in the `Example` class.
     private struct Runner
       # Creates the runner.
       # *example* is the example being tested.
