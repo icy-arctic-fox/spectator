@@ -30,12 +30,10 @@ module Spectator
     # Returns the result of the execution.
     # The result will also be stored in `#result`.
     def run : Result
-      Log.debug { "Running example #{self}" }
-      elapsed = Time.measure do
-        @delegate.call(self)
-      end
+      runner = Runner.new(self, @delegate)
+      @result = runner.run
+    ensure
       @finished = true
-      @result = PassResult.new(elapsed)
     end
 
     # Exposes information about the example useful for debugging.
@@ -52,6 +50,24 @@ module Spectator
       end
 
       io << result
+    end
+
+    # Responsible for executing example code and reporting results.
+    private struct Runner
+      # Creates the runner.
+      # *example* is the example being tested.
+      # The *delegate* is the entrypoint of the example's test code.
+      def initialize(@example : Example, @delegate : ExampleContextDelegate)
+      end
+
+      # Executes the example's test code and produces a result.
+      def run : Result
+        Log.debug { "Running example #{@example}" }
+        elapsed = Time.measure do
+          @delegate.call(@example)
+        end
+        PassResult.new(elapsed)
+      end
     end
   end
 end
