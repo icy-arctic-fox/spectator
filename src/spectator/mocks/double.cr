@@ -7,7 +7,7 @@ module Spectator::Mocks
     def initialize(@spectator_double_name : String, @null = false)
     end
 
-    private macro stub(definition, &block)
+    private macro stub(definition, *types, return_type = :undefined, &block)
       {%
         name = nil
         params = nil
@@ -44,12 +44,27 @@ module Spectator::Mocks
           params = [] of MacroId
           args = [] of MacroId
           body = block
+        elsif definition.is_a?(SymbolLiteral) # stub :foo, arg : Int32
+          name = definition.id
+          named = false
+          params = types
+          if params.last.is_a?(Call)
+            body = params.last.block
+            params[-1] = params.last.name
+          end
+          args = params.map do |p|
+            n = p.is_a?(TypeDeclaration) ? p.var : p.id
+            r = named ? "#{n}: #{n}".id : n
+            named = true if n.starts_with?('*')
+            r
+          end
+          body = block unless body
         else
           raise "Unrecognized stub format"
         end
       %}
 
-      def {{name}}({{params.splat}}){% if definition.is_a?(TypeDeclaration) %} : {{definition.type}}{% end %}
+      def {{name}}({{params.splat}}){% if return_type.is_a?(ArrayLiteral) %} : {{return_type.type}}{% elsif return_type != :undefined %} : {{return_type.id}}{% elsif definition.is_a?(TypeDeclaration) %} : {{definition.type}}{% end %}
         %args = ::Spectator::Mocks::GenericArguments.create({{args.splat}})
         %call = ::Spectator::Mocks::MethodCall.new({{name.symbolize}}, %args)
         ::Spectator::Harness.current.mocks.record_call(self, %call)
@@ -60,7 +75,7 @@ module Spectator::Mocks
         end
       end
 
-      def {{name}}({{params.splat}}){% if definition.is_a?(TypeDeclaration) %} : {{definition.type}}{% end %}
+      def {{name}}({{params.splat}}){% if return_type.is_a?(ArrayLiteral) %} : {{return_type.type}}{% elsif return_type != :undefined %} : {{return_type.id}}{% elsif definition.is_a?(TypeDeclaration) %} : {{definition.type}}{% end %}
         %args = ::Spectator::Mocks::GenericArguments.create({{args.splat}})
         %call = ::Spectator::Mocks::MethodCall.new({{name.symbolize}}, %args)
         ::Spectator::Harness.current.mocks.record_call(self, %call)
@@ -73,9 +88,11 @@ module Spectator::Mocks
         end
       end
 
-      def %method({{params.splat}}){% if definition.is_a?(TypeDeclaration) %} : {{definition.type}}{% end %}
+      def %method({{params.splat}}){% if return_type.is_a?(ArrayLiteral) %} : {{return_type.type}}{% elsif return_type != :undefined %} : {{return_type.id}}{% elsif definition.is_a?(TypeDeclaration) %} : {{definition.type}}{% end %}
         {% if body && !body.is_a?(Nop) %}
           {{body.body}}
+        {% elsif return_type.is_a?(ArrayLiteral) %}
+          {{return_type.splat}}
         {% else %}
           %args = ::Spectator::Mocks::GenericArguments.create({{args.splat}})
           %call = ::Spectator::Mocks::MethodCall.new({{name.symbolize}}, %args)
@@ -84,7 +101,9 @@ module Spectator::Mocks
           end
 
           # This code shouldn't be reached, but makes the compiler happy to have a matching return type.
-          {% if definition.is_a?(TypeDeclaration) %}
+          {% if return_type != :undefined %}
+            %x = uninitialized {{return_type}}
+          {% elsif definition.is_a?(TypeDeclaration) %}
             %x = uninitialized {{definition.type}}
           {% else %}
             nil

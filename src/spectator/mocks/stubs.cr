@@ -1,6 +1,6 @@
 module Spectator::Mocks
   module Stubs
-    private macro stub(definition, _file = __FILE__, _line = __LINE__, &block)
+    private macro stub(definition, *types, _file = __FILE__, _line = __LINE__, return_type = :undefined, &block)
       {%
         receiver = nil
         name = nil
@@ -30,6 +30,21 @@ module Spectator::Mocks
           params = [] of MacroId
           args = [] of MacroId
           body = block
+        elsif definition.is_a?(SymbolLiteral) # stub :foo, arg : Int32
+          name = definition.id
+          named = false
+          params = types
+          if params.last.is_a?(Call)
+            body = params.last.block
+            params[-1] = params.last.name
+          end
+          args = params.map do |p|
+            n = p.is_a?(TypeDeclaration) ? p.var : p.id
+            r = named ? "#{n}: #{n}".id : n
+            named = true if n.starts_with?('*')
+            r
+          end
+          body = block unless body
         else
           raise "Unrecognized stub format"
         end
@@ -50,12 +65,16 @@ module Spectator::Mocks
       %}
 
       {% if body && !body.is_a?(Nop) %}
-        def {{receiver}}%method({{params.splat}}){% if definition.is_a?(TypeDeclaration) %} : {{definition.type}}{% end %}
+        def {{receiver}}%method({{params.splat}}){% if return_type.is_a?(ArrayLiteral) %} : {{return_type.type}}{% elsif return_type != :undefined %} : {{return_type.id}}{% elsif definition.is_a?(TypeDeclaration) %} : {{definition.type}}{% end %}
           {{body.body}}
+        end
+      {% elsif return_type.is_a?(ArrayLiteral) %}
+        def {{receiver}}%method({{params.splat}}) : {{return_type.type}}
+          {{return_type.splat}}
         end
       {% end %}
 
-      def {{receiver}}{{name}}({{params.splat}}){% if definition.is_a?(TypeDeclaration) %} : {{definition.type}}{% end %}
+      def {{receiver}}{{name}}({{params.splat}}){% if return_type.is_a?(ArrayLiteral) %} : {{return_type.type}}{% elsif return_type != :undefined %} : {{return_type.id}}{% elsif definition.is_a?(TypeDeclaration) %} : {{definition.type}}{% end %}
         if (%harness = ::Spectator::Harness.current?)
           %args = ::Spectator::Mocks::GenericArguments.create({{args.splat}})
           %call = ::Spectator::Mocks::MethodCall.new({{name.symbolize}}, %args)
@@ -64,7 +83,7 @@ module Spectator::Mocks
             return %stub.call!(%args) { {{original}} }
           end
 
-          {% if body && !body.is_a?(Nop) %}
+          {% if body && !body.is_a?(Nop) || return_type.is_a?(ArrayLiteral) %}
             %method({{args.splat}})
           {% else %}
             {{original}}
@@ -74,7 +93,7 @@ module Spectator::Mocks
         end
       end
 
-      def {{receiver}}{{name}}({{params.splat}}){% if definition.is_a?(TypeDeclaration) %} : {{definition.type}}{% end %}
+      def {{receiver}}{{name}}({{params.splat}}){% if return_type.is_a?(ArrayLiteral) %} : {{return_type.type}}{% elsif return_type != :undefined %} : {{return_type.id}}{% elsif definition.is_a?(TypeDeclaration) %} : {{definition.type}}{% end %}
         if (%harness = ::Spectator::Harness.current?)
           %args = ::Spectator::Mocks::GenericArguments.create({{args.splat}})
           %call = ::Spectator::Mocks::MethodCall.new({{name.symbolize}}, %args)
@@ -83,7 +102,7 @@ module Spectator::Mocks
             return %stub.call!(%args) { {{original}} { |*%ya| yield *%ya } }
           end
 
-          {% if body && !body.is_a?(Nop) %}
+          {% if body && !body.is_a?(Nop) || return_type.is_a?(ArrayLiteral) %}
             %method({{args.splat}}) { |*%ya| yield *%ya }
           {% else %}
             {{original}} do |*%yield_args|
