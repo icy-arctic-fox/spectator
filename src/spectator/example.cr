@@ -54,7 +54,7 @@ module Spectator
       io << '"'
 
       # Add source if it's available.
-      if (sourse = self.source)
+      if (source = self.source)
         io << " @ "
         io << source
       end
