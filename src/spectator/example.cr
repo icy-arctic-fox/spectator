@@ -26,6 +26,17 @@ module Spectator
       super(name, source, group)
     end
 
+    # Creates a dynamic example.
+    # A block provided to this method will be called as-if it were the test code for the example.
+    # The block will be given this example instance as an argument.
+    # The *name* describes the purpose of the example.
+    # It can be a `Symbol` to describe a type.
+    # The *source* tracks where the example exists in source code.
+    # The example will be assigned to *group* if it is provided.
+    def initialize(name : String? = nil, source : Source? = nil, group : ExampleGroup? = nil, &block : Example -> _)
+      @delegate = ExampleContextDelegate.null(&block)
+    end
+
     # Executes the test case.
     # Returns the result of the execution.
     # The result will also be stored in `#result`.
