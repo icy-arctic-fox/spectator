@@ -7,7 +7,7 @@ module Spectator::Mocks
     def initialize(@spectator_double_name : String, @null = false)
     end
 
-    private macro stub(definition, *types, &block)
+    private macro stub(definition, *types, return_type = :undefined, &block)
       {%
         name = nil
         params = nil
@@ -64,7 +64,7 @@ module Spectator::Mocks
         end
       %}
 
-      def {{name}}({{params.splat}}){% if definition.is_a?(TypeDeclaration) %} : {{definition.type}}{% end %}
+      def {{name}}({{params.splat}}){% if return_type != :undefined %} : {{return_type.id}}{% elsif definition.is_a?(TypeDeclaration) %} : {{definition.type}}{% end %}
         %args = ::Spectator::Mocks::GenericArguments.create({{args.splat}})
         %call = ::Spectator::Mocks::MethodCall.new({{name.symbolize}}, %args)
         ::Spectator::Harness.current.mocks.record_call(self, %call)
@@ -75,7 +75,7 @@ module Spectator::Mocks
         end
       end
 
-      def {{name}}({{params.splat}}){% if definition.is_a?(TypeDeclaration) %} : {{definition.type}}{% end %}
+      def {{name}}({{params.splat}}){% if return_type != :undefined %} : {{return_type.id}}{% elsif definition.is_a?(TypeDeclaration) %} : {{definition.type}}{% end %}
         %args = ::Spectator::Mocks::GenericArguments.create({{args.splat}})
         %call = ::Spectator::Mocks::MethodCall.new({{name.symbolize}}, %args)
         ::Spectator::Harness.current.mocks.record_call(self, %call)
@@ -88,7 +88,7 @@ module Spectator::Mocks
         end
       end
 
-      def %method({{params.splat}}){% if definition.is_a?(TypeDeclaration) %} : {{definition.type}}{% end %}
+      def %method({{params.splat}}){% if return_type != :undefined %} : {{return_type.id}}{% elsif definition.is_a?(TypeDeclaration) %} : {{definition.type}}{% end %}
         {% if body && !body.is_a?(Nop) %}
           {{body.body}}
         {% else %}
@@ -99,7 +99,9 @@ module Spectator::Mocks
           end
 
           # This code shouldn't be reached, but makes the compiler happy to have a matching return type.
-          {% if definition.is_a?(TypeDeclaration) %}
+          {% if return_type != :undefined %}
+            %x = uninitialized {{return_type}}
+          {% elsif definition.is_a?(TypeDeclaration) %}
             %x = uninitialized {{definition.type}}
           {% else %}
             nil

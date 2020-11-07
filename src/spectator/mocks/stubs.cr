@@ -1,6 +1,6 @@
 module Spectator::Mocks
   module Stubs
-    private macro stub(definition, *types, _file = __FILE__, _line = __LINE__, &block)
+    private macro stub(definition, *types, _file = __FILE__, _line = __LINE__, return_type = :undefined, &block)
       {%
         receiver = nil
         name = nil
@@ -65,12 +65,12 @@ module Spectator::Mocks
       %}
 
       {% if body && !body.is_a?(Nop) %}
-        def {{receiver}}%method({{params.splat}}){% if definition.is_a?(TypeDeclaration) %} : {{definition.type}}{% end %}
+        def {{receiver}}%method({{params.splat}}){% if return_type != :undefined %} : {{return_type.id}}{% elsif definition.is_a?(TypeDeclaration) %} : {{definition.type}}{% end %}
           {{body.body}}
         end
       {% end %}
 
-      def {{receiver}}{{name}}({{params.splat}}){% if definition.is_a?(TypeDeclaration) %} : {{definition.type}}{% end %}
+      def {{receiver}}{{name}}({{params.splat}}){% if return_type != :undefined %} : {{return_type.id}}{% elsif definition.is_a?(TypeDeclaration) %} : {{definition.type}}{% end %}
         if (%harness = ::Spectator::Harness.current?)
           %args = ::Spectator::Mocks::GenericArguments.create({{args.splat}})
           %call = ::Spectator::Mocks::MethodCall.new({{name.symbolize}}, %args)
@@ -89,7 +89,7 @@ module Spectator::Mocks
         end
       end
 
-      def {{receiver}}{{name}}({{params.splat}}){% if definition.is_a?(TypeDeclaration) %} : {{definition.type}}{% end %}
+      def {{receiver}}{{name}}({{params.splat}}){% if return_type != :undefined %} : {{return_type.id}}{% elsif definition.is_a?(TypeDeclaration) %} : {{definition.type}}{% end %}
         if (%harness = ::Spectator::Harness.current?)
           %args = ::Spectator::Mocks::GenericArguments.create({{args.splat}})
           %call = ::Spectator::Mocks::MethodCall.new({{name.symbolize}}, %args)
