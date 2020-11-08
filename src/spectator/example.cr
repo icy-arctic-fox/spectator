@@ -19,12 +19,13 @@ module Spectator
     getter result : Result = PendingResult.new
 
     # Creates the example.
-    # The *delegate* contains the test context and method that runs the test case.
+    # An instance to run the test code in is given by *context*.
+    # The *entrypoint* defines the test code (typically inside *context*).
     # The *name* describes the purpose of the example.
     # It can be a `Symbol` to describe a type.
     # The *source* tracks where the example exists in source code.
     # The example will be assigned to *group* if it is provided.
-    def initialize(@delegate : ExampleContextDelegate,
+    def initialize(@context : Context, @entrypoint : ExampleContextMethod,
                    name : String? = nil, source : Source? = nil, group : ExampleGroup? = nil)
       super(name, source, group)
     end
@@ -37,7 +38,8 @@ module Spectator
     # The *source* tracks where the example exists in source code.
     # The example will be assigned to *group* if it is provided.
     def initialize(name : String? = nil, source : Source? = nil, group : ExampleGroup? = nil, &block : Example -> _)
-      @delegate = ExampleContextDelegate.null(&block)
+      @context = NullContext.new
+      @entrypoint = block
     end
 
     # Executes the test case.
@@ -46,11 +48,25 @@ module Spectator
     def run : Result
       @@current = self
       Log.debug { "Running example #{self}" }
-      Log.warn { "Example #{self} running more than once" } if @finished
-      @result = Harness.run { @delegate.call(self) }
+      Log.warn { "Example #{self} already ran" } if @finished
+      @result = Harness.run { @entrypoint.call(self, @context) }
     ensure
       @@current = nil
       @finished = true
+    end
+
+    # Executes code within the example's test context.
+    # This is an advanced method intended for internal usage only.
+    #
+    # The *klass* defines the type of the test context.
+    # This is typically only known by the code constructing the example.
+    # An error will be raised if *klass* doesn't match the test context's type.
+    # The block given to this method will be executed within the test context.
+    #
+    # TODO: Benchmark compiler performance using this method versus client-side casting in a proc.
+    def with_context(klass)
+      context = klass.cast(@delegate.context)
+      with context yield
     end
 
     # Exposes information about the example useful for debugging.

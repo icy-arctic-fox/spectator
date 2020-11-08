@@ -98,6 +98,46 @@ module Spectator
       # The example is added to the current group by `Example` initializer.
     end
 
+    # Defines a block of code to execute before any and all examples in the current group.
+    def before_all(&block)
+      Log.trace { "Add before_all hook" }
+      current_group.before_all(&block)
+    end
+
+    # Defines a delegate to call before every example in the current group.
+    # The current example is provided to the delegate.
+    def before_each(delegate : ExampleContextDelegate)
+      Log.trace { "Add before_each hook delegate" }
+      current_group.before_each(delegate)
+    end
+
+    # Defines a block of code to execute before every example in the current group.
+    # The current example is provided as a block argument.
+    def before_each(&block : Example -> _)
+      Log.trace { "Add before_each hook block" }
+      current_group.before_each(&block)
+    end
+
+    # Defines a block of code to execute after any and all examples in the current group.
+    def after_all(&block)
+      Log.trace { "Add after_all hook" }
+      current_group.after_all(&block)
+    end
+
+    # Defines a delegate to call after every example in the current group.
+    # The current example is provided to the delegate.
+    def after_each(delegate : ExampleContextDelegate)
+      Log.trace { "Add after_each hook delegate" }
+      current_group.after_each(delegate)
+    end
+
+    # Defines a block of code to execute after every example in the current group.
+    # The current example is provided as a block argument.
+    def after_each(&block : Example -> _)
+      Log.trace { "Add after_each hook" }
+      current_group.after_each(&block)
+    end
+
     # Builds the configuration to use for the spec.
     # A `ConfigBuilder` is yielded to the block provided to this method.
     # That builder will be used to create the configuration.

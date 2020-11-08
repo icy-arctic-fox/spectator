@@ -1,0 +1,62 @@
+require "./example_context_delegate"
+
+module Spectator
+  # Mix-in for managing events and hooks.
+  # This module is intended to be included by `ExampleGroup`.
+  module Events
+    # Defines an event for an example group.
+    # This event typically runs before or after an example group finishes.
+    # No contextual information (or example) is provided to the hooks.
+    # The *name* defines the name of the event.
+    # This must be unique across all events.
+    # Two methods are defined - one to add a hook and the other to trigger the event which calls every hook.
+    private macro group_event(name)
+      @{{name.id}}_hooks = Deque(->).new
+
+      # Defines a hook for the *{{name.id}}* event.
+      # The block of code given to this method is invoked when the event occurs.
+      def {{name.id}}(&block) : Nil
+        @{{name.id}}_hooks << block
+      end
+
+      # Signals that the *{{name.id}}* event has occurred.
+      # All hooks associated with the event will be called.
+      def call_{{name.id}} : Nil
+        @{{name.id}}_hooks.each(&.call)
+      end
+    end
+
+    # Defines an event for an example.
+    # This event typically runs before or after an example finishes.
+    # The current example is provided to the hooks.
+    # The *name* defines the name of the event.
+    # This must be unique across all events.
+    # Three methods are defined - two to add a hook and the other to trigger the event which calls every hook.
+    # A hook can be added with an `ExampleContextDelegate` or a block that accepts an example (no context).
+    private macro example_event(name)
+      @{{name.id}}_hooks = Deque(ExampleContextMethod).new
+
+      # Defines a hook for the *{{name.id}}* event.
+      # The *delegate* will be called when the event occurs.
+      # The current example is provided to the delegate.
+      def {{name.id}}(delegate : ExampleContextDelegate) : Nil
+        @{{name.id}}_hooks << delegate
+      end
+
+      # Defines a hook for the *{{name.id}}* event.
+      # The block of code given to this method is invoked when the event occurs.
+      # The current example is provided as a block argument.
+      def {{name.id}}(&block : Example -> _) : Nil
+        delegate = ExampleContextDelegate.null(&block)
+        @{{name.id}}_hooks << delegate
+      end
+
+      # Signals that the *{{name.id}}* event has occurred.
+      # All hooks associated with the event will be called.
+      # The *example* should be the current example.
+      def call_{{name.id}}(example) : Nil
+        @{{name.id}}_hooks.each(&.call(example))
+      end
+    end
+  end
+end

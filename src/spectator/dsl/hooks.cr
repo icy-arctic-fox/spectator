@@ -9,9 +9,7 @@ module Spectator::DSL
         {{block.body}}
       end
 
-      ::Spectator::DSL::Builder.add_hook(
-        :before
-      ) { {{@type.name}.%hook }
+      ::Spectator::DSL::Builder.before_all { {{@type.name}.%hook }
     end
 
     macro before_each(&block)
@@ -21,10 +19,7 @@ module Spectator::DSL
         {{block.body}}
       end
 
-      ::Spectator::DSL::Builder.add_context_hook(
-        :before,
-        {{@type.name}}
-      ) { |context| context.as({{@type.name}).%hook }
+      ::Spectator::DSL::Builder.before_each { |context| context.as({{@type.name}).%hook }
     end
 
     macro after_all(&block)

@@ -6,6 +6,9 @@ module Spectator
   # Stores a test context and a method to call within it.
   # This is a variant of `ContextDelegate` that accepts the current running example.
   struct ExampleContextDelegate
+    # Retrieves the underlying context.
+    protected getter context : Context
+
     # Creates the delegate.
     # The *context* is the instance of the test context.
     # The *method* is proc that downcasts *context* and calls a method on it.

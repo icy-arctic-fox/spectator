@@ -1,10 +1,17 @@
+require "./events"
 require "./example_node"
 
 module Spectator
   # Collection of examples and sub-groups.
   class ExampleGroup < ExampleNode
     include Enumerable(ExampleNode)
+    include Events
     include Iterable(ExampleNode)
+
+    group_event before_all
+    group_event after_all
+    example_event before_each
+    example_event after_each
 
     @nodes = [] of ExampleNode
 
