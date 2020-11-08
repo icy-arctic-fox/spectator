@@ -19,8 +19,8 @@ module Spectator::DSL
         ::Spectator::DSL::Builder.add_example(
           _spectator_example_name(\{{what}}),
           ::Spectator::Source.new(\{{block.filename}}, \{{block.line_number}}),
-        ) { |example, context| context.as(\{{@type.name}}).\%test }
           \{{@type.name}}.new.as(::Spectator::Context)
+        ) { |example| example.with_context(\{{@type.name}}) { \%test } }
       end
     end
 

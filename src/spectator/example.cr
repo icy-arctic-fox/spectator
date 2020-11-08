@@ -25,7 +25,7 @@ module Spectator
     # It can be a `Symbol` to describe a type.
     # The *source* tracks where the example exists in source code.
     # The example will be assigned to *group* if it is provided.
-    def initialize(@context : Context, @entrypoint : ExampleContextMethod,
+    def initialize(@context : Context, @entrypoint : self ->,
                    name : String? = nil, source : Source? = nil, group : ExampleGroup? = nil)
       super(name, source, group)
     end
@@ -37,7 +37,7 @@ module Spectator
     # It can be a `Symbol` to describe a type.
     # The *source* tracks where the example exists in source code.
     # The example will be assigned to *group* if it is provided.
-    def initialize(name : String? = nil, source : Source? = nil, group : ExampleGroup? = nil, &block : Example -> _)
+    def initialize(name : String? = nil, source : Source? = nil, group : ExampleGroup? = nil, &block : self ->)
       @context = NullContext.new
       @entrypoint = block
     end
@@ -49,7 +49,7 @@ module Spectator
       @@current = self
       Log.debug { "Running example #{self}" }
       Log.warn { "Example #{self} already ran" } if @finished
-      @result = Harness.run { @entrypoint.call(self, @context) }
+      @result = Harness.run { @entrypoint.call(self) }
     ensure
       @@current = nil
       @finished = true
@@ -65,7 +65,7 @@ module Spectator
     #
     # TODO: Benchmark compiler performance using this method versus client-side casting in a proc.
     def with_context(klass)
-      context = klass.cast(@delegate.context)
+      context = klass.cast(@context)
       with context yield
     end
 

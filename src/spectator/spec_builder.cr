@@ -91,10 +91,9 @@ module Spectator
     # It is expected that the test code runs when the block is called.
     #
     # The newly created example is returned.
-    def add_example(name, source, context, &block : Example, Context ->) : Example
+    def add_example(name, source, context, &block : Example -> _) : Example
       Log.trace { "Add example: #{name} @ #{source}" }
-      delegate = ExampleContextDelegate.new(context, block)
-      Example.new(delegate, name, source, current_group)
+      Example.new(context, block, name, source, current_group)
       # The example is added to the current group by `Example` initializer.
     end
 
@@ -102,13 +101,6 @@ module Spectator
     def before_all(&block)
       Log.trace { "Add before_all hook" }
       current_group.before_all(&block)
-    end
-
-    # Defines a delegate to call before every example in the current group.
-    # The current example is provided to the delegate.
-    def before_each(delegate : ExampleContextDelegate)
-      Log.trace { "Add before_each hook delegate" }
-      current_group.before_each(delegate)
     end
 
     # Defines a block of code to execute before every example in the current group.
@@ -122,13 +114,6 @@ module Spectator
     def after_all(&block)
       Log.trace { "Add after_all hook" }
       current_group.after_all(&block)
-    end
-
-    # Defines a delegate to call after every example in the current group.
-    # The current example is provided to the delegate.
-    def after_each(delegate : ExampleContextDelegate)
-      Log.trace { "Add after_each hook delegate" }
-      current_group.after_each(delegate)
     end
 
     # Defines a block of code to execute after every example in the current group.

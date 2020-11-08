@@ -34,21 +34,13 @@ module Spectator
     # Three methods are defined - two to add a hook and the other to trigger the event which calls every hook.
     # A hook can be added with an `ExampleContextDelegate` or a block that accepts an example (no context).
     private macro example_event(name)
-      @{{name.id}}_hooks = Deque(ExampleContextMethod).new
-
-      # Defines a hook for the *{{name.id}}* event.
-      # The *delegate* will be called when the event occurs.
-      # The current example is provided to the delegate.
-      def {{name.id}}(delegate : ExampleContextDelegate) : Nil
-        @{{name.id}}_hooks << delegate
-      end
+      @{{name.id}}_hooks = Deque(Example ->).new
 
       # Defines a hook for the *{{name.id}}* event.
       # The block of code given to this method is invoked when the event occurs.
       # The current example is provided as a block argument.
-      def {{name.id}}(&block : Example -> _) : Nil
-        delegate = ExampleContextDelegate.null(&block)
-        @{{name.id}}_hooks << delegate
+      def {{name.id}}(&block : Example ->) : Nil
+        @{{name.id}}_hooks << block
       end
 
       # Signals that the *{{name.id}}* event has occurred.

@@ -31,7 +31,7 @@ module Spectator::DSL
     # The example is added to the group currently on the top of the stack.
     #
     # See `Spec::Builder#add_example` for usage details.
-    def add_example(*args, &block : Example, Context ->)
+    def add_example(*args, &block : Example ->)
       @@builder.add_example(*args, &block)
     end
 
@@ -45,7 +45,7 @@ module Spectator::DSL
     # Defines a block of code to execute before every example in the current group
     #
     # See `Spec::Builder#before_each` for usage details.
-    def before_each(&block : Example, Context -> _)
+    def before_each(&block : Example -> _)
       @@builder.before_each(&block)
     end
 
@@ -59,7 +59,7 @@ module Spectator::DSL
     # Defines a block of code to execute after every example in the current group.
     #
     # See `Spec::Builder#after_each` for usage details.
-    def after_each(&block : Example, Context ->)
+    def after_each(&block : Example ->)
       @@builder.after_each(&block)
     end
 

@@ -19,7 +19,7 @@ module Spectator::DSL
         {{block.body}}
       end
 
-      ::Spectator::DSL::Builder.before_each { |context| context.as({{@type.name}).%hook }
+      ::Spectator::DSL::Builder.before_each { |example| example.with_context({{@type.name}) { %hook } }
     end
 
     macro after_all(&block)
