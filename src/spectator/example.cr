@@ -1,7 +1,7 @@
 require "./example_context_delegate"
 require "./example_group"
 require "./example_node"
-require "./pass_result"
+require "./harness"
 require "./pending_result"
 require "./result"
 require "./source"
@@ -9,6 +9,9 @@ require "./source"
 module Spectator
   # Standard example that runs a test case.
   class Example < ExampleNode
+    # Currently running example.
+    class_getter! current : Example
+
     # Indicates whether the example already ran.
     getter? finished : Bool = false
 
@@ -41,9 +44,13 @@ module Spectator
     # Returns the result of the execution.
     # The result will also be stored in `#result`.
     def run : Result
-      runner = Runner.new(self, @delegate)
+      @@current = self
+      Log.debug { "Running example #{self}" }
+      Log.warn { "Example #{self} running more than once" } if @finished
+      @result = Harness.run { @delegate.call(self) }
+    ensure
+      @@current = nil
       @finished = true
-      @result = runner.run
     end
 
     # Exposes information about the example useful for debugging.
@@ -60,25 +67,6 @@ module Spectator
       end
 
       io << result
-    end
-
-    # Logic dedicated to running an example and necessary hooks.
-    # This type does not directly modify or mutate state in the `Example` class.
-    private struct Runner
-      # Creates the runner.
-      # *example* is the example being tested.
-      # The *delegate* is the entrypoint of the example's test code.
-      def initialize(@example : Example, @delegate : ExampleContextDelegate)
-      end
-
-      # Executes the example's test code and produces a result.
-      def run : Result
-        Log.debug { "Running example #{@example}" }
-        elapsed = Time.measure do
-          @delegate.call(@example)
-        end
-        PassResult.new(elapsed)
-      end
     end
   end
 end
