@@ -2,6 +2,7 @@
 require "./dsl/builder"
 require "./dsl/examples"
 require "./dsl/groups"
+require "./dsl/hooks"
 require "./dsl/top"
 
 module Spectator
