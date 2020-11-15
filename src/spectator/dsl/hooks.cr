@@ -27,9 +27,25 @@ module Spectator::DSL
     end
 
     macro after_all(&block)
+      {% raise "Cannot use 'after_all' inside of a test block" if @def %}
+
+      def self.%hook : Nil
+        {{block.body}}
+      end
+
+      ::Spectator::DSL::Builder.after_all { {{@type.name}}.%hook }
     end
 
     macro after_each(&block)
+      {% raise "Cannot use 'after_each' inside of a test block" if @def %}
+
+      def %hook : Nil
+        {{block.body}}
+      end
+
+      ::Spectator::DSL::Builder.after_each do |example|
+        example.with_context({{@type.name}}) { %hook }
+      end
     end
   end
 end
