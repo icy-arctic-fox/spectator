@@ -49,7 +49,20 @@ module Spectator
       @@current = self
       Log.debug { "Running example #{self}" }
       Log.warn { "Example #{self} already ran" } if @finished
-      @result = Harness.run { @entrypoint.call(self) }
+      @result = Harness.run do
+        if (parent = group?)
+          parent.call_once_before_all
+          parent.call_before_each(self)
+        end
+
+        @entrypoint.call(self)
+        @finished = true
+
+        if (parent = group?)
+          parent.call_after_each(self)
+          parent.call_once_after_all if parent.finished?
+        end
+      end
     ensure
       @@current = nil
       @finished = true
