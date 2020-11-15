@@ -8,10 +8,45 @@ module Spectator
     include Events
     include Iterable(ExampleNode)
 
-    group_event before_all
-    group_event after_all
-    example_event before_each
-    example_event after_each
+    group_event before_all do |hooks|
+      Log.trace { "Processing before_all hooks" }
+
+      if (parent = group?)
+        parent.call_once_before_all
+      end
+
+      hooks.each(&.call)
+    end
+
+    group_event after_all do |hooks|
+      Log.trace { "Processing after_all hooks" }
+
+      hooks.each(&.call)
+
+      if (parent = group?)
+        parent.call_once_after_all
+      end
+    end
+
+    example_event before_each do |hooks, example|
+      Log.trace { "Processing before_each hooks" }
+
+      if (parent = group?)
+        parent.call_before_each(example)
+      end
+
+      hooks.each(&.call(example))
+    end
+
+    example_event after_each do |hooks, example|
+      Log.trace { "Processing after_each hooks" }
+
+      hooks.each(&.call(example))
+
+      if (parent = group?)
+        parent.call_after_each(example)
+      end
+    end
 
     @nodes = [] of ExampleNode
 

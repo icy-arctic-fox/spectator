@@ -12,7 +12,7 @@ module Spectator
     # Three methods are defined - one to add a hook and the others to trigger the event which calls every hook.
     # One trigger method, prefixed with *call_* will always call the event hooks.
     # The other trigger method, prefixed with *call_once_* will only call the event hooks on the first invocation.
-    private macro group_event(name)
+    private macro group_event(name, &block)
       @{{name.id}}_hooks = Deque(->).new
       @{{name.id}}_called = Atomic::Flag.new
 
@@ -25,7 +25,8 @@ module Spectator
       # Signals that the *{{name.id}}* event has occurred.
       # All hooks associated with the event will be called.
       def call_{{name.id}} : Nil
-        @{{name.id}}_hooks.each(&.call)
+        {{block.args.first}} = @{{name.id}}_hooks
+        {{yield}}
       end
 
       # Signals that the *{{name.id}}* event has occurred.
@@ -45,7 +46,7 @@ module Spectator
     # This must be unique across all events.
     # Three methods are defined - two to add a hook and the other to trigger the event which calls every hook.
     # A hook can be added with an `ExampleContextDelegate` or a block that accepts an example (no context).
-    private macro example_event(name)
+    private macro example_event(name, &block)
       @{{name.id}}_hooks = Deque(Example ->).new
 
       # Defines a hook for the *{{name.id}}* event.
@@ -58,8 +59,9 @@ module Spectator
       # Signals that the *{{name.id}}* event has occurred.
       # All hooks associated with the event will be called.
       # The *example* should be the current example.
-      def call_{{name.id}}(example) : Nil
-        @{{name.id}}_hooks.each(&.call(example))
+      def call_{{name.id}}({{block.args[1]}}) : Nil
+        {{block.args.first}} = @{{name.id}}_hooks
+        {{yield}}
       end
     end
   end
