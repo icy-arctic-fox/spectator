@@ -16,7 +16,7 @@ module Spectator::Matchers
     # This explains what condition satisfies the matcher.
     # The description is used when the one-liner syntax is used.
     def description : String
-      "includes #{expected.label}"
+      "has #{expected.label}"
     end
 
     # Entrypoint for the matcher, forwards to the correct method for string or enumerable.
@@ -42,7 +42,7 @@ module Spectator::Matchers
         SuccessfulMatchData.new(description)
       else
         # Content is missing.
-        FailedMatchData.new(description, "#{actual_label} does not include #{expected.label}",
+        FailedMatchData.new(description, "#{actual_label} does not have #{expected.label}",
           expected: expected.value.inspect,
           actual: actual_value.inspect,
           missing: missing.inspect,
@@ -60,7 +60,7 @@ module Spectator::Matchers
       if missing.empty?
         SuccessfulMatchData.new(description)
       else
-        FailedMatchData.new(description, "#{actual_label} does not include #{expected.label}",
+        FailedMatchData.new(description, "#{actual_label} does not have #{expected.label}",
           expected: expected.value.inspect,
           actual: actual_value.inspect,
           missing: missing.inspect,
@@ -89,7 +89,7 @@ module Spectator::Matchers
 
       if satisfied
         # Contents are present.
-        FailedMatchData.new(description, "#{actual_label} includes #{expected.label}",
+        FailedMatchData.new(description, "#{actual_label} has #{expected.label}",
           expected: "Not #{expected.value.inspect}",
           actual: actual_value.inspect
         )
@@ -109,7 +109,7 @@ module Spectator::Matchers
       if satisfied
         SuccessfulMatchData.new(description)
       else
-        FailedMatchData.new(description, "#{actual_label} does not include #{expected.label}",
+        FailedMatchData.new(description, "#{actual_label} does not have #{expected.label}",
           expected: expected.value.inspect,
           actual: actual_value.inspect,
           missing: missing.inspect,
