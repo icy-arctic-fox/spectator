@@ -475,7 +475,7 @@ module Spectator
     # expect(%i[a b c]).to contain(%i[a b])
     # ```
     macro contain_elements(expected)
-      %test_value = ::Spectator::TestValue.new({{expected}}, {{expected.splat.stringify}})
+      %test_value = ::Spectator::TestValue.new({{expected}}, {{expected.stringify}})
       ::Spectator::Matchers::ContainMatcher.new(%test_value)
     end
 
@@ -559,7 +559,7 @@ module Spectator
     # expect([1, 2, 3, :a, :b, :c]).to have_elements([Int32, Symbol])
     # ```
     macro have_elements(expected)
-      %test_value = ::Spectator::TestValue.new({{expected}}, {{expected.splat.stringify}})
+      %test_value = ::Spectator::TestValue.new({{expected}}, {{expected.stringify}})
       ::Spectator::Matchers::HaveMatcher.new(%test_value)
     end
 
