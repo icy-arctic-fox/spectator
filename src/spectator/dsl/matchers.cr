@@ -471,8 +471,8 @@ module Spectator
     # Examples:
     # ```
     # expect("foobar").to contain_elements(["foo", "bar"])
-    # expect("foobar").to contain(['a', 'b'])
-    # expect(%i[a b c]).to contain(%i[a b])
+    # expect("foobar").to contain_elements(['a', 'b'])
+    # expect(%i[a b c]).to contain_elements(%i[a b])
     # ```
     macro contain_elements(expected)
       %test_value = ::Spectator::TestValue.new({{expected}}, {{expected.stringify}})
