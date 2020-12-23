@@ -459,6 +459,26 @@ module Spectator
       {% end %}
     end
 
+    # Indicates that some value or set should contain specific items.
+    # This is typically used on a `String` or `Array` (any `Enumerable` works).
+    # The *expected* argument can be a `String` or `Char`
+    # when the actual type (being comapred against) is a `String`.
+    # For `Enumerable` types, items are compared using the underying implementation.
+    # In both cases, the `includes?` method is used.
+    #
+    # This is identical to `#contain`, but accepts an array (or enumerable type) instead of multiple arguments.
+    #
+    # Examples:
+    # ```
+    # expect("foobar").to contain_elements(["foo", "bar"])
+    # expect("foobar").to contain(['a', 'b'])
+    # expect(%i[a b c]).to contain(%i[a b])
+    # ```
+    macro contain_elements(expected)
+      %test_value = ::Spectator::TestValue.new({{expected}}, {{expected.splat.stringify}})
+      ::Spectator::Matchers::ContainMatcher.new(%test_value)
+    end
+
     # Indicates that some range (or collection) should contain another value.
     # This is typically used on a `Range` (although any `Enumerable` works).
     # The `includes?` method is used.
@@ -518,6 +538,29 @@ module Spectator
         %test_value = ::Spectator::TestValue.new({{expected}}, {{expected.splat.stringify}})
         ::Spectator::Matchers::HaveMatcher.new(%test_value)
       {% end %}
+    end
+
+    # Indicates that some value or set should contain specific items.
+    # This is similar to `#contain_elements`, but uses a different method for matching.
+    # Typically a `String` or `Array` (any `Enumerable` works) is checked against.
+    # The *expected* argument can be a `String` or `Char`
+    # when the actual type (being comapred against) is a `String`.
+    # The `includes?` method is used for this case.
+    # For `Enumerable` types, each item is inspected until one matches.
+    # The === operator is used for this case, which allows for equality, type, regex, and other matches.
+    #
+    # Examples:
+    # ```
+    # expect("foobar").to have_elements(["foo", "bar"])
+    # expect("foobar").to have_elements(['a', 'b'])
+    #
+    # expect(%i[a b c]).to have_elements(%i[b c])
+    # expect(%w[FOO BAR BAZ]).to have_elements([/FOO/, /bar/i])
+    # expect([1, 2, 3, :a, :b, :c]).to have_elements([Int32, Symbol])
+    # ```
+    macro have_elements(expected)
+      %test_value = ::Spectator::TestValue.new({{expected}}, {{expected.splat.stringify}})
+      ::Spectator::Matchers::HaveMatcher.new(%test_value)
     end
 
     # Indicates that some set, such as a `Hash`, has a given key.
