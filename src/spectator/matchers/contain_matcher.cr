@@ -51,13 +51,13 @@ module Spectator::Matchers
       end
 
       if missing.empty?
-        # Contents are identical.
+        # Contents are present.
         FailedMatchData.new(description, "#{actual.label} contains #{expected.label}",
           expected: "Not #{expected.value.inspect}",
           actual: actual_value.inspect
         )
       else
-        # Content differs.
+        # Content is missing.
         SuccessfulMatchData.new(description)
       end
     end
