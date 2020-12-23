@@ -8,7 +8,7 @@ module Spectator::Matchers
     private getter expected
 
     # Creates the matcher with an expected value.
-    def initialize(@expected : TestValue(Array(ExpectedType)))
+    def initialize(@expected : TestValue(ExpectedType))
     end
 
     # Short text about the matcher's purpose.
@@ -23,9 +23,8 @@ module Spectator::Matchers
       actual_value = actual.value
       return unexpected(actual_value, actual.label) unless actual_value.responds_to?(:includes?)
 
-      actual_elements = actual_value.to_a
       missing = expected.value.reject do |item|
-        actual_elements.includes?(item)
+        actual_value.includes?(item)
       end
 
       if missing.empty?
@@ -35,7 +34,7 @@ module Spectator::Matchers
         # Content is missing.
         FailedMatchData.new(description, "#{actual.label} does not contain #{expected.label}",
           expected: expected.value.inspect,
-          actual: actual_elements.inspect,
+          actual: actual_value.inspect,
           missing: missing.inspect,
         )
       end
@@ -47,16 +46,15 @@ module Spectator::Matchers
       actual_value = actual.value
       return unexpected(actual_value, actual.label) unless actual_value.responds_to?(:includes?)
 
-      actual_elements = actual_value.to_a
       missing = expected.value.reject do |item|
-        actual_elements.includes?(item)
+        actual_value.includes?(item)
       end
 
       if missing.empty?
         # Contents are identical.
         FailedMatchData.new(description, "#{actual.label} contains #{expected.label}",
-          expected: "Not #{expected_elements.inspect}",
-          actual: actual_elements.inspect
+          expected: "Not #{expected.value.inspect}",
+          actual: actual_value.inspect
         )
       else
         # Content differs.
