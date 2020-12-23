@@ -1,9 +1,16 @@
-require "./value_matcher"
+require "./matcher"
 
 module Spectator::Matchers
   # Matcher that tests whether a value, such as a `String` or `Array`, contains one or more values.
   # The values are checked with the `includes?` method.
-  struct ContainMatcher(ExpectedType) < ValueMatcher(ExpectedType)
+  struct ContainMatcher(ExpectedType) < Matcher
+    # Expected value and label.
+    private getter expected
+
+    # Creates the matcher with an expected value.
+    def initialize(@expected : TestValue(Array(ExpectedType)))
+    end
+
     # Short text about the matcher's purpose.
     # This explains what condition satisfies the matcher.
     # The description is used when the one-liner syntax is used.
@@ -11,54 +18,50 @@ module Spectator::Matchers
       "contains #{expected.label}"
     end
 
-    # Checks whether the matcher is satisifed with the expression given to it.
-    private def match?(actual : TestExpression(T)) : Bool forall T
+    # Actually performs the test against the expression.
+    def match(actual : TestExpression(T)) : MatchData forall T
       actual_value = actual.value
       return unexpected(actual_value, actual.label) unless actual_value.responds_to?(:includes?)
 
-      expected.value.all? do |item|
-        actual_value.includes?(item)
+      actual_elements = actual_value.to_a
+      missing = expected.value.reject do |item|
+        actual_elements.includes?(item)
+      end
+
+      if missing.empty?
+        # Contents are present.
+        SuccessfulMatchData.new(description)
+      else
+        # Content is missing.
+        FailedMatchData.new(description, "#{actual.label} does not contain #{expected.label}",
+          expected: expected.value.inspect,
+          actual: actual_elements.inspect,
+          missing: missing.inspect,
+        )
       end
     end
 
-    # If the expectation is negated, then this method is called instead of `#match?`.
-    private def does_not_match?(actual : TestExpression(T)) : Bool forall T
+    # Performs the test against the expression, but inverted.
+    # A successful match with `#match` should normally fail for this method, and vice-versa.
+    def negated_match(actual : TestExpression(T)) : MatchData forall T
       actual_value = actual.value
       return unexpected(actual_value, actual.label) unless actual_value.responds_to?(:includes?)
 
-      !expected.value.any? do |item|
-        actual_value.includes?(item)
+      actual_elements = actual_value.to_a
+      missing = expected.value.reject do |item|
+        actual_elements.includes?(item)
       end
-    end
 
-    # Message displayed when the matcher isn't satisifed.
-    #
-    # This is only called when `#match?` returns false.
-    #
-    # The message should typically only contain the test expression labels.
-    # Actual values should be returned by `#values`.
-    private def failure_message(actual) : String
-      "#{actual.label} does not contain #{expected.label}"
-    end
-
-    # Message displayed when the matcher isn't satisifed and is negated.
-    # This is essentially what would satisfy the matcher if it wasn't negated.
-    #
-    # This is only called when `#does_not_match?` returns false.
-    #
-    # The message should typically only contain the test expression labels.
-    # Actual values should be returned by `#values`.
-    private def failure_message_when_negated(actual) : String
-      "#{actual.label} contains #{expected.label}"
-    end
-
-    # Additional information about the match failure.
-    # The return value is a NamedTuple with Strings for each value.
-    private def values(actual)
-      {
-        subset:   expected.value.inspect,
-        superset: actual.value.inspect,
-      }
+      if missing.empty?
+        # Contents are identical.
+        FailedMatchData.new(description, "#{actual.label} contains #{expected.label}",
+          expected: "Not #{expected_elements.inspect}",
+          actual: actual_elements.inspect
+        )
+      else
+        # Content differs.
+        SuccessfulMatchData.new(description)
+      end
     end
 
     private def unexpected(value, label)
