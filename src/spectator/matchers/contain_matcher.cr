@@ -46,11 +46,11 @@ module Spectator::Matchers
       actual_value = actual.value
       return unexpected(actual_value, actual.label) unless actual_value.responds_to?(:includes?)
 
-      missing = expected.value.reject do |item|
+      satisfied = expected.value.any? do |item|
         actual_value.includes?(item)
       end
 
-      if missing.empty?
+      if satisfied
         # Contents are present.
         FailedMatchData.new(description, "#{actual.label} contains #{expected.label}",
           expected: "Not #{expected.value.inspect}",
