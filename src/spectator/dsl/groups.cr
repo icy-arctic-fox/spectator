@@ -2,7 +2,7 @@ require "../spec_builder"
 
 module Spectator
   module DSL
-    macro context(what, _source_file = __FILE__, _source_line = __LINE__, &block)
+    macro context(what, &block)
       class Context%context < {{@type.id}}
         {%
           description = if what.is_a?(StringLiteral) || what.is_a?(StringInterpolation)
@@ -16,7 +16,7 @@ module Spectator
                         end
         %}
 
-        %source = ::Spectator::Source.new({{_source_file}}, {{_source_line}})
+        %source = ::Spectator::Source.new({{block.filename}}, {{block.line_number}})
         ::Spectator::SpecBuilder.start_group({{description}}, %source)
 
         # Oddly, `#resolve?` can return a constant's value, which isn't a TypeNode.
@@ -49,7 +49,7 @@ module Spectator
       context({{what}}) {{block}}
     end
 
-    macro sample(collection, count = nil, _source_file = __FILE__, _source_line = __LINE__, &block)
+    macro sample(collection, count = nil, &block)
       {% name = block.args.empty? ? :value.id : block.args.first.id %}
 
       def %collection
@@ -65,7 +65,7 @@ module Spectator
       end
 
       class Context%sample < {{@type.id}}
-        %source = ::Spectator::Source.new({{_source_file}}, {{_source_line}})
+        %source = ::Spectator::Source.new({{block.filename}}, {{block.line_number}})
         ::Spectator::SpecBuilder.start_sample_group({{collection.stringify}}, %source, :%sample, {{name.stringify}}) do |values|
           sample = {{@type.id}}.new(values)
           sample.%to_a
@@ -81,7 +81,7 @@ module Spectator
       end
     end
 
-    macro random_sample(collection, count = nil, _source_file = __FILE__, _source_line = __LINE__, &block)
+    macro random_sample(collection, count = nil, &block)
       {% name = block.args.empty? ? :value.id : block.args.first.id %}
 
       def %collection
@@ -97,7 +97,7 @@ module Spectator
       end
 
       class Context%sample < {{@type.id}}
-        %source = ::Spectator::Source.new({{_source_file}}, {{_source_line}})
+        %source = ::Spectator::Source.new({{block.filename}}, {{block.line_number}})
         ::Spectator::SpecBuilder.start_sample_group({{collection.stringify}}, %source, :%sample, {{name.stringify}}) do |values|
           sample = {{@type.id}}.new(values)
           collection = sample.%to_a

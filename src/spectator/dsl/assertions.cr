@@ -45,7 +45,7 @@ module Spectator
     # expect(&.size).to eq(5)
     # ```
     # The method passed will always be evaluated on the subject.
-    macro expect(_source_file = __FILE__, _source_line = __LINE__, &block)
+    macro expect(&block)
       {% if block.is_a?(Nop) %}
         {% raise "Argument or block must be provided to expect" %}
       {% end %}
@@ -76,7 +76,7 @@ module Spectator
         {% raise "Unexpected block arguments in expect call" %}
       {% end %}
 
-      %source = ::Spectator::Source.new({{_source_file}}, {{_source_line}})
+      %source = ::Spectator::Source.new({{block.filename}}, {{block.line_number}})
       ::Spectator::Expectations::ExpectationPartial.new(%test_block, %source)
     end
 

@@ -3,7 +3,7 @@ require "../spec_builder"
 
 module Spectator
   module DSL
-    macro it(description = nil, _source_file = __FILE__, _source_line = __LINE__, &block)
+    macro it(description = nil, &block)
       {% if block.is_a?(Nop) %}
         {% if description.is_a?(Call) %}
           def %run
@@ -18,7 +18,7 @@ module Spectator
         end
       {% end %}
 
-      %source = ::Spectator::Source.new({{_source_file}}, {{_source_line}})
+      %source = ::Spectator::Source.new({{block.filename}}, {{block.line_number}})
       ::Spectator::SpecBuilder.add_example(
         {{description.is_a?(StringLiteral) || description.is_a?(StringInterpolation) || description.is_a?(NilLiteral) ? description : description.stringify}},
         %source,
@@ -30,7 +30,7 @@ module Spectator
       it({{description}}) {{block}}
     end
 
-    macro pending(description = nil, _source_file = __FILE__, _source_line = __LINE__, &block)
+    macro pending(description = nil, &block)
       {% if block.is_a?(Nop) %}
         {% if description.is_a?(Call) %}
           def %run
@@ -45,7 +45,7 @@ module Spectator
         end
       {% end %}
 
-      %source = ::Spectator::Source.new({{_source_file}}, {{_source_line}})
+      %source = ::Spectator::Source.new({{block.filename}}, {{block.line_number}})
       ::Spectator::SpecBuilder.add_pending_example(
         {{description.is_a?(StringLiteral) || description.is_a?(StringInterpolation) || description.is_a?(NilLiteral) ? description : description.stringify}},
         %source,
