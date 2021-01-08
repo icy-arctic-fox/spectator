@@ -14,6 +14,11 @@ module Spectator
     end
 
     # Parses a source from a string.
+    # The *string* should be in the form:
+    # ```text
+    # FILE:LINE
+    # ```
+    # This matches the output of the `#to_s` method.
     def self.parse(string)
       # Make sure to handle multiple colons.
       # If this ran on Windows, there's a possibility of a colon in the path.
