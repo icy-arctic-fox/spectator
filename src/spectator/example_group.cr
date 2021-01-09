@@ -8,6 +8,8 @@ module Spectator
     include Events
     include Iterable(SpecNode)
 
+    @nodes = [] of SpecNode
+
     group_event before_all do |hooks|
       Log.trace { "Processing before_all hooks for #{self}" }
 
@@ -59,8 +61,6 @@ module Spectator
         parent.call_after_each(example)
       end
     end
-
-    @nodes = [] of SpecNode
 
     # Removes the specified *node* from the group.
     # The node will be unassigned from this group.
