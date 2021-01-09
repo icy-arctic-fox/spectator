@@ -1,6 +1,6 @@
 require "./abstract_expression"
 require "./label"
-require "./wrapper"
+require "./lazy"
 
 module Spectator
   # Represents a block from a test.
@@ -10,8 +10,7 @@ module Spectator
   # or nil if one isn't available.
   class Block(T) < AbstractExpression
     # Cached value returned from the block.
-    # Is nil if the block hasn't been called.
-    @wrapper : Wrapper(T)?
+    @value = Lazy(T).new
 
     # Creates the block expression from a proc.
     # The *proc* will be called to evaluate the value of the expression.
@@ -34,13 +33,7 @@ module Spectator
     # The block is lazily evaluated and the value retrieved only once.
     # Afterwards, the value is cached and returned by successive calls to this method.
     def value
-      if (wrapper = @wrapper)
-        wrapper.value
-      else
-        call.tap do |value|
-          @wrapper = Wrapper.new(value)
-        end
-      end
+      @value.get { call }
     end
 
     # Evaluates the block and returns the value from it.
