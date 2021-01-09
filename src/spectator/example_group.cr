@@ -15,13 +15,19 @@ module Spectator
         parent.call_once_before_all
       end
 
-      hooks.each(&.call)
+      hooks.each do |hook|
+        Log.trace { "Invoking hook #{hook}" }
+        hook.call
+      end
     end
 
     group_event after_all do |hooks|
       Log.trace { "Processing after_all hooks" }
 
-      hooks.each(&.call)
+      hooks.each do |hook|
+        Log.trace { "Invoking hook #{hook}" }
+        hook.call
+      end
 
       if (parent = group?)
         parent.call_once_after_all
@@ -35,13 +41,19 @@ module Spectator
         parent.call_before_each(example)
       end
 
-      hooks.each(&.call(example))
+      hooks.each do |hook|
+        Log.trace { "Invoking hook #{hook}" }
+        hook.call(example)
+      end
     end
 
     example_event after_each do |hooks, example|
       Log.trace { "Processing after_each hooks" }
 
-      hooks.each(&.call(example))
+      hooks.each do |hook|
+        Log.trace { "Invoking hook #{hook}" }
+        hook.call(example)
+      end
 
       if (parent = group?)
         parent.call_after_each(example)

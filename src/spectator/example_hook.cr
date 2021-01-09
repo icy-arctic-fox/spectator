@@ -30,5 +30,21 @@ module Spectator
     def call(example : Example) : Nil
       @delegate.call(example)
     end
+
+    # Produces the string representation of the hook.
+    # Includes the source and label if they're not nil.
+    def to_s(io)
+      io << "example hook"
+
+      if (label = @label)
+        io << ' '
+        io << label
+      end
+
+      if (source = @source)
+        io << " @ "
+        io << source
+      end
+    end
   end
 end
