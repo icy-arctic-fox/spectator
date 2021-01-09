@@ -1,6 +1,10 @@
-require "./spectator_context"
-require "./spectator/dsl"
+require "./context"
+require "./dsl"
 
+# Class used as the base for all specs using the DSL.
+# It adds methods and macros necessary to use the DSL from the spec.
+# This type is intentionally outside the `Spectator` module.
+# The reason for this is to prevent name collision when using the DSL to define a spec.
 class SpectatorTestContext < SpectatorContext
   include ::Spectator::DSL::Examples
   include ::Spectator::DSL::Groups
@@ -19,7 +23,4 @@ class SpectatorTestContext < SpectatorContext
   private def subject
     _spectator_implicit_subject
   end
-
-  # def initialize(@spectator_test_values : ::Spectator::TestValues)
-  # end
 end

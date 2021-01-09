@@ -1,6 +1,5 @@
 require "log"
 require "./spectator/includes"
-require "./spectator_test_context"
 
 Log.setup_from_env
 
