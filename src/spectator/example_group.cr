@@ -9,7 +9,7 @@ module Spectator
     include Iterable(SpecNode)
 
     group_event before_all do |hooks|
-      Log.trace { "Processing before_all hooks" }
+      Log.trace { "Processing before_all hooks for #{self}" }
 
       if (parent = group?)
         parent.call_once_before_all
@@ -22,7 +22,7 @@ module Spectator
     end
 
     group_event after_all do |hooks|
-      Log.trace { "Processing after_all hooks" }
+      Log.trace { "Processing after_all hooks for #{self}" }
 
       hooks.each do |hook|
         Log.trace { "Invoking hook #{hook}" }
@@ -35,7 +35,7 @@ module Spectator
     end
 
     example_event before_each do |hooks, example|
-      Log.trace { "Processing before_each hooks" }
+      Log.trace { "Processing before_each hooks for #{self}" }
 
       if (parent = group?)
         parent.call_before_each(example)
@@ -48,7 +48,7 @@ module Spectator
     end
 
     example_event after_each do |hooks, example|
-      Log.trace { "Processing after_each hooks" }
+      Log.trace { "Processing after_each hooks for #{self}" }
 
       hooks.each do |hook|
         Log.trace { "Invoking hook #{hook}" }
