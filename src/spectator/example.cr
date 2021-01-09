@@ -1,14 +1,14 @@
 require "./example_context_delegate"
 require "./example_group"
-require "./example_node"
 require "./harness"
 require "./pending_result"
 require "./result"
 require "./source"
+require "./spec_node"
 
 module Spectator
   # Standard example that runs a test case.
-  class Example < ExampleNode
+  class Example < SpecNode
     # Currently running example.
     class_getter! current : Example
 

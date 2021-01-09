@@ -1,12 +1,15 @@
+require "./label"
 require "./source"
 
 module Spectator
-  # A single example or collection (group) of examples in an example tree.
-  abstract class ExampleNode
+  # A single item in a test spec.
+  # This is commonly an `Example` or `ExampleGroup`,
+  # but can be anything that should be iterated over when running the spec.
+  abstract class SpecNode
     # Location of the node in source code.
     getter! source : Source
 
-    # User-provided name or description of the test.
+    # User-provided name or description of the node.
     # This does not include the group name or descriptions.
     # Use `#to_s` to get the full name.
     #
@@ -16,7 +19,7 @@ module Spectator
     # of the first matcher that runs in the test case.
     #
     # If this value is a `Symbol`, the user specified a type for the name.
-    getter! name : String | Symbol
+    getter! name : Label
 
     # Updates the name of the node.
     protected def name=(@name : String)
@@ -35,7 +38,7 @@ module Spectator
     # It can be a `Symbol` to describe a type.
     # The *source* tracks where the node exists in source code.
     # The node will be assigned to *group* if it is provided.
-    def initialize(@name : String | Symbol? = nil, @source : Source? = nil, group : ExampleGroup? = nil)
+    def initialize(@name : Label = nil, @source : Source? = nil, group : ExampleGroup? = nil)
       # Ensure group is linked.
       group << self if group
     end
