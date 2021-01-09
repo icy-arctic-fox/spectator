@@ -16,9 +16,7 @@ module Spectator::DSL
       #   # Your examples for `Foo` go here.
       # end
       # ```
-      # NOTE: Inside the block, the `Spectator` prefix is no longer needed.
-      # Actually, prefixing methods and macros with `Spectator`
-      # most likely won't work and can cause compiler errors.
+      # NOTE: Inside the block, the `Spectator` prefix _should not_ be used.
       macro {{method.id}}(description, &block)
         class ::SpectatorTestContext
           {{method.id}}(\{{description}}) \{{block}}
