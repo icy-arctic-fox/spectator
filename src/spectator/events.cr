@@ -1,4 +1,5 @@
-require "./example_context_delegate"
+require "./example_group_hook"
+require "./example_hook"
 
 module Spectator
   # Mix-in for managing events and hooks.
@@ -10,7 +11,7 @@ module Spectator
     #
     # The *name* defines the name of the event.
     # This must be unique across all events, not just group events.
-    # Three public methods are defined - one to add a hook and the others to trigger the event which calls every hook.
+    # Four public methods are defined - two to add a hook and the others to trigger the event which calls every hook.
     # One trigger method, prefixed with *call_* will always call the event hooks.
     # The other trigger method, prefixed with *call_once_* will only call the event hooks on the first invocation.
     #
@@ -24,13 +25,19 @@ module Spectator
     # end
     # ```
     private macro group_event(name, &block)
-      @%hooks = Deque(->).new
+      @%hooks = [] of ExampleGroupHook
       @%called = Atomic::Flag.new
+
+      # Adds a hook to be invoked when the *{{name.id}}* event occurs.
+      def add_{{name.id}}_hook(hook : ExampleGroupHook) : Nil
+        @%hooks << hook
+      end
 
       # Defines a hook for the *{{name.id}}* event.
       # The block of code given to this method is invoked when the event occurs.
-      def {{name.id}}(&block) : Nil
-        @%hooks << block
+      def {{name.id}}(&block : -> _) : Nil
+        hook = ExampleGroupHook.new(label: {{name.stringify}}, &block)
+        add_{{name.id}}_hook(hook)
       end
 
       # Signals that the *{{name.id}}* event has occurred.
@@ -60,7 +67,7 @@ module Spectator
     #
     # The *name* defines the name of the event.
     # This must be unique across all events.
-    # Two public methods are defined - one to add a hook and the other to trigger the event which calls every hook.
+    # Three public methods are defined - two to add a hook and the other to trigger the event which calls every hook.
     #
     # A block must be provided to this macro.
     # The block defines the logic for invoking all of the hooks.
@@ -72,13 +79,19 @@ module Spectator
     # end
     # ```
     private macro example_event(name, &block)
-      @%hooks = Deque(Example ->).new
+      @%hooks = [] of ExampleHook
+
+      # Adds a hook to be invoked when the *{{name.id}}* event occurs.
+      def add_{{name.id}}_hook(hook : ExampleHook) : Nil
+        @%hooks << hook
+      end
 
       # Defines a hook for the *{{name.id}}* event.
       # The block of code given to this method is invoked when the event occurs.
       # The current example is provided as a block argument.
       def {{name.id}}(&block : Example ->) : Nil
-        @%hooks << block
+        hook = ExampleHook.new(label: {{name.stringify}}, &block)
+        add_{{name.id}}_hook(hook)
       end
 
       # Signals that the *{{name.id}}* event has occurred.
