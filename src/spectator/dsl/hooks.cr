@@ -11,7 +11,9 @@ module Spectator::DSL
         {{block.body}}
       end
 
-      ::Spectator::DSL::Builder.before_all { {{@type.name}}.%hook }
+      ::Spectator::DSL::Builder.before_all(
+        ::Spectator::Source.new({{block.filename}}, {{block.line_number}})
+      ) { {{@type.name}}.%hook }
     end
 
     macro before_each(&block)
@@ -21,9 +23,9 @@ module Spectator::DSL
         {{block.body}}
       end
 
-      ::Spectator::DSL::Builder.before_each do |example|
-        example.with_context({{@type.name}}) { %hook }
-      end
+      ::Spectator::DSL::Builder.before_each(
+        ::Spectator::Source.new({{block.filename}}, {{block.line_number}})
+      ) { |example| example.with_context({{@type.name}}) { %hook } }
     end
 
     macro after_all(&block)
@@ -33,7 +35,9 @@ module Spectator::DSL
         {{block.body}}
       end
 
-      ::Spectator::DSL::Builder.after_all { {{@type.name}}.%hook }
+      ::Spectator::DSL::Builder.after_all(
+        ::Spectator::Source.new({{block.filename}}, {{block.line_number}})
+      ) { {{@type.name}}.%hook }
     end
 
     macro after_each(&block)
@@ -43,9 +47,9 @@ module Spectator::DSL
         {{block.body}}
       end
 
-      ::Spectator::DSL::Builder.after_each do |example|
-        example.with_context({{@type.name}}) { %hook }
-      end
+      ::Spectator::DSL::Builder.after_each(
+        ::Spectator::Source.new({{block.filename}}, {{block.line_number}})
+      ) { |example| example.with_context({{@type.name}}) { %hook } }
     end
   end
 end

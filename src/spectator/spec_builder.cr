@@ -97,10 +97,23 @@ module Spectator
       # The example is added to the current group by `Example` initializer.
     end
 
+    # Attaches a hook to be invoked before any and all examples in the current group.
+    def before_all(hook)
+      Log.trace { "Add before_all hook #{hook}" }
+      current_group.add_before_all_hook(hook)
+    end
+
     # Defines a block of code to execute before any and all examples in the current group.
     def before_all(&block)
       Log.trace { "Add before_all hook" }
       current_group.before_all(&block)
+    end
+
+    # Attaches a hook to be invoked before every example in the current group.
+    # The current example is provided as a block argument.
+    def before_each(hook)
+      Log.trace { "Add before_each hook #{hook}" }
+      current_group.add_before_each_hook(hook)
     end
 
     # Defines a block of code to execute before every example in the current group.
@@ -110,10 +123,23 @@ module Spectator
       current_group.before_each(&block)
     end
 
+    # Attaches a hook to be invoked after any and all examples in the current group.
+    def after_all(hook)
+      Log.trace { "Add after_all hook #{hook}" }
+      current_group.add_after_all_hook(hook)
+    end
+
     # Defines a block of code to execute after any and all examples in the current group.
     def after_all(&block)
       Log.trace { "Add after_all hook" }
       current_group.after_all(&block)
+    end
+
+    # Attaches a hook to be invoked after every example in the current group.
+    # The current example is provided as a block argument.
+    def after_each(hook)
+      Log.trace { "Add after_each hook #{hook}" }
+      current_group.add_after_each_hook(hook)
     end
 
     # Defines a block of code to execute after every example in the current group.

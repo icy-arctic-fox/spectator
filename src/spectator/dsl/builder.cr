@@ -36,31 +36,27 @@ module Spectator::DSL
     end
 
     # Defines a block of code to execute before any and all examples in the current group.
-    #
-    # See `Spec::Builder#before_all` for usage details.
-    def before_all(&block)
-      @@builder.before_all(&block)
+    def before_all(source = nil, label = "before_all", &block)
+      hook = ExampleGroupHook.new(source: source, label: label, &block)
+      @@builder.before_all(hook)
     end
 
     # Defines a block of code to execute before every example in the current group
-    #
-    # See `Spec::Builder#before_each` for usage details.
-    def before_each(&block : Example -> _)
-      @@builder.before_each(&block)
+    def before_each(source = nil, label = "before_each", &block : Example -> _)
+      hook = ExampleHook.new(source: source, label: label, &block)
+      @@builder.before_each(hook)
     end
 
     # Defines a block of code to execute after any and all examples in the current group.
-    #
-    # See `Spec::Builder#after_all` for usage details.
-    def after_all(&block)
-      @@builder.after_all(&block)
+    def after_all(source = nil, label = "after_all", &block)
+      hook = ExampleGroupHook.new(source: source, label: label, &block)
+      @@builder.after_all(hook)
     end
 
     # Defines a block of code to execute after every example in the current group.
-    #
-    # See `Spec::Builder#after_each` for usage details.
-    def after_each(&block : Example ->)
-      @@builder.after_each(&block)
+    def after_each(source = nil, label = "after_each", &block : Example ->)
+      hook = ExampleHook.new(source: source, label: label, &block)
+      @@builder.after_each(hook)
     end
 
     # Sets the configuration of the spec.
