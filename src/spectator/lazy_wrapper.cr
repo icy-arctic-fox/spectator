@@ -11,9 +11,9 @@ module Spectator
     # On the first invocation of this method, it will yield.
     # The block should return the value to store.
     # Subsequent calls will return the same value and not yield.
-    def get(type : T.class, &block : -> T) : T forall T
+    def get(&block : -> T) : T forall T
       wrapper = @lazy.get { Wrapper.new(yield) }
-      wrapper.get(type)
+      wrapper.get(T)
     end
   end
 end
