@@ -24,8 +24,9 @@ module Spectator::DSL
       macro {{name.id}}(what = nil, &block)
         \{% raise "Cannot use '{{name.id}}' inside of a test block" if @def %}
         \{% raise "A description or block must be provided. Cannot use '{{name.id}}' alone." unless what || block %}
+        \{% raise "Block argument count '{{name.id}}' hook must be 0..1" if block.args.size > 1 %}
 
-        def \%test : Nil # TODO: Pass example instance.
+        def \%test(\{{block.args.splat}}) : Nil
           \{{block.body}}
         end
 
@@ -33,7 +34,15 @@ module Spectator::DSL
           _spectator_example_name(\{{what}}),
           ::Spectator::Source.new(\{{block.filename}}, \{{block.line_number}}),
           \{{@type.name}}.new.as(::Spectator::Context)
-        ) { |example| example.with_context(\{{@type.name}}) { \%test } }
+        ) do |example|
+          example.with_context(\{{@type.name}}) do
+            \{% if block.args.empty? %}
+              \%test
+            \{% else %}
+              \%test(example)
+            \{% end %}
+          end
+        end
       end
     end
 

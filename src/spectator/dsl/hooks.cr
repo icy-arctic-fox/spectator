@@ -26,15 +26,24 @@ module Spectator::DSL
     macro define_example_hook(type)
       macro {{type.id}}(&block)
         \{% raise "Missing block for '{{type.id}}' hook" unless block %}
+        \{% raise "Block argument count '{{type.id}}' hook must be 0..1" if block.args.size > 1 %}
         \{% raise "Cannot use '{{type.id}}' inside of a test block" if @def %}
 
-        def \%hook : Nil # TODO: Pass example instance.
+        def \%hook(\{{block.args.splat}}) : Nil
           \{{block.body}}
         end
 
         ::Spectator::DSL::Builder.{{type.id}}(
           ::Spectator::Source.new(\{{block.filename}}, \{{block.line_number}})
-        ) { |example| example.with_context(\{{@type.name}}) { \%hook } }
+        ) do |example|
+          example.with_context(\{{@type.name}}) do
+            \{% if block.args.empty? %}
+              \%hook
+            \{% else %}
+              \%hook(example)
+            \{% end %}
+          end
+        end
       end
     end
 
