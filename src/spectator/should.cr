@@ -64,3 +64,21 @@ struct Proc(*T, R)
     ::Spectator::Expectations::BlockExpectationPartial.new(actual, source).to_not(matcher)
   end
 end
+
+module Spectator::DSL::Assertions
+  macro should(matcher)
+    expect(subject).to({{matcher}})
+  end
+
+  macro should_not(matcher)
+    expect(subject).to_not({{matcher}})
+  end
+
+  macro should_eventually(matcher)
+    expect(subject).to_eventually({{matcher}})
+  end
+
+  macro should_never(matcher)
+    expect(subject).to_never({{matcher}})
+  end
+end

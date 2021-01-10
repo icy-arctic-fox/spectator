@@ -6,20 +6,45 @@ require "../source"
 module Spectator::DSL
   # Methods and macros for asserting that conditions are met.
   module Assertions
+    # Immediately fail the current test.
+    # A reason can be specified with *message*.
+    def fail(message = "Example failed", *, _file = __FILE__, _line = __LINE__)
+      raise AssertionFailed.new(Source.new(_file, _line), message)
+    end
+
     # Checks that the specified condition is true.
     # Raises `AssertionFailed` if *condition* is false.
     # The *message* is passed to the exception.
+    #
+    # ```
+    # assert(value == 42, "That's not the answer to everything.")
+    # ```
     def assert(condition, message, *, _file = __FILE__, _line = __LINE__)
-      raise AssertionFailed.new(Source.new(_file, _line), message) unless condition
+      fail(message, _file: _file, _line: _line) unless condition
     end
 
     # Checks that the specified condition is true.
     # Raises `AssertionFailed` if *condition* is false.
     # The message of the exception is the *condition*.
+    #
+    # ```
+    # assert(value == 42)
+    # ```
     macro assert(condition)
       assert({{condition}}, {{condition.stringify}}, _file: {{condition.filename}}, _line: {{condition.line_number}})
     end
 
+    # Starts an expectation.
+    # This should be followed up with `Assertion::Target#to` or `Assertion::Target#to_not`.
+    # The value passed in will be checked to see if it satisfies the conditions of the specified matcher.
+    #
+    # This macro should be used like so:
+    # ```
+    # expect(actual).to eq(expected)
+    # ```
+    #
+    # Where the actual value is returned by the system under test,
+    # and the expected value is what the actual value should be to satisfy the condition.
     macro expect(actual)
       %actual = begin
         {{actual}}
@@ -29,213 +54,120 @@ module Spectator::DSL
       %source = ::Spectator::Source.new({{actual.filename}}, {{actual.line_number}})
       ::Spectator::Assertion::Target.new(%expression, %source)
     end
-  end
 
-  # Starts an expectation.
-  # This should be followed up with `Spectator::Expectations::ExpectationPartial#to`
-  # or `Spectator::Expectations::ExpectationPartial#to_not`.
-  # The value passed in will be checked
-  # to see if it satisfies the conditions specified.
-  #
-  # This method should be used like so:
-  # ```
-  # expect(actual).to eq(expected)
-  # ```
-  # Where the actual value is returned by the system-under-test,
-  # and the expected value is what the actual value should be to satisfy the condition.
-  macro expect(actual, _source_file = __FILE__, _source_line = __LINE__)
-    %test_value = ::Spectator::TestValue.new({{actual}}, {{actual.stringify}})
-    %source = ::Spectator::Source.new({{_source_file}}, {{_source_line}})
-    ::Spectator::Expectations::ExpectationPartial.new(%test_value, %source)
-  end
-
-  # Starts an expectation on a block of code.
-  # This should be followed up with `Spectator::Expectations::ExpectationPartial#to`
-  # or `Spectator::Expectations::ExpectationPartial#to_not`.
-  # The block passed in, or its return value, will be checked
-  # to see if it satisfies the conditions specified.
-  #
-  # This method should be used like so:
-  # ```
-  # expect { raise "foo" }.to raise_error
-  # ```
-  # The block of code is passed along for validation to the matchers.
-  #
-  # The short, one argument syntax used for passing methods to blocks can be used.
-  # So instead of doing this:
-  # ```
-  # expect(subject.size).to eq(5)
-  # ```
-  # The following syntax can be used instead:
-  # ```
-  # expect(&.size).to eq(5)
-  # ```
-  # The method passed will always be evaluated on the subject.
-  macro expect(_source_file = __FILE__, _source_line = __LINE__, &block)
-    {% if block.is_a?(Nop) %}
-      {% raise "Argument or block must be provided to expect" %}
-    {% end %}
-
-    # Check if the short-hand method syntax is used.
-    # This is a hack, since macros don't get this as a "literal" or something similar.
+    # Starts an expectation.
+    # This should be followed up with `Assertion::Target#to` or `Assertion::Target#not_to`.
+    # The value passed in will be checked to see if it satisfies the conditions of the specified matcher.
+    #
+    # This macro should be used like so:
+    # ```
+    # expect { raise "foo" }.to raise_error
+    # ```
+    #
+    # The block of code is passed along for validation to the matchers.
+    #
+    # The short, one argument syntax used for passing methods to blocks can be used.
+    # So instead of doing this:
+    # ```
+    # expect(subject.size).to eq(5)
+    # ```
+    #
+    # The following syntax can be used instead:
+    # ```
+    # expect(&.size).to eq(5)
+    # ```
+    #
+    # The method passed will always be evaluated on the subject.
+    #
+    # TECHNICAL NOTE:
+    # This macro uses an ugly hack to detect the short-hand syntax.
+    #
     # The Crystal compiler will translate:
     # ```
     # &.foo
     # ```
-    # to:
+    #
+    # effectively to:
     # ```
     # { |__arg0| __arg0.foo }
     # ```
-    # The hack used here is to check if it looks like a compiler-generated block.
-    {% if block.args.size == 1 && block.args[0] =~ /^__arg\d+$/ && block.body.is_a?(Call) && block.body.id =~ /^__arg\d+\./ %}
-      # Extract the method name to make it clear to the user what is tested.
-      # The raw block can't be used because it's not clear to the user.
-      {% method_name = block.body.id.split('.')[1..-1].join('.') %}
-      %proc = ->{ subject.{{method_name.id}} }
-      %test_block = ::Spectator::TestBlock.create(%proc, {{"#" + method_name}})
-    {% elsif block.args.empty? %}
-      # In this case, it looks like the short-hand method syntax wasn't used.
-      # Capture the block as a proc and pass along.
-      %proc = ->{{block}}
-      %test_block = ::Spectator::TestBlock.create(%proc, {{"`" + block.body.stringify + "`"}})
-    {% else %}
-      {% raise "Unexpected block arguments in expect call" %}
-    {% end %}
+    macro expect(&block)
+      {% if block.args.size == 1 && block.args[0] =~ /^__arg\d+$/ && block.body.is_a?(Call) && block.body.id =~ /^__arg\d+\./ %}
+        {% method_name = block.body.id.split('.')[1..-1].join('.') %}
+        %block = ::Spectator::Block.new({{"#" + method_name}}) do
+          subject.{{method_name.id}}
+        end
+      {% elsif block.args.empty? %}
+        %block = ::Spectator::Block.new({{"`" + block.body.stringify + "`"}}) {{block}}
+      {% else %}
+        {% raise "Unexpected block arguments in 'expect' call" %}
+      {% end %}
 
-    %source = ::Spectator::Source.new({{_source_file}}, {{_source_line}})
-    ::Spectator::Expectations::ExpectationPartial.new(%test_block, %source)
-  end
+      %source = ::Spectator::Source.new({{block.filename}}, {{block.line_number}})
+      ::Spectator::Assertion::Target.new(%block, %source)
+    end
 
-  # Starts an expectation.
-  # This should be followed up with `Spectator::Expectations::ExpectationPartial#to`
-  # or `Spectator::Expectations::ExpectationPartial#to_not`.
-  # The value passed in will be checked
-  # to see if it satisfies the conditions specified.
-  #
-  # This method is identical to `#expect`,
-  # but is grammatically correct for the one-liner syntax.
-  # It can be used like so:
-  # ```
-  # it expects(actual).to eq(expected)
-  # ```
-  # Where the actual value is returned by the system-under-test,
-  # and the expected value is what the actual value should be to satisfy the condition.
-  macro expects(actual)
-    expect({{actual}})
-  end
+    # Short-hand for expecting something of the subject.
+    #
+    # These two are functionally equivalent:
+    # ```
+    # expect(subject).to eq("foo")
+    # is_expected.to eq("foo")
+    # ```
+    macro is_expected
+      expect(subject)
+    end
 
-  # Starts an expectation on a block of code.
-  # This should be followed up with `Spectator::Expectations::ExpectationPartial#to`
-  # or `Spectator::Expectations::ExpectationPartial#to_not`.
-  # The block passed in, or its return value, will be checked
-  # to see if it satisfies the conditions specified.
-  #
-  # This method is identical to `#expect`,
-  # but is grammatically correct for the one-liner syntax.
-  # It can be used like so:
-  # ```
-  # it expects { 5 / 0 }.to raise_error
-  # ```
-  # The block of code is passed along for validation to the matchers.
-  #
-  # The short, one argument syntax used for passing methods to blocks can be used.
-  # So instead of doing this:
-  # ```
-  # it expects(subject.size).to eq(5)
-  # ```
-  # The following syntax can be used instead:
-  # ```
-  # it expects(&.size).to eq(5)
-  # ```
-  # The method passed will always be evaluated on the subject.
-  macro expects(&block)
-    expect {{block}}
-  end
+    # Short-hand form of `#is_expected` that can be used for one-liner syntax.
+    #
+    # For instance:
+    # ```
+    # it "is 42" do
+    #   expect(subject).to eq(42)
+    # end
+    # ```
+    #
+    # Can be shortened to:
+    # ```
+    # it { is(42) }
+    # ```
+    #
+    # These three are functionally equivalent:
+    # ```
+    # expect(subject).to eq("foo")
+    # is_expected.to eq("foo")
+    # is("foo")
+    # ```
+    #
+    # See also: `#is_not`
+    macro is(expected)
+      expect(subject).to(eq({{expected}}))
+    end
 
-  # Short-hand for expecting something of the subject.
-  # These two are functionally equivalent:
-  # ```
-  # expect(subject).to eq("foo")
-  # is_expected.to eq("foo")
-  # ```
-  macro is_expected
-    expect(subject)
-  end
-
-  # Short-hand form of `#is_expected` that can be used for one-liner syntax.
-  # For instance:
-  # ```
-  # it "is 42" do
-  #   expect(subject).to eq(42)
-  # end
-  # ```
-  # Can be shortened to:
-  # ```
-  # it is(42)
-  # ```
-  #
-  # These three are functionally equivalent:
-  # ```
-  # expect(subject).to eq("foo")
-  # is_expected.to eq("foo")
-  # is("foo")
-  # ```
-  #
-  # See also: `#is_not`
-  macro is(expected)
-    is_expected.to eq({{expected}})
-  end
-
-  # Short-hand, negated form of `#is_expected` that can be used for one-liner syntax.
-  # For instance:
-  # ```
-  # it "is not 42" do
-  #   expect(subject).to_not eq(42)
-  # end
-  # ```
-  # Can be shortened to:
-  # ```
-  # it is_not(42)
-  # ```
-  #
-  # These three are functionally equivalent:
-  # ```
-  # expect(subject).to_not eq("foo")
-  # is_expected.to_not eq("foo")
-  # is_not("foo")
-  # ```
-  #
-  # See also: `#is`
-  macro is_not(expected)
-    is_expected.to_not eq({{expected}})
-  end
-
-  macro should(matcher)
-    is_expected.to({{matcher}})
-  end
-
-  macro should_not(matcher)
-    is_expected.to_not({{matcher}})
-  end
-
-  macro should_eventually(matcher)
-    is_expected.to_eventually({{matcher}})
-  end
-
-  macro should_never(matcher)
-    is_expected.to_never({{matcher}})
-  end
-
-  # Immediately fail the current test.
-  # A reason can be passed,
-  # which is reported in the output.
-  def fail(reason : String)
-    raise ExampleFailed.new(reason)
-  end
-
-  # :ditto:
-  @[AlwaysInline]
-  def fail
-    fail("Example failed")
+    # Short-hand, negated form of `#is_expected` that can be used for one-liner syntax.
+    #
+    # For instance:
+    # ```
+    # it "is not 42" do
+    #   expect(subject).to_not eq(42)
+    # end
+    # ```
+    #
+    # Can be shortened to:
+    # ```
+    # it { is_not(42) }
+    # ```
+    #
+    # These three are functionally equivalent:
+    # ```
+    # expect(subject).not_to eq("foo")
+    # is_expected.not_to eq("foo")
+    # is_not("foo")
+    # ```
+    #
+    # See also: `#is`
+    macro is_not(expected)
+      expect(subject).not_to(eq({{expected}}))
+    end
   end
 end
