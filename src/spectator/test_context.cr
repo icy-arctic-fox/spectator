@@ -6,6 +6,7 @@ require "./dsl"
 # This type is intentionally outside the `Spectator` module.
 # The reason for this is to prevent name collision when using the DSL to define a spec.
 class SpectatorTestContext < SpectatorContext
+  include ::Spectator::DSL::Assertions
   include ::Spectator::DSL::Examples
   include ::Spectator::DSL::Groups
   include ::Spectator::DSL::Hooks

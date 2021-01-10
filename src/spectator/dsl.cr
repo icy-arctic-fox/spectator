@@ -1,4 +1,5 @@
 # require "./dsl/*"
+require "./dsl/assertions"
 require "./dsl/builder"
 require "./dsl/examples"
 require "./dsl/groups"
