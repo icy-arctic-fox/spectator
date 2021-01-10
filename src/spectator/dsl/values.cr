@@ -1,24 +1,18 @@
+require "../lazy_wrapper"
+
 module Spectator::DSL
+  # DSL methods for defining test values (subjects).
   module Values
-  end
+    macro let(name, &block)
+      {% raise "Block required for 'let'" unless block %}
 
-  macro let(name, &block)
-      @%wrapper : ::Spectator::ValueWrapper?
-
-      def {{name.id}}
-        {{block.body}}
-      end
+      @%value = ::Spectator::LazyWrapper.new
 
       def {{name.id}}
-        if (wrapper = @%wrapper)
-          wrapper.as(::Spectator::TypedValueWrapper(typeof(previous_def))).value
-        else
-          previous_def.tap do |value|
-            @%wrapper = ::Spectator::TypedValueWrapper.new(value)
-          end
-        end
+        @%value.get {{block}}
       end
     end
+  end
 
   macro let!(name, &block)
       @%wrapper : ::Spectator::ValueWrapper?

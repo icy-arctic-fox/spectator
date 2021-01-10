@@ -9,6 +9,7 @@ class SpectatorTestContext < SpectatorContext
   include ::Spectator::DSL::Examples
   include ::Spectator::DSL::Groups
   include ::Spectator::DSL::Hooks
+  include ::Spectator::DSL::Values
 
   # Initial implicit subject for tests.
   # This method should be overridden by example groups when an object is described.
