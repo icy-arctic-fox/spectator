@@ -66,5 +66,15 @@ module Spectator::DSL
     # The block will be run in the context of the current running example.
     # This means that values defined by `let` and `subject` are available.
     define_example_hook :after_each
+
+    # Defines a block of code that will be invoked around every example in the group.
+    # The block will be run in the context of the current running example.
+    # This means that values defined by `let` and `subject` are available.
+    #
+    # The block will execute before the example.
+    # An `Example::Procsy` is passed to the block.
+    # The `Example::Procsy#run` method should be called to ensure the example runs.
+    # More code can run afterwards (in the block).
+    define_example_hook :around_each
   end
 end

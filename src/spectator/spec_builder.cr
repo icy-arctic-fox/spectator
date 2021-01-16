@@ -149,6 +149,20 @@ module Spectator
       current_group.after_each(&block)
     end
 
+    # Attaches a hook to be invoked around every example in the current group.
+    # The current example in procsy form is provided as a block argument.
+    def around_each(hook)
+      Log.trace { "Add around_each hook #{hook}" }
+      current_group.add_around_each_hook(hook)
+    end
+
+    # Defines a block of code to execute around every example in the current group.
+    # The current example in procsy form is provided as a block argument.
+    def around_each(&block : Example -> _)
+      Log.trace { "Add around_each hook" }
+      current_group.around_each(&block)
+    end
+
     # Builds the configuration to use for the spec.
     # A `ConfigBuilder` is yielded to the block provided to this method.
     # That builder will be used to create the configuration.
