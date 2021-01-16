@@ -82,6 +82,16 @@ module Spectator
       with context yield
     end
 
+    # Constructs the full name or description of the example.
+    # This prepends names of groups this example is part of.
+    def to_s(io)
+      if name?
+        super
+      else
+        io << "<anonymous>"
+      end
+    end
+
     # Exposes information about the example useful for debugging.
     def inspect(io)
       # Full example name.
