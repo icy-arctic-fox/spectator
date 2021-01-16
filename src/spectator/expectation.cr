@@ -38,7 +38,7 @@ module Spectator
 
       def to(stub : Mocks::MethodStub) : Nil
         Harness.current.mocks.expect(@expression.value, stub)
-        value = TestValue.new(stub.name, stub.to_s)
+        value = Value.new(stub.name, stub.to_s)
         matcher = Matchers::ReceiveMatcher.new(value, stub.arguments?)
         to_eventually(matcher)
       end
@@ -55,7 +55,7 @@ module Spectator
       end
 
       def to_not(stub : Mocks::MethodStub) : Nil
-        value = TestValue.new(stub.name, stub.to_s)
+        value = Value.new(stub.name, stub.to_s)
         matcher = Matchers::ReceiveMatcher.new(value, stub.arguments?)
         to_never(matcher)
       end
@@ -107,7 +107,7 @@ module Spectator
       # Reports an expectation to the current harness.
       private def report(match_data : Matchers::MatchData)
         expectation = Expectation.new(match_data, @source)
-        Harness.current.report_expectation(expectation)
+        Harness.current.report(expectation)
       end
     end
   end

@@ -6,9 +6,9 @@ module Spectator::Mocks
     end
 
     def to(stub : MethodStub) : Nil
-      actual = TestValue.new(T)
+      actual = Value.new(T)
       Harness.current.mocks.expect(T, stub)
-      value = TestValue.new(stub.name, stub.to_s)
+      value = Value.new(stub.name, stub.to_s)
       matcher = Matchers::ReceiveTypeMatcher.new(value, stub.arguments?)
       partial = Expectations::ExpectationPartial.new(actual, @source)
       partial.to_eventually(matcher)

@@ -9,7 +9,7 @@ module Spectator::Matchers
     private getter expected
 
     # Creates the matcher with an expected value.
-    def initialize(@expected : TestValue(ExpectedType))
+    def initialize(@expected : Value(ExpectedType))
     end
 
     # Short text about the matcher's purpose.
@@ -20,7 +20,7 @@ module Spectator::Matchers
     end
 
     # Entrypoint for the matcher, forwards to the correct method for string or enumerable.
-    def match(actual : TestExpression(T)) : MatchData forall T
+    def match(actual : Expression(T)) : MatchData forall T
       if (value = actual.value).is_a?(String)
         match_string(value, actual.label)
       else
@@ -70,7 +70,7 @@ module Spectator::Matchers
 
     # Performs the test against the expression, but inverted.
     # A successful match with `#match` should normally fail for this method, and vice-versa.
-    def negated_match(actual : TestExpression(T)) : MatchData forall T
+    def negated_match(actual : Expression(T)) : MatchData forall T
       if (value = actual.value).is_a?(String)
         negated_match_string(value, actual.label)
       else

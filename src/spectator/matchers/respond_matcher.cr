@@ -14,7 +14,7 @@ module Spectator::Matchers
     end
 
     # Actually performs the test against the expression.
-    def match(actual : TestExpression(T)) : MatchData forall T
+    def match(actual : Expression(T)) : MatchData forall T
       snapshot = snapshot_values(actual.value)
       if snapshot.values.all?
         SuccessfulMatchData.new(description)
@@ -25,7 +25,7 @@ module Spectator::Matchers
 
     # Performs the test against the expression, but inverted.
     # A successful match with `#match` should normally fail for this method, and vice-versa.
-    def negated_match(actual : TestExpression(T)) : MatchData forall T
+    def negated_match(actual : Expression(T)) : MatchData forall T
       snapshot = snapshot_values(actual.value)
       if snapshot.values.any?
         FailedMatchData.new(description, "#{actual.label} responds to #{label}", values(snapshot).to_a)
