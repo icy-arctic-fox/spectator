@@ -118,7 +118,6 @@ module Spectator
       add_around_each_hook(hook)
     end
 
-
     # Signals that the *around_each* event has occurred.
     # All hooks associated with the event will be called.
     def call_around_each(example : Example, &block : -> _) : Nil
