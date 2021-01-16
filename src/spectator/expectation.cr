@@ -27,7 +27,6 @@ module Spectator
       # The *expression* is the actual value being tested and its label.
       # The *source* is the location of where this expectation was defined.
       def initialize(@expression : Expression(T), @source : Source)
-        puts "TARGET: #{@expression} @ #{@source}"
       end
 
       # Asserts that some criteria defined by the matcher is satisfied.
