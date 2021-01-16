@@ -1,7 +1,8 @@
 require "../assertion"
 require "../assertion_failed"
-require "../expression"
+require "../block"
 require "../source"
+require "../value"
 
 module Spectator::DSL
   # Methods and macros for asserting that conditions are met.
@@ -50,7 +51,7 @@ module Spectator::DSL
         {{actual}}
       end
 
-      %expression = ::Spectator::Expression.new(%actual, {{actual.stringify}})
+      %expression = ::Spectator::Value.new(%actual, {{actual.stringify}})
       %source = ::Spectator::Source.new({{actual.filename}}, {{actual.line_number}})
       ::Spectator::Assertion::Target.new(%expression, %source)
     end

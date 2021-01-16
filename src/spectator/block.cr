@@ -1,4 +1,4 @@
-require "./abstract_expression"
+require "./expression"
 require "./label"
 require "./lazy"
 
@@ -8,7 +8,7 @@ module Spectator
   # It consists of a label and parameterless block.
   # The label should be a string recognizable by the user,
   # or nil if one isn't available.
-  class Block(T) < AbstractExpression
+  class Block(T) < Expression(T)
     # Cached value returned from the block.
     @value = Lazy(T).new
 

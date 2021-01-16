@@ -6,25 +6,30 @@ module Spectator
   # It consists of a label and the value of the expression.
   # The label should be a string recognizable by the user,
   # or nil if one isn't available.
+  #
   # This base class is provided so that all generic sub-classes can be stored as this one type.
   # The value of the expression can be retrieved by downcasting to the expected type with `#cast`.
+  #
+  # NOTE: This is intentionally a class and not a struct.
+  # If it were a struct, changes made to the value held by an instance may not be kept when passing it around.
+  # See commit ca564619ad2ae45f832a058d514298c868fdf699.
   abstract class AbstractExpression
     # User recognizable string for the expression.
     # This can be something like a variable name or a snippet of Crystal code.
     getter label : Label
 
     # Creates the expression.
-    # The *label* is usually the Crystal code evaluating to the `#value`.
+    # The *label* is usually the Crystal code evaluating to the `#raw_value`.
     # It can be nil if it isn't available.
     def initialize(@label : Label)
     end
 
-    # Retrieves the real value of the expression.
-    abstract def value
+    # Retrieves the evaluated value of the expression.
+    abstract def raw_value
 
-    # Attempts to cast `#value` to the type *T* and return it.
+    # Attempts to cast `#raw_value` to the type *T* and return it.
     def cast(type : T.class) : T forall T
-      value.as(T)
+      raw_value.as(T)
     end
 
     # Produces a string representation of the expression.
@@ -35,7 +40,7 @@ module Spectator
         io << ':'
         io << ' '
       end
-      io << value
+      raw_value.to_s(io)
     end
 
     # Produces a detailed string representation of the expression.
@@ -46,7 +51,7 @@ module Spectator
         io << ':'
         io << ' '
       end
-      value.inspect(io)
+      raw_value.inspect(io)
     end
   end
 end
