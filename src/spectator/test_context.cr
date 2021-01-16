@@ -10,6 +10,7 @@ class SpectatorTestContext < SpectatorContext
   include ::Spectator::DSL::Expectations
   include ::Spectator::DSL::Groups
   include ::Spectator::DSL::Hooks
+  include ::Spectator::DSL::Matchers
   include ::Spectator::DSL::Values
 
   # Initial implicit subject for tests.
