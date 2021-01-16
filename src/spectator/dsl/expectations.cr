@@ -1,12 +1,12 @@
-require "../assertion"
 require "../assertion_failed"
 require "../block"
+require "../expectation"
 require "../source"
 require "../value"
 
 module Spectator::DSL
   # Methods and macros for asserting that conditions are met.
-  module Assertions
+  module Expectations
     # Immediately fail the current test.
     # A reason can be specified with *message*.
     def fail(message = "Example failed", *, _file = __FILE__, _line = __LINE__)
@@ -53,7 +53,7 @@ module Spectator::DSL
 
       %expression = ::Spectator::Value.new(%actual, {{actual.stringify}})
       %source = ::Spectator::Source.new({{actual.filename}}, {{actual.line_number}})
-      ::Spectator::Assertion::Target.new(%expression, %source)
+      ::Spectator::Expectation::Target.new(%expression, %source)
     end
 
     # Starts an expectation.
@@ -105,7 +105,7 @@ module Spectator::DSL
       {% end %}
 
       %source = ::Spectator::Source.new({{block.filename}}, {{block.line_number}})
-      ::Spectator::Assertion::Target.new(%block, %source)
+      ::Spectator::Expectation::Target.new(%block, %source)
     end
 
     # Short-hand for expecting something of the subject.
