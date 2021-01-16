@@ -99,10 +99,26 @@ module Spectator
     # An error will be raised if *klass* doesn't match the test context's type.
     # The block given to this method will be executed within the test context.
     #
+    # The context casted to an instance of *klass* is provided as a block argument.
+    #
     # TODO: Benchmark compiler performance using this method versus client-side casting in a proc.
-    def with_context(klass)
+    protected def with_context(klass)
       context = klass.cast(@context)
       with context yield
+    end
+
+    # Casts the example's test context to a specific type.
+    # This is an advanced method intended for internal usage only.
+    #
+    # The *klass* defines the type of the test context.
+    # This is typically only known by the code constructing the example.
+    # An error will be raised if *klass* doesn't match the test context's type.
+    #
+    # The context casted to an instance of *klass* is returned.
+    #
+    # TODO: Benchmark compiler performance using this method versus client-side casting in a proc.
+    protected def cast_context(klass)
+      klass.cast(@context)
     end
 
     # Constructs the full name or description of the example.
@@ -157,6 +173,20 @@ module Spectator
       # Creates a new procsy for a block and the example from this instance.
       def wrap(&block : ->) : self
         self.class.new(@example, &block)
+      end
+
+      # Executes code within the example's test context.
+      # This is an advanced method intended for internal usage only.
+      #
+      # The *klass* defines the type of the test context.
+      # This is typically only known by the code constructing the example.
+      # An error will be raised if *klass* doesn't match the test context's type.
+      # The block given to this method will be executed within the test context.
+      #
+      # TODO: Benchmark compiler performance using this method versus client-side casting in a proc.
+      protected def with_context(klass)
+        context = @example.cast_context(klass)
+        with context yield
       end
 
       # Allow instance to behave like an example.
