@@ -32,7 +32,7 @@ module Spectator
     # This will be the return value of the block.
     # The block is lazily evaluated and the value retrieved only once.
     # Afterwards, the value is cached and returned by successive calls to this method.
-    def value
+    def value : T
       @value.get { call }
     end
 
