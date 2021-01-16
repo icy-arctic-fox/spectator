@@ -46,25 +46,48 @@ module Spectator
     # Returns the result of the execution.
     # The result will also be stored in `#result`.
     def run : Result
-      @@current = self
       Log.debug { "Running example #{self}" }
       Log.warn { "Example #{self} already ran" } if @finished
-      @result = Harness.run do
-        if (parent = group?)
-          parent.call_once_before_all
-          parent.call_before_each(self)
-        end
 
-        @entrypoint.call(self)
+      previous_example = @@current
+      @@current = self
+
+      begin
+        @result = Harness.run do
+          if (parent = group?)
+            parent.call_around_each(self) { run_internal }
+          else
+            run_internal
+          end
+        end
+      ensure
+        @@current = previous_example
         @finished = true
-
-        if (parent = group?)
-          parent.call_after_each(self)
-          parent.call_once_after_all if parent.finished?
-        end
       end
-    ensure
-      @@current = nil
+    end
+
+    private def run_internal
+      run_before_hooks
+      run_test
+      run_after_hooks
+    end
+
+    private def run_before_hooks : Nil
+      return unless (parent = group?)
+
+      parent.call_once_before_all
+      parent.call_before_each(self)
+    end
+
+    private def run_after_hooks : Nil
+      return unless (parent = group?)
+
+      parent.call_after_each(self)
+      parent.call_once_after_all if parent.finished?
+    end
+
+    private def run_test : Nil
+      @entrypoint.call(self)
       @finished = true
     end
 
@@ -106,6 +129,38 @@ module Spectator
       end
 
       io << result
+    end
+
+    # Wraps an example to behave like a `Proc`.
+    # This is typically used for an *around_each* hook.
+    # Invoking `#call` or `#run` will run the example.
+    struct Procsy
+      # Underlying example that will run.
+      getter example : Example
+
+      # Creates the example proxy.
+      # The *example* should be run eventually.
+      # The *proc* defines the block of code to run when `#call` or `#run` is invoked.
+      def initialize(@example : Example, &@proc : ->)
+      end
+
+      # Invokes the proc.
+      def call : Nil
+        @proc.call
+      end
+
+      # Invokes the proc.
+      def run : Nil
+        @proc.call
+      end
+
+      # Creates a new procsy for a block and the example from this instance.
+      def wrap(&block : ->) : self
+        self.class.new(@example, &block)
+      end
+
+      # Allow instance to behave like an example.
+      forward_missing_to @example
     end
   end
 end

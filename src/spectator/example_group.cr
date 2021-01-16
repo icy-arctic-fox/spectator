@@ -1,5 +1,6 @@
 require "./events"
 require "./spec_node"
+require "./example_procsy_hook"
 
 module Spectator
   # Collection of examples and sub-groups.
@@ -100,6 +101,53 @@ module Spectator
       # Add the node to this group and associate with it.
       @nodes << node
       node.group = self
+    end
+
+    @around_hooks = [] of ExampleProcsyHook
+
+    # Adds a hook to be invoked when the *{{name.id}}* event occurs.
+    def add_around_each_hook(hook : ExampleProcsyHook) : Nil
+      @around_hooks << hook
+    end
+
+    # Defines a hook for the *around_each* event.
+    # The block of code given to this method is invoked when the event occurs.
+    # The current example is provided as a block argument.
+    def around_each(&block : Example::Procsy ->) : Nil
+      hook = ExampleProcsyHook.new(label: "around_each", &block)
+      add_around_each_hook(hook)
+    end
+
+
+    # Signals that the *around_each* event has occurred.
+    # All hooks associated with the event will be called.
+    def call_around_each(example : Example, &block : -> _) : Nil
+      # Avoid overhead if there's no hooks.
+      return yield if @around_hooks.empty?
+
+      # Start with a procsy that wraps the original code.
+      procsy = Example::Procsy.new(example, &block)
+      procsy = wrap_around_each(procsy)
+      procsy.call
+    end
+
+    # Wraps a procsy with the *around_each* hooks from this example group.
+    # The returned procsy will call each hook then *procsy*.
+    protected def wrap_around_each(procsy : Example::Procsy) : Example::Procsy
+      # Avoid overhead if there's no hooks.
+      return procsy if @around_hooks.empty?
+
+      # Wrap each hook with the next.
+      outer = procsy
+      @around_hooks.each do |hook|
+        outer = hook.wrap(outer)
+      end
+
+      # If there's a parent, wrap the procsy with its hooks.
+      # Otherwise, return the outermost procsy.
+      return outer unless (parent = group?)
+
+      parent.wrap_around_each(outer)
     end
   end
 end
