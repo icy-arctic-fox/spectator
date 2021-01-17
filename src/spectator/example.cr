@@ -54,10 +54,14 @@ module Spectator
 
       begin
         @result = Harness.run do
+          group?.try(&.call_once_before_all)
           if (parent = group?)
             parent.call_around_each(self) { run_internal }
           else
             run_internal
+          end
+          if (parent = group?)
+            parent.call_once_after_all if parent.finished?
           end
         end
       ensure
@@ -67,9 +71,9 @@ module Spectator
     end
 
     private def run_internal
-      run_before_hooks
+      group?.try(&.call_before_each(self))
       run_test
-      run_after_hooks
+      group?.try(&.call_after_each(self))
     end
 
     private def run_before_hooks : Nil
