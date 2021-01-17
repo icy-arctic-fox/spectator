@@ -72,27 +72,9 @@ module Spectator
 
     private def run_internal
       group?.try(&.call_before_each(self))
-      run_test
-      group?.try(&.call_after_each(self))
-    end
-
-    private def run_before_hooks : Nil
-      return unless (parent = group?)
-
-      parent.call_once_before_all
-      parent.call_before_each(self)
-    end
-
-    private def run_after_hooks : Nil
-      return unless (parent = group?)
-
-      parent.call_after_each(self)
-      parent.call_once_after_all if parent.finished?
-    end
-
-    private def run_test : Nil
       @entrypoint.call(self)
       @finished = true
+      group?.try(&.call_after_each(self))
     end
 
     # Executes code within the example's test context.
