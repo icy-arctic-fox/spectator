@@ -105,7 +105,7 @@ module Spectator
 
     @around_hooks = [] of ExampleProcsyHook
 
-    # Adds a hook to be invoked when the *{{name.id}}* event occurs.
+    # Adds a hook to be invoked when the *around_each* event occurs.
     def add_around_each_hook(hook : ExampleProcsyHook) : Nil
       @around_hooks << hook
     end
