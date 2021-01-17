@@ -12,7 +12,7 @@ module Spectator
     # The *proc* will be called to evaluate the value of the expression.
     # The *label* is usually the Crystal code for the *proc*.
     # It can be nil if it isn't available.
-    def initialize(@block : -> T, label : Label)
+    def initialize(@block : -> T, label : Label = nil)
       super(label)
     end
 
@@ -20,7 +20,7 @@ module Spectator
     # The block will be called to evaluate the value of the expression.
     # The *label* is usually the Crystal code for the *block*.
     # It can be nil if it isn't available.
-    def initialize(label : Label, &@block : -> T)
+    def initialize(label : Label = nil, &@block : -> T)
       super(label)
     end
 

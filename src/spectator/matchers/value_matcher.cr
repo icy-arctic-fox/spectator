@@ -22,7 +22,7 @@ module Spectator::Matchers
 
     # Creates the value matcher.
     # The expected value is stored for later use.
-    def initialize(@expected : TestValue(ExpectedType))
+    def initialize(@expected : Value(ExpectedType))
     end
 
     # Additional information about the match failure.
@@ -40,7 +40,7 @@ module Spectator::Matchers
     #   actual:   "bar",
     # }
     # ```
-    private def values(actual : TestExpression(T)) forall T
+    private def values(actual : Expression(T)) forall T
       super.merge(expected: expected.value.inspect)
     end
 
@@ -60,7 +60,7 @@ module Spectator::Matchers
     #   actual:   "bar",
     # }
     # ```
-    private def negated_values(actual : TestExpression(T)) forall T
+    private def negated_values(actual : Expression(T)) forall T
       super.merge(expected: "Not #{expected.value.inspect}")
     end
   end

@@ -16,10 +16,10 @@ module Spectator::Matchers
     abstract def description : String
 
     # Actually performs the test against the expression (value or block).
-    abstract def match(actual : TestExpression(T)) : MatchData forall T
+    abstract def match(actual : Expression(T)) : MatchData forall T
 
     # Performs the test against the expression (value or block), but inverted.
     # A successful match with `#match` should normally fail for this method, and vice-versa.
-    abstract def negated_match(actual : TestExpression(T)) : MatchData forall T
+    abstract def negated_match(actual : Expression(T)) : MatchData forall T
   end
 end

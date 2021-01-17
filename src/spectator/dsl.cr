@@ -1,9 +1,10 @@
 # require "./dsl/*"
-require "./dsl/assertions"
 require "./dsl/builder"
 require "./dsl/examples"
+require "./dsl/expectations"
 require "./dsl/groups"
 require "./dsl/hooks"
+require "./dsl/matchers"
 require "./dsl/top"
 require "./dsl/values"
 

@@ -59,6 +59,12 @@ module Spectator::DSL
       @@builder.after_each(hook)
     end
 
+    # Defines a block of code to execute around every example in the current group.
+    def around_each(source = nil, label = "around_each", &block : Example::Procsy ->)
+      hook = ExampleProcsyHook.new(source: source, label: label, &block)
+      @@builder.around_each(hook)
+    end
+
     # Sets the configuration of the spec.
     #
     # See `Spec::Builder#config=` for usage details.

@@ -6,11 +6,14 @@ require "./dsl"
 # This type is intentionally outside the `Spectator` module.
 # The reason for this is to prevent name collision when using the DSL to define a spec.
 class SpectatorTestContext < SpectatorContext
-  include ::Spectator::DSL::Assertions
   include ::Spectator::DSL::Examples
+  include ::Spectator::DSL::Expectations
   include ::Spectator::DSL::Groups
   include ::Spectator::DSL::Hooks
+  include ::Spectator::DSL::Matchers
   include ::Spectator::DSL::Values
+
+  @subject = ::Spectator::LazyWrapper.new
 
   # Initial implicit subject for tests.
   # This method should be overridden by example groups when an object is described.
@@ -21,8 +24,7 @@ class SpectatorTestContext < SpectatorContext
   # Initial subject for tests.
   # Returns the implicit subject.
   # This method should be overridden when an explicit subject is defined by the DSL.
-  # TODO: Subject needs to be cached.
   private def subject
-    _spectator_implicit_subject
+    @subject.get { _spectator_implicit_subject }
   end
 end

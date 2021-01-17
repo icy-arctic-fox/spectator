@@ -15,18 +15,20 @@ module Spectator
   # This sets up the harness so that the test code can use it.
   # The framework does the following:
   # ```
-  # result = Harness.run { delegate.call(example) }
+  # result = Harness.run { run_example_code }
   # # Do something with the result.
   # ```
+  #
   # Then from the test code, the harness can be accessed via `.current` like so:
   # ```
   # harness = ::Spectator::Harness.current
   # # Do something with the harness.
   # ```
+  #
   # Of course, the end-user shouldn't see this or work directly with the harness.
-  # Instead, methods the user calls can access it.
-  # For instance, an assertion reporting a result.
-  private class Harness
+  # Instead, methods the test calls can access it.
+  # For instance, an expectation reporting a result.
+  class Harness
     # Retrieves the harness for the current running example.
     class_getter! current : self
 
@@ -52,6 +54,10 @@ module Spectator
       outcome = capture { yield }
       run_deferred # TODO: Handle errors in deferred blocks.
       translate(*outcome)
+    end
+
+    def report(expectation)
+      # TODO
     end
 
     # Stores a block of code to be executed later.

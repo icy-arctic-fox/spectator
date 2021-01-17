@@ -9,7 +9,7 @@ module Spectator::Matchers
     private getter expression
 
     # Creates a new change matcher.
-    def initialize(@expression : TestBlock(ExpressionType), @relativity : String,
+    def initialize(@expression : Block(ExpressionType), @relativity : String,
                    &evaluator : ExpressionType, ExpressionType -> Bool)
       @evaluator = evaluator
     end
@@ -22,7 +22,7 @@ module Spectator::Matchers
     end
 
     # Actually performs the test against the expression.
-    def match(actual : TestExpression(T)) : MatchData forall T
+    def match(actual : Expression(T)) : MatchData forall T
       before, after = change(actual)
       if before == after
         FailedMatchData.new(description, "#{actual.label} did not change #{expression.label}",
@@ -41,7 +41,7 @@ module Spectator::Matchers
 
     # Performs the test against the expression, but inverted.
     # A successful match with `#match` should normally fail for this method, and vice-versa.
-    def negated_match(actual : TestExpression(T)) : MatchData forall T
+    def negated_match(actual : Expression(T)) : MatchData forall T
       {% raise "The `expect { }.to_not change { }.by_...()` syntax is not supported (ambiguous)." %}
     end
 

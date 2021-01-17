@@ -15,7 +15,7 @@ module Spectator::Matchers
     private getter expected_after
 
     # Creates a new change matcher.
-    def initialize(@expression : TestBlock(ExpressionType), @expected_before : FromType, @expected_after : ToType)
+    def initialize(@expression : Block(ExpressionType), @expected_before : FromType, @expected_after : ToType)
     end
 
     # Short text about the matcher's purpose.
@@ -26,7 +26,7 @@ module Spectator::Matchers
     end
 
     # Actually performs the test against the expression.
-    def match(actual : TestExpression(T)) : MatchData forall T
+    def match(actual : Expression(T)) : MatchData forall T
       before, after = change(actual)
       if expected_before == before
         if before == after
@@ -53,7 +53,7 @@ module Spectator::Matchers
 
     # Performs the test against the expression, but inverted.
     # A successful match with `#match` should normally fail for this method, and vice-versa.
-    def negated_match(actual : TestExpression(T)) : MatchData forall T
+    def negated_match(actual : Expression(T)) : MatchData forall T
       before, after = change(actual)
       if expected_before == before
         if expected_after == after

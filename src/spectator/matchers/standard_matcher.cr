@@ -1,4 +1,4 @@
-require "../test_value"
+require "../expression"
 require "./failed_match_data"
 require "./matcher"
 require "./successful_match_data"
@@ -23,7 +23,7 @@ module Spectator::Matchers
     # If it returns true, then a `SuccessfulMatchData` instance is returned.
     # Otherwise, a `FailedMatchData` instance is returned.
     # Additionally, `#failure_message` and `#values` are called for a failed match.
-    def match(actual : TestExpression(T)) : MatchData forall T
+    def match(actual : Expression(T)) : MatchData forall T
       if match?(actual)
         SuccessfulMatchData.new(description)
       else
@@ -38,7 +38,7 @@ module Spectator::Matchers
     # If it returns true, then a `SuccessfulMatchData` instance is returned.
     # Otherwise, a `FailedMatchData` instance is returned.
     # Additionally, `#failure_message_when_negated` and `#negated_values` are called for a failed match.
-    def negated_match(actual : TestExpression(T)) : MatchData forall T
+    def negated_match(actual : Expression(T)) : MatchData forall T
       # TODO: Invert description.
       if does_not_match?(actual)
         SuccessfulMatchData.new(description)
@@ -53,7 +53,7 @@ module Spectator::Matchers
     #
     # The message should typically only contain the test expression labels.
     # Actual values should be returned by `#values`.
-    private abstract def failure_message(actual : TestExpression(T)) : String forall T
+    private abstract def failure_message(actual : Expression(T)) : String forall T
 
     # Message displayed when the matcher isn't satisifed and is negated.
     # This is essentially what would satisfy the matcher if it wasn't negated.
@@ -66,12 +66,12 @@ module Spectator::Matchers
     #
     # The message should typically only contain the test expression labels.
     # Actual values should be returned by `#values`.
-    private def failure_message_when_negated(actual : TestExpression(T)) : String forall T
+    private def failure_message_when_negated(actual : Expression(T)) : String forall T
       raise "Negation with #{self.class} is not supported."
     end
 
     # Checks whether the matcher is satisifed with the expression given to it.
-    private abstract def match?(actual : TestExpression(T)) : Bool forall T
+    private abstract def match?(actual : Expression(T)) : Bool forall T
 
     # If the expectation is negated, then this method is called instead of `#match?`.
     #
@@ -79,7 +79,7 @@ module Spectator::Matchers
     # If the matcher requires custom handling of negated matches,
     # then this method should be overriden.
     # Remember to override `#failure_message_when_negated` as well.
-    private def does_not_match?(actual : TestExpression(T)) : Bool forall T
+    private def does_not_match?(actual : Expression(T)) : Bool forall T
       !match?(actual)
     end
 
@@ -101,7 +101,7 @@ module Spectator::Matchers
     #
     # The values should typically only contain the test expression values, not the labels.
     # Labeled should be returned by `#failure_message`.
-    private def values(actual : TestExpression(T)) forall T
+    private def values(actual : Expression(T)) forall T
       {actual: actual.value.inspect}
     end
 
@@ -123,7 +123,7 @@ module Spectator::Matchers
     #
     # The values should typically only contain the test expression values, not the labels.
     # Labeled should be returned by `#failure_message_when_negated`.
-    private def negated_values(actual : TestExpression(T)) forall T
+    private def negated_values(actual : Expression(T)) forall T
       values(actual)
     end
   end

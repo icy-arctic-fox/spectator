@@ -53,7 +53,7 @@ module Spectator
 
       # Prefix with group's full name if the node belongs to a group.
       if (group = @group)
-        io << group
+        group.to_s(io)
 
         # Add padding between the node names
         # only if the names don't appear to be symbolic.
@@ -63,7 +63,7 @@ module Spectator
                          (name.starts_with?('#') || name.starts_with?('.')))
       end
 
-      io << name
+      name.to_s(io)
     end
   end
 end
