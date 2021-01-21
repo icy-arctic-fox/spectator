@@ -1,4 +1,5 @@
 require "./error_result"
+require "./expectation"
 require "./pass_result"
 require "./result"
 
@@ -29,6 +30,8 @@ module Spectator
   # Instead, methods the test calls can access it.
   # For instance, an expectation reporting a result.
   class Harness
+    Log = ::Spectator::Log.for(self)
+
     # Retrieves the harness for the current running example.
     class_getter! current : self
 
@@ -56,8 +59,9 @@ module Spectator
       translate(*outcome)
     end
 
-    def report(expectation)
-      # TODO
+    def report(expectation : Expectation) : Nil
+      Log.debug { "Reporting expectation #{expectation}" }
+      raise ExpectationFailed.new(expectation) if expectation.failed?
     end
 
     # Stores a block of code to be executed later.
@@ -84,10 +88,13 @@ module Spectator
     # Takes the *elapsed* time and a possible *error* from the test.
     # Returns a type of `Result`.
     private def translate(elapsed, error) : Result
-      if error
-        ErrorResult.new(elapsed, error)
-      else
+      case error
+      when nil
         PassResult.new(elapsed)
+      when ExpectationFailed
+        FailResult.new(elapsed, error)
+      else
+        ErrorResult.new(elapsed, error)
       end
     end
 

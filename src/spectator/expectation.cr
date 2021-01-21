@@ -11,6 +11,42 @@ module Spectator
     # for instance using the *should* syntax or dynamically created expectations.
     getter source : Source?
 
+    # Indicates whether the expectation was met.
+    def satisfied?
+      @match_data.matched?
+    end
+
+    # Indicates whether the expectation was not met.
+    def failed?
+      !satisfied?
+    end
+
+    # If nil, then the match was successful.
+    def failure_message?
+      @match_data.as?(Matchers::FailedMatchData).try(&.failure_message)
+    end
+
+    # Description of why the match failed.
+    def failure_message
+      failure_message?.not_nil!
+    end
+
+    # Additional information about the match, useful for debug.
+    # If nil, then the match was successful.
+    def values?
+      @match_data.as?(Matchers::FailedMatchData).try(&.values)
+    end
+
+    # Additional information about the match, useful for debug.
+    def values
+      values?.not_nil!
+    end
+
+    def description
+      @match_data.description
+    end
+
+
     # Creates the expectation.
     # The *match_data* comes from the result of calling `Matcher#match`.
     # The *source* is the location of the expectation in source code, if available.
