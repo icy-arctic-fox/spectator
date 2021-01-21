@@ -19,14 +19,7 @@ module Spectator
       examples = ExampleIterator.new(@root).to_a
       @config.shuffle!(examples)
     end
-
-    private struct Runner
-      def initialize(@examples : Array(Example))
-      end
-
-      def run
-        @examples.each(&.run)
-      end
-    end
   end
 end
+
+require "./spec/*"

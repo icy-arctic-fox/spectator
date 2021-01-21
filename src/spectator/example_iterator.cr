@@ -1,6 +1,6 @@
 require "./example"
 require "./example_group"
-require "./spec_node"
+require "./spec/node"
 
 module Spectator
   # Iterates through all examples in a group and its nested groups.
@@ -9,12 +9,12 @@ module Spectator
 
     # Stack that contains the iterators for each group.
     # A stack is used to track where in the tree this iterator is.
-    @stack : Array(Iterator(SpecNode))
+    @stack : Array(Iterator(Spec::Node))
 
     # Creates a new iterator.
     # The *group* is the example group to iterate through.
     def initialize(@group : ExampleGroup)
-      iter = @group.each.as(Iterator(SpecNode))
+      iter = @group.each.as(Iterator(Spec::Node))
       @stack = [iter]
     end
 
@@ -39,7 +39,7 @@ module Spectator
     # Restart the iterator at the beginning.
     def rewind
       # Same code as `#initialize`, but return self.
-      iter = @group.each.as(Iterator(SpecNode))
+      iter = @group.each.as(Iterator(Spec::Node))
       @stack = [iter]
       self
     end

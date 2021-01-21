@@ -4,11 +4,11 @@ require "./harness"
 require "./pending_result"
 require "./result"
 require "./source"
-require "./spec_node"
+require "./spec/node"
 
 module Spectator
   # Standard example that runs a test case.
-  class Example < SpecNode
+  class Example < Spec::Node
     # Currently running example.
     class_getter! current : Example
 

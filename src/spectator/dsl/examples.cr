@@ -49,7 +49,7 @@ module Spectator::DSL
     # Inserts the correct representation of a example's name.
     # If *what* is a string, then it is dropped in as-is.
     # For anything else, it is stringified.
-    # This is intended to be used to convert a description from the spec DSL to `SpecNode#name`.
+    # This is intended to be used to convert a description from the spec DSL to `Spec::Node#name`.
     private macro _spectator_example_name(what)
       {% if what.is_a?(StringLiteral) ||
               what.is_a?(StringInterpolation) ||

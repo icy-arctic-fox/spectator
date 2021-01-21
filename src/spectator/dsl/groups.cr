@@ -32,7 +32,7 @@ module Spectator::DSL
     # If *what* appears to be a type name, it will be symbolized.
     # If it's a string, then it is dropped in as-is.
     # For anything else, it is stringified.
-    # This is intended to be used to convert a description from the spec DSL to `SpecNode#name`.
+    # This is intended to be used to convert a description from the spec DSL to `Spec::Node#name`.
     private macro _spectator_group_name(what)
       {% if (what.is_a?(Generic) ||
               what.is_a?(Path) ||
