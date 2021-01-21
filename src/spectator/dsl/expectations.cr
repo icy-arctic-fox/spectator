@@ -1,6 +1,6 @@
-require "../assertion_failed"
 require "../block"
 require "../expectation"
+require "../expectation_failed"
 require "../source"
 require "../value"
 
@@ -10,7 +10,7 @@ module Spectator::DSL
     # Immediately fail the current test.
     # A reason can be specified with *message*.
     def fail(message = "Example failed", *, _file = __FILE__, _line = __LINE__)
-      raise AssertionFailed.new(Source.new(_file, _line), message)
+      raise ExpectationFailed.new(Source.new(_file, _line), message)
     end
 
     # Starts an expectation.
