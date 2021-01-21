@@ -13,28 +13,6 @@ module Spectator::DSL
       raise AssertionFailed.new(Source.new(_file, _line), message)
     end
 
-    # Checks that the specified condition is true.
-    # Raises `AssertionFailed` if *condition* is false.
-    # The *message* is passed to the exception.
-    #
-    # ```
-    # assert(value == 42, "That's not the answer to everything.")
-    # ```
-    def assert(condition, message, *, _file = __FILE__, _line = __LINE__)
-      fail(message, _file: _file, _line: _line) unless condition
-    end
-
-    # Checks that the specified condition is true.
-    # Raises `AssertionFailed` if *condition* is false.
-    # The message of the exception is the *condition*.
-    #
-    # ```
-    # assert(value == 42)
-    # ```
-    macro assert(condition)
-      assert({{condition}}, {{condition.stringify}}, _file: {{condition.filename}}, _line: {{condition.line_number}})
-    end
-
     # Starts an expectation.
     # This should be followed up with `Assertion::Target#to` or `Assertion::Target#to_not`.
     # The value passed in will be checked to see if it satisfies the conditions of the specified matcher.
