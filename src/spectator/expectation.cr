@@ -46,7 +46,6 @@ module Spectator
       @match_data.description
     end
 
-
     # Creates the expectation.
     # The *match_data* comes from the result of calling `Matcher#match`.
     # The *source* is the location of the expectation in source code, if available.
