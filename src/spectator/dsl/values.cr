@@ -10,11 +10,15 @@ module Spectator::DSL
     macro let(name, &block)
       {% raise "Block required for 'let'" unless block %}
       {% raise "Cannot use 'let' inside of a test block" if @def %}
+      {% raise "Block argument count for 'let' must be 0..1" if block.args.size > 1 %}
 
       @%value = ::Spectator::LazyWrapper.new
 
       def {{name.id}}
-        @%value.get {{block}}
+        {% if block.args.size > 0 %}{{block.args.first}} = ::Spectator::Example.current{% end %}
+        @%value.get do
+          {{block.body}}
+        end
       end
     end
 
@@ -25,6 +29,7 @@ module Spectator::DSL
     macro let!(name, &block)
       {% raise "Block required for 'let!'" unless block %}
       {% raise "Cannot use 'let!' inside of a test block" if @def %}
+      {% raise "Block argument count for 'let!' must be 0..1" if block.args.size > 1 %}
 
       let({{name}}) {{block}}
       before_each { {{name.id}} }
@@ -37,6 +42,7 @@ module Spectator::DSL
     macro subject(&block)
       {% raise "Block required for 'subject'" unless block %}
       {% raise "Cannot use 'subject' inside of a test block" if @def %}
+      {% raise "Block argument count for 'subject' must be 0..1" if block.args.size > 1 %}
 
       let(subject) {{block}}
     end
@@ -63,6 +69,7 @@ module Spectator::DSL
     macro subject!(&block)
       {% raise "Block required for 'subject!'" unless block %}
       {% raise "Cannot use 'subject!' inside of a test block" if @def %}
+      {% raise "Block argument count for 'subject!' must be 0..1" if block.args.size > 1 %}
 
       let!(subject) {{block}}
     end
