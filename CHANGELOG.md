@@ -4,6 +4,25 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+### Added
+- Hooks are yielded the current example as a block argument.
+- The `let` and `subject` blocks are yielded the current example as a block argument.
+- Add internal logging that uses Crystal's `Log` utility. Provide the `LOG_LEVEL` environment variable to enable.
+- Support dynamic creation of examples.
+- Capture and log information for hooks.
+
+### Changed
+- Simplify and reduce defined types and generics. Should speed up compilation times.
+- `around_each` hooks wrap `before_all` and `after_all` hooks. [#12](https://github.com/icy-arctic-fox/spectator/issues/12)
+- The "should" syntax no longer reports the source as inside Spectator.
+- Short-hand "should" syntax must be included by using `require "spectator/should"` - `it { should eq("foo") }`
+- Overhaul example creation and handling.
+- Overhaul storage of test values.
+- Cleanup and simplify DSL implementation.
+- Better error messages and detection when DSL methods are used when they shouldn't (i.e. `describe` inside `it`).
+- Other minor internal improvements and cleanup.
+
 ## [0.9.31] - 2021-01-08
 ### Fixed
 - Fix misaligned line numbers when referencing examples and groups.
