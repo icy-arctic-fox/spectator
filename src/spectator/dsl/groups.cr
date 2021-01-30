@@ -16,16 +16,22 @@ module Spectator::DSL
         class Group\%group < \{{@type.id}}
           _spectator_group_subject(\{{what}})
 
-          def self._spectator_metadata
+          def self._spectator_tags
             \{% if tags.empty? && metadata.empty? %}
               super
             \{% else %}
-              super.merge(
-                \{% for tag in tags %}
-                \{{tag.id.stringify}}: true,
+              super.concat({\{{tags.map(&.id.stringify).splat}}}).tap do |tags|
+                \{% for k, v in metadata %}
+                  cond = begin
+                    \{{v}}
+                  end
+                  if cond
+                    tags.add(\{{k.id.stringify}})
+                  else
+                    tags.remove(\{{k.id.stringify}})
+                  end
                 \{% end %}
-                \{{metadata.double_splat}}
-              )
+              end
             \{% end %}
           end
 
