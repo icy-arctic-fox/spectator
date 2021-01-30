@@ -55,6 +55,11 @@ module Spectator
       Log.debug { "Running example #{self}" }
       Log.warn { "Example #{self} already ran" } if @finished
 
+      if pending?
+        Log.debug { "Skipping example #{self} - marked pending" }
+        return @result = PendingResult.new
+      end
+
       previous_example = @@current
       @@current = self
 
