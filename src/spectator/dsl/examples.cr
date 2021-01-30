@@ -21,10 +21,23 @@ module Spectator::DSL
       #
       # The example will be marked as pending if the block is omitted.
       # A block or name must be provided.
-      macro {{name.id}}(what = nil, &block)
+      macro {{name.id}}(what = nil, *tags, **metadata, &block)
         \{% raise "Cannot use '{{name.id}}' inside of a test block" if @def %}
         \{% raise "A description or block must be provided. Cannot use '{{name.id}}' alone." unless what || block %}
         \{% raise "Block argument count '{{name.id}}' hook must be 0..1" if block.args.size > 1 %}
+
+        def self.\%metadata
+          \{% if tags.empty? && metadata.empty? %}
+            _spectator_metadata
+          \{% else %}
+            _spectator_metadata.merge(
+              \{% for tag in tags %}
+              \{{tag.id.stringify}}: true,
+              \{% end %}
+              \{{metadata.double_splat}}
+            )
+          \{% end %}
+        end
 
         def \%test(\{{block.args.splat}}) : Nil
           \{{block.body}}
@@ -33,7 +46,8 @@ module Spectator::DSL
         ::Spectator::DSL::Builder.add_example(
           _spectator_example_name(\{{what}}),
           ::Spectator::Source.new(\{{block.filename}}, \{{block.line_number}}),
-          \{{@type.name}}.new.as(::Spectator::Context)
+          \{{@type.name}}.new.as(::Spectator::Context),
+          \{{@type.name}}.\%metadata
         ) do |example|
           example.with_context(\{{@type.name}}) do
             \{% if block.args.empty? %}

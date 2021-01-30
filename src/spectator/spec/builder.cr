@@ -93,8 +93,8 @@ module Spectator
       # It is expected that the test code runs when the block is called.
       #
       # The newly created example is returned.
-      def add_example(name, source, context, &block : Example -> _) : Example
-        Log.trace { "Add example: #{name} @ #{source}" }
+      def add_example(name, source, context, metadata, &block : Example -> _) : Example
+        Log.trace { "Add example: #{name} @ #{source}; metadata: #{metadata}" }
         Example.new(context, block, name, source, current_group)
         # The example is added to the current group by `Example` initializer.
       end

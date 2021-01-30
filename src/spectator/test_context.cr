@@ -27,4 +27,10 @@ class SpectatorTestContext < SpectatorContext
   private def subject
     @subject.get { _spectator_implicit_subject }
   end
+
+  # Initial metadata for tests.
+  # This method should be overridden by example groups and examples.
+  def self._spectator_metadata
+    NamedTuple.new
+  end
 end

@@ -10,11 +10,24 @@ module Spectator::DSL
       # The *what* argument is a name or description of the group.
       #
       # TODO: Handle string interpolation in example and group names.
-      macro {{name.id}}(what, &block)
+      macro {{name.id}}(what, *tags, **metadata, &block)
         \{% raise "Cannot use '{{name.id}}' inside of a test block" if @def %}
 
         class Group\%group < \{{@type.id}}
           _spectator_group_subject(\{{what}})
+
+          def self._spectator_metadata
+            \{% if tags.empty? && metadata.empty? %}
+              super
+            \{% else %}
+              super.merge(
+                \{% for tag in tags %}
+                \{{tag.id.stringify}}: true,
+                \{% end %}
+                \{{metadata.double_splat}}
+              )
+            \{% end %}
+          end
 
           ::Spectator::DSL::Builder.start_group(
             _spectator_group_name(\{{what}}),
