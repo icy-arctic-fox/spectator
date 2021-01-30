@@ -27,6 +27,7 @@ module Spectator
     # The *source* tracks where the example exists in source code.
     # The example will be assigned to *group* if it is provided.
     # A set of *tags* can be used for filtering and modifying example behavior.
+    # Note: The tags will not be merged with the parent tags.
     def initialize(@context : Context, @entrypoint : self ->,
                    name : String? = nil, source : Source? = nil,
                    group : ExampleGroup? = nil, tags = Tags.new)
@@ -41,6 +42,7 @@ module Spectator
     # The *source* tracks where the example exists in source code.
     # The example will be assigned to *group* if it is provided.
     # A set of *tags* can be used for filtering and modifying example behavior.
+    # Note: The tags will not be merged with the parent tags.
     def initialize(name : String? = nil, source : Source? = nil, group : ExampleGroup? = nil,
                    tags = Tags.new, &block : self ->)
       super(name, source, group, tags)
