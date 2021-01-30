@@ -26,8 +26,8 @@ module Spectator::DSL
         \{% raise "A description or block must be provided. Cannot use '{{name.id}}' alone." unless what || block %}
         \{% raise "Block argument count '{{name.id}}' hook must be 0..1" if block.args.size > 1 %}
 
-        _spectator_tags_method(%tags, :_spectator_tags, {{tags.splat(",")}} {{metadata.double_splat}})
-        _spectator_tags_method(\%tags, %tags, \{{tags.splat(",")}} \{{metadata.double_splat}})
+        _spectator_tags(%tags, :tags, {{tags.splat(",")}} {{metadata.double_splat}})
+        _spectator_tags(\%tags, %tags, \{{tags.splat(",")}} \{{metadata.double_splat}})
 
         def \%test(\{{block.args.splat}}) : Nil
           \{{block.body}}
@@ -67,23 +67,23 @@ module Spectator::DSL
     # Defines a class method named *name* that combines tags
     # returned by *source* with *tags* and *metadata*.
     # Any falsey items from *metadata* are removed.
-    private macro _spectator_tags_method(name, source, *tags, **metadata)
+    private macro _spectator_tags(name, source, *tags, **metadata)
       def self.{{name.id}}
-        tags = {{source.id}}
+        %tags = {{source.id}}
         {% unless tags.empty? %}
-          tags.concat({ {{tags.map(&.id.symbolize).splat}} })
+          %tags.concat({ {{tags.map(&.id.symbolize).splat}} })
         {% end %}
         {% for k, v in metadata %}
-          cond = begin
+          %cond = begin
             {{v}}
           end
-          if cond
-            tags.add({{k.id.symbolize}})
+          if %cond
+            %tags.add({{k.id.symbolize}})
           else
-            tags.delete({{k.id.symbolize}})
+            %tags.delete({{k.id.symbolize}})
           end
         {% end %}
-        tags
+        %tags
       end
     end
 

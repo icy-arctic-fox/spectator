@@ -32,7 +32,7 @@ class SpectatorTestContext < SpectatorContext
 
   # Initial tags for tests.
   # This method should be overridden by example groups and examples.
-  def self._spectator_tags
+  def self.tags
     ::Spectator::Tags.new
   end
 end

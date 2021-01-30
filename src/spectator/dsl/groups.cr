@@ -16,13 +16,13 @@ module Spectator::DSL
         class Group\%group < \{{@type.id}}
           _spectator_group_subject(\{{what}})
 
-          _spectator_tags_method(:_spectator_tags, :super, {{tags.splat(", ")}} {{metadata.double_splat}})
-          _spectator_tags_method(:_spectator_tags, :previous_def, \{{tags.splat(", ")}} \{{metadata.double_splat}})
+          _spectator_tags_method(:tags, :super, {{tags.splat(", ")}} {{metadata.double_splat}})
+          _spectator_tags_method(:tags, :previous_def, \{{tags.splat(", ")}} \{{metadata.double_splat}})
 
           ::Spectator::DSL::Builder.start_group(
             _spectator_group_name(\{{what}}),
             ::Spectator::Source.new(\{{block.filename}}, \{{block.line_number}}),
-            _spectator_tags
+            tags
           )
 
           \{{block.body}}
@@ -89,21 +89,21 @@ module Spectator::DSL
     # Any falsey items from *metadata* are removed.
     private macro _spectator_tags_method(name, source, *tags, **metadata)
       def self.{{name.id}}
-        tags = {{source.id}}
+        %tags = {{source.id}}
         {% unless tags.empty? %}
-          tags.concat({ {{tags.map(&.id.symbolize).splat}} })
+          %tags.concat({ {{tags.map(&.id.symbolize).splat}} })
         {% end %}
         {% for k, v in metadata %}
-          cond = begin
+          %cond = begin
             {{v}}
           end
-          if cond
-            tags.add({{k.id.symbolize}})
+          if %cond
+            %tags.add({{k.id.symbolize}})
           else
-            tags.delete({{k.id.symbolize}})
+            %tags.delete({{k.id.symbolize}})
           end
         {% end %}
-        tags
+        %tags
       end
     end
 
