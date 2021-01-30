@@ -1,5 +1,7 @@
 require "./context"
 require "./dsl"
+require "./lazy_wrapper"
+require "./tags"
 
 # Class used as the base for all specs using the DSL.
 # It adds methods and macros necessary to use the DSL from the spec.
@@ -31,6 +33,6 @@ class SpectatorTestContext < SpectatorContext
   # Initial tags for tests.
   # This method should be overridden by example groups and examples.
   def self._spectator_tags
-    ::Spectator::Example::Tags.new
+    ::Spectator::Tags.new
   end
 end

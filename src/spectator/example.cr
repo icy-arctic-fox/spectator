@@ -5,6 +5,7 @@ require "./pending_result"
 require "./result"
 require "./source"
 require "./spec/node"
+require "./tags"
 
 module Spectator
   # Standard example that runs a test case.
@@ -28,7 +29,7 @@ module Spectator
     # A set of *tags* can be used for filtering and modifying example behavior.
     def initialize(@context : Context, @entrypoint : self ->,
                    name : String? = nil, source : Source? = nil,
-                   group : ExampleGroup? = nil, tags = Spec::Node::Tags.new)
+                   group : ExampleGroup? = nil, tags = Tags.new)
       super(name, source, group, tags)
     end
 
@@ -41,7 +42,7 @@ module Spectator
     # The example will be assigned to *group* if it is provided.
     # A set of *tags* can be used for filtering and modifying example behavior.
     def initialize(name : String? = nil, source : Source? = nil, group : ExampleGroup? = nil,
-                   tags = Spec::Node::Tags.new, &block : self ->)
+                   tags = Tags.new, &block : self ->)
       super(name, source, group, tags)
       @context = NullContext.new
       @entrypoint = block

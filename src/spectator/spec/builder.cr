@@ -4,6 +4,7 @@ require "../example"
 require "../example_context_method"
 require "../example_group"
 require "../spec"
+require "../tags"
 
 module Spectator
   class Spec
@@ -58,7 +59,7 @@ module Spectator
       #
       # The newly created group is returned.
       # It shouldn't be used outside of this class until a matching `#end_group` is called.
-      def start_group(name, source = nil, tags = Spec::Node::Tags.new) : ExampleGroup
+      def start_group(name, source = nil, tags = Tags.new) : ExampleGroup
         Log.trace { "Start group: #{name.inspect} @ #{source}; tags: #{tags}" }
         ExampleGroup.new(name, source, current_group, tags).tap do |group|
           @group_stack << group
@@ -99,7 +100,7 @@ module Spectator
       # It is expected that the test code runs when the block is called.
       #
       # The newly created example is returned.
-      def add_example(name, source, context, tags = Spec::Node::Tags.new, &block : Example -> _) : Example
+      def add_example(name, source, context, tags = Tags.new, &block : Example -> _) : Example
         Log.trace { "Add example: #{name} @ #{source}; tags: #{tags}" }
         Example.new(context, block, name, source, current_group, tags)
         # The example is added to the current group by `Example` initializer.

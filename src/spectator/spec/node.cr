@@ -1,5 +1,6 @@
 require "../label"
 require "../source"
+require "../tags"
 
 module Spectator
   class Spec
@@ -7,9 +8,6 @@ module Spectator
     # This is commonly an `Example` or `ExampleGroup`,
     # but can be anything that should be iterated over when running the spec.
     abstract class Node
-      # User-defined keywords used for filtering and behavior modification.
-      alias Tags = Set(Symbol)
-
       # Location of the node in source code.
       getter! source : Source
 
