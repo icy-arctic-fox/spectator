@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add internal logging that uses Crystal's `Log` utility. Provide the `LOG_LEVEL` environment variable to enable.
 - Support dynamic creation of examples.
 - Capture and log information for hooks.
+- Tags can be added to examples and example groups.
 
 ### Changed
 - Simplify and reduce defined types and generics. Should speed up compilation times.
