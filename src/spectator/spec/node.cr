@@ -53,6 +53,12 @@ module Spectator
       # Indicates whether the node has completed.
       abstract def finished? : Bool
 
+      # Checks if the node has been marked as pending.
+      # Pending items should be skipped during execution.
+      def pending?
+        tags.includes?(:pending)
+      end
+
       # Constructs the full name or description of the node.
       # This prepends names of groups this node is part of.
       def to_s(io)
