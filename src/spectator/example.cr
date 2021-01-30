@@ -1,6 +1,7 @@
 require "./example_context_delegate"
 require "./example_group"
 require "./harness"
+require "./metadata_example"
 require "./pending_result"
 require "./result"
 require "./source"
@@ -26,8 +27,9 @@ module Spectator
     # The *source* tracks where the example exists in source code.
     # The example will be assigned to *group* if it is provided.
     def initialize(@context : Context, @entrypoint : self ->,
-                   name : String? = nil, source : Source? = nil, group : ExampleGroup? = nil)
+                   name : String? = nil, source : Source? = nil, group : ExampleGroup? = nil, metadata = NamedTuple.new)
       super(name, source, group)
+      @metadata = Wrapper.new(metadata)
     end
 
     # Creates a dynamic example.
@@ -37,9 +39,11 @@ module Spectator
     # It can be a `Symbol` to describe a type.
     # The *source* tracks where the example exists in source code.
     # The example will be assigned to *group* if it is provided.
-    def initialize(name : String? = nil, source : Source? = nil, group : ExampleGroup? = nil, &block : self ->)
+    def initialize(name : String? = nil, source : Source? = nil, group : ExampleGroup? = nil,
+                   metadata = NamedTuple.new, &block : self ->)
       @context = NullContext.new
       @entrypoint = block
+      @metadata = Wrapper.new(metadata)
     end
 
     # Executes the test case.
@@ -91,6 +95,11 @@ module Spectator
     protected def with_context(klass)
       context = klass.cast(@context)
       with context yield
+    end
+
+    protected def unwrap_metadata(klass)
+      metadata = @metadata.get(klass)
+      MetadataExample.new(self, metadata)
     end
 
     # Casts the example's test context to a specific type.

@@ -53,7 +53,7 @@ module Spectator::DSL
             \{% if block.args.empty? %}
               \%test
             \{% else %}
-              \%test(example)
+              \%test(example.unwrap_metadata(typeof(\{{@type.name}}.\%metadata)))
             \{% end %}
           end
         end
