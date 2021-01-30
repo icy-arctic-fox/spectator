@@ -27,22 +27,21 @@ module Spectator::DSL
         \{% raise "Block argument count '{{name.id}}' hook must be 0..1" if block.args.size > 1 %}
 
         def self.\%tags
-          \{% if tags.empty? && metadata.empty? %}
-            _spectator_tags
-          \{% else %}
-            _spectator_tags.concat({\{{tags.map(&.id.stringify).splat}}}).tap do |tags|
-              \{% for k, v in metadata %}
-                cond = begin
-                  \{{v}}
-                end
-                if cond
-                  tags.add(\{{k.id.stringify}})
-                else
-                  tags.remove(\{{k.id.stringify}})
-                end
-              \{% end %}
+          tags = _spectator_tags
+          \{% if !tags.empty? %}
+            tags.concat({ \{{tags.map(&.id.stringify).splat}} })
+          \{% end %}
+          \{% for k, v in metadata %}
+            cond = begin
+              \{{v}}
+            end
+            if cond
+              tags.add(\{{k.id.stringify}})
+            else
+              tags.delete(\{{k.id.stringify}})
             end
           \{% end %}
+          tags
         end
 
         def \%test(\{{block.args.splat}}) : Nil
