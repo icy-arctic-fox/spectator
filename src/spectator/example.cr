@@ -41,6 +41,7 @@ module Spectator
     # The example will be assigned to *group* if it is provided.
     def initialize(name : String? = nil, source : Source? = nil, group : ExampleGroup? = nil,
                    metadata = NamedTuple.new, &block : self ->)
+      super(name, source, group)
       @context = NullContext.new
       @entrypoint = block
       @metadata = Wrapper.new(metadata)
