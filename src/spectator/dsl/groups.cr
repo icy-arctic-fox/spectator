@@ -8,9 +8,25 @@ module Spectator::DSL
   module Groups
     include Tags
 
+    # Defines a macro to generate code for an example group.
+    # The *name* is the name given to the macro.
+    #
+    # Default tags can be provided with *tags* and *metadata*.
+    # The tags are merged with parent groups.
+    # Any items with falsey values from *metadata* remove the corresponding tag.
     macro define_example_group(name, *tags, **metadata)
       # Defines a new example group.
       # The *what* argument is a name or description of the group.
+      #
+      # The first argument names the example (test).
+      # Typically, this specifies what is being tested.
+      # This argument is also used as the subject.
+      # When it is a type name, it becomes an explicit, which overrides any previous subjects.
+      # Otherwise it becomes an implicit subject, which doesn't override explicitly defined subjects.
+      #
+      # Tags can be specified by adding symbols (keywords) after the first argument.
+      # Key-value pairs can also be specified.
+      # Any falsey items will remove a previously defined tag.
       #
       # TODO: Handle string interpolation in example and group names.
       macro {{name.id}}(what, *tags, **metadata, &block)

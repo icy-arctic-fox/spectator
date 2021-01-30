@@ -10,6 +10,11 @@ module Spectator::DSL
 
     # Defines a macro to generate code for an example.
     # The *name* is the name given to the macro.
+    #
+    # Default tags can be provided with *tags* and *metadata*.
+    # The tags are merged with parent groups.
+    # Any items with falsey values from *metadata* remove the corresponding tag.
+    #
     # TODO: Mark example as pending if block is omitted.
     macro define_example(name, *tags, **metadata)
       # Defines an example.
@@ -24,6 +29,10 @@ module Spectator::DSL
       #
       # The example will be marked as pending if the block is omitted.
       # A block or name must be provided.
+      #
+      # Tags can be specified by adding symbols (keywords) after the first argument.
+      # Key-value pairs can also be specified.
+      # Any falsey items will remove a previously defined tag.
       macro {{name.id}}(what = nil, *tags, **metadata, &block)
         \{% raise "Cannot use '{{name.id}}' inside of a test block" if @def %}
         \{% raise "A description or block must be provided. Cannot use '{{name.id}}' alone." unless what || block %}
