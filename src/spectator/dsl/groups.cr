@@ -16,36 +16,8 @@ module Spectator::DSL
         class Group\%group < \{{@type.id}}
           _spectator_group_subject(\{{what}})
 
-          def self._spectator_tags
-            tags = super
-            {% if !tags.empty? %}
-              tags.concat({ {{tags.map(&.id.symbolize).splat}} })
-            {% end %}
-            {% for k, v in metadata %}
-              cond = begin
-                {{v}}
-              end
-              if cond
-                tags.add({{k.id.symbolize}})
-              else
-                tags.delete({{k.id.symbolize}})
-              end
-            {% end %}
-            \{% if !tags.empty? %}
-              tags.concat({ \{{tags.map(&.id.symbolize).splat}} })
-            \{% end %}
-            \{% for k, v in metadata %}
-              cond = begin
-                \{{v}}
-              end
-              if cond
-                tags.add(\{{k.id.symbolize}})
-              else
-                tags.delete(\{{k.id.symbolize}})
-              end
-            \{% end %}
-            tags
-          end
+          _spectator_tags_method(:_spectator_tags, :super, {{tags.splat(", ")}} {{metadata.double_splat}})
+          _spectator_tags_method(:_spectator_tags, :previous_def, \{{tags.splat(", ")}} \{{metadata.double_splat}})
 
           ::Spectator::DSL::Builder.start_group(
             _spectator_group_name(\{{what}}),
@@ -110,6 +82,29 @@ module Spectator::DSL
           {{what}}
         end
       {% end %}
+    end
+
+    # Defines a class method named *name* that combines tags
+    # returned by *source* with *tags* and *metadata*.
+    # Any falsey items from *metadata* are removed.
+    private macro _spectator_tags_method(name, source, *tags, **metadata)
+      def self.{{name.id}}
+        tags = {{source.id}}
+        {% unless tags.empty? %}
+          tags.concat({ {{tags.map(&.id.symbolize).splat}} })
+        {% end %}
+        {% for k, v in metadata %}
+          cond = begin
+            {{v}}
+          end
+          if cond
+            tags.add({{k.id.symbolize}})
+          else
+            tags.delete({{k.id.symbolize}})
+          end
+        {% end %}
+        tags
+      end
     end
 
     define_example_group :example_group
