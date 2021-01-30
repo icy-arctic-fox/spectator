@@ -45,7 +45,7 @@ module Spectator
       # The node will be assigned to *group* if it is provided.
       # A set of *tags* can be used for filtering and modifying example behavior.
       def initialize(@name : Label = nil, @source : Source? = nil,
-        group : ExampleGroup? = nil, @tags : Tags = Tags.new)
+                     group : ExampleGroup? = nil, @tags : Tags = Tags.new)
         # Ensure group is linked.
         group << self if group
       end
