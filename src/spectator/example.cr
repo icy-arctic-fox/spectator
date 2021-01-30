@@ -9,9 +9,6 @@ require "./spec/node"
 module Spectator
   # Standard example that runs a test case.
   class Example < Spec::Node
-    # User-defined keywords used for filtering and behavior modification.
-    alias Tags = Set(String)
-
     # Currently running example.
     class_getter! current : Example
 
@@ -21,9 +18,6 @@ module Spectator
     # Retrieves the result of the last time the example ran.
     getter result : Result = PendingResult.new
 
-    # User-defined keywords used for filtering and behavior modification.
-    getter tags : Set(String)
-
     # Creates the example.
     # An instance to run the test code in is given by *context*.
     # The *entrypoint* defines the test code (typically inside *context*).
@@ -31,9 +25,11 @@ module Spectator
     # It can be a `Symbol` to describe a type.
     # The *source* tracks where the example exists in source code.
     # The example will be assigned to *group* if it is provided.
+    # A set of *tags* can be used for filtering and modifying example behavior.
     def initialize(@context : Context, @entrypoint : self ->,
-                   name : String? = nil, source : Source? = nil, group : ExampleGroup? = nil, @tags = Tags.new)
-      super(name, source, group)
+                   name : String? = nil, source : Source? = nil,
+                   group : ExampleGroup? = nil, tags = Spec::Node::Tags.new)
+      super(name, source, group, tags)
     end
 
     # Creates a dynamic example.
@@ -43,9 +39,10 @@ module Spectator
     # It can be a `Symbol` to describe a type.
     # The *source* tracks where the example exists in source code.
     # The example will be assigned to *group* if it is provided.
+    # A set of *tags* can be used for filtering and modifying example behavior.
     def initialize(name : String? = nil, source : Source? = nil, group : ExampleGroup? = nil,
-                   @tags = Tags.new, &block : self ->)
-      super(name, source, group)
+                   tags = Spec::Node::Tags.new, &block : self ->)
+      super(name, source, group, tags)
       @context = NullContext.new
       @entrypoint = block
     end

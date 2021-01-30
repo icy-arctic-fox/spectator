@@ -7,6 +7,9 @@ module Spectator
     # This is commonly an `Example` or `ExampleGroup`,
     # but can be anything that should be iterated over when running the spec.
     abstract class Node
+      # User-defined keywords used for filtering and behavior modification.
+      alias Tags = Set(String)
+
       # Location of the node in source code.
       getter! source : Source
 
@@ -29,6 +32,9 @@ module Spectator
       # Group the node belongs to.
       getter! group : ExampleGroup
 
+      # User-defined keywords used for filtering and behavior modification.
+      getter tags : Tags
+
       # Assigns the node to the specified *group*.
       # This is an internal method and should only be called from `ExampleGroup`.
       # `ExampleGroup` manages the association of nodes to groups.
@@ -39,7 +45,9 @@ module Spectator
       # It can be a `Symbol` to describe a type.
       # The *source* tracks where the node exists in source code.
       # The node will be assigned to *group* if it is provided.
-      def initialize(@name : Label = nil, @source : Source? = nil, group : ExampleGroup? = nil)
+      # A set of *tags* can be used for filtering and modifying example behavior.
+      def initialize(@name : Label = nil, @source : Source? = nil,
+        group : ExampleGroup? = nil, @tags : Tags = Tags.new)
         # Ensure group is linked.
         group << self if group
       end
