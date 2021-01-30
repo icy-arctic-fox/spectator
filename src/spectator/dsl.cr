@@ -1,13 +1,4 @@
-# require "./dsl/*"
-require "./dsl/builder"
-require "./dsl/examples"
-require "./dsl/expectations"
-require "./dsl/groups"
-require "./dsl/hooks"
-require "./dsl/matchers"
-require "./dsl/tags"
-require "./dsl/top"
-require "./dsl/values"
+require "./dsl/*"
 
 module Spectator
   # Namespace containing methods representing the spec domain specific language.
