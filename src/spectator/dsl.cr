@@ -5,6 +5,7 @@ require "./dsl/expectations"
 require "./dsl/groups"
 require "./dsl/hooks"
 require "./dsl/matchers"
+require "./dsl/tags"
 require "./dsl/top"
 require "./dsl/values"
 
