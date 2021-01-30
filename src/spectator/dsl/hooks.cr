@@ -17,7 +17,7 @@ module Spectator::DSL
 
         ::Spectator::DSL::Builder.{{type.id}}(
           ::Spectator::Source.new(\{{block.filename}}, \{{block.line_number}})
-        ) { \{{@type.name}}.\%hook }
+        ) { \%hook }
       end
     end
 

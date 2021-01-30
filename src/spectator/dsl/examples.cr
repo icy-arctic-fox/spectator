@@ -51,8 +51,8 @@ module Spectator::DSL
         ::Spectator::DSL::Builder.add_example(
           _spectator_example_name(\{{what}}),
           ::Spectator::Source.new(\{{block.filename}}, \{{block.line_number}}),
-          \{{@type.name}}.new.as(::Spectator::Context),
-          \{{@type.name}}.\%tags
+          new.as(::Spectator::Context),
+          \%tags
         ) do |example|
           example.with_context(\{{@type.name}}) do
             \{% if block.args.empty? %}
