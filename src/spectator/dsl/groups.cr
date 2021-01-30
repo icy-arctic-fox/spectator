@@ -5,7 +5,7 @@ module Spectator::DSL
   # DSL methods and macros for creating example groups.
   # This module should be included as a mix-in.
   module Groups
-    macro define_example_group(name)
+    macro define_example_group(name, *tags, **metadata)
       # Defines a new example group.
       # The *what* argument is a name or description of the group.
       #
@@ -16,25 +16,36 @@ module Spectator::DSL
         class Group\%group < \{{@type.id}}
           _spectator_group_subject(\{{what}})
 
-          \{% if !tags.empty? || !metadata.empty? %}
-            def self._spectator_tags
-              tags = super
-              \{% if !tags.empty? %}
-                tags.concat({ \{{tags.map(&.id.symbolize).splat}} })
-              \{% end %}
-              \{% for k, v in metadata %}
-                cond = begin
-                  \{{v}}
-                end
-                if cond
-                  tags.add(\{{k.id.symbolize}})
-                else
-                  tags.delete(\{{k.id.symbolize}})
-                end
-              \{% end %}
-              tags
-            end
-          \{% end %}
+          def self._spectator_tags
+            tags = super
+            {% if !tags.empty? %}
+              tags.concat({ {{tags.map(&.id.symbolize).splat}} })
+            {% end %}
+            {% for k, v in metadata %}
+              cond = begin
+                {{v}}
+              end
+              if cond
+                tags.add({{k.id.symbolize}})
+              else
+                tags.delete({{k.id.symbolize}})
+              end
+            {% end %}
+            \{% if !tags.empty? %}
+              tags.concat({ \{{tags.map(&.id.symbolize).splat}} })
+            \{% end %}
+            \{% for k, v in metadata %}
+              cond = begin
+                \{{v}}
+              end
+              if cond
+                tags.add(\{{k.id.symbolize}})
+              else
+                tags.delete(\{{k.id.symbolize}})
+              end
+            \{% end %}
+            tags
+          end
 
           ::Spectator::DSL::Builder.start_group(
             _spectator_group_name(\{{what}}),
@@ -106,6 +117,12 @@ module Spectator::DSL
     define_example_group :describe
 
     define_example_group :context
+
+    define_example_group :xexample_group, :pending
+
+    define_example_group :xdescribe, :pending
+
+    define_example_group :xcontext, :pending
 
     # TODO: sample, random_sample, and given
   end

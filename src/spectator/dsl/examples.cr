@@ -8,7 +8,7 @@ module Spectator::DSL
     # Defines a macro to generate code for an example.
     # The *name* is the name given to the macro.
     # TODO: Mark example as pending if block is omitted.
-    macro define_example(name)
+    macro define_example(name, *tags, **metadata)
       # Defines an example.
       #
       # If a block is given, it is treated as the code to test.
@@ -28,6 +28,19 @@ module Spectator::DSL
 
         def self.\%tags
           tags = _spectator_tags
+          {% if !tags.empty? %}
+            tags.concat({ {{tags.map(&.id.symbolize).splat}} })
+          {% end %}
+          {% for k, v in metadata %}
+            cond = begin
+              {{v}}
+            end
+            if cond
+              tags.add({{k.id.symbolize}})
+            else
+              tags.delete({{k.id.symbolize}})
+            end
+          {% end %}
           \{% if !tags.empty? %}
             tags.concat({ \{{tags.map(&.id.symbolize).splat}} })
           \{% end %}
@@ -85,6 +98,12 @@ module Spectator::DSL
 
     define_example :specify
 
-    # TODO: pending, skip, and xit
+    define_example :xexample, :pending
+
+    define_example :xspecify, :pending
+
+    define_example :xit, :pending
+
+    define_example :skip, :pending
   end
 end
