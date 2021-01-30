@@ -29,16 +29,16 @@ module Spectator::DSL
         def self.\%tags
           tags = _spectator_tags
           \{% if !tags.empty? %}
-            tags.concat({ \{{tags.map(&.id.stringify).splat}} })
+            tags.concat({ \{{tags.map(&.id.symbolize).splat}} })
           \{% end %}
           \{% for k, v in metadata %}
             cond = begin
               \{{v}}
             end
             if cond
-              tags.add(\{{k.id.stringify}})
+              tags.add(\{{k.id.symbolize}})
             else
-              tags.delete(\{{k.id.stringify}})
+              tags.delete(\{{k.id.symbolize}})
             end
           \{% end %}
           tags

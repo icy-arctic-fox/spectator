@@ -8,7 +8,7 @@ module Spectator
     # but can be anything that should be iterated over when running the spec.
     abstract class Node
       # User-defined keywords used for filtering and behavior modification.
-      alias Tags = Set(String)
+      alias Tags = Set(Symbol)
 
       # Location of the node in source code.
       getter! source : Source
