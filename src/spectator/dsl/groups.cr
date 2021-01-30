@@ -37,7 +37,8 @@ module Spectator::DSL
 
           ::Spectator::DSL::Builder.start_group(
             _spectator_group_name(\{{what}}),
-            ::Spectator::Source.new(\{{block.filename}}, \{{block.line_number}})
+            ::Spectator::Source.new(\{{block.filename}}, \{{block.line_number}}),
+            _spectator_tags
           )
 
           \{{block.body}}

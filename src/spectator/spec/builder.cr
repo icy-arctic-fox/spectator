@@ -53,11 +53,14 @@ module Spectator
       #
       # The *source* optionally defined where the group originates in source code.
       #
+      # A set of *tags* can be used for filtering and modifying example behavior.
+      # For instance, adding a "pending" tag will mark tests as pending and skip execution.
+      #
       # The newly created group is returned.
       # It shouldn't be used outside of this class until a matching `#end_group` is called.
-      def start_group(name, source = nil) : ExampleGroup
-        Log.trace { "Start group: #{name.inspect} @ #{source}" }
-        ExampleGroup.new(name, source, current_group).tap do |group|
+      def start_group(name, source = nil, tags = Spec::Node::Tags.new) : ExampleGroup
+        Log.trace { "Start group: #{name.inspect} @ #{source}; tags: #{tags}" }
+        ExampleGroup.new(name, source, current_group, tags).tap do |group|
           @group_stack << group
         end
       end
@@ -87,15 +90,18 @@ module Spectator
       # The *context* is an instance of the context the test code should run in.
       # See `Context` for more information.
       #
+      # A set of *tags* can be used for filtering and modifying example behavior.
+      # For instance, adding a "pending" tag will mark the test as pending and skip execution.
+      #
       # A block must be provided.
       # It will be yielded two arguments - the example created by this method, and the *context* argument.
       # The return value of the block is ignored.
       # It is expected that the test code runs when the block is called.
       #
       # The newly created example is returned.
-      def add_example(name, source, context, tags, &block : Example -> _) : Example
+      def add_example(name, source, context, tags = Spec::Node::Tags.new, &block : Example -> _) : Example
         Log.trace { "Add example: #{name} @ #{source}; tags: #{tags}" }
-        Example.new(context, block, name, source, current_group)
+        Example.new(context, block, name, source, current_group, tags)
         # The example is added to the current group by `Example` initializer.
       end
 
