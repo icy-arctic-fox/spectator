@@ -26,16 +26,22 @@ module Spectator::DSL
         \{% raise "A description or block must be provided. Cannot use '{{name.id}}' alone." unless what || block %}
         \{% raise "Block argument count '{{name.id}}' hook must be 0..1" if block.args.size > 1 %}
 
-        def self.\%metadata
+        def self.\%tags
           \{% if tags.empty? && metadata.empty? %}
-            _spectator_metadata
+            _spectator_tags
           \{% else %}
-            _spectator_metadata.merge(
-              \{% for tag in tags %}
-              \{{tag.id.stringify}}: true,
+            _spectator_tags.concat({\{{tags.map(&.id.stringify).splat}}}).tap do |tags|
+              \{% for k, v in metadata %}
+                cond = begin
+                  \{{v}}
+                end
+                if cond
+                  tags.add(\{{k.id.stringify}})
+                else
+                  tags.remove(\{{k.id.stringify}})
+                end
               \{% end %}
-              \{{metadata.double_splat}}
-            )
+            end
           \{% end %}
         end
 
@@ -47,13 +53,13 @@ module Spectator::DSL
           _spectator_example_name(\{{what}}),
           ::Spectator::Source.new(\{{block.filename}}, \{{block.line_number}}),
           \{{@type.name}}.new.as(::Spectator::Context),
-          \{{@type.name}}.\%metadata
+          \{{@type.name}}.\%tags
         ) do |example|
           example.with_context(\{{@type.name}}) do
             \{% if block.args.empty? %}
               \%test
             \{% else %}
-              \%test(example.unwrap_metadata(typeof(\{{@type.name}}.\%metadata)))
+              \%test(example)
             \{% end %}
           end
         end

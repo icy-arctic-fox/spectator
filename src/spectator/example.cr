@@ -1,7 +1,6 @@
 require "./example_context_delegate"
 require "./example_group"
 require "./harness"
-require "./metadata_example"
 require "./pending_result"
 require "./result"
 require "./source"
@@ -10,6 +9,9 @@ require "./spec/node"
 module Spectator
   # Standard example that runs a test case.
   class Example < Spec::Node
+    # User-defined keywords used for filtering and behavior modification.
+    alias Tags = Set(String)
+
     # Currently running example.
     class_getter! current : Example
 
@@ -19,6 +21,9 @@ module Spectator
     # Retrieves the result of the last time the example ran.
     getter result : Result = PendingResult.new
 
+    # User-defined keywords used for filtering and behavior modification.
+    getter tags : Set(String)
+
     # Creates the example.
     # An instance to run the test code in is given by *context*.
     # The *entrypoint* defines the test code (typically inside *context*).
@@ -27,9 +32,8 @@ module Spectator
     # The *source* tracks where the example exists in source code.
     # The example will be assigned to *group* if it is provided.
     def initialize(@context : Context, @entrypoint : self ->,
-                   name : String? = nil, source : Source? = nil, group : ExampleGroup? = nil, metadata = NamedTuple.new)
+                   name : String? = nil, source : Source? = nil, group : ExampleGroup? = nil, @tags = Tags.new)
       super(name, source, group)
-      @metadata = Wrapper.new(metadata)
     end
 
     # Creates a dynamic example.
@@ -40,11 +44,10 @@ module Spectator
     # The *source* tracks where the example exists in source code.
     # The example will be assigned to *group* if it is provided.
     def initialize(name : String? = nil, source : Source? = nil, group : ExampleGroup? = nil,
-                   metadata = NamedTuple.new, &block : self ->)
+                   @tags = Tags.new, &block : self ->)
       super(name, source, group)
       @context = NullContext.new
       @entrypoint = block
-      @metadata = Wrapper.new(metadata)
     end
 
     # Executes the test case.
@@ -96,11 +99,6 @@ module Spectator
     protected def with_context(klass)
       context = klass.cast(@context)
       with context yield
-    end
-
-    protected def unwrap_metadata(klass)
-      metadata = @metadata.get(klass)
-      MetadataExample.new(self, metadata)
     end
 
     # Casts the example's test context to a specific type.
