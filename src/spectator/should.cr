@@ -65,7 +65,7 @@ struct Proc(*T, R)
   end
 end
 
-module Spectator::DSL::Assertions
+module Spectator::DSL::Expectations
   macro should(matcher)
     expect(subject).to({{matcher}})
   end
