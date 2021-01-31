@@ -107,6 +107,7 @@ module Spectator
 
     # Runs all deferred blocks.
     private def run_deferred
+      Log.debug { "Running deferred operations" }
       error = nil.as(Exception?)
       elapsed = Time.measure do
         @deferred.each(&.call)
