@@ -138,7 +138,7 @@ module Spectator
 
       # Wrap each hook with the next.
       outer = procsy
-      @around_hooks.each do |hook|
+      @around_hooks.reverse_each do |hook|
         outer = hook.wrap(outer)
       end
 
