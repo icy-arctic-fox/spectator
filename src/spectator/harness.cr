@@ -53,6 +53,7 @@ module Spectator
     end
 
     @deferred = Deque(->).new
+    @expectations = [] of Expectation
 
     # Runs test code and produces a result based on the outcome.
     # The test code should be called from within the block given to this method.
@@ -64,6 +65,7 @@ module Spectator
 
     def report(expectation : Expectation) : Nil
       Log.debug { "Reporting expectation #{expectation}" }
+      @expectations << expectation
       raise ExpectationFailed.new(expectation) if expectation.failed?
     end
 
@@ -94,11 +96,11 @@ module Spectator
       example = Example.current # TODO: Remove this.
       case error
       when nil
-        PassResult.new(example, elapsed)
+        PassResult.new(example, elapsed, @expectations)
       when ExpectationFailed
-        FailResult.new(example, elapsed, error)
+        FailResult.new(example, elapsed, error, @expectations)
       else
-        ErrorResult.new(example, elapsed, error)
+        ErrorResult.new(example, elapsed, error, @expectations)
       end
     end
 
