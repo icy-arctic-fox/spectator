@@ -66,6 +66,7 @@ module Spectator
     def report(expectation : Expectation) : Nil
       Log.debug { "Reporting expectation #{expectation}" }
       @expectations << expectation
+      Example.current.name = expectation.description unless Example.current.name?
       raise ExpectationFailed.new(expectation) if expectation.failed?
     end
 
