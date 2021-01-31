@@ -79,11 +79,11 @@ module Spectator::Mocks
       end
     end
 
-    private def unique_key(reference : Reference)
+    private def unique_key(reference : ::Reference)
       {reference.class.name, reference.object_id}
     end
 
-    private def unique_key(value : Value)
+    private def unique_key(value : ::Value)
       {value.class.name, value.hash}
     end
   end
