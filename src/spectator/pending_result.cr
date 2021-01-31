@@ -25,10 +25,5 @@ module Spectator
     def to_s(io)
       io << "pending"
     end
-
-    # TODO
-    def to_json(builder)
-      builder.string("PENDING")
-    end
   end
 end

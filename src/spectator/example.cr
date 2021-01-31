@@ -149,9 +149,10 @@ module Spectator
       io << result
     end
 
-    # TODO
-    def to_json(builder)
-      builder.string("EXAMPLE")
+    # Creates the JSON representation of the example,
+    # which is just its name.
+    def to_json(json : ::JSON::Builder)
+      json.string(to_s)
     end
 
     # Wraps an example to behave like a `Proc`.

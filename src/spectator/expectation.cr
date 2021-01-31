@@ -52,6 +52,29 @@ module Spectator
     def initialize(@match_data : Matchers::MatchData, @source : Source? = nil)
     end
 
+    # Creates the JSON representation of the expectation.
+    def to_json(json : ::JSON::Builder)
+      json.object do
+        json.field("source") { @source.to_json(json) }
+        json.field("satisfied", satisfied?)
+        if (failed = @match_data.as?(Matchers::FailedMatchData))
+          failed_to_json(failed, json)
+        end
+      end
+    end
+
+    # Adds failure information to a JSON structure.
+    private def failed_to_json(failed : Matchers::FailedMatchData, json : ::JSON::Builder)
+      json.field("failure", failed.failure_message)
+      json.field("values") do
+        json.object do
+          failed.values.each do |pair|
+            json.field(pair.first, pair.last)
+          end
+        end
+      end
+    end
+
     # Stores part of an expectation.
     # This covers the actual value (or block) being inspected and its source.
     # This is the type returned by an `expect` block in the DSL.

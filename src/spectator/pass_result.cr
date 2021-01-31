@@ -17,10 +17,5 @@ module Spectator
     def to_s(io)
       io << "pass"
     end
-
-    # TODO
-    def to_json(builder)
-      builder.string("PASS")
-    end
   end
 end
