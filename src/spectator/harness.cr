@@ -58,9 +58,9 @@ module Spectator
     # Runs test code and produces a result based on the outcome.
     # The test code should be called from within the block given to this method.
     def run : Result
-      outcome = capture { yield }
-      run_deferred # TODO: Handle errors in deferred blocks.
-      translate(*outcome)
+      elapsed, error = capture { yield }
+      elapsed2, error2 = run_deferred
+      translate(elapsed + elapsed2, error || error2)
     end
 
     def report(expectation : Expectation) : Nil
@@ -105,9 +105,15 @@ module Spectator
     end
 
     # Runs all deferred blocks.
-    private def run_deferred : Nil
-      @deferred.each(&.call)
+    private def run_deferred
+      error = nil.as(Exception?)
+      elapsed = Time.measure do
+        @deferred.each(&.call)
+      rescue ex
+        error = ex
+      end
       @deferred.clear
+      {elapsed, error}
     end
   end
 end
