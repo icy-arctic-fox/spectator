@@ -1,5 +1,6 @@
 require "./error_result"
 require "./expectation"
+require "./mocks"
 require "./pass_result"
 require "./result"
 
@@ -34,6 +35,8 @@ module Spectator
 
     # Retrieves the harness for the current running example.
     class_getter! current : self
+
+    getter mocks = Mocks::Registry.new
 
     # Wraps an example with a harness and runs test code.
     # A block provided to this method is considered to be the test code.
