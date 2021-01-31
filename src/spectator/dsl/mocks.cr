@@ -53,7 +53,7 @@ module Spectator::DSL
     end
 
     def anonymous_double(name = "Anonymous", **stubs)
-      Mocks::AnonymousDouble.new(name, stubs)
+      ::Spectator::Mocks::AnonymousDouble.new(name, stubs)
     end
 
     macro null_double(name, **stubs, &block)
@@ -100,7 +100,7 @@ module Spectator::DSL
     end
 
     def anonymous_null_double(name = "Anonymous", **stubs)
-      AnonymousNullDouble.new(name, stubs)
+      ::Spectator::Mocks::AnonymousNullDouble.new(name, stubs)
     end
 
     macro mock(name, &block)
@@ -142,11 +142,11 @@ module Spectator::DSL
     end
 
     def allow(thing)
-      Mocks::Allow.new(thing)
+      ::Spectator::Mocks::Allow.new(thing)
     end
 
     def allow_any_instance_of(type : T.class) forall T
-      Mocks::AllowAnyInstance(T).new
+      ::Spectator::Mocks::AllowAnyInstance(T).new
     end
 
     macro expect_any_instance_of(type, _source_file = __FILE__, _source_line = __LINE__)
