@@ -4,6 +4,15 @@
 # This type is intentionally outside the `Spectator` module.
 # The reason for this is to prevent name collision when using the DSL to define a spec.
 abstract class SpectatorContext
+  def to_s(io)
+    io << "Context"
+  end
+
+  def inspect(io)
+    io << "Context<"
+    io << self.class
+    io << '>'
+  end
 end
 
 module Spectator
