@@ -37,7 +37,7 @@ module Spectator::Formatting
       hierarchy = [] of ExampleGroup
       group = example.group
       while group.is_a?(ExampleGroup)
-        hierarchy << group
+        hierarchy << group if group.name?
         group = group.group?
       end
       hierarchy.reverse
