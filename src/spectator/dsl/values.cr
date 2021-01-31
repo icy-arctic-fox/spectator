@@ -15,7 +15,9 @@ module Spectator::DSL
       @%value = ::Spectator::LazyWrapper.new
 
       def {{name.id}}
-        {% if block.args.size > 0 %}{{block.args.first}} = ::Spectator::Example.current{% end %}
+        {% if block.args.size > 0 %}
+          {{block.args.first}} = ::Spectator::Example.current
+        {% end %}
         @%value.get do
           {{block.body}}
         end
