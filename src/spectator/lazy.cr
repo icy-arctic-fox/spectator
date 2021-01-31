@@ -8,8 +8,8 @@ module Spectator
     # The block should return the value to store.
     # Subsequent calls will return the same value and not yield.
     def get(&block : -> T)
-      if (value = @value)
-        value.get
+      if (existing = @value)
+        existing.get
       else
         yield.tap do |value|
           @value = Value.new(value)

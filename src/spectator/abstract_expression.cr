@@ -47,7 +47,7 @@ module Spectator
     # This consists of the label (if one is available) and the value.
     def inspect(io)
       if (label = @label)
-        io << @label
+        io << label
         io << ':'
         io << ' '
       end
