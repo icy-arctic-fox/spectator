@@ -16,11 +16,15 @@ spec:
     - shards
     - crystal spec --error-on-warnings
 
+format:
+  script:
+    - shards
+    - crystal tool format --check
+
 style:
   script:
     - shards
     - bin/ameba
-    - crystal tool format --check
 
 nightly:
   image: "crystallang/crystal:nightly"
