@@ -86,17 +86,17 @@ module Spectator::DSL
               what.is_a?(TypeNode) ||
               what.is_a?(Union)) &&
               (described_type = what.resolve?).is_a?(TypeNode) %}
-        private def described_class
-          {{described_type}}
+        private macro described_class
+          {{what}}
         end
 
-        {% if described_type < Reference || described_type < Value %}
-          subject { described_class.new }
-        {% else %}
-          private def subject
+        subject do
+          {% if described_type.class? || described_type.struct? %}
+            described_class.new
+          {% else %}
             described_class
-          end
-        {% end %}
+          {% end %}
+        end
       {% else %}
         private def _spectator_implicit_subject
           {{what}}
