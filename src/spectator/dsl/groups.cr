@@ -1,6 +1,7 @@
 require "../source"
 require "./builder"
 require "./tags"
+require "./values"
 
 module Spectator::DSL
   # DSL methods and macros for creating example groups.
@@ -89,13 +90,13 @@ module Spectator::DSL
           {{described_type}}
         end
 
-        private def _spectator_implicit_subject
-          {% if described_type < Reference || described_type < Value %}
-            described_class.new
-          {% else %}
+        {% if described_type < Reference || described_type < Value %}
+          subject { described_class.new }
+        {% else %}
+          private def subject
             described_class
-          {% end %}
-        end
+          end
+        {% end %}
       {% else %}
         private def _spectator_implicit_subject
           {{what}}

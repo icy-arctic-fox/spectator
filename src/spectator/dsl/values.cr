@@ -53,11 +53,15 @@ module Spectator::DSL
     # The block is evaluated only the first time the subject is referenced
     # and the return value is saved for subsequent calls.
     macro subject(name, &block)
-      subject {{block}}
+      {% raise "Block required for 'subject'" unless block %}
+      {% raise "Cannot use 'subject' inside of a test block" if @def %}
+      {% raise "Block argument count for 'subject' must be 0..1" if block.args.size > 1 %}
+
+      let({{name.id}}) {{block}}
 
       {% if name.id != :subject.id %}
-        def {{name.id}}
-          subject
+        def subject
+          {{name.id}}
         end
       {% end %}
     end
@@ -80,11 +84,15 @@ module Spectator::DSL
     # The block is evaluated once before the example runs
     # and the return value is saved for subsequent calls.
     macro subject!(name, &block)
-      subject! {{block}}
+      {% raise "Block required for 'subject!'" unless block %}
+      {% raise "Cannot use 'subject!' inside of a test block" if @def %}
+      {% raise "Block argument count for 'subject!' must be 0..1" if block.args.size > 1 %}
+
+      let!({{name.id}}) {{block}}
 
       {% if name.id != :subject.id %}
-        def {{name.id}}
-          subject
+        def subject
+          {{name.id}}
         end
       {% end %}
     end
