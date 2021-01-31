@@ -718,13 +718,13 @@ module Spectator::DSL
     # expect { subject << :foo }.to change(&.size).by(1)
     # ```
     macro change(&expression)
-      {% if block.args.size == 1 && block.args[0] =~ /^__arg\d+$/ && block.body.is_a?(Call) && block.body.id =~ /^__arg\d+\./ %}
-        {% method_name = block.body.id.split('.')[1..-1].join('.') %}
+      {% if expression.args.size == 1 && expression.args[0] =~ /^__arg\d+$/ && expression.body.is_a?(Call) && expression.body.id =~ /^__arg\d+\./ %}
+        {% method_name = expression.body.id.split('.')[1..-1].join('.') %}
         %block = ::Spectator::Block.new({{"#" + method_name}}) do
           subject.{{method_name.id}}
         end
-      {% elsif block.args.empty? %}
-        %block = ::Spectator::Block.new({{"`" + block.body.stringify + "`"}}) {{block}}
+      {% elsif expression.args.empty? %}
+        %block = ::Spectator::Block.new({{"`" + expression.body.stringify + "`"}}) {{expression}}
       {% else %}
         {% raise "Unexpected block arguments in 'expect' call" %}
       {% end %}

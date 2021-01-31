@@ -1,11 +1,12 @@
 require "../src/spectator"
+require "../src/spectator/should"
 require "./helpers/**"
 
 macro it_fails(description = nil, &block)
   it {{description}} do
     expect do
       {{block.body}}
-    end.to raise_error(Spectator::ExampleFailed)
+    end.to raise_error(Spectator::ExpectationFailed)
   end
 end
 
