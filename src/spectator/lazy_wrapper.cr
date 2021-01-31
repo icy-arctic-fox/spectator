@@ -13,7 +13,7 @@ module Spectator
     # Subsequent calls will return the same value and not yield.
     def get(&block : -> T) : T forall T
       wrapper = @lazy.get { Wrapper.new(yield) }
-      wrapper.get(T)
+      wrapper.get { yield }
     end
   end
 end

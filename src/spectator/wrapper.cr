@@ -17,6 +17,16 @@ module Spectator
       value.get
     end
 
+    # Retrieves the previously wrapped value.
+    # Alternate form of `#get` that accepts a block.
+    # The block must return the same type as the wrapped value, otherwise an error will be raised.
+    # This method gets around the issue where the value might be a type (i.e. `Int32.class`).
+    # The block will never be executed, it is only used for type information.
+    def get(& : -> T) : T forall T
+      value = @value.as(Value(T))
+      value.get
+    end
+
     # Base type that generic types inherit from.
     # This provides a common base type,
     # since Crystal doesn't support storing an `Object` (yet).
