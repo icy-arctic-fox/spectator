@@ -24,6 +24,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Better error messages and detection when DSL methods are used when they shouldn't (i.e. `describe` inside `it`).
 - Other minor internal improvements and cleanup.
 
+### Removed
+- Removed one-liner it syntax without braces (block).
+
 ## [0.9.31] - 2021-01-08
 ### Fixed
 - Fix misaligned line numbers when referencing examples and groups.
