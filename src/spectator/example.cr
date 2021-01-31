@@ -17,7 +17,10 @@ module Spectator
     getter? finished : Bool = false
 
     # Retrieves the result of the last time the example ran.
-    getter result : Result = PendingResult.new
+    def result : Result
+      # TODO: Set to pending immediately (requires circular dependency between Example <-> Result removed).
+      @result ||= PendingResult.new(self)
+    end
 
     # Creates the example.
     # An instance to run the test code in is given by *context*.
@@ -59,7 +62,7 @@ module Spectator
 
       if pending?
         Log.debug { "Skipping example #{self} - marked pending" }
-        return @result = PendingResult.new
+        return @result = PendingResult.new(self)
       end
 
       previous_example = @@current
@@ -144,6 +147,11 @@ module Spectator
       end
 
       io << result
+    end
+
+    # TODO
+    def to_json(builder)
+      builder.string("EXAMPLE")
     end
 
     # Wraps an example to behave like a `Proc`.

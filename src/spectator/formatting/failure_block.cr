@@ -16,7 +16,7 @@ module Spectator::Formatting
     # Creates the failure block.
     # The *index* uniquely identifies the failure in the output.
     # The *result* is the outcome of the failed example.
-    def initialize(@index : Int32, @result : FailedResult)
+    def initialize(@index : Int32, @result : FailResult)
     end
 
     # Creates the block of text describing the failure.
@@ -47,12 +47,12 @@ module Spectator::Formatting
     # then an error stacktrace if an error occurred.
     private def content(indent)
       unsatisfied_expectations(indent)
-      error_stacktrace(indent) if @result.is_a?(ErroredResult)
+      error_stacktrace(indent) if @result.is_a?(ErrorResult)
     end
 
     # Produces a list of unsatisfied expectations and their values.
     private def unsatisfied_expectations(indent)
-      @result.expectations.each_unsatisfied do |expectation|
+      @result.expectations.reject(&.satisfied?).each do |expectation|
         indent.line(Color.failure(LabeledText.new("Failure", expectation.failure_message)))
         indent.line
         indent.increase do
@@ -66,7 +66,7 @@ module Spectator::Formatting
     private def matcher_values(indent, expectation)
       MatchDataValues.new(expectation.values).each do |pair|
         colored_pair = if expectation.satisfied?
-                         Color.success(pair)
+                         Color.pass(pair)
                        else
                          Color.failure(pair)
                        end

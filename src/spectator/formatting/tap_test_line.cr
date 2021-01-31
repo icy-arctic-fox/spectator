@@ -17,7 +17,7 @@ module Spectator::Formatting
 
     # The text "ok" or "not ok" depending on the result.
     private def status
-      @result.is_a?(FailedResult) ? "not ok" : "ok"
+      @result.is_a?(FailResult) ? "not ok" : "ok"
     end
 
     # The example that was tested.

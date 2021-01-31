@@ -7,7 +7,7 @@ module Spectator
   class PendingResult < Result
     # Creates the result.
     # *elapsed* is the length of time it took to run the example.
-    def initialize(elapsed = Time::Span::ZERO)
+    def initialize(example, elapsed = Time::Span::ZERO, expectations = [] of Expectation)
       super
     end
 
@@ -16,9 +16,19 @@ module Spectator
       visitor.pending
     end
 
+    # Calls the `pending` method on the *visitor*.
+    def accept(visitor)
+      visitor.pending(yield self)
+    end
+
     # One-word description of the result.
     def to_s(io)
       io << "pending"
+    end
+
+    # TODO
+    def to_json(builder)
+      builder.string("PENDING")
     end
   end
 end

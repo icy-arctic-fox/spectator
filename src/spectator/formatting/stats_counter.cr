@@ -20,7 +20,7 @@ module Spectator::Formatting
       elsif @pending > 0
         Color.pending(self)
       else
-        Color.success(self)
+        Color.pass(self)
       end
     end
 

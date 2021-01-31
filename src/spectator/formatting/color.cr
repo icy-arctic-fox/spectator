@@ -15,7 +15,7 @@ module Spectator::Formatting
     }
 
     # Colorizes some text with the success color.
-    def success(text)
+    def pass(text)
       text.colorize(COLORS[:success])
     end
 

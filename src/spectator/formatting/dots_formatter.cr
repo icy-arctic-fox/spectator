@@ -21,7 +21,7 @@ module Spectator::Formatting
 
     # Produces a single character output based on a result.
     def end_example(result)
-      @io.print result.call(Character)
+      @io.print result.accept(Character)
     end
 
     # Interface for `Result` to pick a character for output.
@@ -37,8 +37,8 @@ module Spectator::Formatting
       }
 
       # Character output for a successful example.
-      def success
-        Color.success(CHARACTERS[:success])
+      def pass
+        Color.pass(CHARACTERS[:success])
       end
 
       # Character output for a failed example.

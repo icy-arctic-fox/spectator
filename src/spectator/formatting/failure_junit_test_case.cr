@@ -7,7 +7,7 @@ module Spectator::Formatting
     private getter result
 
     # Creates the JUnit test case.
-    def initialize(@result : FailedResult)
+    def initialize(@result : FailResult)
     end
 
     # Status string specific to the result type.
@@ -18,7 +18,7 @@ module Spectator::Formatting
     # Adds the failed expectations to the XML block.
     private def content(xml)
       super
-      @result.expectations.each_unsatisfied do |expectation|
+      @result.expectations.reject(&.satisfied?).each do |expectation|
         xml.element("failure", message: expectation.failure_message) do
           expectation_values(expectation.values, xml)
         end

@@ -91,13 +91,14 @@ module Spectator
     # Takes the *elapsed* time and a possible *error* from the test.
     # Returns a type of `Result`.
     private def translate(elapsed, error) : Result
+      example = Example.current # TODO: Remove this.
       case error
       when nil
-        PassResult.new(elapsed)
+        PassResult.new(example, elapsed)
       when ExpectationFailed
-        FailResult.new(elapsed, error)
+        FailResult.new(example, elapsed, error)
       else
-        ErrorResult.new(elapsed, error)
+        ErrorResult.new(example, elapsed, error)
       end
     end
 

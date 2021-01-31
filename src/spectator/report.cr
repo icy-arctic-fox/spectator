@@ -37,12 +37,12 @@ module Spectator
     def initialize(@results : Array(Result), @runtime, @remaining_count = 0, @fail_blank = false, @random_seed = nil)
       @results.each do |result|
         case result
-        when SuccessfulResult
+        when PassResult
           @successful_count += 1
-        when ErroredResult
+        when ErrorResult
           @error_count += 1
           @failed_count += 1
-        when FailedResult
+        when FailResult
           @failed_count += 1
         when PendingResult
           @pending_count += 1
@@ -58,7 +58,7 @@ module Spectator
     # The *results* are from running the examples in the test suite.
     # The runtime is calculated from the *results*.
     def initialize(results : Array(Result))
-      runtime = results.each.compact_map(&.as?(FinishedResult)).sum(&.elapsed)
+      runtime = results.sum(&.elapsed)
       initialize(results, runtime)
     end
 
@@ -92,19 +92,19 @@ module Spectator
 
     # Returns a set of results for all failed examples.
     def failures
-      @results.each.compact_map(&.as?(FailedResult))
+      @results.each.compact_map(&.as?(FailResult))
     end
 
     # Returns a set of results for all errored examples.
     def errors
-      @results.each.compact_map(&.as?(ErroredResult))
+      @results.each.compact_map(&.as?(ErrorResult))
     end
 
     # Length of time it took to run just example code.
     # This does not include hooks,
     # but it does include pre- and post-conditions.
     def example_runtime
-      @results.each.compact_map(&.as?(FinishedResult)).sum(&.elapsed)
+      @results.sum(&.elapsed)
     end
 
     # Length of time spent in framework processes and hooks.

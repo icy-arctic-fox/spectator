@@ -8,7 +8,7 @@ module Spectator
 
     # Creates the profiling information.
     # The *slowest* results must already be sorted, longest time first.
-    private def initialize(@slowest : Array(FinishedResult), @total_time)
+    private def initialize(@slowest : Array(Result), @total_time)
     end
 
     # Number of results in the profile.
@@ -33,7 +33,7 @@ module Spectator
 
     # Produces the profile from a report.
     def self.generate(report, size = 10)
-      results = report.compact_map(&.as?(FinishedResult))
+      results = report.to_a
       sorted_results = results.sort_by(&.elapsed)
       slowest = sorted_results.last(size).reverse
       self.new(slowest, report.example_runtime)

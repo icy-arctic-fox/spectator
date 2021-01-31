@@ -25,7 +25,7 @@ module Spectator::Formatting
     # Adds the test case elements to the XML.
     private def add_test_cases(xml)
       @report.each do |result|
-        test_case = result.call(JUnitTestCaseSelector) { |r| r }
+        test_case = result.accept(JUnitTestCaseSelector) { |r| r }
         test_case.to_xml(xml)
       end
     end
@@ -50,18 +50,18 @@ module Spectator::Formatting
       extend self
 
       # Creates a successful JUnit test case.
-      def success(result)
-        SuccessfulJUnitTestCase.new(result.as(SuccessfulResult))
+      def pass(result)
+        SuccessfulJUnitTestCase.new(result.as(PassResult))
       end
 
       # Creates a failure JUnit test case.
       def failure(result)
-        FailureJUnitTestCase.new(result.as(FailedResult))
+        FailureJUnitTestCase.new(result.as(FailResult))
       end
 
       # Creates an error JUnit test case.
       def error(result)
-        ErrorJUnitTestCase.new(result.as(ErroredResult))
+        ErrorJUnitTestCase.new(result.as(ErrorResult))
       end
 
       # Creates a skipped JUnit test case.
