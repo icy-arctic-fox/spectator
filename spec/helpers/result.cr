@@ -57,10 +57,10 @@ module Spectator::SpecHelpers
     # Converts a result string, such as "fail" to an enum value.
     private def self.parse_outcome_string(string)
       case string
-      when /success/i then Outcome::Success
-      when /fail/i    then Outcome::Failure
-      when /error/i   then Outcome::Error
-      else                 Outcome::Unknown
+      when /pass/i  then Outcome::Success
+      when /fail/i  then Outcome::Failure
+      when /error/i then Outcome::Error
+      else               Outcome::Unknown
       end
     end
   end
