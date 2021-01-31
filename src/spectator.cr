@@ -68,7 +68,6 @@ module Spectator
     DSL::Builder.config = config
     spec = DSL::Builder.build
     spec.run(config.example_filter)
-    true
   rescue ex
     # Catch all unhandled exceptions here.
     # Examples are already wrapped, so any exceptions they throw are caught.
