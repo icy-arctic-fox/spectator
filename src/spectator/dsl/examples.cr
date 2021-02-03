@@ -18,7 +18,11 @@ module Spectator
         end
       {% end %}
 
-      %source = ::Spectator::Source.new({{block.filename}}, {{block.line_number}})
+      {% if block.is_a?(Nop) %}
+        %source = ::Spectator::Source.new({{description.filename}}, {{description.line_number}})
+      {% else %}
+        %source = ::Spectator::Source.new({{block.filename}}, {{block.line_number}})
+      {% end %}
       ::Spectator::SpecBuilder.add_example(
         {{description.is_a?(StringLiteral) || description.is_a?(StringInterpolation) || description.is_a?(NilLiteral) ? description : description.stringify}},
         %source,
@@ -45,7 +49,11 @@ module Spectator
         end
       {% end %}
 
-      %source = ::Spectator::Source.new({{block.filename}}, {{block.line_number}})
+      {% if block.is_a?(Nop) %}
+        %source = ::Spectator::Source.new({{description.filename}}, {{description.line_number}})
+      {% else %}
+        %source = ::Spectator::Source.new({{block.filename}}, {{block.line_number}})
+      {% end %}
       ::Spectator::SpecBuilder.add_pending_example(
         {{description.is_a?(StringLiteral) || description.is_a?(StringInterpolation) || description.is_a?(NilLiteral) ? description : description.stringify}},
         %source,
