@@ -4,22 +4,11 @@ module Spectator
   # Can be used like so:
   # ```
   # anything = Spectator::Anything.new
-  # array = ["foo", anything]
-  # expect(["foo", "bar"]).to eq(array)
+  # expect("foo").to match(anything)
   # ```
   struct Anything
     # Always returns true.
-    def ==(other)
-      true
-    end
-
-    # Always returns true.
     def ===(other)
-      true
-    end
-
-    # Always returns true.
-    def =~(other)
       true
     end
 
