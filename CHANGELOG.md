@@ -27,6 +27,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Removed
 - Removed one-liner it syntax without braces (block).
 
+## [0.9.32] - 2021-02-03
+### Fixed
+- Fix source reference with brace-less example syntax. [#20](https://github.com/icy-arctic-fox/spectator/issues/20)
+
 ## [0.9.31] - 2021-01-08
 ### Fixed
 - Fix misaligned line numbers when referencing examples and groups.
@@ -260,7 +264,8 @@ This has been changed so that it compiles and raises an error at runtime with a 
 First version ready for public use.
 
 
-[Unreleased]: https://gitlab.com/arctic-fox/spectator/-/compare/v0.9.31...HEAD
+[Unreleased]: https://gitlab.com/arctic-fox/spectator/-/compare/v0.9.32...HEAD
+[0.9.31]: https://gitlab.com/arctic-fox/spectator/-/compare/v0.9.31...v0.9.32
 [0.9.31]: https://gitlab.com/arctic-fox/spectator/-/compare/v0.9.30...v0.9.31
 [0.9.30]: https://gitlab.com/arctic-fox/spectator/-/compare/v0.9.29...v0.9.30
 [0.9.29]: https://gitlab.com/arctic-fox/spectator/-/compare/v0.9.28...v0.9.29
