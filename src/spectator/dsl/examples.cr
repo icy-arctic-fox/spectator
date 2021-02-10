@@ -41,7 +41,7 @@ module Spectator::DSL
         _spectator_tags(%tags, :tags, {{tags.splat(",")}} {{metadata.double_splat}})
         _spectator_tags(\%tags, %tags, \{{tags.splat(",")}} \{{metadata.double_splat}})
 
-        def \%test(\{{block.args.splat}}) : Nil
+        private def \%test(\{{block.args.splat}}) : Nil
           \{{block.body}}
         end
 

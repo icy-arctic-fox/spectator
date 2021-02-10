@@ -14,7 +14,7 @@ module Spectator::DSL
 
       @%value = ::Spectator::LazyWrapper.new
 
-      def {{name.id}}
+      private def {{name.id}}
         {% if block.args.size > 0 %}
           {{block.args.first}} = ::Spectator::Example.current
         {% end %}
@@ -62,7 +62,7 @@ module Spectator::DSL
       let({{name.id}}) {{block}}
 
       {% if name.id != :subject.id %}
-        def subject
+        private def subject
           {{name.id}}
         end
       {% end %}
@@ -93,7 +93,7 @@ module Spectator::DSL
       let!({{name.id}}) {{block}}
 
       {% if name.id != :subject.id %}
-        def subject
+        private def subject
           {{name.id}}
         end
       {% end %}

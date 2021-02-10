@@ -4,7 +4,7 @@ module Spectator::DSL
     # returned by *source* with *tags* and *metadata*.
     # Any falsey items from *metadata* are removed.
     private macro _spectator_tags(name, source, *tags, **metadata)
-      def self.{{name.id}}
+      private def self.{{name.id}}
         %tags = {{source.id}}
         {% unless tags.empty? %}
           %tags.concat({ {{tags.map(&.id.symbolize).splat}} })

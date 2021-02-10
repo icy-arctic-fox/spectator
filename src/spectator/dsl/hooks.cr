@@ -11,7 +11,7 @@ module Spectator::DSL
         \{% raise "Missing block for '{{type.id}}' hook" unless block %}
         \{% raise "Cannot use '{{type.id}}' inside of a test block" if @def %}
 
-        def self.\%hook : Nil
+        private def self.\%hook : Nil
           \{{block.body}}
         end
 
@@ -29,7 +29,7 @@ module Spectator::DSL
         \{% raise "Block argument count '{{type.id}}' hook must be 0..1" if block.args.size > 1 %}
         \{% raise "Cannot use '{{type.id}}' inside of a test block" if @def %}
 
-        def \%hook(\{{block.args.splat}}) : Nil
+        private def \%hook(\{{block.args.splat}}) : Nil
           \{{block.body}}
         end
 
