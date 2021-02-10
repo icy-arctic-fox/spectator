@@ -11,6 +11,7 @@ module Spectator::DSL
       {% raise "Block required for 'let'" unless block %}
       {% raise "Cannot use 'let' inside of a test block" if @def %}
       {% raise "Block argument count for 'let' must be 0..1" if block.args.size > 1 %}
+      {% raise "Cannot use '#{name.id}' for 'let'" if ::Spectator::DSL::RESERVED_KEYWORDS.includes?(name.id.symbolize) %}
 
       @%value = ::Spectator::LazyWrapper.new
 
@@ -32,6 +33,7 @@ module Spectator::DSL
       {% raise "Block required for 'let!'" unless block %}
       {% raise "Cannot use 'let!' inside of a test block" if @def %}
       {% raise "Block argument count for 'let!' must be 0..1" if block.args.size > 1 %}
+      {% raise "Cannot use '#{name.id}' for 'let!'" if ::Spectator::DSL::RESERVED_KEYWORDS.includes?(name.id.symbolize) %}
 
       let({{name}}) {{block}}
       before_each { {{name.id}} }
@@ -58,6 +60,7 @@ module Spectator::DSL
       {% raise "Block required for 'subject'" unless block %}
       {% raise "Cannot use 'subject' inside of a test block" if @def %}
       {% raise "Block argument count for 'subject' must be 0..1" if block.args.size > 1 %}
+      {% raise "Cannot use '#{name.id}' for 'subject'" if ::Spectator::DSL::RESERVED_KEYWORDS.includes?(name.id.symbolize) %}
 
       let({{name.id}}) {{block}}
 
@@ -89,6 +92,7 @@ module Spectator::DSL
       {% raise "Block required for 'subject!'" unless block %}
       {% raise "Cannot use 'subject!' inside of a test block" if @def %}
       {% raise "Block argument count for 'subject!' must be 0..1" if block.args.size > 1 %}
+      {% raise "Cannot use '#{name.id}' for 'subject!'" if ::Spectator::DSL::RESERVED_KEYWORDS.includes?(name.id.symbolize) %}
 
       let!({{name.id}}) {{block}}
 

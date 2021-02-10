@@ -22,6 +22,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Overhaul storage of test values.
 - Cleanup and simplify DSL implementation.
 - Better error messages and detection when DSL methods are used when they shouldn't (i.e. `describe` inside `it`).
+- Prevent usage of reserved keywords in DSL (such as `initialize`).
 - Other minor internal improvements and cleanup.
 
 ### Removed
