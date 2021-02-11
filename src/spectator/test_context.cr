@@ -13,8 +13,8 @@ class SpectatorTestContext < SpectatorContext
   include ::Spectator::DSL::Groups
   include ::Spectator::DSL::Hooks
   include ::Spectator::DSL::Matchers
+  include ::Spectator::DSL::Memoize
   include ::Spectator::DSL::Mocks
-  include ::Spectator::DSL::Values
 
   @subject = ::Spectator::LazyWrapper.new
 

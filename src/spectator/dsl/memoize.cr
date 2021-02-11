@@ -2,7 +2,8 @@ require "../lazy_wrapper"
 
 module Spectator::DSL
   # DSL methods for defining test values (subjects).
-  module Values
+  # These values are stored and reused throughout the test.
+  module Memoize
     # Defines a memoized getter.
     # The *name* is the name of the getter method.
     # The block is evaluated only on the first time the getter is used

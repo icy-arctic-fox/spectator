@@ -1,7 +1,7 @@
 require "../source"
 require "./builder"
 require "./tags"
-require "./values"
+require "./memoize"
 
 module Spectator::DSL
   # DSL methods and macros for creating example groups.
