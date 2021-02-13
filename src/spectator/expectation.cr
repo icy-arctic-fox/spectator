@@ -1,5 +1,5 @@
 require "./expression"
-require "./source"
+require "./location"
 
 module Spectator
   # Result of evaluating a matcher on a target.
@@ -7,9 +7,9 @@ module Spectator
   # such as whether it was successful and a description of the operation.
   struct Expectation
     # Location of the expectation in source code.
-    # This can be nil if the source isn't capturable,
+    # This can be nil if the location isn't capturable,
     # for instance using the *should* syntax or dynamically created expectations.
-    getter source : Source?
+    getter location : Location?
 
     # Indicates whether the expectation was met.
     def satisfied?
@@ -48,14 +48,14 @@ module Spectator
 
     # Creates the expectation.
     # The *match_data* comes from the result of calling `Matcher#match`.
-    # The *source* is the location of the expectation in source code, if available.
-    def initialize(@match_data : Matchers::MatchData, @source : Source? = nil)
+    # The *location* is the location of the expectation in source code, if available.
+    def initialize(@match_data : Matchers::MatchData, @location : Location? = nil)
     end
 
     # Creates the JSON representation of the expectation.
     def to_json(json : ::JSON::Builder)
       json.object do
-        json.field("source") { @source.to_json(json) }
+        json.field("location") { @location.to_json(json) }
         json.field("satisfied", satisfied?)
         if (failed = @match_data.as?(Matchers::FailedMatchData))
           failed_to_json(failed, json)
@@ -76,15 +76,15 @@ module Spectator
     end
 
     # Stores part of an expectation.
-    # This covers the actual value (or block) being inspected and its source.
+    # This covers the actual value (or block) being inspected and its location.
     # This is the type returned by an `expect` block in the DSL.
     # It is not intended to be used directly, but instead by chaining methods.
     # Typically `#to` and `#not_to` are used.
     struct Target(T)
       # Creates the expectation target.
       # The *expression* is the actual value being tested and its label.
-      # The *source* is the location of where this expectation was defined.
-      def initialize(@expression : Expression(T), @source : Source)
+      # The *location* is the location of where this expectation was defined.
+      def initialize(@expression : Expression(T), @location : Location)
       end
 
       # Asserts that some criteria defined by the matcher is satisfied.
@@ -163,7 +163,7 @@ module Spectator
 
       # Reports an expectation to the current harness.
       private def report(match_data : Matchers::MatchData)
-        expectation = Expectation.new(match_data, @source)
+        expectation = Expectation.new(match_data, @location)
         Harness.current.report(expectation)
       end
     end

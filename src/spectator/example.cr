@@ -1,9 +1,9 @@
 require "./example_context_delegate"
 require "./example_group"
 require "./harness"
+require "./location"
 require "./pending_result"
 require "./result"
-require "./source"
 require "./spec/node"
 require "./tags"
 
@@ -27,14 +27,14 @@ module Spectator
     # The *entrypoint* defines the test code (typically inside *context*).
     # The *name* describes the purpose of the example.
     # It can be a `Symbol` to describe a type.
-    # The *source* tracks where the example exists in source code.
+    # The *location* tracks where the example exists in source code.
     # The example will be assigned to *group* if it is provided.
     # A set of *tags* can be used for filtering and modifying example behavior.
     # Note: The tags will not be merged with the parent tags.
     def initialize(@context : Context, @entrypoint : self ->,
-                   name : String? = nil, source : Source? = nil,
+                   name : String? = nil, location : Location? = nil,
                    group : ExampleGroup? = nil, tags = Tags.new)
-      super(name, source, group, tags)
+      super(name, location, group, tags)
     end
 
     # Creates a dynamic example.
@@ -42,13 +42,13 @@ module Spectator
     # The block will be given this example instance as an argument.
     # The *name* describes the purpose of the example.
     # It can be a `Symbol` to describe a type.
-    # The *source* tracks where the example exists in source code.
+    # The *location* tracks where the example exists in source code.
     # The example will be assigned to *group* if it is provided.
     # A set of *tags* can be used for filtering and modifying example behavior.
     # Note: The tags will not be merged with the parent tags.
-    def initialize(name : String? = nil, source : Source? = nil, group : ExampleGroup? = nil,
+    def initialize(name : String? = nil, location : Location? = nil, group : ExampleGroup? = nil,
                    tags = Tags.new, &block : self ->)
-      super(name, source, group, tags)
+      super(name, location, group, tags)
       @context = NullContext.new
       @entrypoint = block
     end
@@ -140,10 +140,10 @@ module Spectator
       to_s(io)
       io << '"'
 
-      # Add source if it's available.
-      if (source = self.source)
+      # Add location if it's available.
+      if (location = self.location)
         io << " @ "
-        io << source
+        io << location
       end
 
       io << result

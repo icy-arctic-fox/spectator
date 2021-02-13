@@ -52,16 +52,16 @@ module Spectator
       # This should be a symbol when describing a type - the type name is represented as a symbol.
       # Otherwise, a string should be used.
       #
-      # The *source* optionally defined where the group originates in source code.
+      # The *location* optionally defined where the group originates in source code.
       #
       # A set of *tags* can be used for filtering and modifying example behavior.
       # For instance, adding a "pending" tag will mark tests as pending and skip execution.
       #
       # The newly created group is returned.
       # It shouldn't be used outside of this class until a matching `#end_group` is called.
-      def start_group(name, source = nil, tags = Tags.new) : ExampleGroup
-        Log.trace { "Start group: #{name.inspect} @ #{source}; tags: #{tags}" }
-        ExampleGroup.new(name, source, current_group, tags).tap do |group|
+      def start_group(name, location = nil, tags = Tags.new) : ExampleGroup
+        Log.trace { "Start group: #{name.inspect} @ #{location}; tags: #{tags}" }
+        ExampleGroup.new(name, location, current_group, tags).tap do |group|
           @group_stack << group
         end
       end
@@ -86,7 +86,7 @@ module Spectator
       # This should be a string or nil.
       # When nil, the example's name will be populated by the first expectation run inside of the test code.
       #
-      # The *source* optionally defined where the example originates in source code.
+      # The *location* optionally defined where the example originates in source code.
       #
       # The *context* is an instance of the context the test code should run in.
       # See `Context` for more information.
@@ -100,9 +100,9 @@ module Spectator
       # It is expected that the test code runs when the block is called.
       #
       # The newly created example is returned.
-      def add_example(name, source, context, tags = Tags.new, &block : Example -> _) : Example
-        Log.trace { "Add example: #{name} @ #{source}; tags: #{tags}" }
-        Example.new(context, block, name, source, current_group, tags)
+      def add_example(name, location, context, tags = Tags.new, &block : Example -> _) : Example
+        Log.trace { "Add example: #{name} @ #{location}; tags: #{tags}" }
+        Example.new(context, block, name, location, current_group, tags)
         # The example is added to the current group by `Example` initializer.
       end
 

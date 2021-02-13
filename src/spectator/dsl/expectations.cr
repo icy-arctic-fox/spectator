@@ -1,7 +1,7 @@
 require "../block"
 require "../expectation"
 require "../expectation_failed"
-require "../source"
+require "../location"
 require "../value"
 
 module Spectator::DSL
@@ -10,7 +10,7 @@ module Spectator::DSL
     # Immediately fail the current test.
     # A reason can be specified with *message*.
     def fail(message = "Example failed", *, _file = __FILE__, _line = __LINE__)
-      raise ExpectationFailed.new(Source.new(_file, _line), message)
+      raise ExpectationFailed.new(Location.new(_file, _line), message)
     end
 
     # Starts an expectation.
@@ -30,8 +30,8 @@ module Spectator::DSL
       end
 
       %expression = ::Spectator::Value.new(%actual, {{actual.stringify}})
-      %source = ::Spectator::Source.new({{actual.filename}}, {{actual.line_number}})
-      ::Spectator::Expectation::Target.new(%expression, %source)
+      %location = ::Spectator::Location.new({{actual.filename}}, {{actual.line_number}})
+      ::Spectator::Expectation::Target.new(%expression, %location)
     end
 
     # Starts an expectation.
@@ -82,8 +82,8 @@ module Spectator::DSL
         {% raise "Unexpected block arguments in 'expect' call" %}
       {% end %}
 
-      %source = ::Spectator::Source.new({{block.filename}}, {{block.line_number}})
-      ::Spectator::Expectation::Target.new(%block, %source)
+      %location = ::Spectator::Location.new({{block.filename}}, {{block.line_number}})
+      ::Spectator::Expectation::Target.new(%block, %location)
     end
 
     # Short-hand for expecting something of the subject.

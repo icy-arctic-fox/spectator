@@ -2,7 +2,7 @@ require "./registry"
 
 module Spectator::Mocks
   struct ExpectAnyInstance(T)
-    def initialize(@source : Source)
+    def initialize(@location : Location)
     end
 
     def to(stub : MethodStub) : Nil
@@ -10,7 +10,7 @@ module Spectator::Mocks
       Harness.current.mocks.expect(T, stub)
       value = Value.new(stub.name, stub.to_s)
       matcher = Matchers::ReceiveTypeMatcher.new(value, stub.arguments?)
-      partial = Expectations::ExpectationPartial.new(actual, @source)
+      partial = Expectations::ExpectationPartial.new(actual, @location)
       partial.to_eventually(matcher)
     end
 

@@ -2,9 +2,9 @@ require "option_parser"
 require "./config_source"
 require "./formatting"
 require "./line_example_filter"
+require "./location"
+require "./location_example_filter"
 require "./name_example_filter"
-require "./source"
-require "./source_example_filter"
 
 module Spectator
   # Generates configuration from the command-line arguments.
@@ -130,8 +130,8 @@ module Spectator
     private def location_option(parser, builder)
       parser.on("--location FILE:LINE", "Run the example at line 'LINE' in the file 'FILE', multiple allowed") do |location|
         Log.debug { "Filtering for examples at #{location} (--location '#{location}')" }
-        source = Source.parse(location)
-        filter = SourceExampleFilter.new(source)
+        location = Location.parse(location)
+        filter = LocationExampleFilter.new(location)
         builder.add_example_filter(filter)
       end
     end

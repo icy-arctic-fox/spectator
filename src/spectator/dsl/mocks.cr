@@ -150,24 +150,24 @@ module Spectator::DSL
     end
 
     macro expect_any_instance_of(type, _source_file = __FILE__, _source_line = __LINE__)
-      %source = ::Spectator::Source.new({{_source_file}}, {{_source_line}})
-      ::Spectator::Mocks::ExpectAnyInstance({{type}}).new(%source)
+      %location = ::Spectator::Location.new({{_source_file}}, {{_source_line}})
+      ::Spectator::Mocks::ExpectAnyInstance({{type}}).new(%location)
     end
 
     macro receive(method_name, _source_file = __FILE__, _source_line = __LINE__, &block)
-      %source = ::Spectator::Source.new({{_source_file}}, {{_source_line}})
+      %location = ::Spectator::Location.new({{_source_file}}, {{_source_line}})
       {% if block.is_a?(Nop) %}
-        ::Spectator::Mocks::NilMethodStub.new({{method_name.id.symbolize}}, %source)
+        ::Spectator::Mocks::NilMethodStub.new({{method_name.id.symbolize}}, %location)
       {% else %}
-        ::Spectator::Mocks::ProcMethodStub.create({{method_name.id.symbolize}}, %source) { {{block.body}} }
+        ::Spectator::Mocks::ProcMethodStub.create({{method_name.id.symbolize}}, %location) { {{block.body}} }
       {% end %}
     end
 
     macro receive_messages(_source_file = __FILE__, _source_line = __LINE__, **stubs)
-      %source = ::Spectator::Source.new({{_source_file}}, {{_source_line}})
+      %location = ::Spectator::Location.new({{_source_file}}, {{_source_line}})
       %stubs = [] of ::Spectator::Mocks::MethodStub
       {% for name, value in stubs %}
-      %stubs << ::Spectator::Mocks::ValueMethodStub.new({{name.id.symbolize}}, %source, {{value}})
+      %stubs << ::Spectator::Mocks::ValueMethodStub.new({{name.id.symbolize}}, %location, {{value}})
       {% end %}
       %stubs
     end

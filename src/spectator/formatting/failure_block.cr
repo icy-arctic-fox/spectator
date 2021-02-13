@@ -28,7 +28,7 @@ module Spectator::Formatting
         title(indent)
         indent.increase(inner_indent) do
           content(indent)
-          source(indent)
+          location(indent)
         end
       end
     end
@@ -103,9 +103,9 @@ module Spectator::Formatting
       end
     end
 
-    # Produces the source line of the failure block.
-    private def source(indent)
-      indent.line(Comment.color(@result.example.source))
+    # Produces the location line of the failure block.
+    private def location(indent)
+      indent.line(Comment.color(@result.example.location))
     end
 
     # Gets the number of characters a positive integer spans in base 10.

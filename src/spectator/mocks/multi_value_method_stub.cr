@@ -5,8 +5,8 @@ module Spectator::Mocks
   class MultiValueMethodStub(ReturnType) < GenericMethodStub(ReturnType)
     @index = 0
 
-    def initialize(name, source, @values : ReturnType, args = nil)
-      super(name, source, args)
+    def initialize(name, location, @values : ReturnType, args = nil)
+      super(name, location, args)
       raise ArgumentError.new("Values must have at least one item") if @values.size < 1
     end
 

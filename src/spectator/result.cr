@@ -31,7 +31,7 @@ module Spectator
     # Adds the common fields for a result to a JSON builder.
     private def add_json_fields(json : ::JSON::Builder)
       json.field("name", example)
-      json.field("location", example.source)
+      json.field("location", example.location)
       json.field("result", to_s)
       json.field("time", elapsed.total_seconds)
       json.field("expectations", expectations)

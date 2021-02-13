@@ -1,4 +1,4 @@
-require "../source"
+require "../location"
 require "./builder"
 
 module Spectator::DSL
@@ -16,7 +16,7 @@ module Spectator::DSL
         end
 
         ::Spectator::DSL::Builder.{{type.id}}(
-          ::Spectator::Source.new(\{{block.filename}}, \{{block.line_number}})
+          ::Spectator::Location.new(\{{block.filename}}, \{{block.line_number}})
         ) { \%hook }
       end
     end
@@ -34,7 +34,7 @@ module Spectator::DSL
         end
 
         ::Spectator::DSL::Builder.{{type.id}}(
-          ::Spectator::Source.new(\{{block.filename}}, \{{block.line_number}})
+          ::Spectator::Location.new(\{{block.filename}}, \{{block.line_number}})
         ) do |example|
           example.with_context(\{{@type.name}}) do
             \{% if block.args.empty? %}

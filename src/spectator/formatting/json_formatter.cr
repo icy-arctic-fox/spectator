@@ -88,7 +88,7 @@ module Spectator::Formatting
       @json.object do
         @json.field("example", result.example)
         @json.field("time", result.elapsed.total_seconds)
-        @json.field("source", result.example.source)
+        @json.field("location", result.example.location)
       end
     end
   end

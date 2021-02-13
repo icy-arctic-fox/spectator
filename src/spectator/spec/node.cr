@@ -1,5 +1,5 @@
 require "../label"
-require "../source"
+require "../location"
 require "../tags"
 
 module Spectator
@@ -9,7 +9,7 @@ module Spectator
     # but can be anything that should be iterated over when running the spec.
     abstract class Node
       # Location of the node in source code.
-      getter! source : Source
+      getter! location : Location
 
       # User-provided name or description of the node.
       # This does not include the group name or descriptions.
@@ -41,10 +41,10 @@ module Spectator
       # Creates the node.
       # The *name* describes the purpose of the node.
       # It can be a `Symbol` to describe a type.
-      # The *source* tracks where the node exists in source code.
+      # The *location* tracks where the node exists in source code.
       # The node will be assigned to *group* if it is provided.
       # A set of *tags* can be used for filtering and modifying example behavior.
-      def initialize(@name : Label = nil, @source : Source? = nil,
+      def initialize(@name : Label = nil, @location : Location? = nil,
                      group : ExampleGroup? = nil, @tags : Tags = Tags.new)
         # Ensure group is linked.
         group << self if group

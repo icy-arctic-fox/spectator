@@ -1,4 +1,4 @@
-require "../source"
+require "../location"
 require "./builder"
 require "./tags"
 require "./memoize"
@@ -41,7 +41,7 @@ module Spectator::DSL
 
           ::Spectator::DSL::Builder.start_group(
             _spectator_group_name(\{{what}}),
-            ::Spectator::Source.new(\{{block.filename}}, \{{block.line_number}}),
+            ::Spectator::Location.new(\{{block.filename}}, \{{block.line_number}}),
             tags
           )
 

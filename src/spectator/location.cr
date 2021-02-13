@@ -1,19 +1,19 @@
 require "json"
 
 module Spectator
-  # Define the file and line number something originated from.
-  struct Source
+  # Defines the file and line number a piece of code originated from.
+  struct Location
     # Absolute file path.
     getter file : String
 
     # Line number in the file.
     getter line : Int32
 
-    # Creates the source.
+    # Creates the location.
     def initialize(@file, @line)
     end
 
-    # Parses a source from a string.
+    # Parses a location from a string.
     # The *string* should be in the form:
     # ```text
     # FILE:LINE
@@ -50,7 +50,7 @@ module Spectator
       end
     end
 
-    # String representation of the source.
+    # String representation of the location.
     # This is formatted as:
     # ```text
     # FILE:LINE
@@ -61,7 +61,7 @@ module Spectator
       io << line
     end
 
-    # Creates the JSON representation of the source.
+    # Creates the JSON representation of the location.
     def to_json(json : ::JSON::Builder)
       json.string(to_s)
     end

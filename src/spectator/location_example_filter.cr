@@ -1,14 +1,14 @@
 module Spectator
   # Filter that matches examples in a given file and line.
-  class SourceExampleFilter < ExampleFilter
+  class LocationExampleFilter < ExampleFilter
     # Creates the filter.
-    # The *source* indicates which file and line the example must be on.
-    def initialize(@source : Source)
+    # The *location* indicates which file and line the example must be on.
+    def initialize(@location : Location)
     end
 
     # Checks whether the example satisfies the filter.
     def includes?(example) : Bool
-      @source === example.source
+      @location === example.location
     end
   end
 end

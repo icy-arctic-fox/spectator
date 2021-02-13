@@ -8,7 +8,7 @@ module Spectator::Formatting
     # Appends the command to the output.
     def to_s(io)
       io << "crystal spec "
-      io << @example.source
+      io << @example.location
     end
 
     # Colorizes the command instance based on the result.

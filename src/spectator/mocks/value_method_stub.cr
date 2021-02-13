@@ -3,8 +3,8 @@ require "./generic_method_stub"
 
 module Spectator::Mocks
   class ValueMethodStub(ReturnType) < GenericMethodStub(ReturnType)
-    def initialize(name, source, @value : ReturnType, args = nil)
-      super(name, source, args)
+    def initialize(name, location, @value : ReturnType, args = nil)
+      super(name, location, args)
     end
 
     def call(_args : GenericArguments(T, NT), &_original : -> RT) forall T, NT, RT

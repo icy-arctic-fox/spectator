@@ -38,32 +38,32 @@ module Spectator::DSL
     end
 
     # Defines a block of code to execute before any and all examples in the current group.
-    def before_all(source = nil, label = "before_all", &block)
-      hook = ExampleGroupHook.new(source: source, label: label, &block)
+    def before_all(location = nil, label = "before_all", &block)
+      hook = ExampleGroupHook.new(location: location, label: label, &block)
       @@builder.before_all(hook)
     end
 
     # Defines a block of code to execute before every example in the current group
-    def before_each(source = nil, label = "before_each", &block : Example -> _)
-      hook = ExampleHook.new(source: source, label: label, &block)
+    def before_each(location = nil, label = "before_each", &block : Example -> _)
+      hook = ExampleHook.new(location: location, label: label, &block)
       @@builder.before_each(hook)
     end
 
     # Defines a block of code to execute after any and all examples in the current group.
-    def after_all(source = nil, label = "after_all", &block)
-      hook = ExampleGroupHook.new(source: source, label: label, &block)
+    def after_all(location = nil, label = "after_all", &block)
+      hook = ExampleGroupHook.new(location: location, label: label, &block)
       @@builder.after_all(hook)
     end
 
     # Defines a block of code to execute after every example in the current group.
-    def after_each(source = nil, label = "after_each", &block : Example ->)
-      hook = ExampleHook.new(source: source, label: label, &block)
+    def after_each(location = nil, label = "after_each", &block : Example ->)
+      hook = ExampleHook.new(location: location, label: label, &block)
       @@builder.after_each(hook)
     end
 
     # Defines a block of code to execute around every example in the current group.
-    def around_each(source = nil, label = "around_each", &block : Example::Procsy ->)
-      hook = ExampleProcsyHook.new(source: source, label: label, &block)
+    def around_each(location = nil, label = "around_each", &block : Example::Procsy ->)
+      hook = ExampleProcsyHook.new(location: location, label: label, &block)
       @@builder.around_each(hook)
     end
 

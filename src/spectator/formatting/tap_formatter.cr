@@ -51,7 +51,7 @@ module Spectator::Formatting
       indent.line(result.example)
       indent.increase do
         @io << "# "
-        indent.line(SourceTiming.new(result.elapsed, result.example.source))
+        indent.line(LocationTiming.new(result.elapsed, result.example.location))
       end
     end
   end

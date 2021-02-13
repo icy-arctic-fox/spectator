@@ -31,7 +31,7 @@ module Spectator::Formatting
 
     # Java-ified class name created from the spec.
     private def classname
-      path = result.example.source.path
+      path = result.example.location.path
       file = File.basename(path)
       ext = File.extname(file)
       name = file[0...-(ext.size)]
