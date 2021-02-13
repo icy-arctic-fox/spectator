@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Support dynamic creation of examples.
 - Capture and log information for hooks.
 - Tags can be added to examples and example groups.
+- Add matcher to check compiled type of values.
 
 ### Changed
 - Simplify and reduce defined types and generics. Should speed up compilation times.

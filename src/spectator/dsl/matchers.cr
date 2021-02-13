@@ -123,7 +123,7 @@ module Spectator::DSL
     end
 
     # Indicates that some value should be of a specified type.
-    # The value's runtime class is checked.
+    # The value's runtime type is checked.
     # A type name or type union should be used for *expected*.
     #
     # Examples:
@@ -135,7 +135,7 @@ module Spectator::DSL
     end
 
     # Indicates that some value should be of a specified type.
-    # The value's runtime class is checked.
+    # The value's runtime type is checked.
     # A type name or type union should be used for *expected*.
     # This method is identical to `#be_an_instance_of`,
     # and exists just to improve grammar.
@@ -146,6 +146,19 @@ module Spectator::DSL
     # ```
     macro be_an_instance_of(expected)
       be_instance_of({{expected}})
+    end
+
+    # Indicates that some value should be of a specified type at compile time.
+    # The value's compile time type is checked.
+    # This can test is a variable or value returned by a method is inferred to the expected type.
+    #
+    # Examples:
+    # ```
+    # value = 42 || "foobar"
+    # expect(value).to compile_as(Int32 | String)
+    # ```
+    macro compile_as(expected)
+      ::Spectator::Matchers::CompiledTypeMatcher({{expected}}).new
     end
 
     # Indicates that some value should respond to a method call.
