@@ -5,15 +5,19 @@ Spectator.describe Spectator do
   subject(source) { current_example.source }
 
   context "line numbers" do
-    subject { source.line }
+    it "contains starting line of spec" do
+      expect(source.line).to eq(__LINE__ - 1)
+    end
 
-    it "match source code" do
-      is_expected.to eq(__LINE__ - 1)
+    it "contains ending line of spec" do
+      expect(source.end_line).to eq(__LINE__ + 1)
     end
 
     it "handles multiple lines and examples" do
       # Offset is important.
-      is_expected.to eq(__LINE__ - 2)
+      expect(source.line).to eq(__LINE__ - 2)
+      expect(source.end_line).to eq(__LINE__ + 2)
+      # Offset is still important.
     end
   end
 

@@ -5,10 +5,14 @@ module Spectator
     getter file : String
 
     # Line number in the file.
+    # If end_line is present, this is the starting line
     getter line : Int32
 
+    # Ending line number in the file.
+    getter end_line : Int32?
+
     # Creates the source.
-    def initialize(@file, @line)
+    def initialize(@file, @line, @end_line = nil)
     end
 
     # Parses a source from a string.
