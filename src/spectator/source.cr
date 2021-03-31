@@ -4,11 +4,17 @@ module Spectator
     # Absolute file path.
     getter file : String
 
-    # Line number in the file.
+    # Starting line number in the file.
     getter line : Int32
 
+    # Ending line number in the file.
+    getter end_line : Int32
+
     # Creates the source.
-    def initialize(@file, @line)
+    def initialize(@file, @line, end_line = nil)
+      # if an end line is not provided,
+      # make the end line the same as the start line
+      @end_line = end_line || @line
     end
 
     # Parses a source from a string.

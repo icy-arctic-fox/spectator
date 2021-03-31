@@ -1,12 +1,12 @@
 name: spectator
-version: 0.9.32
+version: 0.9.33
 description: |
   A feature-rich spec testing framework for Crystal with similarities to RSpec.
 
 authors:
   - Michael Miller <icy.arctic.fox@gmail.com>
 
-crystal: 0.35.1
+crystal: 1.0.0
 
 license: MIT
 
