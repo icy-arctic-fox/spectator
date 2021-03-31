@@ -4,6 +4,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.9.34] - 2021-03-31
+### Changed
+- Allow filtering examples by using any line in the example block. [#19](https://github.com/icy-arctic-fox/spectator/issues/19) Thanks @matthewmcgarvey !
+
+## [0.9.33] - 2021-03-22
+### Changed
+- Target Crystal 1.0
+
 ## [0.9.32] - 2021-02-03
 ### Fixed
 - Fix source reference with brace-less example syntax. [#20](https://github.com/icy-arctic-fox/spectator/issues/20)
