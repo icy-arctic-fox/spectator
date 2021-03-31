@@ -29,6 +29,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Removed
 - Removed one-liner it syntax without braces (block).
 
+## [0.9.34] - 2021-03-31
+### Changed
+- Allow filtering examples by using any line in the example block. [#19](https://github.com/icy-arctic-fox/spectator/issues/19) Thanks @matthewmcgarvey !
+
+## [0.9.33] - 2021-03-22
+### Changed
+- Target Crystal 1.0
+
 ## [0.9.32] - 2021-02-03
 ### Fixed
 - Fix source reference with brace-less example syntax. [#20](https://github.com/icy-arctic-fox/spectator/issues/20)
@@ -266,8 +274,10 @@ This has been changed so that it compiles and raises an error at runtime with a 
 First version ready for public use.
 
 
-[Unreleased]: https://gitlab.com/arctic-fox/spectator/-/compare/v0.9.32...HEAD
-[0.9.31]: https://gitlab.com/arctic-fox/spectator/-/compare/v0.9.31...v0.9.32
+[Unreleased]: https://gitlab.com/arctic-fox/spectator/-/compare/v0.9.34...HEAD
+[0.9.34]: https://gitlab.com/arctic-fox/spectator/-/compare/v0.9.33...v0.9.34
+[0.9.33]: https://gitlab.com/arctic-fox/spectator/-/compare/v0.9.32...v0.9.33
+[0.9.32]: https://gitlab.com/arctic-fox/spectator/-/compare/v0.9.31...v0.9.32
 [0.9.31]: https://gitlab.com/arctic-fox/spectator/-/compare/v0.9.30...v0.9.31
 [0.9.30]: https://gitlab.com/arctic-fox/spectator/-/compare/v0.9.29...v0.9.30
 [0.9.29]: https://gitlab.com/arctic-fox/spectator/-/compare/v0.9.28...v0.9.29

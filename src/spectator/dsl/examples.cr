@@ -47,7 +47,7 @@ module Spectator::DSL
 
         ::Spectator::DSL::Builder.add_example(
           _spectator_example_name(\{{what}}),
-          ::Spectator::Location.new(\{{block.filename}}, \{{block.line_number}}),
+          ::Spectator::Location.new(\{{block.filename}}, \{{block.line_number}}, \{{block.end_line_number}}),
           new.as(::Spectator::Context),
           \%tags
         ) do |example|
