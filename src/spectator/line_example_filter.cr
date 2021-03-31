@@ -7,7 +7,9 @@ module Spectator
 
     # Checks whether the example satisfies the filter.
     def includes?(example) : Bool
-      @line == example.source.line
+      start_line = example.source.line
+      end_line = example.source.end_line
+      (start_line..end_line).covers?(@line)
     end
   end
 end
