@@ -4,6 +4,11 @@ module Spectator::Matchers
   # Matcher that tests a value is of a specified type.
   # The values are compared with the `Object#is_a?` method.
   struct TypeMatcher(Expected) < StandardMatcher
+    # Alternate constructor that works with constant types and types from variables.
+    def self.create(type : T.class) forall T
+      TypeMatcher(T).new
+    end
+
     # Short text about the matcher's purpose.
     # This explains what condition satisfies the matcher.
     # The description is used when the one-liner syntax is used.
