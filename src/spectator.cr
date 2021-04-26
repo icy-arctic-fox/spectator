@@ -50,7 +50,7 @@ module Spectator
   # A `ConfigBuilder` is yielded to allow changing the configuration.
   # NOTE: The configuration set here can be overriden
   # with a `.spectator` file and command-line arguments.
-  def configure : Nil
+  def configure(& : ConfigBuilder -> _) : Nil
     yield @@config_builder
   end
 
