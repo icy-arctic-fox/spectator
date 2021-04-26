@@ -175,7 +175,7 @@ module Spectator
       # Builds the configuration to use for the spec.
       # A `ConfigBuilder` is yielded to the block provided to this method.
       # That builder will be used to create the configuration.
-      def config
+      def configure(& : ConfigBuilder -> _) : Nil
         builder = ConfigBuilder.new
         yield builder
         @config = builder.build
