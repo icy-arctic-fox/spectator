@@ -4,10 +4,17 @@
 # This type is intentionally outside the `Spectator` module.
 # The reason for this is to prevent name collision when using the DSL to define a spec.
 abstract class SpectatorContext
+  # Produces a dummy string to represent the context as a string.
+  # This prevents the default behavior, which normally stringifies instance variables.
+  # Due to the sheer amount of types Spectator can create
+  # and that the Crystal compiler instantiates a `#to_s` and/or `#inspect` for each of those types,
+  # an explosion in method instances can be created.
+  # The compile time is drastically reduced by using a dummy string instead.
   def to_s(io)
     io << "Context"
   end
 
+  # :ditto:
   def inspect(io)
     io << "Context<"
     io << self.class

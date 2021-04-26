@@ -1,7 +1,7 @@
 require "json"
 
 module Spectator
-  # Define the file and line number something originated from.
+  # Defines the file and line numbers something originated from.
   struct Source
     # Absolute file path.
     getter file : String

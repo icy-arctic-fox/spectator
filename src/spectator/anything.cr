@@ -1,14 +1,19 @@
 module Spectator
+  # Equals and matches everything.
+  # All comparison methods will always return true.
   struct Anything
-    def ==(other)
+    # Returns true for equality.
+    def ==(_other)
       true
     end
 
-    def ===(other)
+    # Returns true for case equality.
+    def ===(_other)
       true
     end
 
-    def =~(other)
+    # Returns true for matching.
+    def =~(_other)
       true
     end
   end
