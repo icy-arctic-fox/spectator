@@ -20,8 +20,8 @@ module Spectator::Formatting
     end
 
     # Produces a single character output based on a result.
-    def end_example(result)
-      @io.print result.accept(Character)
+    def end_example(example)
+      @io.print example.result.accept(Character)
     end
 
     # Interface for `Result` to pick a character for output.

@@ -3,7 +3,7 @@ require "./result"
 module Spectator
   # Outcome of all tests in a suite.
   class Report
-    include Enumerable(Result)
+    include Enumerable(Example)
 
     # Total length of time it took to execute the test suite.
     # This includes examples, hooks, and framework processes.
@@ -29,14 +29,14 @@ module Spectator
     getter! random_seed : UInt64?
 
     # Creates the report.
-    # The *results* are from running the examples in the test suite.
+    # The *examples* are all examples in the test suite.
     # The *runtime* is the total time it took to execute the suite.
     # The *remaining_count* is the number of tests skipped due to fail-fast.
     # The *fail_blank* flag indicates whether it is a failure if there were no tests run.
     # The *random_seed* is the seed used for random number generation.
-    def initialize(@results : Array(Result), @runtime, @remaining_count = 0, @fail_blank = false, @random_seed = nil)
-      @results.each do |result|
-        case result
+    def initialize(@examples : Array(Example), @runtime, @remaining_count = 0, @fail_blank = false, @random_seed = nil)
+      @examples.each do |example|
+        case example.result
         when PassResult
           @successful_count += 1
         when ErrorResult
@@ -55,23 +55,28 @@ module Spectator
 
     # Creates the report.
     # This constructor is intended for reports of subsets of results.
-    # The *results* are from running the examples in the test suite.
+    # The *examples* are all examples in the test suite.
     # The runtime is calculated from the *results*.
-    def initialize(results : Array(Result))
-      runtime = results.sum(&.elapsed)
-      initialize(results, runtime)
+    def initialize(examples : Array(Example))
+      runtime = examples.sum(&.result.elapsed)
+      initialize(examples, runtime)
     end
 
-    # Yields each result in turn.
+    # Yields each example in turn.
     def each
-      @results.each do |result|
-        yield result
+      @examples.each do |example|
+        yield example
       end
+    end
+
+    # Retrieves results of all examples.
+    def results
+      @examples.each.map(&.result)
     end
 
     # Number of examples.
     def example_count
-      @results.size
+      @examples.size
     end
 
     # Number of examples run (not skipped or pending).
@@ -90,21 +95,21 @@ module Spectator
       remaining_count > 0
     end
 
-    # Returns a set of results for all failed examples.
+    # Returns a set of all failed examples.
     def failures
-      @results.each.compact_map(&.as?(FailResult))
+      @examples.select(&.result.is_a?(FailResult))
     end
 
-    # Returns a set of results for all errored examples.
+    # Returns a set of all errored examples.
     def errors
-      @results.each.compact_map(&.as?(ErrorResult))
+      @examples.select(&.result.is_a?(ErrorResult))
     end
 
     # Length of time it took to run just example code.
     # This does not include hooks,
     # but it does include pre- and post-conditions.
     def example_runtime
-      @results.sum(&.elapsed)
+      results.sum(&.elapsed)
     end
 
     # Length of time spent in framework processes and hooks.

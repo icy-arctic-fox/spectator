@@ -16,11 +16,9 @@ module Spectator
     # Indicates whether the example already ran.
     getter? finished : Bool = false
 
-    # Retrieves the result of the last time the example ran.
-    def result : Result
-      # TODO: Set to pending immediately (requires circular dependency between Example <-> Result removed).
-      @result ||= PendingResult.new(self)
-    end
+    # Result of the last time the example ran.
+    # Is pending if the example hasn't run.
+    getter result : Result = PendingResult.new
 
     # Creates the example.
     # An instance to run the test code in is given by *context*.
@@ -62,7 +60,7 @@ module Spectator
 
       if pending?
         Log.debug { "Skipping example #{self} - marked pending" }
-        return @result = PendingResult.new(self)
+        return @result = PendingResult.new
       end
 
       previous_example = @@current

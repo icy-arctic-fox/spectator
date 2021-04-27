@@ -19,8 +19,8 @@ module Spectator::Formatting
     end
 
     # Called when a test finishes.
-    # The result of the test is provided.
-    def end_example(result : Result)
+    # The result of the test is provided by *example*.
+    def end_example(example : Example)
       # ... crickets ...
     end
   end

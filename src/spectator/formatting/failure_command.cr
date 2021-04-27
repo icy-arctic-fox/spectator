@@ -12,8 +12,8 @@ module Spectator::Formatting
     end
 
     # Colorizes the command instance based on the result.
-    def self.color(result)
-      result.accept(Color) { new(result.example) }
+    def self.color(example)
+      example.result.accept(Color) { new(example) }
     end
   end
 end

@@ -37,8 +37,8 @@ module Spectator::Formatting
     end
 
     # Called when a test finishes.
-    # The result of the test is provided.
-    def end_example(result : Result)
+    # The result of the test is provided by *example*.
+    def end_example(example : Example)
     end
 
     # Creates the "testsuites" block in the XML.
@@ -55,8 +55,8 @@ module Spectator::Formatting
 
     # Adds all of the individual test suite blocks.
     private def add_test_suites(report)
-      report.group_by(&.example.location.path).each do |path, results|
-        JUnitTestSuite.new(path, results).to_xml(@xml)
+      report.group_by(&.location.path).each do |path, examples|
+        JUnitTestSuite.new(path, examples).to_xml(@xml)
       end
     end
   end

@@ -27,9 +27,9 @@ module Spectator::Formatting
     end
 
     # Called when a test finishes.
-    # The result of the test is provided.
-    def end_example(result : Result)
-      @io.puts TAPTestLine.new(@index, result)
+    # The result of the test is provided by *example*.
+    def end_example(example : Example)
+      @io.puts TAPTestLine.new(@index, example)
       @index += 1
     end
 
@@ -39,19 +39,19 @@ module Spectator::Formatting
 
       indent = Indent.new(@io)
       indent.increase do
-        profile.each do |result|
-          profile_entry(indent, result)
+        profile.each do |example|
+          profile_entry(indent, example)
         end
       end
     end
 
     # Adds a profile result entry to the output.
-    private def profile_entry(indent, result)
+    private def profile_entry(indent, example)
       @io << "# "
-      indent.line(result.example)
+      indent.line(example)
       indent.increase do
         @io << "# "
-        indent.line(LocationTiming.new(result.elapsed, result.example.location))
+        indent.line(LocationTiming.new(example.result.elapsed, example.location))
       end
     end
   end

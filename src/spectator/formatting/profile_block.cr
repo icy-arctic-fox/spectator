@@ -11,17 +11,17 @@ module Spectator::Formatting
 
       indent = Indent.new(io)
       indent.increase do
-        @profile.each do |result|
-          entry(indent, result)
+        @profile.each do |example|
+          entry(indent, example)
         end
       end
     end
 
     # Adds a result entry to the output.
-    private def entry(indent, result)
-      indent.line(result.example)
+    private def entry(indent, example)
+      indent.line(example)
       indent.increase do
-        indent.line(LocationTiming.new(result.elapsed, result.example.location))
+        indent.line(LocationTiming.new(example.result.elapsed, example.location))
       end
     end
   end

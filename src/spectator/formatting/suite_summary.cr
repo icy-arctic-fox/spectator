@@ -33,8 +33,8 @@ module Spectator::Formatting
     private def failures(failures)
       @io.puts "Failures:"
       @io.puts
-      failures.each_with_index do |result, index|
-        @io.puts FailureBlock.new(index + 1, result)
+      failures.each_with_index do |example, index|
+        @io.puts FailureBlock.new(index + 1, example)
       end
     end
 
@@ -68,10 +68,10 @@ module Spectator::Formatting
       @io.puts
       @io.puts "Failed examples:"
       @io.puts
-      failures.each do |result|
-        @io << FailureCommand.color(result)
+      failures.each do |example|
+        @io << FailureCommand.color(example)
         @io << ' '
-        @io.puts Comment.color(result.example)
+        @io.puts Comment.color(example)
       end
     end
   end

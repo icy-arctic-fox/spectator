@@ -21,7 +21,7 @@ module Spectator::Formatting
     abstract def start_example(example : Example)
 
     # Called when a test finishes.
-    # The result of the test is provided.
-    abstract def end_example(result : Result)
+    # The result of the test is available through *example*.
+    abstract def end_example(example : Example)
   end
 end

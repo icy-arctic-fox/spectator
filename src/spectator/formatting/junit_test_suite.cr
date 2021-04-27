@@ -3,9 +3,9 @@ module Spectator::Formatting
   private struct JUnitTestSuite
     # Creates the JUnit test suite.
     # The *path* should be the file that all results are from.
-    # The *results* is a subset of all results that share the path.
-    def initialize(@path : String, results : Array(Result))
-      @report = Report.new(results)
+    # The *examples* is a subset of all examples that share the path.
+    def initialize(@path : String, examples : Array(Example))
+      @report = Report.new(examples)
     end
 
     # Generates the XML for the test suite (and all nested test cases).
@@ -24,8 +24,8 @@ module Spectator::Formatting
 
     # Adds the test case elements to the XML.
     private def add_test_cases(xml)
-      @report.each do |result|
-        test_case = result.accept(JUnitTestCaseSelector) { |r| r }
+      @report.each do |example|
+        test_case = example.result.accept(JUnitTestCaseSelector) { example }
         test_case.to_xml(xml)
       end
     end
@@ -50,23 +50,23 @@ module Spectator::Formatting
       extend self
 
       # Creates a successful JUnit test case.
-      def pass(result)
-        SuccessfulJUnitTestCase.new(result.as(PassResult))
+      def pass(example)
+        SuccessfulJUnitTestCase.new(example)
       end
 
       # Creates a failure JUnit test case.
-      def failure(result)
-        FailureJUnitTestCase.new(result.as(FailResult))
+      def failure(example)
+        FailureJUnitTestCase.new(example)
       end
 
       # Creates an error JUnit test case.
-      def error(result)
-        ErrorJUnitTestCase.new(result.as(ErrorResult))
+      def error(example)
+        ErrorJUnitTestCase.new(example)
       end
 
       # Creates a skipped JUnit test case.
-      def pending(result)
-        SkippedJUnitTestCase.new(result.as(PendingResult))
+      def pending(example)
+        SkippedJUnitTestCase.new(example)
       end
     end
   end

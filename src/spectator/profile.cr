@@ -1,14 +1,14 @@
 module Spectator
   # Information about the runtimes of examples.
   class Profile
-    include Indexable(Result)
+    include Indexable(Example)
 
     # Total length of time it took to run all examples in the test suite.
     getter total_time : Time::Span
 
     # Creates the profiling information.
     # The *slowest* results must already be sorted, longest time first.
-    private def initialize(@slowest : Array(Result), @total_time)
+    private def initialize(@slowest : Array(Example), @total_time)
     end
 
     # Number of results in the profile.
@@ -23,7 +23,7 @@ module Spectator
 
     # Length of time it took to run the results in the profile.
     def time
-      @slowest.sum(&.elapsed)
+      @slowest.sum(&.result.elapsed)
     end
 
     # Percentage (from 0 to 1) of time the results in this profile took compared to all examples.
@@ -33,9 +33,9 @@ module Spectator
 
     # Produces the profile from a report.
     def self.generate(report, size = 10)
-      results = report.to_a
-      sorted_results = results.sort_by(&.elapsed)
-      slowest = sorted_results.last(size).reverse
+      examples = report.to_a
+      sorted_examples = examples.sort_by(&.result.elapsed)
+      slowest = sorted_examples.last(size).reverse
       self.new(slowest, report.example_runtime)
     end
   end

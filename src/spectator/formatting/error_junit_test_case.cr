@@ -7,7 +7,9 @@ module Spectator::Formatting
     private getter result
 
     # Creates the JUnit test case.
-    def initialize(@result : ErrorResult)
+    def initialize(example : Example)
+      super
+      @result = example.result.as(ErrorResult)
     end
 
     # Adds the exception to the XML block.

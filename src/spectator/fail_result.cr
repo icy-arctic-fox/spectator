@@ -11,8 +11,8 @@ module Spectator
     # Creates a failure result.
     # The *elapsed* argument is the length of time it took to run the example.
     # The *error* is the exception raised that caused the failure.
-    def initialize(example, elapsed, @error, expectations = [] of Expectation)
-      super(example, elapsed, expectations)
+    def initialize(elapsed, @error, expectations = [] of Expectation)
+      super(elapsed, expectations)
     end
 
     # Calls the `failure` method on *visitor*.

@@ -15,8 +15,13 @@ module Spectator::Formatting
   private struct FailureBlock
     # Creates the failure block.
     # The *index* uniquely identifies the failure in the output.
-    # The *result* is the outcome of the failed example.
-    def initialize(@index : Int32, @result : FailResult)
+    # The *example* is the failed example.
+    def initialize(@index : Int32, @example : Example)
+    end
+
+    # Retrieves the failed result.
+    private def result
+      @example.result.as(FailResult)
     end
 
     # Creates the block of text describing the failure.
@@ -39,7 +44,7 @@ module Spectator::Formatting
     # 1) Example name
     # ```
     private def title(indent)
-      indent.line(NumberedItem.new(@index, @result.example))
+      indent.line(NumberedItem.new(@index, @example))
     end
 
     # Produces the main content of the failure block.
@@ -47,12 +52,12 @@ module Spectator::Formatting
     # then an error stacktrace if an error occurred.
     private def content(indent)
       unsatisfied_expectations(indent)
-      error_stacktrace(indent) if @result.is_a?(ErrorResult)
+      error_stacktrace(indent) if result.is_a?(ErrorResult)
     end
 
     # Produces a list of unsatisfied expectations and their values.
     private def unsatisfied_expectations(indent)
-      @result.expectations.reject(&.satisfied?).each do |expectation|
+      result.expectations.reject(&.satisfied?).each do |expectation|
         indent.line(Color.failure(LabeledText.new("Failure", expectation.failure_message)))
         indent.line
         indent.increase do
@@ -76,7 +81,7 @@ module Spectator::Formatting
 
     # Produces the stack trace for an errored result.
     private def error_stacktrace(indent)
-      error = @result.error
+      error = result.error
       first_line = error.message.try(&.lines).try(&.first)
       indent.line(Color.error(LabeledText.new("Error", first_line)))
       indent.line
@@ -105,7 +110,7 @@ module Spectator::Formatting
 
     # Produces the location line of the failure block.
     private def location(indent)
-      indent.line(Comment.color(@result.example.location))
+      indent.line(Comment.color(@example.location))
     end
 
     # Gets the number of characters a positive integer spans in base 10.

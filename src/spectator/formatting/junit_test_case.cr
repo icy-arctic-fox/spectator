@@ -1,6 +1,10 @@
 module Spectator::Formatting
   # Base type for all JUnit test case results.
   private abstract class JUnitTestCase
+    # Creates the JUnit test case.
+    def initialize(@example : Example)
+    end
+
     # Produces the test case XML element.
     def to_xml(xml : ::XML::Builder)
       xml.element("testcase", **attributes) do
@@ -11,7 +15,7 @@ module Spectator::Formatting
     # Attributes that go in the "testcase" XML element.
     private def attributes
       {
-        name:      result.example,
+        name:      example,
         status:    status,
         classname: classname,
       }
@@ -23,6 +27,9 @@ module Spectator::Formatting
     # Status string specific to the result type.
     private abstract def status : String
 
+    # Example for this test case.
+    private getter example : Example
+
     # Adds additional content to the "testcase" XML block.
     # Override this to add more content.
     private def content(xml)
@@ -31,7 +38,7 @@ module Spectator::Formatting
 
     # Java-ified class name created from the spec.
     private def classname
-      path = result.example.location.path
+      path = example.location.path
       file = File.basename(path)
       ext = File.extname(file)
       name = file[0...-(ext.size)]

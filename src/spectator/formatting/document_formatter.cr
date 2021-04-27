@@ -27,9 +27,9 @@ module Spectator::Formatting
     end
 
     # Produces a single character output based on a result.
-    def end_example(result)
+    def end_example(example)
       @previous_hierarchy.size.times { @io.print INDENT }
-      @io.puts result.accept(Color) { result.example }
+      @io.puts example.result.accept(Color) { example }
     end
 
     # Produces a list of groups making up the hierarchy for an example.

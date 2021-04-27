@@ -36,8 +36,8 @@ module Spectator::Formatting
 
     # Called when a test finishes.
     # The result of the test is provided.
-    def end_example(result : Result)
-      result.to_json(@json)
+    def end_example(example : Example)
+      example.result.to_json(@json, example)
     end
 
     # Adds the totals section of the document.
@@ -84,11 +84,11 @@ module Spectator::Formatting
     end
 
     # Adds a profile entry to the document.
-    private def profile_entry(result)
+    private def profile_entry(example)
       @json.object do
-        @json.field("example", result.example)
-        @json.field("time", result.elapsed.total_seconds)
-        @json.field("location", result.example.location)
+        @json.field("example", example)
+        @json.field("time", example.result.elapsed.total_seconds)
+        @json.field("location", example.location)
       end
     end
   end

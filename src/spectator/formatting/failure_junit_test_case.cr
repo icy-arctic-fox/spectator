@@ -7,7 +7,9 @@ module Spectator::Formatting
     private getter result
 
     # Creates the JUnit test case.
-    def initialize(@result : FailResult)
+    def initialize(example : Example)
+      super
+      @result = example.result.as(FailResult)
     end
 
     # Status string specific to the result type.

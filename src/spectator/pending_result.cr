@@ -7,7 +7,7 @@ module Spectator
   class PendingResult < Result
     # Creates the result.
     # *elapsed* is the length of time it took to run the example.
-    def initialize(example, elapsed = Time::Span::ZERO, expectations = [] of Expectation)
+    def initialize(elapsed = Time::Span::ZERO, expectations = [] of Expectation)
       super
     end
 

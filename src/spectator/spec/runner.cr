@@ -16,25 +16,25 @@ module Spectator
         @config.each_formatter(&.start_suite(@suite))
 
         # Run all examples and capture the results.
-        results = Array(Result).new(@suite.size)
+        examples = Array(Example).new(@suite.size)
         elapsed = Time.measure do
-          collect_results(results)
+          collect_results(examples)
         end
 
         # Generate a report and pass it along to the formatter.
-        remaining = @suite.size - results.size
+        remaining = @suite.size - examples.size
         seed = (@config.random_seed if @config.randomize?)
-        report = Report.new(results, elapsed, remaining, @config.fail_blank?, seed)
+        report = Report.new(examples, elapsed, remaining, @config.fail_blank?, seed)
         @config.each_formatter(&.end_suite(report, profile(report)))
 
         !report.failed?
       end
 
-      # Runs all examples and adds results to a list.
-      private def collect_results(results)
+      # Runs all examples and adds them to a list.
+      private def collect_results(examples)
         example_order.each do |example|
-          result = run_example(example).as(Result)
-          results << result
+          result = run_example(example)
+          examples << example
           if @config.fail_fast? && result.is_a?(FailResult)
             example.group.call_once_after_all
             break
@@ -60,14 +60,14 @@ module Spectator
                  else
                    example.run
                  end
-        @config.each_formatter(&.end_example(result))
+        @config.each_formatter(&.end_example(example))
         result
       end
 
       # Creates a fake result for an example.
       private def dry_run_result(example)
         expectations = [] of Expectation
-        PassResult.new(example, Time::Span.zero, expectations)
+        PassResult.new(Time::Span.zero, expectations)
       end
 
       # Generates and returns a profile if one should be displayed.
