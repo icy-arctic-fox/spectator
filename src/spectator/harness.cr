@@ -6,7 +6,6 @@ require "./result"
 
 module Spectator
   # Helper class that acts as a gateway between test code and the framework.
-  # This is essentially an "example runner."
   #
   # Test code should be wrapped with a call to `.run`.
   # This class will catch all errors raised by the test code.
@@ -44,12 +43,23 @@ module Spectator
     # It will be reset after the test regardless of the outcome.
     # The result of running the test code will be returned.
     def self.run : Result
-      harness = new
+      with_harness do |harness|
+        harness.run { yield }
+      end
+    end
+
+    # Instanciates a new harness and yields it.
+    # The `.current` harness is set to the new harness for the duration of the block.
+    # `.current` is reset to the previous value (probably nil) afterwards, even if the block raises.
+    # The result of the block is returned.
+    private def self.with_harness
       previous = @@current
-      @@current = harness
-      result = harness.run { yield }
-      @@current = previous
-      result
+      begin
+        harness = new
+        yield harness
+      ensure
+        @@current = previous
+      end
     end
 
     @deferred = Deque(->).new
@@ -59,14 +69,17 @@ module Spectator
     # The test code should be called from within the block given to this method.
     def run : Result
       elapsed, error = capture { yield }
-      elapsed2, error2 = run_deferred
+      elapsed2, error2 = capture { run_deferred }
       translate(elapsed + elapsed2, error || error2)
     end
 
     def report(expectation : Expectation) : Nil
       Log.debug { "Reporting expectation #{expectation}" }
       @expectations << expectation
+
+      # TODO: Move this out of harness, maybe to `Example`.
       Example.current.name = expectation.description unless Example.current.name?
+
       raise ExpectationFailed.new(expectation) if expectation.failed?
     end
 
@@ -78,16 +91,23 @@ module Spectator
 
     # Yields to run the test code and returns information about the outcome.
     # Returns a tuple with the elapsed time and an error if one occurred (otherwise nil).
-    private def capture
-      error = nil.as(Exception?)
+    private def capture : Tuple(Time, Exception?)
+      error   = nil
       elapsed = Time.measure do
-        begin
-          yield
-        rescue e
-          error = e
-        end
+        error = catch_error { yield }
       end
       {elapsed, error}
+    end
+
+    # Yields to run a block of code and captures exceptions.
+    # If the block of code raises an error, the error is caught and returned.
+    # If the block doesn't raise an error, then nil is returned.
+    private def catch : Exception?
+      yield
+    rescue e
+      e
+    else
+      nil
     end
 
     # Translates the outcome of running a test to a result.
@@ -105,16 +125,11 @@ module Spectator
     end
 
     # Runs all deferred blocks.
+    # This method executes code from tests and may raise an error.
+    # It should be wrapped in a call to `#capture`.
     private def run_deferred
       Log.debug { "Running deferred operations" }
-      error = nil.as(Exception?)
-      elapsed = Time.measure do
-        @deferred.each(&.call)
-      rescue ex
-        error = ex
-      end
-      @deferred.clear
-      {elapsed, error}
+      @deferred.each(&.call)
     end
   end
 end
