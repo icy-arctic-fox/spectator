@@ -160,17 +160,8 @@ module Spectator
 
     # Exposes information about the example useful for debugging.
     def inspect(io)
-      # Full example name.
-      io << '"'
-      to_s(io)
-      io << '"'
-
-      # Add location if it's available.
-      if (location = self.location)
-        io << " @ "
-        io << location
-      end
-
+      super
+      io << ' '
       io << result
     end
 

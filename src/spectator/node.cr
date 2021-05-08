@@ -51,5 +51,19 @@ module Spectator
     def to_s(io)
       (@name || "<anonymous>").to_s(io)
     end
+
+    # Exposes information about the node useful for debugging.
+    def inspect(io)
+      # Full node name.
+      io << '"'
+      to_s(io)
+      io << '"'
+
+      # Add location if it's available.
+      if (location = self.location)
+        io << " @ "
+        io << location
+      end
+    end
   end
 end
