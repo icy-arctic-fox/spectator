@@ -180,6 +180,11 @@ module Spectator
       json.string(to_s)
     end
 
+    # Creates a procsy from this example and the provided block.
+    def procsy(&block : ->)
+      Procsy.new(self, &block)
+    end
+
     # Wraps an example to behave like a `Proc`.
     # This is typically used for an *around_each* hook.
     # Invoking `#call` or `#run` will run the example.

@@ -163,26 +163,26 @@ module Spectator
     # Defines a hook for the *around_each* event.
     # The block of code given to this method is invoked when the event occurs.
     # The current example is provided as a block argument.
-    def around_each(&block : Example::Procsy ->) : Nil
+    def around_each(&block) : Nil
       hook = ExampleProcsyHook.new(label: "around_each", &block)
       add_around_each_hook(hook)
     end
 
     # Signals that the *around_each* event has occurred.
     # All hooks associated with the event will be called.
-    def call_around_each(example : Example, &block : -> _) : Nil
+    def call_around_each(example, &block : -> _) : Nil
       # Avoid overhead if there's no hooks.
       return yield if @around_hooks.empty?
 
       # Start with a procsy that wraps the original code.
-      procsy = Example::Procsy.new(example, &block)
+      procsy = example.procsy(&block)
       procsy = wrap_around_each(procsy)
       procsy.call
     end
 
     # Wraps a procsy with the *around_each* hooks from this example group.
     # The returned procsy will call each hook then *procsy*.
-    protected def wrap_around_each(procsy : Example::Procsy) : Example::Procsy
+    protected def wrap_around_each(procsy)
       # Avoid overhead if there's no hooks.
       return procsy if @around_hooks.empty?
 
