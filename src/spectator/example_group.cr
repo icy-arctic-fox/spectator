@@ -1,15 +1,15 @@
 require "./events"
 require "./example_procsy_hook"
-require "./spec/node"
+require "./node"
 
 module Spectator
   # Collection of examples and sub-groups.
-  class ExampleGroup < Spec::Node
-    include Enumerable(Spec::Node)
+  class ExampleGroup < Node
+    include Enumerable(Node)
     include Events
-    include Iterable(Spec::Node)
+    include Iterable(Node)
 
-    @nodes = [] of Spec::Node
+    @nodes = [] of Node
 
     group_event before_all do |hooks|
       Log.trace { "Processing before_all hooks for #{self}" }
@@ -65,7 +65,7 @@ module Spectator
 
     # Removes the specified *node* from the group.
     # The node will be unassigned from this group.
-    def delete(node : Spec::Node)
+    def delete(node : Node)
       # Only remove from the group if it is associated with this group.
       return unless node.group == self
 
@@ -92,7 +92,7 @@ module Spectator
     # Assigns the node to this group.
     # If the node already belongs to a group,
     # it will be removed from the previous group before adding it to this group.
-    def <<(node : Spec::Node)
+    def <<(node : Node)
       # Remove from existing group if the node is part of one.
       if (previous = node.group?)
         previous.delete(node)
