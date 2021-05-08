@@ -124,14 +124,14 @@ module Spectator
       name = @name
 
       # Prefix with group's full name if the node belongs to a group.
-      if (group = @group)
-        group.to_s(io)
+      if (parent = @group)
+        parent.to_s(io)
 
         # Add padding between the node names
         # only if the names don't appear to be symbolic.
         # Skip blank group names (like the root group).
-        io << ' ' unless !group.name? || # ameba:disable Style/NegatedConditionsInUnless
-                         (group.name?.is_a?(Symbol) && name.is_a?(String) &&
+        io << ' ' unless !parent.name? || # ameba:disable Style/NegatedConditionsInUnless
+                         (parent.name?.is_a?(Symbol) && name.is_a?(String) &&
                          (name.starts_with?('#') || name.starts_with?('.')))
       end
 
