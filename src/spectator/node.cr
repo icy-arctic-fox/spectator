@@ -26,27 +26,15 @@ module Spectator
     protected def name=(@name : String)
     end
 
-    # Group the node belongs to.
-    getter! group : ExampleGroup
-
     # User-defined keywords used for filtering and behavior modification.
     getter tags : Tags
-
-    # Assigns the node to the specified *group*.
-    # This is an internal method and should only be called from `ExampleGroup`.
-    # `ExampleGroup` manages the association of nodes to groups.
-    protected setter group : ExampleGroup?
 
     # Creates the node.
     # The *name* describes the purpose of the node.
     # It can be a `Symbol` to describe a type.
     # The *location* tracks where the node exists in source code.
-    # The node will be assigned to *group* if it is provided.
     # A set of *tags* can be used for filtering and modifying example behavior.
-    def initialize(@name : Label = nil, @location : Location? = nil,
-                   group : ExampleGroup? = nil, @tags : Tags = Tags.new)
-      # Ensure group is linked.
-      group << self if group
+    def initialize(@name : Label = nil, @location : Location? = nil, @tags : Tags = Tags.new)
     end
 
     # Indicates whether the node has completed.
@@ -61,21 +49,7 @@ module Spectator
     # Constructs the full name or description of the node.
     # This prepends names of groups this node is part of.
     def to_s(io)
-      name = @name
-
-      # Prefix with group's full name if the node belongs to a group.
-      if (group = @group)
-        group.to_s(io)
-
-        # Add padding between the node names
-        # only if the names don't appear to be symbolic.
-        # Skip blank group names (like the root group).
-        io << ' ' unless !group.name? || # ameba:disable Style/NegatedConditionsInUnless
-                         (group.name?.is_a?(Symbol) && name.is_a?(String) &&
-                         (name.starts_with?('#') || name.starts_with?('.')))
-      end
-
-      name.to_s(io)
+      (@name || "<anonymous>").to_s(io)
     end
   end
 end

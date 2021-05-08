@@ -13,6 +13,14 @@ module Spectator
     # Currently running example.
     class_getter! current : Example
 
+    # Group the node belongs to.
+    getter! group : ExampleGroup
+
+    # Assigns the node to the specified *group*.
+    # This is an internal method and should only be called from `ExampleGroup`.
+    # `ExampleGroup` manages the association of nodes to groups.
+    protected setter group : ExampleGroup?
+
     # Indicates whether the example already ran.
     getter? finished : Bool = false
 
@@ -33,8 +41,11 @@ module Spectator
     # Note: The tags will not be merged with the parent tags.
     def initialize(@context : Context, @entrypoint : self ->,
                    name : String? = nil, location : Location? = nil,
-                   group : ExampleGroup? = nil, tags = Tags.new)
-      super(name, location, group, tags)
+                   @group : ExampleGroup? = nil, tags = Tags.new)
+      super(name, location, tags)
+
+      # Ensure group is linked.
+      group << self if group
     end
 
     # Creates a dynamic example.
@@ -48,9 +59,13 @@ module Spectator
     # Note: The tags will not be merged with the parent tags.
     def initialize(name : String? = nil, location : Location? = nil, group : ExampleGroup? = nil,
                    tags = Tags.new, &block : self ->)
-      super(name, location, group, tags)
+      super(name, location, tags)
+
       @context = NullContext.new
       @entrypoint = block
+
+      # Ensure group is linked.
+      group << self if group
     end
 
     # Executes the test case.
@@ -87,10 +102,10 @@ module Spectator
     end
 
     private def run_internal
-      group?.try(&.call_before_each(self))
+      @group.try(&.call_before_each(self))
       @entrypoint.call(self)
       @finished = true
-      group?.try(&.call_after_each(self))
+      @group.try(&.call_after_each(self))
     end
 
     # Executes code within the example's test context.
@@ -126,11 +141,21 @@ module Spectator
     # Constructs the full name or description of the example.
     # This prepends names of groups this example is part of.
     def to_s(io)
-      if name?
-        super
-      else
-        io << "<anonymous>"
+      name = @name
+
+      # Prefix with group's full name if the node belongs to a group.
+      if (group = @group)
+        group.to_s(io)
+
+        # Add padding between the node names
+        # only if the names don't appear to be symbolic.
+        # Skip blank group names (like the root group).
+        io << ' ' unless !group.name? || # ameba:disable Style/NegatedConditionsInUnless
+                         (group.name?.is_a?(Symbol) && name.is_a?(String) &&
+                         (name.starts_with?('#') || name.starts_with?('.')))
       end
+
+      super
     end
 
     # Exposes information about the example useful for debugging.

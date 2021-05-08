@@ -11,6 +11,14 @@ module Spectator
 
     @nodes = [] of Node
 
+    # Parent group this group belongs to.
+    getter! group : ExampleGroup
+
+    # Assigns this group to the specified *group*.
+    # This is an internal method and should only be called from `ExampleGroup`.
+    # `ExampleGroup` manages the association of nodes to groups.
+    protected setter group : ExampleGroup?
+
     group_event before_all do |hooks|
       Log.trace { "Processing before_all hooks for #{self}" }
 
@@ -63,6 +71,18 @@ module Spectator
       end
     end
 
+    # Creates the example group.
+    # The *name* describes the purpose of the group.
+    # It can be a `Symbol` to describe a type.
+    # The *location* tracks where the group exists in source code.
+    # This group will be assigned to the parent *group* if it is provided.
+    # A set of *tags* can be used for filtering and modifying example behavior.
+    def initialize(@name : Label = nil, @location : Location? = nil,
+                   @group : ExampleGroup? = nil, @tags : Tags = Tags.new)
+      # Ensure group is linked.
+      group << self if group
+    end
+
     # Removes the specified *node* from the group.
     # The node will be unassigned from this group.
     def delete(node : Node)
@@ -86,6 +106,26 @@ module Spectator
     # Checks if all examples and sub-groups have finished.
     def finished? : Bool
       @nodes.all?(&.finished?)
+    end
+
+    # Constructs the full name or description of the example group.
+    # This prepends names of groups this group is part of.
+    def to_s(io)
+      name = @name
+
+      # Prefix with group's full name if the node belongs to a group.
+      if (group = @group)
+        group.to_s(io)
+
+        # Add padding between the node names
+        # only if the names don't appear to be symbolic.
+        # Skip blank group names (like the root group).
+        io << ' ' unless !group.name? || # ameba:disable Style/NegatedConditionsInUnless
+                         (group.name?.is_a?(Symbol) && name.is_a?(String) &&
+                         (name.starts_with?('#') || name.starts_with?('.')))
+      end
+
+      super
     end
 
     # Adds the specified *node* to the group.
