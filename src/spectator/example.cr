@@ -2,16 +2,24 @@ require "./example_context_delegate"
 require "./example_group"
 require "./harness"
 require "./location"
+require "./node"
 require "./pending_result"
 require "./result"
-require "./spec/node"
 require "./tags"
 
 module Spectator
   # Standard example that runs a test case.
-  class Example < Spec::Node
+  class Example < Node
     # Currently running example.
     class_getter! current : Example
+
+    # Group the node belongs to.
+    getter! group : ExampleGroup
+
+    # Assigns the node to the specified *group*.
+    # This is an internal method and should only be called from `ExampleGroup`.
+    # `ExampleGroup` manages the association of nodes to groups.
+    protected setter group : ExampleGroup?
 
     # Indicates whether the example already ran.
     getter? finished : Bool = false
@@ -31,8 +39,11 @@ module Spectator
     # Note: The tags will not be merged with the parent tags.
     def initialize(@context : Context, @entrypoint : self ->,
                    name : String? = nil, location : Location? = nil,
-                   group : ExampleGroup? = nil, tags = Tags.new)
-      super(name, location, group, tags)
+                   @group : ExampleGroup? = nil, tags = Tags.new)
+      super(name, location, tags)
+
+      # Ensure group is linked.
+      group << self if group
     end
 
     # Creates a dynamic example.
@@ -44,11 +55,15 @@ module Spectator
     # The example will be assigned to *group* if it is provided.
     # A set of *tags* can be used for filtering and modifying example behavior.
     # Note: The tags will not be merged with the parent tags.
-    def initialize(name : String? = nil, location : Location? = nil, group : ExampleGroup? = nil,
-                   tags = Tags.new, &block : self ->)
-      super(name, location, group, tags)
+    def initialize(name : String? = nil, location : Location? = nil,
+                   @group : ExampleGroup? = nil, tags = Tags.new, &block : self ->)
+      super(name, location, tags)
+
       @context = NullContext.new
       @entrypoint = block
+
+      # Ensure group is linked.
+      group << self if group
     end
 
     # Executes the test case.
@@ -68,13 +83,13 @@ module Spectator
 
       begin
         @result = Harness.run do
-          group?.try(&.call_once_before_all)
-          if (parent = group?)
+          @group.try(&.call_once_before_all)
+          if (parent = @group)
             parent.call_around_each(self) { run_internal }
           else
             run_internal
           end
-          if (parent = group?)
+          if (parent = @group)
             parent.call_once_after_all if parent.finished?
           end
         end
@@ -85,10 +100,10 @@ module Spectator
     end
 
     private def run_internal
-      group?.try(&.call_before_each(self))
+      @group.try(&.call_before_each(self))
       @entrypoint.call(self)
       @finished = true
-      group?.try(&.call_after_each(self))
+      @group.try(&.call_after_each(self))
     end
 
     # Executes code within the example's test context.
@@ -124,26 +139,27 @@ module Spectator
     # Constructs the full name or description of the example.
     # This prepends names of groups this example is part of.
     def to_s(io)
-      if name?
-        super
-      else
-        io << "<anonymous>"
+      name = @name
+
+      # Prefix with group's full name if the node belongs to a group.
+      if (parent = @group)
+        parent.to_s(io)
+
+        # Add padding between the node names
+        # only if the names don't appear to be symbolic.
+        # Skip blank group names (like the root group).
+        io << ' ' unless !parent.name? || # ameba:disable Style/NegatedConditionsInUnless
+                         (parent.name?.is_a?(Symbol) && name.is_a?(String) &&
+                         (name.starts_with?('#') || name.starts_with?('.')))
       end
+
+      super
     end
 
     # Exposes information about the example useful for debugging.
     def inspect(io)
-      # Full example name.
-      io << '"'
-      to_s(io)
-      io << '"'
-
-      # Add location if it's available.
-      if (location = self.location)
-        io << " @ "
-        io << location
-      end
-
+      super
+      io << ' '
       io << result
     end
 
@@ -151,6 +167,11 @@ module Spectator
     # which is just its name.
     def to_json(json : ::JSON::Builder)
       json.string(to_s)
+    end
+
+    # Creates a procsy from this example and the provided block.
+    def procsy(&block : ->)
+      Procsy.new(self, &block)
     end
 
     # Wraps an example to behave like a `Proc`.
