@@ -19,56 +19,66 @@ module Spectator
     # `ExampleGroup` manages the association of nodes to groups.
     protected setter group : ExampleGroup?
 
-    group_event before_all do |hooks|
-      Log.trace { "Processing before_all hooks for #{self}" }
-
-      if (parent = group?)
-        parent.call_once_before_all
+    # Calls all hooks from the parent group if there is a parent.
+    # The *hook* is the method name of the group hook to invoke.
+    private macro call_parent_hooks(hook)
+      if (parent = @group)
+        parent.{{hook.id}}
       end
+    end
 
+    # Calls all hooks from the parent group if there is a parent.
+    # The *hook* is the method name of the example hook to invoke.
+    # The current *example* must be provided.
+    private macro call_parent_hooks(hook, example)
+      if (parent = @group)
+        parent.{{hook.id}}({{example}})
+      end
+    end
+
+    # Calls group hooks of the current group.
+    private def call_hooks(hooks)
       hooks.each do |hook|
         Log.trace { "Invoking hook #{hook}" }
         hook.call
       end
+    end
+
+    # Calls example hooks of the current group.
+    # Requires the current *example*.
+    private def call_hooks(hooks, example)
+      hooks.each do |hook|
+        Log.trace { "Invoking hook #{hook}" }
+        hook.call(example)
+      end
+    end
+
+    group_event before_all do |hooks|
+      Log.trace { "Processing before_all hooks for #{self}" }
+
+      call_parent_hooks(:call_once_before_all)
+      call_hooks(hooks)
     end
 
     group_event after_all do |hooks|
       Log.trace { "Processing after_all hooks for #{self}" }
 
-      hooks.each do |hook|
-        Log.trace { "Invoking hook #{hook}" }
-        hook.call
-      end
-
-      if (parent = group?)
-        parent.call_once_after_all
-      end
+      call_hooks(hooks)
+      call_parent_hooks(:call_once_after_all)
     end
 
     example_event before_each do |hooks, example|
       Log.trace { "Processing before_each hooks for #{self}" }
 
-      if (parent = group?)
-        parent.call_before_each(example)
-      end
-
-      hooks.each do |hook|
-        Log.trace { "Invoking hook #{hook}" }
-        hook.call(example)
-      end
+      call_parent_hooks(:call_before_each, example)
+      call_hooks(hooks, example)
     end
 
     example_event after_each do |hooks, example|
       Log.trace { "Processing after_each hooks for #{self}" }
 
-      hooks.each do |hook|
-        Log.trace { "Invoking hook #{hook}" }
-        hook.call(example)
-      end
-
-      if (parent = group?)
-        parent.call_after_each(example)
-      end
+      call_hooks(hooks, example)
+      call_parent_hooks(:call_after_each, example)
     end
 
     # Creates the example group.
