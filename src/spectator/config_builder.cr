@@ -156,10 +156,10 @@ module Spectator
     # If no filters were added with `#add_example_filter`,
     # then the returned filter will allow all examples to be run.
     protected def example_filter
-      if @filters.empty?
-        NullExampleFilter.new
-      else
-        CompositeExampleFilter.new(@filters)
+      case (filters = @filters)
+      when .empty? then NullExampleFilter.new
+      when .one? then filters.first
+      else CompositeExampleFilter.new(filters)
       end
     end
   end
