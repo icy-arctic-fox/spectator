@@ -2,14 +2,18 @@ require "../example"
 
 module Spectator
   class Spec
+    # Logic for executing examples and collecting results.
     private struct Runner
-      def initialize(@suite : TestSuite, @config : Config)
+      # Creates the runner.
+      # The collection of *examples* should be pre-filtered and shuffled.
+      # This runner will run each example in the order provided.
+      def initialize(@examples : Enumerable(Example), @config : Config)
       end
 
-      # Runs the test suite.
-      # This will run the selected examples
-      # and invoke the formatter to output results.
-      # True will be returned if the test suite ran successfully,
+      # Runs the spec.
+      # This will run the provided examples
+      # and invoke the reporters to communicate results.
+      # True will be returned if the spec ran successfully,
       # or false if there was at least one failure.
       def run : Bool
         # Indicate the suite is starting.
@@ -39,15 +43,6 @@ module Spectator
             example.group.call_once_after_all
             break
           end
-        end
-      end
-
-      # Retrieves an enumerable for the examples to run.
-      # The order of examples is randomized
-      # if specified by the configuration.
-      private def example_order
-        @suite.to_a.tap do |examples|
-          @config.shuffle!(examples)
         end
       end
 
