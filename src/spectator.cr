@@ -107,11 +107,11 @@ module Spectator
   private def apply_config_file(file_path = CONFIG_FILE_PATH) : Nil
     return unless File.exists?(file_path)
     args = File.read(file_path).lines
-    CommandLineArgumentsConfigSource.new(args).apply(@@config_builder)
+    Config::CLIArgumentsApplicator.new(args).apply(@@config_builder)
   end
 
   # Applies configuration options from the command-line arguments
   private def apply_command_line_args : Nil
-    CommandLineArgumentsConfigSource.new.apply(@@config_builder)
+    Config::CLIArgumentsApplicator.new.apply(@@config_builder)
   end
 end
