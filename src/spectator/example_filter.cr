@@ -5,5 +5,10 @@ module Spectator
   abstract class ExampleFilter
     # Checks if an example is in the filter, and should be run.
     abstract def includes?(example : Example) : Bool
+
+    # :ditto:
+    def ===(example : Example)
+      includes?(example)
+    end
   end
 end
