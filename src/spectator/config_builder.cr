@@ -2,6 +2,7 @@ require "./composite_example_filter"
 require "./config"
 require "./example_filter"
 require "./null_example_filter"
+require "./run_flags"
 
 module Spectator
   # Mutable configuration used to produce a final configuration.
@@ -18,11 +19,7 @@ module Spectator
 
     @primary_formatter : Formatting::Formatter?
     @additional_formatters = [] of Formatting::Formatter
-    @fail_fast = false
-    @fail_blank = false
-    @dry_run = false
-    @randomize = false
-    @profile = false
+    @run_flags = RunFlags::None
     @filters = [] of ExampleFilter
 
     # Creates a configuration.
@@ -55,79 +52,99 @@ module Spectator
 
     # Enables fail-fast mode.
     def fail_fast
-      self.fail_fast = true
+      @run_flags |= RunFlags::FailFast
     end
 
     # Sets the fail-fast flag.
     def fail_fast=(flag)
-      @fail_fast = flag
+      if flag
+        @run_flags |= RunFlags::FailFast
+      else
+        @run_flags &= ~RunFlags::FailFast
+      end
     end
 
     # Indicates whether fail-fast mode is enabled.
     protected def fail_fast?
-      @fail_fast
+      @run_flags.fail_fast?
     end
 
     # Enables fail-blank mode (fail on no tests).
     def fail_blank
-      self.fail_blank = true
+      @run_flags |= RunFlags::FailBlank
     end
 
     # Enables or disables fail-blank mode.
     def fail_blank=(flag)
-      @fail_blank = flag
+      if flag
+        @run_flags |= RunFlags::FailBlank
+      else
+        @run_flags &= ~RunFlags::FailBlank
+      end
     end
 
     # Indicates whether fail-fast mode is enabled.
     # That is, it is a failure if there are no tests.
     protected def fail_blank?
-      @fail_blank
+      @run_flags.fail_blank?
     end
 
     # Enables dry-run mode.
     def dry_run
-      self.dry_run = true
+      @run_flags |= RunFlags::DryRun
     end
 
     # Enables or disables dry-run mode.
     def dry_run=(flag)
-      @dry_run = flag
+      if flag
+        @run_flags |= RunFlags::DryRun
+      else
+        @run_flags &= ~RunFlags::DryRun
+      end
     end
 
     # Indicates whether dry-run mode is enabled.
     # In this mode, no tests are run, but output acts like they were.
     protected def dry_run?
-      @dry_run
+      @run_flags.dry_run?
     end
 
     # Randomizes test execution order.
     def randomize
-      self.randomize = true
+      @run_flags |= RunFlags::Randomize
     end
 
     # Enables or disables running tests in a random order.
     def randomize=(flag)
-      @randomize = flag
+      if flag
+        @run_flags |= RunFlags::Randomize
+      else
+        @run_flags &= ~RunFlags::Randomize
+      end
     end
 
     # Indicates whether tests are run in a random order.
     protected def randomize?
-      @randomize
+      @run_flags.randomize?
     end
 
     # Displays profiling information
     def profile
-      self.profile = true
+      @run_flags |= RunFlags::Profile
     end
 
     # Enables or disables displaying profiling information.
     def profile=(flag)
-      @profile = flag
+      if flag
+        @run_flags |= RunFlags::Profile
+      else
+        @run_flags &= ~RunFlags::Profile
+      end
     end
 
     # Indicates whether profiling information should be displayed.
     protected def profile?
-      @profile
+      @run_flags.profile?
     end
 
     # Adds a filter to determine which examples can run.
