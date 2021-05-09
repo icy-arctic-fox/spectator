@@ -43,14 +43,14 @@ module Spectator
     exit(1) if autorun? && !run
   end
 
-  @@config_builder = ConfigBuilder.new
+  @@config_builder = Config::Builder.new
   @@config : Config?
 
   # Provides a means to configure how Spectator will run and report tests.
   # A `ConfigBuilder` is yielded to allow changing the configuration.
   # NOTE: The configuration set here can be overriden
   # with a `.spectator` file and command-line arguments.
-  def configure(& : ConfigBuilder -> _) : Nil
+  def configure(& : Config::Builder -> _) : Nil
     yield @@config_builder
   end
 

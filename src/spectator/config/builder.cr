@@ -1,7 +1,7 @@
 require "../composite_example_filter"
 require "../example_filter"
+require "../formatting"
 require "../null_example_filter"
-require "../reporters"
 require "../run_flags"
 
 module Spectator
@@ -52,6 +52,7 @@ module Spectator
         case (formatters = self.formatters)
         when .one? then formatters.first
         else Formatting::BroadcastFormatter.new(formatters)
+        end
       end
 
       # Enables fail-fast mode.

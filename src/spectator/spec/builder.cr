@@ -1,5 +1,4 @@
 require "../config"
-require "../config_builder"
 require "../example"
 require "../example_context_method"
 require "../example_group"
@@ -173,10 +172,10 @@ module Spectator
       end
 
       # Builds the configuration to use for the spec.
-      # A `ConfigBuilder` is yielded to the block provided to this method.
+      # A `Config::Builder` is yielded to the block provided to this method.
       # That builder will be used to create the configuration.
-      def configure(& : ConfigBuilder -> _) : Nil
-        builder = ConfigBuilder.new
+      def configure(& : Config::Builder -> _) : Nil
+        builder = Config::Builder.new
         yield builder
         @config = builder.build
       end
@@ -206,7 +205,7 @@ module Spectator
       # Retrieves the configuration.
       # If one wasn't previously set, a default configuration is used.
       private def config : Config
-        @config || ConfigBuilder.default
+        @config || Config.default
       end
     end
   end
