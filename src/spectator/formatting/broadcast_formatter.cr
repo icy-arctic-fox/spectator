@@ -6,8 +6,7 @@ module Spectator::Formatting
   class BroadcastFormatter < Formatter
     # Creates the broadcast formatter.
     # Takes a collection of formatters to pass events along to.
-    def initialize(formatters : Enumerable(Formatter))
-      @formatters = formatters.to_a
+    def initialize(@formatters : Enumerable(Formatter))
     end
   end
 end
