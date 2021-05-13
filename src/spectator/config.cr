@@ -17,6 +17,9 @@ module Spectator
     # Seed used for random number generation.
     getter random_seed : UInt64
 
+    # Filter used to select which examples to run.
+    getter example_filter : ExampleFilter
+
     # Creates a new configuration.
     # Properties are pulled from *source*.
     # Typically, *source* is a `Config::Builder`.

@@ -1,3 +1,4 @@
+require "colorize"
 require "log"
 require "./spectator/includes"
 
@@ -67,7 +68,7 @@ module Spectator
     # Build the spec and run it.
     DSL::Builder.config = config
     spec = DSL::Builder.build
-    spec.run(config.example_filter)
+    spec.run
   rescue ex
     # Catch all unhandled exceptions here.
     # Examples are already wrapped, so any exceptions they throw are caught.

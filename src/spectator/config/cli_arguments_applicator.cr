@@ -1,3 +1,4 @@
+require "colorize"
 require "option_parser"
 require "../formatting"
 require "../line_example_filter"

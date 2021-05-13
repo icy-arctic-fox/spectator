@@ -13,9 +13,11 @@ module Spectator
       # Seed used for random number generation.
       property random_seed : UInt64 = Random.rand(UInt64)
 
+      # Toggles indicating how the test spec should execute.
+      property run_flags = RunFlags::None
+
       @primary_formatter : Formatting::Formatter?
       @additional_formatters = [] of Formatting::Formatter
-      @run_flags = RunFlags::None
       @filters = [] of ExampleFilter
 
       # Creates a configuration.
