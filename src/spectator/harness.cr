@@ -92,7 +92,7 @@ module Spectator
     # Yields to run the test code and returns information about the outcome.
     # Returns a tuple with the elapsed time and an error if one occurred (otherwise nil).
     private def capture : Tuple(Time::Span, Exception?)
-      error   = nil
+      error = nil
       elapsed = Time.measure do
         error = catch { yield }
       end

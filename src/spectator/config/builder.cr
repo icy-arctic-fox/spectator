@@ -53,7 +53,7 @@ module Spectator
       protected def formatter
         case (formatters = self.formatters)
         when .one? then formatters.first
-        else Formatting::BroadcastFormatter.new(formatters)
+        else            Formatting::BroadcastFormatter.new(formatters)
         end
       end
 
@@ -165,8 +165,8 @@ module Spectator
       protected def example_filter
         case (filters = @filters)
         when .empty? then NullExampleFilter.new
-        when .one? then filters.first
-        else CompositeExampleFilter.new(filters)
+        when .one?   then filters.first
+        else              CompositeExampleFilter.new(filters)
         end
       end
     end
