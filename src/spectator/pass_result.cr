@@ -13,6 +13,16 @@ module Spectator
       visitor.pass(yield self)
     end
 
+    # Indicates whether the example passed.
+    def pass? : Bool
+      true
+    end
+
+    # Indicates whether the example failed.
+    def fail? : Bool
+      false
+    end
+
     # One-word description of the result.
     def to_s(io)
       io << "pass"

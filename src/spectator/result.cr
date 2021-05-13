@@ -17,6 +17,12 @@ module Spectator
     # This is the visitor design pattern.
     abstract def accept(visitor)
 
+    # Indicates whether the example passed.
+    abstract def pass? : Bool
+
+    # Indicates whether the example failed.
+    abstract def fail? : Bool
+
     # Creates a JSON object from the result information.
     def to_json(json : ::JSON::Builder, example)
       json.object do
