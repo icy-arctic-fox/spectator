@@ -8,7 +8,9 @@ module Spectator
       # Creates the runner.
       # The collection of *examples* should be pre-filtered and shuffled.
       # This runner will run each example in the order provided.
-      def initialize(@examples : Enumerable(Example), @run_flags = RunFlags::None)
+      # The *formatter* will be called for various events.
+      def initialize(@examples : Enumerable(Example),
+        @formatter : Formatting::Formatter, @run_flags = RunFlags::None)
       end
 
       # Runs the spec.
