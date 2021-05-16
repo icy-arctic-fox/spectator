@@ -27,7 +27,8 @@ module Spectator::Matchers
     # A successful match with `#match` should normally fail for this method, and vice-versa.
     def negated_match(actual : Expression(T)) : MatchData forall T
       snapshot = snapshot_values(actual.value)
-      if snapshot.values.any?
+      # Intentionally check truthiness of each value.
+      if snapshot.values.any? # ameba:disable Performance/AnyInsteadOfEmpty
         FailedMatchData.new(description, "#{actual.label} responds to #{label}", values(snapshot).to_a)
       else
         SuccessfulMatchData.new(description)

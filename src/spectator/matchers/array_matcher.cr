@@ -110,9 +110,9 @@ module Spectator::Matchers
         end
       end.reject do |(_, count)|
         count <= 0
-      end.map do |(element, count)|
+      end.flat_map do |(element, count)|
         Array.new(count, element)
-      end.flatten
+      end
     end
 
     private def unexpected(value, label)
