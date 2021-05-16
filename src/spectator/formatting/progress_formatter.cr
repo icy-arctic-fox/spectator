@@ -1,14 +1,20 @@
 require "colorize"
 require "./formatter"
+require "./summary"
 
 module Spectator::Formatting
   # Output formatter that produces a single character for each test as it completes.
   # A '.' indicates a pass, 'F' a failure, 'E' an error, and '*' a skipped or pending test.
   class ProgressFormatter < Formatter
+    include Summary
+
     @pass_char : Colorize::Object(Char) = '.'.colorize(:green)
     @fail_char : Colorize::Object(Char) = 'F'.colorize(:red)
     @error_char : Colorize::Object(Char) = 'E'.colorize(:red)
     @skip_char : Colorize::Object(Char) = '*'.colorize(:yellow)
+
+    # Output stream to write results to.
+    private getter io : IO
 
     # Creates the formatter.
     def initialize(@io : IO = STDOUT)
@@ -32,6 +38,11 @@ module Spectator::Formatting
     # Produces a skip character.
     def example_pending(_notification)
       @skip_char.to_s(@io)
+    end
+
+    # Produces a new line after the tests complete.
+    def stop(_notification)
+      @io.puts
     end
   end
 end
