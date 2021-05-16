@@ -16,7 +16,7 @@ module Spectator
       # This runner will run each example in the order provided.
       # The *formatter* will be called for various events.
       def initialize(@examples : Enumerable(Example),
-        @formatter : Formatting::Formatter, @run_flags = RunFlags::None)
+                     @formatter : Formatting::Formatter, @run_flags = RunFlags::None)
       end
 
       # Runs the spec.
@@ -33,6 +33,7 @@ module Spectator
         # TODO: Generate a report and pass it along to the formatter.
 
         false # TODO: Report real result
+
       ensure
         close
       end
@@ -57,10 +58,10 @@ module Spectator
       private def run_example(example)
         example_started(example)
         result = if dry_run?
-          dry_run_result
-        else
-          example.run
-        end
+                   dry_run_result
+                 else
+                   example.run
+                 end
         example_finished(example)
         result
       end
