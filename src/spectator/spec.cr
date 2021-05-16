@@ -14,7 +14,8 @@ module Spectator
 
     # Runs all selected examples and returns the results.
     def run
-      Runner.new(examples, @config.formatter, @config.run_flags).run
+      runner = Runner.new(examples, @config.formatter, @config.run_flags)
+      runner.run
     end
 
     # Selects and shuffles the examples that should run.
