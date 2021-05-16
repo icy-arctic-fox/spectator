@@ -5,7 +5,7 @@ module Spectator
   class PassResult < Result
     # Calls the `pass` method on *visitor*.
     def accept(visitor)
-      visitor.pass
+      visitor.pass(self)
     end
 
     # Calls the `pass` method on *visitor*.

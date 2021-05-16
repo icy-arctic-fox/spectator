@@ -49,22 +49,22 @@ module Spectator
         end
 
         # Invokes the example passed method.
-        def pass
+        def pass(_result)
           @formatter.example_passed(@notification)
         end
 
         # Invokes the example failed method.
-        def fail
+        def fail(_result)
           @formatter.example_failed(@notification)
         end
 
         # Invokes the example error method.
-        def error
+        def error(_result)
           @formatter.example_error(@notification)
         end
 
         # Invokes the example pending method.
-        def pending
+        def pending(_result)
           @formatter.example_pending(@notification)
         end
       end

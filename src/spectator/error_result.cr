@@ -7,7 +7,7 @@ module Spectator
   class ErrorResult < FailResult
     # Calls the `error` method on *visitor*.
     def accept(visitor)
-      visitor.error
+      visitor.error(self)
     end
 
     # Calls the `error` method on *visitor*.

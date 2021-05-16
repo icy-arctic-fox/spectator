@@ -13,7 +13,7 @@ module Spectator
 
     # Calls the `pending` method on the *visitor*.
     def accept(visitor)
-      visitor.pending
+      visitor.pending(self)
     end
 
     # Calls the `pending` method on the *visitor*.
