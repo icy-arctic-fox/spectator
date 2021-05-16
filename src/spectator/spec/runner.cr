@@ -1,10 +1,16 @@
 require "../example"
 require "../run_flags"
+require "./events"
 
 module Spectator
   class Spec
     # Logic for executing examples and collecting results.
     private struct Runner
+      include Events
+
+      # Formatter to send events to.
+      private getter formatter : Formatting::Formatter
+
       # Creates the runner.
       # The collection of *examples* should be pre-filtered and shuffled.
       # This runner will run each example in the order provided.
@@ -19,12 +25,16 @@ module Spectator
       # True will be returned if the spec ran successfully,
       # or false if there was at least one failure.
       def run : Bool
+        start
         executed = [] of Example
         elapsed = Time.measure { executed = run_examples }
+        stop
 
         # TODO: Generate a report and pass it along to the formatter.
 
         false # TODO: Report real result
+      ensure
+        close
       end
 
       # Attempts to run all examples.
@@ -45,11 +55,14 @@ module Spectator
       # Runs a single example and returns the result.
       # The formatter is given the example and result information.
       private def run_example(example)
-        if dry_run?
+        example_started(example)
+        result = if dry_run?
           dry_run_result
         else
           example.run
         end
+        example_finished(example)
+        result
       end
 
       # Creates a fake result.

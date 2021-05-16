@@ -31,11 +31,13 @@ module Spectator::Formatting
     # This method is the first method to be invoked
     # and will be called only once.
     # It is called before any examples run.
+    # The *notification* will be a `StartNotification` type of object.
     def start(_notification)
     end
 
     # Invoked just before an example runs.
     # This method is called once for every example.
+    # The *notification* will be an `ExampleNotification` type of object.
     def example_started(_notification)
     end
 
@@ -43,22 +45,26 @@ module Spectator::Formatting
     # This method is called once for every example.
     # One of `#example_passed`, `#example_pending` or `#example_failed`
     # will be called immediately after this method, depending on the example's result.
+    # The *notification* will be an `ExampleNotification` type of object.
     def example_finished(_notification)
     end
 
     # Invoked after an example completes successfully.
     # This is called right after `#example_finished`.
+    # The *notification* will be an `ExampleNotification` type of object.
     def example_passed(_notification)
     end
 
     # Invoked after an example is skipped or marked as pending.
     # This is called right after `#example_finished`.
+    # The *notification* will be an `ExampleNotification` type of object.
     def example_pending(_notification)
     end
 
     # Invoked after an example fails.
     # This is called right after `#example_finished`.
     # Errors are considered failures and will cause this method to be called.
+    # The *notification* will be an `ExampleNotification` type of object.
     def example_failed(_notification)
     end
 
