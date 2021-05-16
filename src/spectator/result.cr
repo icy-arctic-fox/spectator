@@ -23,6 +23,11 @@ module Spectator
     # Indicates whether the example failed.
     abstract def fail? : Bool
 
+    # Indicates whether the example was skipped.
+    def pending? : Bool
+      !pass? && !fail?
+    end
+
     # Creates a JSON object from the result information.
     def to_json(json : ::JSON::Builder, example)
       json.object do
