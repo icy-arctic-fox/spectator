@@ -1,4 +1,4 @@
-require "./example_filter_command"
+require "./example_command"
 require "./runtime"
 require "./totals"
 
@@ -31,7 +31,7 @@ module Spectator::Formatting::Components
       io.puts "Failed examples:"
       io.puts
       failures.each do |failure|
-        io.puts ExampleFilterCommand.new(failure).colorize(:red)
+        io.puts ExampleCommand.new(failure).colorize(:red)
       end
     end
   end

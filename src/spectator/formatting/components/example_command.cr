@@ -1,5 +1,7 @@
+require "./comment"
+
 module Spectator::Formatting::Components
-  struct ExampleFilterCommand
+  struct ExampleCommand
     def initialize(@example : Example)
     end
 
