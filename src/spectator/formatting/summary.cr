@@ -43,7 +43,7 @@ module Spectator::Formatting
     # Invoked after testing completes with summarized information from the test suite.
     # Called after `#dump_failures` and before `#dump_profile`.
     def dump_summary(notification)
-      io.puts Components::SummaryBlock.new(notification.report)
+      io.puts Components::Stats.new(notification.report)
     end
 
     # Invoked after testing completes with profiling information.

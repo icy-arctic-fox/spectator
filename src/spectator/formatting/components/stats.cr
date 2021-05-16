@@ -3,8 +3,8 @@ require "./runtime"
 require "./totals"
 
 module Spectator::Formatting::Components
-  # Summary information displayed at the end of a run.
-  struct SummaryBlock
+  # Statistics information displayed at the end of a run.
+  struct Stats
     def initialize(@report : Report)
     end
 
