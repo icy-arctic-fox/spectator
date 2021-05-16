@@ -1,12 +1,12 @@
 require "../../example"
-require "../../fail_result"
+require "../../error_result"
 require "./comment"
 
 module Spectator::Formatting::Components
-  struct FailureBlock
+  struct ErrorBlock
     private INDENT = 2
 
-    def initialize(@example : Example, @result : FailResult, @index : Int32)
+    def initialize(@example : Example, @result : ErrorResult, @index : Int32)
     end
 
     def to_s(io)
@@ -17,10 +17,22 @@ module Spectator::Formatting::Components
       io.puts @example
       indent = INDENT + index_digit_count + 2
       indent.times { io << ' ' }
-      io << "Failure: ".colorize(:red)
-      io.puts @result.error.message
+      error = @result.error
+      io << "Error: ".colorize(:red)
+      io.puts error.message
       io.puts
-      # TODO: Expectation values
+      indent.times { io << ' ' }
+      io << error.class
+      io.puts ':'
+      indent += INDENT
+      error.backtrace?.try do |trace|
+        trace.each do |entry|
+          indent.times { io << ' ' }
+          entry = entry.colorize.dim unless entry.starts_with?(/src\/|spec\//)
+          io.puts entry
+        end
+      end
+      indent -= INDENT
       indent.times { io << ' ' }
       io.puts Comment.colorize(@example.location) # TODO: Use location of failed expectation.
     end

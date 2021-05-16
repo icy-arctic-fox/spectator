@@ -1,3 +1,4 @@
+require "../fail_result"
 require "./components"
 
 module Spectator::Formatting
@@ -36,7 +37,11 @@ module Spectator::Formatting
       io.puts "Failures:"
       io.puts
       examples.each_with_index do |example, index|
-        io.puts Components::FailureBlock.new(example, index + 1)
+        if result = example.result.as?(ErrorResult)
+          io.puts Components::ErrorBlock.new(example, result, index + 1)
+        elsif result = example.result.as?(FailResult)
+          io.puts Components::FailureBlock.new(example, result, index + 1)
+        end
       end
     end
 
