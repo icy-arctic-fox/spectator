@@ -35,6 +35,22 @@ module Spectator
         formatter.stop(nil)
       end
 
+      # Triggers the 'dump' events.
+      private def summarize(report)
+        formatter.start_dump
+
+        notification = Formatting::ExampleSummaryNotification.new(report.pending)
+        formatter.dump_pending(notification)
+
+        notification = Formatting::ExampleSummaryNotification.new(report.failures)
+        formatter.dump_failures(notification)
+
+        notification = Formatting::SummaryNotification.new(report)
+        formatter.dump_summary(notification)
+
+        formatter.dump_profile(nil)
+      end
+
       # Triggers the 'close' event.
       # See `Formatting::Formatter#close`
       private def close

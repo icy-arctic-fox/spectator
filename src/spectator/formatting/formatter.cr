@@ -96,17 +96,20 @@ module Spectator::Formatting
     # Invoked after testing completes with a list of pending examples.
     # This method will be called with an empty list if there were no pending (skipped) examples.
     # Called after `#start_dump` and before `#dump_failures`.
+    # The *notification* will be an `ExampleSummaryNotification` type of object.
     def dump_pending(_notification)
     end
 
     # Invoked after testing completes with a list of failed examples.
     # This method will be called with an empty list if there were no failures.
     # Called after `#dump_pending` and before `#dump_summary`.
+    # The *notification* will be an `ExampleSummaryNotification` type of object.
     def dump_failures(_notification)
     end
 
     # Invoked after testing completes with summarized information from the test suite.
     # Called after `#dump_failures` and before `#dump_profile`.
+    # The *notification* will be an `SummaryNotification` type of object.
     def dump_summary(_notification)
     end
 

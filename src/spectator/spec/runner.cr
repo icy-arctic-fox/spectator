@@ -1,4 +1,5 @@
 require "../example"
+require "../report"
 require "../run_flags"
 require "./events"
 
@@ -26,11 +27,11 @@ module Spectator
       # or false if there was at least one failure.
       def run : Bool
         start
-        executed = [] of Example
-        elapsed = Time.measure { executed = run_examples }
+        elapsed = Time.measure { run_examples }
         stop
 
-        # TODO: Generate a report and pass it along to the formatter.
+        report = Report.generate(@examples, elapsed, nil) # TODO: Provide random seed.
+        summarize(report)
 
         false # TODO: Report real result
 
@@ -41,15 +42,12 @@ module Spectator
       # Attempts to run all examples.
       # Returns a list of examples that ran.
       private def run_examples
-        Array(Example).new(example_count).tap do |executed|
-          @examples.each do |example|
-            result = run_example(example)
-            executed << example
+        @examples.each do |example|
+          result = run_example(example)
 
-            # Bail out if the example failed
-            # and configured to stop after the first failure.
-            break fail_fast if fail_fast? && result.fail?
-          end
+          # Bail out if the example failed
+          # and configured to stop after the first failure.
+          break fail_fast if fail_fast? && result.fail?
         end
       end
 
@@ -58,6 +56,7 @@ module Spectator
       private def run_example(example)
         example_started(example)
         result = if dry_run?
+                   # TODO: Pending examples return a pending result instead of pass in RSpec dry-run.
                    dry_run_result
                  else
                    example.run
