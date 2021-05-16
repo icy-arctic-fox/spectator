@@ -63,9 +63,17 @@ module Spectator::Formatting
 
     # Invoked after an example fails.
     # This is called right after `#example_finished`.
-    # Errors are considered failures and will cause this method to be called.
     # The *notification* will be an `ExampleNotification` type of object.
+    #
+    # NOTE: Errors are normally considered failures,
+    # however `#example_error` is called instead if one occurs in an exmaple.
     def example_failed(_notification)
+    end
+
+    # Invoked after an example fails from an unexpected error.
+    # This is called right after `#example_finished`.
+    # The *notification* will be an `ExampleNotification` type of object.
+    def example_error(_notification)
     end
 
     # Called whenever the example or framework produces a message.

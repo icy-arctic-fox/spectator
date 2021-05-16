@@ -58,9 +58,9 @@ module Spectator
           @formatter.example_failed(@notification)
         end
 
-        # Invokes the example failed method.
+        # Invokes the example error method.
         def error
-          @formatter.example_failed(@notification)
+          @formatter.example_error(@notification)
         end
 
         # Invokes the example pending method.
