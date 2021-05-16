@@ -55,8 +55,8 @@ module Spectator::Formatting
     end
 
     # :ditto:
-    def start_dump(notification)
-      @formatters.each(&.start_dump(notification))
+    def start_dump
+      @formatters.each(&.start_dump)
     end
 
     # :ditto:
@@ -80,8 +80,8 @@ module Spectator::Formatting
     end
 
     # :ditto:
-    def close(notification)
-      @formatters.each(&.close(notification))
+    def close
+      @formatters.each(&.close)
     end
   end
 end

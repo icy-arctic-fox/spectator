@@ -38,7 +38,7 @@ module Spectator
       # Triggers the 'close' event.
       # See `Formatting::Formatter#close`
       private def close
-        formatter.close(nil)
+        formatter.close
       end
 
       # Provides methods for the various result types.

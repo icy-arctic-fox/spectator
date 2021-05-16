@@ -90,7 +90,7 @@ module Spectator::Formatting
     # Invoked after all examples finished.
     # Indicates that summarized report data is about to be produced.
     # This method is called after `#stop` and before `#dump_pending`.
-    def start_dump(_notification)
+    def start_dump
     end
 
     # Invoked after testing completes with a list of pending examples.
@@ -118,7 +118,7 @@ module Spectator::Formatting
 
     # Invoked at the end of the program.
     # Allows the formatter to perform any cleanup and teardown.
-    def close(_notification)
+    def close
     end
   end
 end
