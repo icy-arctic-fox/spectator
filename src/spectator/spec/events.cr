@@ -24,13 +24,9 @@ module Spectator
       # See `Formatting::Formatter#example_finished`
       private def example_finished(example)
         notification = Formatting::ExampleNotification.new(example)
+        visitor = ResultVisitor.new(formatter, notification)
         formatter.example_started(notification)
-
-        case example.result
-        when .fail? then formatter.example_failed(notification)
-        when .pass? then formatter.example_passed(notification)
-        else formatter.example_pending(notification)
-        end
+        example.result.accept(visitor)
       end
 
       # Triggers the 'stop' event.
@@ -43,6 +39,34 @@ module Spectator
       # See `Formatting::Formatter#close`
       private def close
         formatter.close(nil)
+      end
+
+      # Provides methods for the various result types.
+      private struct ResultVisitor
+        # Creates the visitor.
+        # Requires the *formatter* to notify and the *notification* to send it.
+        def initialize(@formatter : Formatting::Formatter, @notification : Formatting::ExampleNotification)
+        end
+
+        # Invokes the example passed method.
+        def pass
+          @formatter.example_passed(@notification)
+        end
+
+        # Invokes the example failed method.
+        def fail
+          @formatter.example_failed(@notification)
+        end
+
+        # Invokes the example failed method.
+        def error
+          @formatter.example_failed(@notification)
+        end
+
+        # Invokes the example pending method.
+        def pending
+          @formatter.example_pending(@notification)
+        end
       end
     end
   end
