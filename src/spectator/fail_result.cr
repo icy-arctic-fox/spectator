@@ -17,12 +17,12 @@ module Spectator
 
     # Calls the `failure` method on *visitor*.
     def accept(visitor)
-      visitor.failure
+      visitor.fail
     end
 
     # Calls the `failure` method on *visitor*.
     def accept(visitor)
-      visitor.failure(yield self)
+      visitor.fail(yield self)
     end
 
     # Indicates whether the example passed.
