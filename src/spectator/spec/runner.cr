@@ -16,7 +16,7 @@ module Spectator
       # The collection of *examples* should be pre-filtered and shuffled.
       # This runner will run each example in the order provided.
       # The *formatter* will be called for various events.
-      def initialize(@examples : Enumerable(Example),
+      def initialize(@examples : Array(Example),
                      @formatter : Formatting::Formatter, @run_flags = RunFlags::None)
       end
 
