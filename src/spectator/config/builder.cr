@@ -11,7 +11,7 @@ module Spectator
     # Then call `#build` to create the final configuration.
     class Builder
       # Seed used for random number generation.
-      property random_seed : UInt64 = Random.rand(UInt64)
+      property random_seed : UInt64 = Random.rand(100000_u64)
 
       # Toggles indicating how the test spec should execute.
       property run_flags = RunFlags::None
