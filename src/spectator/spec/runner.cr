@@ -35,6 +35,7 @@ module Spectator
 
         false # TODO: Report real result
 
+
       ensure
         close
       end

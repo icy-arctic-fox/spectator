@@ -44,10 +44,10 @@ module Spectator::Formatting::Components
 
     private def source_line(io)
       source = if (result = @example.result).responds_to?(:source)
-        result.source
-      else
-        @example.location
-      end
+                 result.source
+               else
+                 @example.location
+               end
       line(io) { io << Comment.colorize(source) }
     end
 
