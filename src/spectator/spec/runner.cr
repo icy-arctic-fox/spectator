@@ -34,9 +34,7 @@ module Spectator
         profile = Profile.generate(@examples) if @run_flags.profile? && report.counts.run > 0
         summarize(report, profile)
 
-        false # TODO: Report real result
-
-
+        report.counts.fail.zero?
       ensure
         close
       end
