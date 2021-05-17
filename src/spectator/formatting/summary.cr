@@ -9,7 +9,7 @@ module Spectator::Formatting
   # Classes including this module must implement `#io`.
   module Summary
     # Stream to write results to.
-    private abstract def io : IO
+    private abstract def io
 
     def start_dump
       io.puts

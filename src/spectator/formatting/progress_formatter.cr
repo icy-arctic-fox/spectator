@@ -14,7 +14,7 @@ module Spectator::Formatting
     @skip_char : Colorize::Object(Char) = '*'.colorize(:yellow)
 
     # Output stream to write results to.
-    private getter io : IO
+    private getter io
 
     # Creates the formatter.
     def initialize(@io : IO = STDOUT)
