@@ -16,7 +16,7 @@ module Spectator
     # True will be returned if the spec ran successfully,
     # or false if there was at least one failure.
     def run : Bool
-      runner = Runner.new(examples, @config.formatter, @config.run_flags)
+      runner = Runner.new(examples, @config.formatter, @config.run_flags, @config.random_seed)
       runner.run
     end
 

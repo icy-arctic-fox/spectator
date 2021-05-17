@@ -1,3 +1,4 @@
+require "colorize"
 require "./runtime"
 require "./totals"
 
@@ -10,6 +11,9 @@ module Spectator::Formatting::Components
     def to_s(io)
       runtime(io)
       totals(io)
+      if seed = @report.random_seed?
+        random(io, seed)
+      end
     end
 
     private def runtime(io)
@@ -19,6 +23,10 @@ module Spectator::Formatting::Components
 
     private def totals(io)
       io.puts Totals.colorize(@report.counts)
+    end
+
+    private def random(io, seed)
+      io.puts "Randomized with seed: #{seed}".colorize(:cyan)
     end
   end
 end

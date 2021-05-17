@@ -16,8 +16,8 @@ module Spectator
       # The collection of *examples* should be pre-filtered and shuffled.
       # This runner will run each example in the order provided.
       # The *formatter* will be called for various events.
-      def initialize(@examples : Array(Example),
-                     @formatter : Formatting::Formatter, @run_flags = RunFlags::None)
+      def initialize(@examples : Array(Example), @formatter : Formatting::Formatter,
+                     @run_flags = RunFlags::None, @random_seed : UInt64? = nil)
       end
 
       # Runs the spec.
@@ -30,7 +30,7 @@ module Spectator
         elapsed = Time.measure { run_examples }
         stop
 
-        report = Report.generate(@examples, elapsed, nil) # TODO: Provide random seed.
+        report = Report.generate(@examples, elapsed, @random_seed)
         profile = Profile.generate(@examples) if @run_flags.profile? && report.counts.run > 0
         summarize(report, profile)
 
