@@ -38,9 +38,9 @@ module Spectator::Formatting
       io.puts
       examples.each_with_index do |example, index|
         if result = example.result.as?(ErrorResult)
-          io.puts Components::ErrorBlock.new(example, result, index + 1)
+          io.puts Components::ErrorResultBlock.new(index + 1, example, result)
         elsif result = example.result.as?(FailResult)
-          io.puts Components::FailureBlock.new(example, result, index + 1)
+          io.puts Components::FailResultBlock.new(index + 1, example, result)
         end
       end
     end

@@ -1,3 +1,5 @@
+require "colorize"
+
 module Spectator::Formatting::Components
   struct Comment(T)
     private COLOR = :cyan
