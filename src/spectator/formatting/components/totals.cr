@@ -1,3 +1,5 @@
+require "colorize"
+
 module Spectator::Formatting::Components
   struct Totals
     def initialize(@examples : Int32, @failures : Int32, @errors : Int32, @pending : Int32)
@@ -25,9 +27,14 @@ module Spectator::Formatting::Components
       io << @examples
       io << " examples, "
       io << @failures
-      io << " failures, "
-      io << @errors
-      io << " errors, "
+      io << " failures "
+
+      if @errors > 1
+        io << '('
+        io << @errors
+        io << " errors), "
+      end
+
       io << @pending
       io << " pending"
     end
