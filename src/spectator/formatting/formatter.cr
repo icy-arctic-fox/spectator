@@ -18,8 +18,8 @@ module Spectator::Formatting
   # 8.  `#start_dump`
   # 9.  `#dump_pending`
   # 10. `#dump_failures`
-  # 11. `#dump_summary`
-  # 12. `#dump_profile`
+  # 11. `#dump_profile`
+  # 12. `#dump_summary`
   # 13. `#close`
   #
   # Only one of the `#example_passed`, `#example_pending`, or `#example_failed` methods
@@ -107,16 +107,16 @@ module Spectator::Formatting
     def dump_failures(_notification)
     end
 
-    # Invoked after testing completes with summarized information from the test suite.
-    # Called after `#dump_failures` and before `#dump_profile`.
-    # The *notification* will be an `SummaryNotification` type of object.
-    def dump_summary(_notification)
-    end
-
     # Invoked after testing completes with profiling information.
     # This method is only called if profiling is enabled.
-    # Called after `#dump_summary` and before `#close`.
+    # Called after `#dump_failures` and before `#dump_summary`.
     def dump_profile(_notification)
+    end
+
+    # Invoked after testing completes with summarized information from the test suite.
+    # Called after `#dump_profile` and before `#close`.
+    # The *notification* will be an `SummaryNotification` type of object.
+    def dump_summary(_notification)
     end
 
     # Invoked at the end of the program.

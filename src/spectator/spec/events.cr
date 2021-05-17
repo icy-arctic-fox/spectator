@@ -45,10 +45,10 @@ module Spectator
         notification = Formatting::ExampleSummaryNotification.new(report.failures)
         formatter.dump_failures(notification)
 
+        formatter.dump_profile(nil)
+
         notification = Formatting::SummaryNotification.new(report)
         formatter.dump_summary(notification)
-
-        formatter.dump_profile(nil)
       end
 
       # Triggers the 'close' event.
