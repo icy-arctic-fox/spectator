@@ -1,4 +1,6 @@
 require "../example"
+require "../profile"
+require "../report"
 
 module Spectator::Formatting
   # Structure indicating the test suite has started.
@@ -9,6 +11,9 @@ module Spectator::Formatting
 
   # Structure containing a subset of examples from the test suite.
   record ExampleSummaryNotification, examples : Enumerable(Example)
+
+  # Structure containing profiling information.
+  record ProfileNotification, profile : Profile
 
   # Structure containing summarized information from the outcome of the test suite.
   record SummaryNotification, report : Report

@@ -36,7 +36,7 @@ module Spectator
       end
 
       # Triggers the 'dump' events.
-      private def summarize(report)
+      private def summarize(report, profile)
         formatter.start_dump
 
         notification = Formatting::ExampleSummaryNotification.new(report.pending)
@@ -45,7 +45,10 @@ module Spectator
         notification = Formatting::ExampleSummaryNotification.new(report.failures)
         formatter.dump_failures(notification)
 
-        formatter.dump_profile(nil)
+        if profile
+          notification = Formatting::ProfileNotification.new(profile)
+          formatter.dump_profile(notification)
+        end
 
         notification = Formatting::SummaryNotification.new(report)
         formatter.dump_summary(notification)

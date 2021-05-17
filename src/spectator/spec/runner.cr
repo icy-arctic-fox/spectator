@@ -31,7 +31,8 @@ module Spectator
         stop
 
         report = Report.generate(@examples, elapsed, nil) # TODO: Provide random seed.
-        summarize(report)
+        profile = Profile.generate(@examples) if @run_flags.profile? && report.counts.run > 0
+        summarize(report, profile)
 
         false # TODO: Report real result
 

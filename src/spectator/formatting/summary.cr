@@ -48,7 +48,8 @@ module Spectator::Formatting
     # Invoked after testing completes with profiling information.
     # This method is only called if profiling is enabled.
     # Called after `#dump_failures` and before `#dump_summary`.
-    def dump_profile(_notification)
+    def dump_profile(notification)
+      io.puts Components::Profile.new(notification.profile)
     end
 
     # Invoked after testing completes with summarized information from the test suite.

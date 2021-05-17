@@ -8,7 +8,16 @@ module Spectator
 
     # Creates the profiling information.
     # The *slowest* results must already be sorted, longest time first.
-    private def initialize(@slowest : Array(Example), @total_time)
+    def initialize(@slowest : Array(Example), @total_time)
+    end
+
+    # Produces the profile from a report.
+    def self.generate(examples, size = 10)
+      finished = examples.select(&.finished?).to_a
+      total_time = finished.sum(&.result.elapsed)
+      sorted_examples = finished.sort_by(&.result.elapsed)
+      slowest = sorted_examples.last(size).reverse
+      new(slowest, total_time)
     end
 
     # Number of results in the profile.
@@ -26,17 +35,9 @@ module Spectator
       @slowest.sum(&.result.elapsed)
     end
 
-    # Percentage (from 0 to 1) of time the results in this profile took compared to all examples.
+    # Percentage (from 0 to 100) of time the results in this profile took compared to all examples.
     def percentage
-      time / @total_time
-    end
-
-    # Produces the profile from a report.
-    def self.generate(report, size = 10)
-      examples = report.to_a
-      sorted_examples = examples.sort_by(&.result.elapsed)
-      slowest = sorted_examples.last(size).reverse
-      self.new(slowest, report.example_runtime)
+      time / @total_time * 100
     end
   end
 end
