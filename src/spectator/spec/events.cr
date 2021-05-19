@@ -32,7 +32,7 @@ module Spectator
       # Triggers the 'stop' event.
       # See `Formatting::Formatter#stop`
       private def stop
-        formatter.stop(nil)
+        formatter.stop
       end
 
       # Triggers the 'dump' events.

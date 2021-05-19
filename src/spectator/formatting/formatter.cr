@@ -84,7 +84,7 @@ module Spectator::Formatting
     # Invoked after all tests that will run have completed.
     # When this method is called, it should be considered that the testing is done.
     # Summary (dump) methods will be called after this.
-    def stop(_notification)
+    def stop
     end
 
     # Invoked after all examples finished.

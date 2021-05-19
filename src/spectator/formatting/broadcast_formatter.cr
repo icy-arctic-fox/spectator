@@ -50,8 +50,8 @@ module Spectator::Formatting
     end
 
     # :ditto:
-    def stop(notification)
-      @formatters.each(&.stop(notification))
+    def stop
+      @formatters.each(&.stop)
     end
 
     # :ditto:

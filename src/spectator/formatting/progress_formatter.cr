@@ -41,7 +41,7 @@ module Spectator::Formatting
     end
 
     # Produces a new line after the tests complete.
-    def stop(_notification)
+    def stop
       @io.puts
     end
   end
