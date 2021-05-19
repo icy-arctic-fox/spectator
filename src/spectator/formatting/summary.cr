@@ -23,8 +23,8 @@ module Spectator::Formatting
 
       io.puts "Pending:"
       io.puts
-      examples.each_with_index do |example, index|
-        io.puts Components::PendingBlock.new(example, index + 1)
+      examples.each_with_index(1) do |example, index|
+        io.puts Components::PendingBlock.new(example, index)
       end
     end
 
@@ -36,11 +36,11 @@ module Spectator::Formatting
 
       io.puts "Failures:"
       io.puts
-      examples.each_with_index do |example, index|
+      examples.each_with_index(1) do |example, index|
         if result = example.result.as?(ErrorResult)
-          io.puts Components::ErrorResultBlock.new(index + 1, example, result)
+          io.puts Components::ErrorResultBlock.new(index, example, result)
         elsif result = example.result.as?(FailResult)
-          io.puts Components::FailResultBlock.new(index + 1, example, result)
+          io.puts Components::FailResultBlock.new(index, example, result)
         end
       end
     end
