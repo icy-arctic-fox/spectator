@@ -9,8 +9,8 @@ module Spectator::Formatting
   class DocumentFormatter < Formatter
     include Summary
 
-    # Whitespace count per indent.
-    private INDENT_AMOUNT = 2
+    # Identation string.
+    private INDENT = "  "
 
     # Output stream to write results to.
     private getter io
@@ -34,25 +34,19 @@ module Spectator::Formatting
     # Invoked after an example completes successfully.
     # Produces a successful example line.
     def example_passed(notification)
-      indent = @previous_hierarchy.size * INDENT_AMOUNT
-      indent.times { @io << ' ' }
-      @io.puts notification.example.name.colorize(:green)
+      line(notification.example.name.colorize(:green))
     end
 
     # Invoked after an example is skipped or marked as pending.
     # Produces a pending example line.
     def example_pending(notification)
-      indent = @previous_hierarchy.size * INDENT_AMOUNT
-      indent.times { @io << ' ' }
-      @io.puts notification.example.name.colorize(:yellow)
+      line(notification.example.name.colorize(:yellow))
     end
 
     # Invoked after an example fails.
     # Produces a failure example line.
     def example_failed(notification)
-      indent = @previous_hierarchy.size * INDENT_AMOUNT
-      indent.times { @io << ' ' }
-      @io.puts notification.example.name.colorize(:red)
+      line(notification.example.name.colorize(:red))
     end
 
     # Invoked after an example fails from an unexpected error.
@@ -63,13 +57,14 @@ module Spectator::Formatting
 
     # Produces a list of groups making up the hierarchy for an example.
     private def group_hierarchy(example)
-      hierarchy = [] of Label
-      group = example.group?
-      while group && (parent = group.group?)
-        hierarchy << group.name
-        group = parent
+      Array(Label).new.tap do |hierarchy|
+        group = example.group?
+        while group && (parent = group.group?)
+          hierarchy << group.name
+          group = parent
+        end
+        hierarchy.reverse!
       end
-      hierarchy.reverse
     end
 
     # Generates a difference between two hierarchies.
@@ -83,11 +78,16 @@ module Spectator::Formatting
     end
 
     # Displays an indented hierarchy starting partially into the whole hierarchy.
-    private def print_sub_hierarchy(start_index, sub_hierarchy)
-      sub_hierarchy.each_with_index(start_index) do |name, index|
-        (index * INDENT_AMOUNT).times { @io << ' ' }
-        @io.puts name
+    private def print_sub_hierarchy(start_index, hierarchy)
+      hierarchy.each_with_index(start_index) do |name, index|
+        line(name, index)
       end
+    end
+
+    # Displays an indented line of text.
+    private def line(text, level = @previous_hierarchy.size)
+      level.times { @io << INDENT }
+      @io.puts text
     end
   end
 end
