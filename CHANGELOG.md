@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.9.37] - 2021-05-19
+### Added
+- Added support for `be ===` and `be =~`. [#26](https://github.com/icy-arctic-fox/spectator/issues/26)
+
 ## [0.9.36] - 2021-04-22
 ### Fixed
 - Remove old workaround that prevented compilation on Windows. [#58](https://gitlab.com/arctic-fox/spectator/-/issues/58)
@@ -257,7 +261,8 @@ This has been changed so that it compiles and raises an error at runtime with a 
 First version ready for public use.
 
 
-[Unreleased]: https://gitlab.com/arctic-fox/spectator/-/compare/v0.9.36...HEAD
+[Unreleased]: https://gitlab.com/arctic-fox/spectator/-/compare/v0.9.37...release%2F0.10
+[0.9.36]: https://gitlab.com/arctic-fox/spectator/-/compare/v0.9.36...v0.9.37
 [0.9.35]: https://gitlab.com/arctic-fox/spectator/-/compare/v0.9.35...v0.9.36
 [0.9.35]: https://gitlab.com/arctic-fox/spectator/-/compare/v0.9.34...v0.9.35
 [0.9.34]: https://gitlab.com/arctic-fox/spectator/-/compare/v0.9.33...v0.9.34
