@@ -82,6 +82,26 @@ module Spectator::Matchers
       InequalityMatcher.new(expected)
     end
 
+    # Creates a matcher that checks if a value is semantically equal to an expected value.
+    # The spec would look like:
+    # ```
+    # expect("foobar").to be === /foo/
+    # ```
+    def ===(value)
+      expected = TestValue.new(value)
+      PatternMatcher.new(expected)
+    end
+
+    # Creates a matcher that checks if a value matches the pattern of an expected value.
+    # The spec would look like:
+    # ```
+    # expect("foobar").to be =~ /foo/
+    # ```
+    def =~(value)
+      expected = TestValue.new(value)
+      PatternMatcher.new(expected)
+    end
+
     # Checks whether the matcher is satisifed with the expression given to it.
     private def match?(actual : TestExpression(T)) : Bool forall T
       @truthy == !!actual.value
