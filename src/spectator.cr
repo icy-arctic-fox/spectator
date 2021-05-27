@@ -98,8 +98,21 @@ module Spectator
     config.random
   end
 
+  # Trick for detecting if a constant is defined.
+  # Includes the block of code if the *constant* is defined.
+  private macro on_defined(constant)
+    {% if constant.resolve? %}
+      {{yield}}
+    {% end %}
+  end
+
   # Builds the tests and runs the framework.
   private def run
+    # Silence default logger, only if it's used somewhere in the program.
+    on_defined(::Log) do
+      ::Log.setup_from_env(default_level: :none)
+    end
+
     # Build the test suite and run it.
     suite = ::Spectator::SpecBuilder.build(config.example_filter)
     Runner.new(suite, config).run
