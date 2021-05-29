@@ -55,7 +55,7 @@ module Spectator
     private def self.with_harness
       previous = @@current
       begin
-        harness = new
+        @@current = harness = new
         yield harness
       ensure
         @@current = previous
