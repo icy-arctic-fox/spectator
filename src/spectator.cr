@@ -1,8 +1,6 @@
 require "log"
 require "./spectator/includes"
 
-Log.setup_from_env
-
 # Module that contains all functionality related to Spectator.
 module Spectator
   extend self
@@ -64,6 +62,9 @@ module Spectator
 
   # Builds the tests and runs the framework.
   private def run
+    # Silence default logger.
+    ::Log.setup_from_env(default_level: :none)
+
     # Build the spec and run it.
     DSL::Builder.config = config
     spec = DSL::Builder.build

@@ -29,6 +29,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Removed
 - Removed one-liner it syntax without braces (block).
 
+## [0.9.38] - 2021-05-27
+### Fixed
+- Fix `Channel::ClosedError` when using default Crystal Logger. [#27](https://github.com/icy-arctic-fox/spectator/issues/27)
+
+## [0.9.37] - 2021-05-19
+### Added
+- Added support for `be ===` and `be =~`. [#26](https://github.com/icy-arctic-fox/spectator/issues/26)
+
+## [0.9.36] - 2021-04-22
+### Fixed
+- Remove old workaround that prevented compilation on Windows. [#58](https://gitlab.com/arctic-fox/spectator/-/issues/58)
+
+## [0.9.35] - 2021-04-18
+### Fixed
+- Allow types stored in variables or returned by methods in `be_a` (and variants), not just type literals. [#25](https://github.com/icy-arctic-fox/spectator/issues/25)
+
 ## [0.9.34] - 2021-03-31
 ### Changed
 - Allow filtering examples by using any line in the example block. [#19](https://github.com/icy-arctic-fox/spectator/issues/19) Thanks @matthewmcgarvey !
@@ -274,9 +290,10 @@ This has been changed so that it compiles and raises an error at runtime with a 
 First version ready for public use.
 
 
-[Unreleased]: https://gitlab.com/arctic-fox/spectator/-/compare/v0.9.37...release%2F0.10
-[0.9.36]: https://gitlab.com/arctic-fox/spectator/-/compare/v0.9.36...v0.9.37
-[0.9.35]: https://gitlab.com/arctic-fox/spectator/-/compare/v0.9.35...v0.9.36
+[Unreleased]: https://gitlab.com/arctic-fox/spectator/-/compare/v0.9.38...release%2F0.10
+[0.9.38]: https://gitlab.com/arctic-fox/spectator/-/compare/v0.9.37...v0.9.38
+[0.9.37]: https://gitlab.com/arctic-fox/spectator/-/compare/v0.9.36...v0.9.37
+[0.9.36]: https://gitlab.com/arctic-fox/spectator/-/compare/v0.9.35...v0.9.36
 [0.9.35]: https://gitlab.com/arctic-fox/spectator/-/compare/v0.9.34...v0.9.35
 [0.9.34]: https://gitlab.com/arctic-fox/spectator/-/compare/v0.9.33...v0.9.34
 [0.9.33]: https://gitlab.com/arctic-fox/spectator/-/compare/v0.9.32...v0.9.33
