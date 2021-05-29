@@ -75,6 +75,7 @@ module Spectator
 
       if pending?
         Log.debug { "Skipping example #{self} - marked pending" }
+        @finished = true
         return @result = PendingResult.new
       end
 
