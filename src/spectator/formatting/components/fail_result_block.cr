@@ -10,7 +10,7 @@ module Spectator::Formatting::Components
     end
 
     private def subtitle
-      @result.error.message
+      @result.error.message.try(&.each_line.first)
     end
 
     private def subtitle_label

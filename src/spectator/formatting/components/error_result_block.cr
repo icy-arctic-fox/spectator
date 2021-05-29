@@ -10,7 +10,7 @@ module Spectator::Formatting::Components
     end
 
     private def subtitle
-      @result.error.message
+      @result.error.message.try(&.each_line.first)
     end
 
     private def subtitle_label
@@ -19,10 +19,17 @@ module Spectator::Formatting::Components
 
     private def content(io)
       error = @result.error
+      lines = error.message.try(&.lines) || {"<blank>".colorize(:purple)}
 
       line(io) do
         io << "#{error.class}: ".colorize(:red)
-        io << error.message
+        io << lines.first
+      end
+
+      lines.skip(1).each do |entry|
+        line(io) do
+          io << entry
+        end
       end
 
       error.backtrace?.try do |backtrace|
