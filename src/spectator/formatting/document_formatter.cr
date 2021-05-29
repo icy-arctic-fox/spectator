@@ -12,6 +12,9 @@ module Spectator::Formatting
     # Identation string.
     private INDENT = "  "
 
+    # String used for groups and examples that don't have a name.
+    private NO_NAME = "<anonymous>"
+
     # Output stream to write results to.
     private getter io
 
@@ -34,19 +37,22 @@ module Spectator::Formatting
     # Invoked after an example completes successfully.
     # Produces a successful example line.
     def example_passed(notification)
-      line(notification.example.name.colorize(:green))
+      name = (notification.example.name? || NO_NAME)
+      line(name.colorize(:green))
     end
 
     # Invoked after an example is skipped or marked as pending.
     # Produces a pending example line.
     def example_pending(notification)
-      line(notification.example.name.colorize(:yellow))
+      name = (notification.example.name? || NO_NAME)
+      line(name.colorize(:yellow))
     end
 
     # Invoked after an example fails.
     # Produces a failure example line.
     def example_failed(notification)
-      line(notification.example.name.colorize(:red))
+      name = (notification.example.name? || NO_NAME)
+      line(name.colorize(:red))
     end
 
     # Invoked after an example fails from an unexpected error.
@@ -60,7 +66,7 @@ module Spectator::Formatting
       Array(Label).new.tap do |hierarchy|
         group = example.group?
         while group && (parent = group.group?)
-          hierarchy << group.name
+          hierarchy << (group.name? || NO_NAME)
           group = parent
         end
         hierarchy.reverse!
