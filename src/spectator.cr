@@ -71,6 +71,9 @@ module Spectator
     spec = DSL::Builder.build
     spec.run
   rescue ex
+    # Re-enable logger for fatal error.
+    ::Log.setup_from_env
+
     # Catch all unhandled exceptions here.
     # Examples are already wrapped, so any exceptions they throw are caught.
     # But if an exception occurs outside an example,
