@@ -18,7 +18,7 @@ module Spectator
       # Indicates whether there were skipped tests
       # because of a failure causing the test suite to abort.
       def remaining?
-        remaining_count > 0
+        remaining > 0
       end
     end
 
