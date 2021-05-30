@@ -1,10 +1,13 @@
 require "colorize"
 
 module Spectator::Formatting::Components
+  # Displays counts for each type of example result (pass, fail, error, pending).
   struct Totals
+    # Creates the component with the specified counts.
     def initialize(@examples : Int32, @failures : Int32, @errors : Int32, @pending : Int32)
     end
 
+    # Creates the component by pulling numbers from *counts*.
     def initialize(counts)
       @examples = counts.run
       @failures = counts.fail
@@ -12,6 +15,10 @@ module Spectator::Formatting::Components
       @pending = counts.pending
     end
 
+    # Creates the component, but colors it whether there were pending or failed results.
+    # The component will be red if there were failures (or errors),
+    # yellow if there were pending/skipped tests,
+    # and green if everything passed.
     def self.colorize(counts)
       totals = new(counts)
       if counts.fail > 0
@@ -23,6 +30,7 @@ module Spectator::Formatting::Components
       end
     end
 
+    # Writes the counts to the output.
     def to_s(io)
       io << @examples
       io << " examples, "

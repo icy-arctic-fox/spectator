@@ -2,10 +2,13 @@ require "../../profile"
 require "./runtime"
 
 module Spectator::Formatting::Components
+  # Displays profiling information for slow examples.
   struct Profile
+    # Creates the component with the specified *profile*.
     def initialize(@profile : Spectator::Profile)
     end
 
+    # Produces the output containing the profiling information.
     def to_s(io)
       io << "Top "
       io << @profile.size
@@ -20,6 +23,7 @@ module Spectator::Formatting::Components
       end
     end
 
+    # Writes a single example's timing to the output.
     private def example_profile(io, example)
       io << "  "
       io.puts example
