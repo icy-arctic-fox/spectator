@@ -24,24 +24,46 @@ module Spectator::Formatting::Components
     # Display error information.
     private def content(io)
       # Fetch the error and message.
-      # If there's no message
       error = @result.error
-      lines = error.message.try(&.lines) || {"<blank>".colorize(:purple)}
+      lines = error.message.try(&.lines)
 
-      # Display the error type and first line of the message.
-      line(io) do
-        io << "#{error.class}: ".colorize(:red)
-        io << lines.first
-      end
-
-      # Display additional lines after the first if there's any.
-      lines.skip(1).each do |entry|
-        line(io) { io << entry }
+      # Write the error and message if available.
+      case
+      when lines.nil?      then write_error_class(io, error)
+      when lines.size == 1 then write_error_message(io, error, lines.first)
+      when lines.size > 1  then write_multiline_error_message(io, error, lines)
+      else                      write_error_class(io, error)
       end
 
       # Display the backtrace if it's available.
       if backtrace = error.backtrace?
         indent { write_backtrace(io, backtrace) }
+      end
+    end
+
+    # Display just the error type.
+    private def write_error_class(io, error)
+      line(io) do
+        io << error.class.colorize(:red)
+      end
+    end
+
+    # Display the error type and first line of the message.
+    private def write_error_message(io, error, message)
+      line(io) do
+        io << "#{error.class}: ".colorize(:red)
+        io << message
+      end
+    end
+
+    # Display the error type and its multi-line message.
+    private def write_multiline_error_message(io, error, lines)
+      # Use the normal formatting for the first line.
+      write_error_message(io, error, lines.first)
+
+      # Display additional lines after the first.
+      lines.skip(1).each do |entry|
+        line(io) { io << entry }
       end
     end
 
