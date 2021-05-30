@@ -25,7 +25,7 @@ module Spectator
       private def example_finished(example)
         notification = Formatting::ExampleNotification.new(example)
         visitor = ResultVisitor.new(formatter, notification)
-        formatter.example_started(notification)
+        formatter.example_finished(notification)
         example.result.accept(visitor)
       end
 
