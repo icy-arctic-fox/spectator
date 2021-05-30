@@ -69,12 +69,12 @@ module Spectator
 
     # Returns a collection of all failed examples.
     def failures
-      @examples.each.select(&.result.fail?)
+      @examples.select(&.result.fail?)
     end
 
     # Returns a collection of all pending (skipped) examples.
     def pending
-      @examples.each.select(&.result.pending?)
+      @examples.select(&.result.pending?)
     end
 
     # Length of time it took to run just example code.
