@@ -36,13 +36,11 @@ module Spectator
       io << "example group hook"
 
       if (label = @label)
-        io << ' '
-        io << label
+        io << ' ' << label
       end
 
       if (location = @location)
-        io << " @ "
-        io << location
+        io << " @ " << location
       end
     end
   end

@@ -55,14 +55,11 @@ module Spectator
     # Exposes information about the node useful for debugging.
     def inspect(io)
       # Full node name.
-      io << '"'
-      to_s(io)
-      io << '"'
+      io << '"' << self << '"'
 
       # Add location if it's available.
       if (location = self.location)
-        io << " @ "
-        io << location
+        io << " @ " << location
       end
     end
   end

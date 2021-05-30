@@ -18,14 +18,9 @@ module Spectator::Mocks
     def to_s(io)
       super(io)
       if @args
-        io << '('
-        io << @args
-        io << ')'
+        io << '(' << @args << ')'
       end
-      io << " : "
-      io << ReturnType
-      io << " at "
-      io << @location
+      io << " : " << ReturnType << " at " << @location
     end
   end
 end

@@ -55,18 +55,14 @@ module Spectator::Formatting::Components
     # Produces the title line.
     private def title_line(io)
       line(io) do
-        io << @index
-        io << ')'
-        io << ' '
-        io << title
+        io << @index << ") " << title
       end
     end
 
     # Produces the subtitle line.
     private def subtitle_line(io)
       line(io) do
-        io << subtitle_label
-        io << subtitle
+        io << subtitle_label << subtitle
       end
     end
 

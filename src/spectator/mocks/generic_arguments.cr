@@ -32,8 +32,7 @@ module Spectator::Mocks
       end
       io << ", " unless @args.empty? || @opts.empty?
       @opts.each_with_index do |key, value, i|
-        io << key
-        io << ": "
+        io << key << ": "
         value.inspect(io)
         io << ", " if i < @opts.size - 1
       end

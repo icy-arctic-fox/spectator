@@ -24,27 +24,21 @@ module Spectator::Formatting
 
     # Invoked after an example completes successfully.
     def example_passed(notification)
-      @io << "ok "
-      @io << @counter
-      @io << " - "
+      @io << "ok " << @counter << " - "
       @io.puts notification.example
     end
 
     # Invoked after an example is skipped or marked as pending.
     def example_pending(notification)
-      @io << "not ok " # TODO: Skipped tests should report ok.
-      @io << @counter
-      @io << " - "
-      @io << notification.example
-      @io << " # TODO "
+      # TODO: Skipped tests should report ok.
+      @io << "not ok " << @counter << " - "
+      @io << notification.example << " # TODO "
       @io.puts "No reason given" # TODO: Get reason from result.
     end
 
     # Invoked after an example fails.
     def example_failed(notification)
-      @io << "not ok "
-      @io << @counter
-      @io << " - "
+      @io << "not ok " << @counter << " - "
       @io.puts notification.example
     end
 

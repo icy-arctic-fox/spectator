@@ -35,20 +35,17 @@ module Spectator::Formatting::Components
 
     # Formats for microseconds.
     private def format_micro(io, micros)
-      io << micros.round.to_i
-      io << " microseconds"
+      io << micros.round.to_i << " microseconds"
     end
 
     # Formats for milliseconds.
     private def format_millis(io, millis)
-      io << millis.round(2)
-      io << " milliseconds"
+      io << millis.round(2) << " milliseconds"
     end
 
     # Formats for seconds.
     private def format_seconds(io, seconds)
-      io << seconds.round(2)
-      io << " seconds"
+      io << seconds.round(2) << " seconds"
     end
 
     # Formats for minutes.

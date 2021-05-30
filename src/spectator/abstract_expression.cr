@@ -36,9 +36,7 @@ module Spectator
     # This consists of the label (if one is available) and the value.
     def to_s(io)
       if (label = @label)
-        io << label
-        io << ':'
-        io << ' '
+        io << label << ": "
       end
       raw_value.to_s(io)
     end
@@ -47,9 +45,7 @@ module Spectator
     # This consists of the label (if one is available) and the value.
     def inspect(io)
       if (label = @label)
-        io << label
-        io << ':'
-        io << ' '
+        io << label << ": "
       end
       raw_value.inspect(io)
     end

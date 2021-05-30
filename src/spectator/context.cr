@@ -16,9 +16,7 @@ abstract class SpectatorContext
 
   # :ditto:
   def inspect(io)
-    io << "Context<"
-    io << self.class
-    io << '>'
+    io << "Context<" << self.class << '>'
   end
 end
 

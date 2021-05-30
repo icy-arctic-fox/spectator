@@ -62,9 +62,7 @@ module Spectator
     # FILE:LINE
     # ```
     def to_s(io)
-      io << path
-      io << ':'
-      io << line
+      io << path << ':' << line
     end
 
     # Creates the JSON representation of the location.

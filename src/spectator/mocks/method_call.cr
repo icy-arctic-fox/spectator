@@ -7,8 +7,7 @@ module Spectator::Mocks
     end
 
     def to_s(io)
-      io << '#'
-      io << @name
+      io << '#' << @name
     end
   end
 end

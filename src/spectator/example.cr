@@ -160,8 +160,7 @@ module Spectator
     # Exposes information about the example useful for debugging.
     def inspect(io)
       super
-      io << ' '
-      io << result
+      io << ' ' << result
     end
 
     # Creates the JSON representation of the example,
