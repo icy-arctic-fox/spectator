@@ -24,7 +24,8 @@ module Spectator::Formatting
       io.puts "Pending:"
       io.puts
       examples.each_with_index(1) do |example, index|
-        io.puts Components::PendingBlock.new(example, index)
+        result = example.result.as(PendingResult)
+        io.puts Components::PendingResultBlock.new(index, example, result)
       end
     end
 
