@@ -17,4 +17,7 @@ module Spectator::Formatting
 
   # Structure containing summarized information from the outcome of the test suite.
   record SummaryNotification, report : Report
+
+  # Structure containing a debug or log message from the test suite.
+  record MessageNotification, message : String
 end

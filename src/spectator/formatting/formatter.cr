@@ -78,6 +78,7 @@ module Spectator::Formatting
 
     # Called whenever the example or framework produces a message.
     # This is typically used for logging.
+    # The *notification* will be a `MessageNotification` type of object.
     def message(_notification)
     end
 
