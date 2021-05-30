@@ -22,6 +22,9 @@ module Spectator
       end
     end
 
+    # Retrieves all examples that were planned to run as part of the suite.
+    getter examples : Array(Example)
+
     # Total length of time it took to execute the test suite.
     # This includes examples, hooks, and framework processes.
     getter runtime : Time::Span

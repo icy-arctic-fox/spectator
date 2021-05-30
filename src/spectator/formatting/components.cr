@@ -1,4 +1,4 @@
-require "./components/*"
+require "./components/**"
 
 module Spectator::Formatting
   # Namespace for snippets of text displayed in console output.
