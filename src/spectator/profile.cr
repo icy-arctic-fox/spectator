@@ -1,3 +1,6 @@
+require "json"
+require "./example"
+
 module Spectator
   # Information about the runtimes of examples.
   class Profile
@@ -38,6 +41,21 @@ module Spectator
     # Percentage (from 0 to 100) of time the results in this profile took compared to all examples.
     def percentage
       time / @total_time * 100
+    end
+
+    # Produces a JSON fragment containing the profiling information.
+    def to_json(json : JSON::Builder)
+      json.object do
+        json.field("examples") do
+          json.array do
+            @slowest.each(&.to_json(json))
+          end
+        end
+
+        json.field("slowest", @slowest.max_of(&.result.elapsed).total_seconds)
+        json.field("total", time.total_seconds)
+        json.field("percentage", percentage)
+      end
     end
   end
 end

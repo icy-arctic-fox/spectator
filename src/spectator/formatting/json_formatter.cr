@@ -33,20 +33,8 @@ module Spectator::Formatting
 
     # Adds the profiling information to the document.
     def dump_profile(notification)
-      profile = notification.profile
-
       @json.field("profile") do
-        @json.object do
-          @json.field("examples") do
-            @json.array do
-              profile.each(&.to_json(@json))
-            end
-          end
-
-          @json.field("slowest", profile.max_of(&.result.elapsed).total_seconds)
-          @json.field("total", profile.time.total_seconds)
-          @json.field("percentage", profile.percentage)
-        end
+        notification.profile.to_json(@json)
       end
     end
 
