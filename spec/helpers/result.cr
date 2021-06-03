@@ -44,8 +44,8 @@ module Spectator::SpecHelpers
 
     # Extracts the result information from a `JSON::Any` object.
     def self.from_json_any(object : JSON::Any)
-      name = object["name"].as_s
-      outcome = parse_outcome_string(object["result"].as_s)
+      name = object["description"].as_s
+      outcome = parse_outcome_string(object["status"].as_s)
       expectations = if (list = object["expectations"].as_a?)
                        list.map { |e| Expectation.from_json_any(e) }
                      else
