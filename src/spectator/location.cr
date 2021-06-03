@@ -1,5 +1,3 @@
-require "json"
-
 module Spectator
   # Defines the file and line number a piece of code originated from.
   struct Location
@@ -63,11 +61,6 @@ module Spectator
     # ```
     def to_s(io)
       io << path << ':' << line
-    end
-
-    # Creates the JSON representation of the location.
-    def to_json(json : ::JSON::Builder)
-      json.string(to_s)
     end
   end
 end
