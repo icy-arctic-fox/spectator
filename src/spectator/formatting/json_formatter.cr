@@ -21,75 +21,9 @@ module Spectator::Formatting
       @json.start_array
     end
 
-    # Begins an example object and adds common fields known before running the example.
-    def example_started(notification)
-      example = notification.example
-
-      @json.start_object
-      @json.field("description", example.name? || "<anonymous>")
-      @json.field("full_description", example.to_s)
-
-      if location = example.location?
-        @json.field("file_path", location.path)
-        @json.field("line_number", location.line)
-      end
-    end
-
     # Adds fields to the example object for all result types known after the example completes.
     def example_finished(notification)
-      example = notification.example
-      result = example.result
-
-      @json.field("run_time", result.elapsed.total_seconds)
-      @json.field("expectations") do
-        @json.array do
-          result.expectations.each(&.to_json(@json))
-        end
-      end
-    end
-
-    # Adds success-specific fields to an example object and closes it.
-    def example_passed(_notification)
-      @json.field("status", "passed")
-      @json.end_object # End example object.
-    end
-
-    # Adds pending-specific fields to an example object and closes it.
-    def example_pending(_notification)
-      @json.field("status", "pending")
-      @json.field("pending_message", "Not implemented") # TODO: Fetch pending message from result.
-      @json.end_object                                  # End example object.
-    end
-
-    # Adds failure-specific fields to an example object and closes it.
-    def example_failed(notification)
-      example = notification.example
-      result = example.result
-
-      @json.field("status", "failed")
-      build_exception_object(result.error) if result.responds_to?(:error)
-      @json.end_object # End example object.
-    end
-
-    # Adds error-specific fields to an example object and closes it.
-    def example_error(notification)
-      example = notification.example
-      result = example.result
-
-      @json.field("status", "error")
-      build_exception_object(result.error) if result.responds_to?(:error)
-      @json.end_object # End example object.
-    end
-
-    # Adds an exception field and object to the JSON document.
-    private def build_exception_object(error)
-      @json.field("exception") do
-        @json.object do
-          @json.field("class", error.class.name)
-          @json.field("message", error.message)
-          @json.field("backtrace", error.backtrace)
-        end
-      end
+      notification.example.to_json(@json)
     end
 
     # Marks the end of the examples array.
