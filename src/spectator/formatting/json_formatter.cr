@@ -27,7 +27,7 @@ module Spectator::Formatting
 
       @json.start_object
       @json.field("description", example.name? || "<anonymous>")
-      @json.field("full_description", example)
+      @json.field("full_description", example.to_s)
 
       if location = example.location?
         @json.field("file_path", location.path)
