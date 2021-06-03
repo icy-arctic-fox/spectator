@@ -28,8 +28,11 @@ module Spectator::Formatting
       @json.start_object
       @json.field("description", example.name? || "<anonymous>")
       @json.field("full_description", example)
-      @json.field("file_path", example.location.path)
-      @json.field("line_number", example.location.line)
+
+      if location = example.location?
+        @json.field("file_path", location.path)
+        @json.field("line_number", location.line)
+      end
     end
 
     # Adds fields to the example object for all result types known after the example completes.

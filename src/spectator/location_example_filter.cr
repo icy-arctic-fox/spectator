@@ -8,7 +8,7 @@ module Spectator
 
     # Checks whether the example satisfies the filter.
     def includes?(example) : Bool
-      @location === example.location
+      @location === example.location?
     end
   end
 end

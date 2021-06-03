@@ -30,8 +30,13 @@ module Spectator::Formatting::Components
       io.puts example
       io << "#     "
       io << Runtime.new(example.result.elapsed)
-      io << ' '
-      io.puts example.location
+
+      if location = example.location?
+        io << ' '
+        io.puts location
+      else
+        io.puts
+      end
     end
   end
 end

@@ -13,7 +13,7 @@ module Spectator::Formatting::Components::JUnit
     def self.from_report(report)
       hostname = System.hostname
       counts = report.counts
-      suites = report.examples.group_by(&.location.file)
+      suites = report.examples.group_by { |example| example.location?.try(&.path) || "anonymous" }
       suites = suites.map do |file, examples|
         TestSuite.from_examples(file, examples, hostname)
       end

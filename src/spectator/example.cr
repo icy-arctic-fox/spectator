@@ -169,8 +169,10 @@ module Spectator
       json.object do
         json.field("description", name? || "<anonymous>")
         json.field("full_description", to_s)
-        json.field("file_path", location.path)
-        json.field("line_number", location.line)
+        if location = location?
+          json.field("file_path", location.path)
+          json.field("line_number", location.line)
+        end
         @result.to_json(json) if @finished
       end
     end

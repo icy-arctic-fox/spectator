@@ -11,9 +11,16 @@ module Spectator::Formatting::Components
     # Produces output for running the previously specified example.
     def to_s(io)
       io << "crystal spec "
-      io << @example.location
-      io << ' '
-      io << Comment.colorize(@example.to_s)
+
+      # Use location for argument if it's available, since it's simpler.
+      # Otherwise, use the example name filter argument.
+      if location = @example.location?
+        io << location
+      else
+        io << "-e " << @example
+      end
+
+      io << ' ' << Comment.colorize(@example.to_s)
     end
   end
 end

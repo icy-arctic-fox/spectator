@@ -71,8 +71,10 @@ module Spectator::Formatting::Components
       source = if (result = @example.result).responds_to?(:source)
                  result.source
                else
-                 @example.location
+                 @example.location?
                end
+      return unless source
+
       line(io) { io << Comment.colorize(source) }
     end
 

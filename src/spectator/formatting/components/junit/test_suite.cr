@@ -26,7 +26,7 @@ module Spectator::Formatting::Components::JUnit
     private def self.package_name_from_file(file)
       path = Path.new(file.to_s)
       name = path.stem
-      directory = path.relative_to(Dir.current).dirname
+      directory = path.dirname
       package = directory.gsub(File::SEPARATOR, '.')
       {package, name}
     end

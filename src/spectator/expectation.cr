@@ -56,8 +56,10 @@ module Spectator
     # Creates the JSON representation of the expectation.
     def to_json(json : JSON::Builder)
       json.object do
-        json.field("file_path", @location.path)
-        json.field("line_number", @location.line)
+        if location = @location
+          json.field("file_path", location.path)
+          json.field("line_number", location.line)
+        end
         json.field("satisfied", satisfied?)
         if (failed = @match_data.as?(Matchers::FailedMatchData))
           failed_to_json(failed, json)
