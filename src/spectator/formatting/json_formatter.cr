@@ -21,7 +21,7 @@ module Spectator::Formatting
       @json.start_array
     end
 
-    # Adds fields to the example object for all result types known after the example completes.
+    # Adds an object containing fields about the example.
     def example_finished(notification)
       notification.example.to_json(@json)
     end
