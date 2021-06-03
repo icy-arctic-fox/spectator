@@ -165,8 +165,14 @@ module Spectator
 
     # Creates the JSON representation of the example,
     # which is just its name.
-    def to_json(json : ::JSON::Builder)
-      json.string(to_s)
+    def to_json(json : JSON::Builder)
+      json.object do
+        json.field("description", name? || "<anonymous>")
+        json.field("full_description", to_s)
+        json.field("file_path", location.path)
+        json.field("line_number", location.line)
+        @result.to_json(json) if @finished
+      end
     end
 
     # Creates a procsy from this example and the provided block.

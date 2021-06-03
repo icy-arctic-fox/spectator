@@ -1,3 +1,4 @@
+require "json"
 require "./result"
 
 module Spectator
@@ -40,10 +41,23 @@ module Spectator
       io << "fail"
     end
 
-    # Adds all of the JSON fields for finished results and failed results.
-    private def add_json_fields(json : ::JSON::Builder)
+    # Creates a JSON object from the result information.
+    def to_json(json : JSON::Builder)
       super
-      json.field("error", error.message)
+      json.field("status", json_status)
+      json.field("exception") do
+        json.object do
+          json.field("class", @error.class.name)
+          json.field("message", @error.message)
+          json.field("backtrace", @error.backtrace)
+        end
+      end
+    end
+
+    # String used for the JSON status field.
+    # Necessary for the error result to override the status, but nothing else from `#to_json`.
+    private def json_status
+      "failed"
     end
   end
 end

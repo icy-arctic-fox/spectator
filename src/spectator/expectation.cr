@@ -1,3 +1,4 @@
+require "json"
 require "./expression"
 require "./location"
 
@@ -53,7 +54,7 @@ module Spectator
     end
 
     # Creates the JSON representation of the expectation.
-    def to_json(json : ::JSON::Builder)
+    def to_json(json : JSON::Builder)
       json.object do
         json.field("location") { @location.to_json(json) }
         json.field("satisfied", satisfied?)
@@ -64,7 +65,7 @@ module Spectator
     end
 
     # Adds failure information to a JSON structure.
-    private def failed_to_json(failed : Matchers::FailedMatchData, json : ::JSON::Builder)
+    private def failed_to_json(failed : Matchers::FailedMatchData, json : JSON::Builder)
       json.field("failure", failed.failure_message)
       json.field("values") do
         json.object do

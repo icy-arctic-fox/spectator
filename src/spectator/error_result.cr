@@ -20,28 +20,9 @@ module Spectator
       io << "error"
     end
 
-    # Adds the common JSON fields for all result types
-    # and fields specific to errored results.
-    private def add_json_fields(json : ::JSON::Builder)
-      super
-      json.field("exceptions") do
-        exception = error
-        json.array do
-          while exception
-            error_to_json(exception, json) if exception
-            exception = error.cause
-          end
-        end
-      end
-    end
-
-    # Adds a single exception to a JSON builder.
-    private def error_to_json(error : Exception, json : ::JSON::Builder)
-      json.object do
-        json.field("type", error.class.to_s)
-        json.field("message", error.message)
-        json.field("backtrace", error.backtrace)
-      end
+    # String used for the JSON status field.
+    private def json_status
+      "error"
     end
   end
 end

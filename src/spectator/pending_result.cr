@@ -35,5 +35,12 @@ module Spectator
     def to_s(io)
       io << "pending"
     end
+
+    # Creates a JSON object from the result information.
+    def to_json(json : JSON::Builder)
+      super
+      json.field("status", "pending")
+      json.field("pending_message", "Not implemented") # TODO: Provide pending message.
+    end
   end
 end

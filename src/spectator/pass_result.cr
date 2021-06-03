@@ -27,5 +27,11 @@ module Spectator
     def to_s(io)
       io << "pass"
     end
+
+    # Creates a JSON object from the result information.
+    def to_json(json : JSON::Builder)
+      super
+      json.field("status", "passed")
+    end
   end
 end
