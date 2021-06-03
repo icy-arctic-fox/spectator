@@ -58,7 +58,7 @@ module Spectator::Formatting
     def example_pending(_notification)
       @json.field("status", "pending")
       @json.field("pending_message", "Not implemented") # TODO: Fetch pending message from result.
-      @json.end_object # End example object.
+      @json.end_object                                  # End example object.
     end
 
     # Adds failure-specific fields to an example object and closes it.
