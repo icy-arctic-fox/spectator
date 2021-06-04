@@ -21,6 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Short-hand "should" syntax must be included by using `require "spectator/should"` - `it { should eq("foo") }`
 - Overhaul example creation and handling.
 - Overhaul storage of test values.
+- Overhaul reporting and formatting. Cleaner output for failures and pending tests.
 - Cleanup and simplify DSL implementation.
 - Better error messages and detection when DSL methods are used when they shouldn't (i.e. `describe` inside `it`).
 - Prevent usage of reserved keywords in DSL (such as `initialize`).
