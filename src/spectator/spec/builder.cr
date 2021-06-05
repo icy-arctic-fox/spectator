@@ -105,6 +105,25 @@ module Spectator
         # The example is added to the current group by `Example` initializer.
       end
 
+      # Defines a new pending example.
+      # The example is added to the group currently on the top of the stack.
+      #
+      # The *name* is the name or brief description of the example.
+      # This should be a string or nil.
+      # When nil, the example's name will be an anonymous example reference.
+      #
+      # The *location* optionally defined where the example originates in source code.
+      #
+      # A set of *tags* can be used for filtering and modifying example behavior.
+      # For instance, adding a "pending" tag will mark the test as pending and skip execution.
+      #
+      # The newly created example is returned.
+      def add_pending_example(name, location, tags = Tags.new) : Example
+        Log.trace { "Add pending example: #{name} @ #{location}; tags: #{tags}" }
+        Example.pending(name, location, current_group, tags)
+        # The example is added to the current group by `Example` initializer.
+      end
+
       # Attaches a hook to be invoked before any and all examples in the current group.
       def before_all(hook)
         Log.trace { "Add before_all hook #{hook}" }

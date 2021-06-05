@@ -37,6 +37,14 @@ module Spectator::DSL
       @@builder.add_example(*args, &block)
     end
 
+    # Defines a new pending example.
+    # The example is added to the group currently on the top of the stack.
+    #
+    # See `Spec::Builder#add_pending_example` for usage details.
+    def add_pending_example(*args)
+      @@builder.add_pending_example(*args)
+    end
+
     # Defines a block of code to execute before any and all examples in the current group.
     def before_all(location = nil, label = "before_all", &block)
       hook = ExampleGroupHook.new(location: location, label: label, &block)

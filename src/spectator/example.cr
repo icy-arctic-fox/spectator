@@ -66,6 +66,18 @@ module Spectator
       group << self if group
     end
 
+    # Creates a pending example.
+    # The *name* describes the purpose of the example.
+    # It can be a `Symbol` to describe a type.
+    # The *location* tracks where the example exists in source code.
+    # The example will be assigned to *group* if it is provided.
+    # A set of *tags* can be used for filtering and modifying example behavior.
+    # Note: The tags will not be merged with the parent tags.
+    def self.pending(name : String? = nil, location : Location? = nil,
+                     group : ExampleGroup? = nil, tags = Tags.new)
+      new(name, location, group, tags.add(:pending)) { nil }
+    end
+
     # Executes the test case.
     # Returns the result of the execution.
     # The result will also be stored in `#result`.
