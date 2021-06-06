@@ -64,7 +64,7 @@ module Spectator
       Log.trace { "Processing after_all hooks for #{self}" }
 
       call_hooks(hooks)
-      call_parent_hooks(:call_once_after_all)
+      call_parent_hooks(:call_once_after_all) if @group.try(&.finished?)
     end
 
     example_event before_each do |hooks, example|
