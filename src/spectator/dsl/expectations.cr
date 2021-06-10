@@ -1,4 +1,5 @@
 require "../block"
+require "../example_pending"
 require "../expectation"
 require "../expectation_failed"
 require "../location"
@@ -11,6 +12,18 @@ module Spectator::DSL
     # A reason can be specified with *message*.
     def fail(message = "Example failed", *, _file = __FILE__, _line = __LINE__)
       raise ExpectationFailed.new(Location.new(_file, _line), message)
+    end
+
+    # Mark the current test as pending and immediately abort.
+    # A reason can be specified with *message*.
+    def pending(message = "No reason given")
+      raise ExamplePending.new(message)
+    end
+
+    # Mark the current test as skipped and immediately abort.
+    # A reason can be specified with *message*.
+    def skip(message = "No reason given")
+      raise ExamplePending.new(message)
     end
 
     # Starts an expectation.

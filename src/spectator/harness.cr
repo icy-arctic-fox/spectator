@@ -1,4 +1,5 @@
 require "./error_result"
+require "./example_pending"
 require "./expectation"
 require "./mocks"
 require "./pass_result"
@@ -119,6 +120,8 @@ module Spectator
         PassResult.new(elapsed, @expectations)
       when ExpectationFailed
         FailResult.new(elapsed, error, @expectations)
+      when ExamplePending
+        PendingResult.new(elapsed, @expectations)
       else
         ErrorResult.new(elapsed, error, @expectations)
       end
