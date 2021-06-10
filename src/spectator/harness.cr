@@ -121,7 +121,7 @@ module Spectator
       when ExpectationFailed
         FailResult.new(elapsed, error, @expectations)
       when ExamplePending
-        PendingResult.new(elapsed, @expectations)
+        PendingResult.new(elapsed, error.message || "No reason given", @expectations)
       else
         ErrorResult.new(elapsed, error, @expectations)
       end

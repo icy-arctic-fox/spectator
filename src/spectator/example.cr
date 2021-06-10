@@ -26,7 +26,7 @@ module Spectator
 
     # Result of the last time the example ran.
     # Is pending if the example hasn't run.
-    getter result : Result = PendingResult.new
+    getter result : Result = PendingResult.new(Time::Span::ZERO, "Example not run")
 
     # Creates the example.
     # An instance to run the test code in is given by *context*.

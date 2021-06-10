@@ -5,10 +5,14 @@ module Spectator
   # A pending result means the example is not ready to run yet.
   # This can happen when the functionality to be tested is not implemented yet.
   class PendingResult < Result
+    # Reason the example was skipped or marked pending.
+    getter reason : String
+
     # Creates the result.
     # *elapsed* is the length of time it took to run the example.
-    def initialize(elapsed = Time::Span::ZERO, expectations = [] of Expectation)
-      super
+    # A *reason* for the skip/pending result can be specified.
+    def initialize(elapsed = Time::Span::ZERO, @reason = "No reason given", expectations = [] of Expectation)
+      super(elapsed, expectations)
     end
 
     # Calls the `pending` method on the *visitor*.
@@ -40,7 +44,7 @@ module Spectator
     def to_json(json : JSON::Builder)
       super
       json.field("status", "pending")
-      json.field("pending_message", "Not implemented") # TODO: Provide pending message.
+      json.field("pending_message", @reason)
     end
   end
 end

@@ -78,8 +78,8 @@ module Spectator::Formatting::Components::JUnit
       end
 
       # Adds a skipped element to the test case node.
-      def pending(_result)
-        @xml.element("skipped") # TODO: Populate message attribute with reason from result.
+      def pending(result)
+        @xml.element("skipped", message: result.reason)
       end
     end
   end

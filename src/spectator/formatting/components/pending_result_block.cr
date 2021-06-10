@@ -13,7 +13,7 @@ module Spectator::Formatting::Components
 
     # Content displayed on the second line of the block after the label.
     private def subtitle
-      "No reason given" # TODO: Get reason from result.
+      @result.reason
     end
 
     # Prefix for the second line of the block.

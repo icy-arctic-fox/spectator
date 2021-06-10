@@ -33,7 +33,11 @@ module Spectator::Formatting
       # TODO: Skipped tests should report ok.
       @io << "not ok " << @counter << " - "
       @io << notification.example << " # TODO "
-      @io.puts "No reason given" # TODO: Get reason from result.
+
+      # This should never be false.
+      if (result = notification.example.result).responds_to?(:reason)
+        @io.puts result.reason
+      end
     end
 
     # Invoked after an example fails.
