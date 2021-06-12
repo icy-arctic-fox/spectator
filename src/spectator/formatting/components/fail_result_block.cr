@@ -7,14 +7,12 @@ require "./result_block"
 module Spectator::Formatting::Components
   # Displays information about a fail result.
   struct FailResultBlock < ResultBlock
-    @expectation : Expectation
     @longest_key : Int32
 
     # Creates the component.
-    def initialize(example : Example, index : Int32, result : FailResult, subindex = 0)
+    def initialize(example : Example, index : Int32, @expectation : Expectation, subindex = 0)
       super(example, index, subindex)
-      @expectation = result.expectations.find(&.failed?).not_nil!
-      @longest_key = @expectation.values.max_of { |(key, _value)| key.to_s.size }
+      @longest_key = expectation.values.max_of { |(key, _value)| key.to_s.size }
     end
 
     # Content displayed on the second line of the block after the label.

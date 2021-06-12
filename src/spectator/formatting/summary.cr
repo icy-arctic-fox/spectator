@@ -41,7 +41,14 @@ module Spectator::Formatting
         if result = example.result.as?(ErrorResult)
           io.puts Components::ErrorResultBlock.new(example, index, result)
         elsif result = example.result.as?(FailResult)
-          io.puts Components::FailResultBlock.new(example, index, result)
+          failed_expectations = result.expectations.select(&.failed?)
+          if failed_expectations.size == 1
+            io.puts Components::FailResultBlock.new(example, index, failed_expectations.first)
+          else
+            failed_expectations.each_with_index(1) do |expectation, subindex|
+              io.puts Components::FailResultBlock.new(example, index, expectation, subindex)
+            end
+          end
         end
       end
     end
