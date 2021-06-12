@@ -3,6 +3,7 @@ require "../example_pending"
 require "../expectation"
 require "../expectation_failed"
 require "../location"
+require "../pending_result"
 require "../value"
 
 module Spectator::DSL
@@ -16,13 +17,13 @@ module Spectator::DSL
 
     # Mark the current test as pending and immediately abort.
     # A reason can be specified with *message*.
-    def pending(message = "No reason given")
+    def pending(message = PendingResult::DEFAULT_REASON)
       raise ExamplePending.new(message)
     end
 
     # Mark the current test as skipped and immediately abort.
     # A reason can be specified with *message*.
-    def skip(message = "No reason given")
+    def skip(message = PendingResult::DEFAULT_REASON)
       raise ExamplePending.new(message)
     end
 

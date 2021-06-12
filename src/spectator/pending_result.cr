@@ -5,13 +5,15 @@ module Spectator
   # A pending result means the example is not ready to run yet.
   # This can happen when the functionality to be tested is not implemented yet.
   class PendingResult < Result
+    DEFAULT_REASON = "No reason given"
+
     # Reason the example was skipped or marked pending.
     getter reason : String
 
     # Creates the result.
     # *elapsed* is the length of time it took to run the example.
     # A *reason* for the skip/pending result can be specified.
-    def initialize(@reason = "No reason given", elapsed = Time::Span::ZERO, expectations = [] of Expectation)
+    def initialize(@reason = DEFAULT_REASON, elapsed = Time::Span::ZERO, expectations = [] of Expectation)
       super(elapsed, expectations)
     end
 
