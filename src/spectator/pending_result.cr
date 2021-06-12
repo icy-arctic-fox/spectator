@@ -11,7 +11,7 @@ module Spectator
     # Creates the result.
     # *elapsed* is the length of time it took to run the example.
     # A *reason* for the skip/pending result can be specified.
-    def initialize(elapsed = Time::Span::ZERO, @reason = "No reason given", expectations = [] of Expectation)
+    def initialize(@reason = "No reason given", elapsed = Time::Span::ZERO, expectations = [] of Expectation)
       super(elapsed, expectations)
     end
 

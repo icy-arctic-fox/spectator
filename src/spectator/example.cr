@@ -26,7 +26,7 @@ module Spectator
 
     # Result of the last time the example ran.
     # Is pending if the example hasn't run.
-    getter result : Result = PendingResult.new(Time::Span::ZERO, "Example not run")
+    getter result : Result = PendingResult.new("Example not run")
 
     # Creates the example.
     # An instance to run the test code in is given by *context*.
@@ -89,7 +89,7 @@ module Spectator
       if pending?
         Log.debug { "Skipping example #{self} - marked pending" }
         @finished = true
-        return @result = PendingResult.new(Time::Span::ZERO, tags[:pending] || "No reason given")
+        return @result = PendingResult.new(tags[:pending] || "No reason given")
       end
 
       previous_example = @@current
