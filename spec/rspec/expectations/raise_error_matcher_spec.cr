@@ -75,14 +75,13 @@ Spectator.describe "`raise_error` matcher" do
     end
   end
 
-  # TODO: Support passing a block to `raise_error` matcher.
-  # context "set expectations on error object passed to block" do
-  #   it "raises DivisionByZeroError" do
-  #     expect { 42 // 0 }.to raise_error do |error|
-  #       expect(error).to be_a(DivisionByZeroError)
-  #     end
-  #   end
-  # end
+  context "set expectations on error object passed to block" do
+    skip "raises DivisionByZeroError", reason: "Support passing a block to `raise_error` matcher." do
+      expect { 42 // 0 }.to raise_error do |error|
+        expect(error).to be_a(DivisionByZeroError)
+      end
+    end
+  end
 
   context "expect no error at all" do
     describe "#to_s" do

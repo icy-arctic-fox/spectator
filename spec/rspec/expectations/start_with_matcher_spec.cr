@@ -18,10 +18,9 @@ Spectator.describe "`start_with` matcher" do
   context "with an array" do
     describe [0, 1, 2, 3, 4] do
       it { is_expected.to start_with 0 }
-      # TODO: Add support for multiple items at the beginning of an array.
-      # it { is_expected.to start_with(0, 1) }
+      skip reason: "Add support for multiple items at the beginning of an array." { is_expected.to start_with(0, 1) }
       it { is_expected.not_to start_with(2) }
-      # it { is_expected.not_to start_with(0, 1, 2, 3, 4, 5) }
+      skip reason: "Add support for multiple items at the beginning of an array." { is_expected.not_to start_with(0, 1, 2, 3, 4, 5) }
 
       # deliberate failures
       it_fails { is_expected.not_to start_with 0 }

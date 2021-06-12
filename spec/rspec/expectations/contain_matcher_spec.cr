@@ -12,16 +12,14 @@ Spectator.describe "`contain` matcher" do
       it { is_expected.to contain(1, 7) }
       it { is_expected.to contain(1, 3, 7) }
 
-      # Utility matcher method `a_kind_of` is not supported.
-      # it { is_expected.to contain(a_kind_of(Int)) }
+      skip reason: "Utility matcher method `a_kind_of` is not supported." { is_expected.to contain(a_kind_of(Int)) }
 
-      # TODO: Compound matchers aren't supported.
-      # it { is_expected.to contain(be_odd.and be < 10) }
+      skip reason: "Compound matchers aren't supported." { is_expected.to contain(be_odd.and be < 10) }
 
       # TODO: Fix behavior and cleanup output.
       # This syntax is allowed, but produces a wrong result and bad output.
-      xit { is_expected.to contain(be_odd) }
-      xit { is_expected.not_to contain(be_even) }
+      skip reason: "Fix behavior and cleanup output." { is_expected.to contain(be_odd) }
+      skip reason: "Fix behavior and cleanup output." { is_expected.not_to contain(be_even) }
 
       it { is_expected.not_to contain(17) }
       it { is_expected.not_to contain(43, 100) }
@@ -62,35 +60,31 @@ Spectator.describe "`contain` matcher" do
       subject { {:a => 7, :b => 5} }
 
       # Hash syntax is changed here from `:a => 7` to `a: 7`.
-      # it { is_expected.to contain(:a) }
-      # it { is_expected.to contain(:b, :a) }
-
-      # TODO: This hash-like syntax isn't supported.
-      # it { is_expected.to contain(a: 7) }
-      # it { is_expected.to contain(b: 5, a: 7) }
-      # it { is_expected.not_to contain(:c) }
-      # it { is_expected.not_to contain(:c, :d) }
-      # it { is_expected.not_to contain(d: 2) }
-      # it { is_expected.not_to contain(a: 5) }
-      # it { is_expected.not_to contain(b: 7, a: 5) }
+      skip reason: "This hash-like syntax isn't supported." { is_expected.to contain(a: 7) }
+      skip reason: "This hash-like syntax isn't supported." { is_expected.to contain(b: 5, a: 7) }
+      skip reason: "This hash-like syntax isn't supported." { is_expected.not_to contain(:c) }
+      skip reason: "This hash-like syntax isn't supported." { is_expected.not_to contain(:c, :d) }
+      skip reason: "This hash-like syntax isn't supported." { is_expected.not_to contain(d: 2) }
+      skip reason: "This hash-like syntax isn't supported." { is_expected.not_to contain(a: 5) }
+      skip reason: "This hash-like syntax isn't supported." { is_expected.not_to contain(b: 7, a: 5) }
 
       # deliberate failures
-      # it { is_expected.not_to contain(:a) }
-      # it { is_expected.not_to contain(:b, :a) }
-      # it { is_expected.not_to contain(a: 7) }
-      # it { is_expected.not_to contain(a: 7, b: 5) }
-      # it { is_expected.to contain(:c) }
-      # it { is_expected.to contain(:c, :d) }
-      # it { is_expected.to contain(d: 2) }
-      # it { is_expected.to contain(a: 5) }
-      # it { is_expected.to contain(a: 5, b: 7) }
+      skip reason: "This hash-like syntax isn't supported." { is_expected.not_to contain(:a) }
+      skip reason: "This hash-like syntax isn't supported." { is_expected.not_to contain(:b, :a) }
+      skip reason: "This hash-like syntax isn't supported." { is_expected.not_to contain(a: 7) }
+      skip reason: "This hash-like syntax isn't supported." { is_expected.not_to contain(a: 7, b: 5) }
+      skip reason: "This hash-like syntax isn't supported." { is_expected.to contain(:c) }
+      skip reason: "This hash-like syntax isn't supported." { is_expected.to contain(:c, :d) }
+      skip reason: "This hash-like syntax isn't supported." { is_expected.to contain(d: 2) }
+      skip reason: "This hash-like syntax isn't supported." { is_expected.to contain(a: 5) }
+      skip reason: "This hash-like syntax isn't supported." { is_expected.to contain(a: 5, b: 7) }
 
       # Mixed cases--the hash contains one but not the other.
       # All 4 of these cases should fail.
-      # it { is_expected.to contain(:a, :d) }
-      # it { is_expected.not_to contain(:a, :d) }
-      # it { is_expected.to contain(a: 7, d: 3) }
-      # it { is_expected.not_to contain(a: 7, d: 3) }
+      skip reason: "This hash-like syntax isn't supported." { is_expected.to contain(:a, :d) }
+      skip reason: "This hash-like syntax isn't supported." { is_expected.not_to contain(:a, :d) }
+      skip reason: "This hash-like syntax isn't supported." { is_expected.to contain(a: 7, d: 3) }
+      skip reason: "This hash-like syntax isn't supported." { is_expected.not_to contain(a: 7, d: 3) }
     end
   end
 end
