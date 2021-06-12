@@ -11,8 +11,8 @@ module Spectator::Formatting::Components
     @longest_key : Int32
 
     # Creates the component.
-    def initialize(index : Int32, example : Example, result : FailResult)
-      super(index, example)
+    def initialize(example : Example, index : Int32, result : FailResult, subindex = 0)
+      super(example, index, subindex)
       @expectation = result.expectations.find(&.failed?).not_nil!
       @longest_key = @expectation.values.max_of { |(key, _value)| key.to_s.size }
     end

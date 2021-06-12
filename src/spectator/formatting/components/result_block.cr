@@ -14,7 +14,7 @@ module Spectator::Formatting::Components
   # ```
   abstract struct ResultBlock < Block
     # Creates the block with the specified *index* and for the given *example*.
-    def initialize(@index : Int32, @example : Example)
+    def initialize(@example : Example, @index : Int32, @subindex : Int32 = 0)
       super()
     end
 
@@ -55,7 +55,9 @@ module Spectator::Formatting::Components
     # Produces the title line.
     private def title_line(io)
       line(io) do
-        io << @index << ") " << title
+        io << @index
+        io << '.' << @subindex if @subindex > 0
+        io << ") " << title
       end
     end
 
@@ -80,7 +82,14 @@ module Spectator::Formatting::Components
 
     # Computes the number of spaces the index takes
     private def index_digit_count
-      (Math.log(@index.to_f + 1) / Math::LOG10).ceil.to_i
+      count = digit_count(@index)
+      count += 1 + digit_count(@subindex) if @subindex > 0
+      count
+    end
+
+    # Computes the number of spaces an integer takes.
+    private def digit_count(integer)
+      (Math.log(integer.to_f + 1) / Math::LOG10).ceil.to_i
     end
   end
 end

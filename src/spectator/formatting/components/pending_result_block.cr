@@ -7,8 +7,8 @@ module Spectator::Formatting::Components
   # Displays information about a pending result.
   struct PendingResultBlock < ResultBlock
     # Creates the component.
-    def initialize(index : Int32, example : Example, @result : PendingResult)
-      super(index, example)
+    def initialize(example : Example, index : Int32, @result : PendingResult)
+      super(example, index)
     end
 
     # Content displayed on the second line of the block after the label.
