@@ -5,7 +5,7 @@ require "./location"
 require "./node"
 require "./pending_result"
 require "./result"
-require "./tags"
+require "./metadata"
 
 module Spectator
   # Standard example that runs a test case.
@@ -35,12 +35,12 @@ module Spectator
     # It can be a `Symbol` to describe a type.
     # The *location* tracks where the example exists in source code.
     # The example will be assigned to *group* if it is provided.
-    # A set of *tags* can be used for filtering and modifying example behavior.
-    # Note: The tags will not be merged with the parent tags.
+    # A set of *metadata* can be used for filtering and modifying example behavior.
+    # Note: The metadata will not be merged with the parent metadata.
     def initialize(@context : Context, @entrypoint : self ->,
                    name : String? = nil, location : Location? = nil,
-                   @group : ExampleGroup? = nil, tags = Tags.new)
-      super(name, location, tags)
+                   @group : ExampleGroup? = nil, metadata = Metadata.new)
+      super(name, location, metadata)
 
       # Ensure group is linked.
       group << self if group
@@ -53,11 +53,11 @@ module Spectator
     # It can be a `Symbol` to describe a type.
     # The *location* tracks where the example exists in source code.
     # The example will be assigned to *group* if it is provided.
-    # A set of *tags* can be used for filtering and modifying example behavior.
-    # Note: The tags will not be merged with the parent tags.
+    # A set of *metadata* can be used for filtering and modifying example behavior.
+    # Note: The metadata will not be merged with the parent metadata.
     def initialize(name : String? = nil, location : Location? = nil,
-                   @group : ExampleGroup? = nil, tags = Tags.new, &block : self ->)
-      super(name, location, tags)
+                   @group : ExampleGroup? = nil, metadata = Metadata.new, &block : self ->)
+      super(name, location, metadata)
 
       @context = NullContext.new
       @entrypoint = block
@@ -71,13 +71,13 @@ module Spectator
     # It can be a `Symbol` to describe a type.
     # The *location* tracks where the example exists in source code.
     # The example will be assigned to *group* if it is provided.
-    # A set of *tags* can be used for filtering and modifying example behavior.
-    # Note: The tags will not be merged with the parent tags.
+    # A set of *metadata* can be used for filtering and modifying example behavior.
+    # Note: The metadata will not be merged with the parent metadata.
     def self.pending(name : String? = nil, location : Location? = nil,
-                     group : ExampleGroup? = nil, tags = Tags.new, reason = nil)
+                     group : ExampleGroup? = nil, metadata = Metadata.new, reason = nil)
       # Add pending tag and reason if they don't exist.
-      tags = tags.merge({:pending => nil, :reason => reason}) { |_, v, _| v }
-      new(name, location, group, tags) { nil }
+      metadata = metadata.merge({:pending => nil, :reason => reason}) { |_, v, _| v }
+      new(name, location, group, metadata) { nil }
     end
 
     # Executes the test case.

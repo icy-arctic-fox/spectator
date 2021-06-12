@@ -1,6 +1,6 @@
 require "./label"
 require "./location"
-require "./tags"
+require "./metadata"
 
 module Spectator
   # A single item in a test spec.
@@ -29,15 +29,15 @@ module Spectator
     protected def name=(@name : String)
     end
 
-    # User-defined keywords used for filtering and behavior modification.
-    getter tags : Tags
+    # User-defined tags and values used for filtering and behavior modification.
+    getter metadata : Metadata
 
     # Creates the node.
     # The *name* describes the purpose of the node.
     # It can be a `Symbol` to describe a type.
     # The *location* tracks where the node exists in source code.
-    # A set of *tags* can be used for filtering and modifying example behavior.
-    def initialize(@name : Label = nil, @location : Location? = nil, @tags : Tags = Tags.new)
+    # A set of *metadata* can be used for filtering and modifying example behavior.
+    def initialize(@name : Label = nil, @location : Location? = nil, @metadata : Metadata = Metadata.new)
     end
 
     # Indicates whether the node has completed.
@@ -46,12 +46,17 @@ module Spectator
     # Checks if the node has been marked as pending.
     # Pending items should be skipped during execution.
     def pending?
-      tags.has_key?(:pending) || tags.has_key?(:skip)
+      metadata.has_key?(:pending) || metadata.has_key?(:skip)
     end
 
     # Gets the reason the node has been marked as pending.
     def pending_reason
-      tags[:pending]? || tags[:skip]? || tags[:reason]? || DEFAULT_PENDING_REASON
+      metadata[:pending]? || metadata[:skip]? || metadata[:reason]? || DEFAULT_PENDING_REASON
+    end
+
+    # Retrieves just the tag names applied to the node.
+    def tags
+      Tags.new(metadata.keys)
     end
 
     # Constructs the full name or description of the node.

@@ -1,13 +1,13 @@
 require "../location"
 require "./builder"
-require "./tags"
 require "./memoize"
+require "./metadata"
 
 module Spectator::DSL
   # DSL methods and macros for creating example groups.
   # This module should be included as a mix-in.
   module Groups
-    include Tags
+    include Metadata
 
     # Defines a macro to generate code for an example group.
     # The *name* is the name given to the macro.
@@ -36,13 +36,13 @@ module Spectator::DSL
         class Group\%group < \{{@type.id}}
           _spectator_group_subject(\{{what}})
 
-          _spectator_tags(:tags, :super, {{tags.splat(", ")}} {{metadata.double_splat}})
-          _spectator_tags(:tags, :previous_def, \{{tags.splat(", ")}} \{{metadata.double_splat}})
+          _spectator_metadata(:metadata, :super, {{tags.splat(", ")}} {{metadata.double_splat}})
+          _spectator_metadata(:metadata, :previous_def, \{{tags.splat(", ")}} \{{metadata.double_splat}})
 
           ::Spectator::DSL::Builder.start_group(
             _spectator_group_name(\{{what}}),
             ::Spectator::Location.new(\{{block.filename}}, \{{block.line_number}}),
-            tags
+            metadata
           )
 
           \{{block.body}}

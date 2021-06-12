@@ -3,7 +3,7 @@ require "../example"
 require "../example_context_method"
 require "../example_group"
 require "../spec"
-require "../tags"
+require "../metadata"
 
 module Spectator
   class Spec
@@ -53,14 +53,14 @@ module Spectator
       #
       # The *location* optionally defined where the group originates in source code.
       #
-      # A set of *tags* can be used for filtering and modifying example behavior.
+      # A set of *metadata* can be used for filtering and modifying example behavior.
       # For instance, adding a "pending" tag will mark tests as pending and skip execution.
       #
       # The newly created group is returned.
       # It shouldn't be used outside of this class until a matching `#end_group` is called.
-      def start_group(name, location = nil, tags = Tags.new) : ExampleGroup
-        Log.trace { "Start group: #{name.inspect} @ #{location}; tags: #{tags}" }
-        ExampleGroup.new(name, location, current_group, tags).tap do |group|
+      def start_group(name, location = nil, metadata = Metadata.new) : ExampleGroup
+        Log.trace { "Start group: #{name.inspect} @ #{location}; metadata: #{metadata}" }
+        ExampleGroup.new(name, location, current_group, metadata).tap do |group|
           @group_stack << group
         end
       end
@@ -90,7 +90,7 @@ module Spectator
       # The *context* is an instance of the context the test code should run in.
       # See `Context` for more information.
       #
-      # A set of *tags* can be used for filtering and modifying example behavior.
+      # A set of *metadata* can be used for filtering and modifying example behavior.
       # For instance, adding a "pending" tag will mark the test as pending and skip execution.
       #
       # A block must be provided.
@@ -99,9 +99,9 @@ module Spectator
       # It is expected that the test code runs when the block is called.
       #
       # The newly created example is returned.
-      def add_example(name, location, context, tags = Tags.new, &block : Example -> _) : Example
-        Log.trace { "Add example: #{name} @ #{location}; tags: #{tags}" }
-        Example.new(context, block, name, location, current_group, tags)
+      def add_example(name, location, context, metadata = Metadata.new, &block : Example -> _) : Example
+        Log.trace { "Add example: #{name} @ #{location}; metadata: #{metadata}" }
+        Example.new(context, block, name, location, current_group, metadata)
         # The example is added to the current group by `Example` initializer.
       end
 
@@ -114,14 +114,14 @@ module Spectator
       #
       # The *location* optionally defined where the example originates in source code.
       #
-      # A set of *tags* can be used for filtering and modifying example behavior.
+      # A set of *metadata* can be used for filtering and modifying example behavior.
       # For instance, adding a "pending" tag will mark the test as pending and skip execution.
       # A default *reason* can be given in case the user didn't provide one.
       #
       # The newly created example is returned.
-      def add_pending_example(name, location, tags = Tags.new, reason = nil) : Example
-        Log.trace { "Add pending example: #{name} @ #{location}; tags: #{tags}" }
-        Example.pending(name, location, current_group, tags, reason)
+      def add_pending_example(name, location, metadata = Metadata.new, reason = nil) : Example
+        Log.trace { "Add pending example: #{name} @ #{location}; metadata: #{metadata}" }
+        Example.pending(name, location, current_group, metadata, reason)
         # The example is added to the current group by `Example` initializer.
       end
 

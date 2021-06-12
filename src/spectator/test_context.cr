@@ -1,7 +1,7 @@
 require "./context"
 require "./dsl"
 require "./lazy_wrapper"
-require "./tags"
+require "./metadata"
 
 # Class used as the base for all specs using the DSL.
 # It adds methods and macros necessary to use the DSL from the spec.
@@ -32,9 +32,9 @@ class SpectatorTestContext < SpectatorContext
     @subject.get { _spectator_implicit_subject }
   end
 
-  # Initial tags for tests.
+  # Initial metadata for tests.
   # This method should be overridden by example groups and examples.
-  private def self.tags
-    ::Spectator::Tags.new
+  private def self.metadata
+    ::Spectator::Metadata.new
   end
 end

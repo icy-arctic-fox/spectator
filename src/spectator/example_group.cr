@@ -86,9 +86,9 @@ module Spectator
     # It can be a `Symbol` to describe a type.
     # The *location* tracks where the group exists in source code.
     # This group will be assigned to the parent *group* if it is provided.
-    # A set of *tags* can be used for filtering and modifying example behavior.
+    # A set of *metadata* can be used for filtering and modifying example behavior.
     def initialize(@name : Label = nil, @location : Location? = nil,
-                   @group : ExampleGroup? = nil, @tags : Tags = Tags.new)
+                   @group : ExampleGroup? = nil, @metadata : Metadata = Metadata.new)
       # Ensure group is linked.
       group << self if group
     end

@@ -1,25 +1,25 @@
 module Spectator::DSL
-  module Tags
-    # Defines a class method named *name* that combines tags
+  module Metadata
+    # Defines a class method named *name* that combines metadata
     # returned by *source* with *tags* and *metadata*.
     # Any falsey items from *metadata* are removed.
-    private macro _spectator_tags(name, source, *tags, **metadata)
+    private macro _spectator_metadata(name, source, *tags, **metadata)
       private def self.{{name.id}}
-        %tags = {{source.id}}.dup
+        %metadata = {{source.id}}.dup
         {% for k in tags %}
-          %tags[{{k.id.symbolize}}] = nil
+          %metadata[{{k.id.symbolize}}] = nil
         {% end %}
         {% for k, v in metadata %}
           %cond = begin
             {{v}}
           end
           if %cond
-            %tags[{{k.id.symbolize}}] = %cond.to_s
+            %metadata[{{k.id.symbolize}}] = %cond.to_s
           else
-            %tags.delete({{k.id.symbolize}})
+            %metadata.delete({{k.id.symbolize}})
           end
         {% end %}
-        %tags
+        %metadata
       end
     end
   end

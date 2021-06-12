@@ -1,12 +1,12 @@
 require "../context"
 require "../location"
 require "./builder"
-require "./tags"
+require "./metadata"
 
 module Spectator::DSL
   # DSL methods for defining examples and test code.
   module Examples
-    include Tags
+    include Metadata
 
     # Defines a macro to generate code for an example.
     # The *name* is the name given to the macro.
@@ -39,8 +39,8 @@ module Spectator::DSL
         \{% raise "Cannot use '{{name.id}}' inside of a test block" if @def %}
         \{% raise "A description or block must be provided. Cannot use '{{name.id}}' alone." unless what || block %}
 
-        _spectator_tags(%tags, :tags, {{tags.splat(",")}} {{metadata.double_splat}})
-        _spectator_tags(\%tags, %tags, \{{tags.splat(",")}} \{{metadata.double_splat}})
+        _spectator_metadata(%metadata, :metadata, {{tags.splat(",")}} {{metadata.double_splat}})
+        _spectator_metadata(\%metadata, %metadata, \{{tags.splat(",")}} \{{metadata.double_splat}})
 
         \{% if block %}
           \{% raise "Block argument count '{{name.id}}' hook must be 0..1" if block.args.size > 1 %}
@@ -53,7 +53,7 @@ module Spectator::DSL
             _spectator_example_name(\{{what}}),
             ::Spectator::Location.new(\{{block.filename}}, \{{block.line_number}}, \{{block.end_line_number}}),
             new.as(::Spectator::Context),
-            \%tags
+            \%metadata
           ) do |example|
             example.with_context(\{{@type.name}}) do
               \{% if block.args.empty? %}
@@ -68,7 +68,7 @@ module Spectator::DSL
           ::Spectator::DSL::Builder.add_pending_example(
             _spectator_example_name(\{{what}}),
             ::Spectator::Location.new(\{{what.filename}}, \{{what.line_number}}),
-            \%tags,
+            \%metadata,
             "Not yet implemented"
           )
         \{% end %}
@@ -105,13 +105,13 @@ module Spectator::DSL
         \{% raise "A description or block must be provided. Cannot use '{{name.id}}' alone." unless what || block %}
         \{% raise "Block argument count '{{name.id}}' hook must be 0..1" if block && block.args.size > 1 %}
 
-        _spectator_tags(%tags, :tags, {{tags.splat(",")}} {{metadata.double_splat}})
-        _spectator_tags(\%tags, %tags, \{{tags.splat(",")}} \{{metadata.double_splat}})
+        _spectator_metadata(%metadata, :metadata, {{tags.splat(",")}} {{metadata.double_splat}})
+        _spectator_metadata(\%metadata, %metadata, \{{tags.splat(",")}} \{{metadata.double_splat}})
 
         ::Spectator::DSL::Builder.add_pending_example(
           _spectator_example_name(\{{what}}),
           ::Spectator::Location.new(\{{(what || block).filename}}, \{{(what || block).line_number}}, \{{(what || block).end_line_number}}),
-          \%tags,
+          \%metadata,
           \{% if !block %}"Not yet implemented"\{% end %}
         )
       end
