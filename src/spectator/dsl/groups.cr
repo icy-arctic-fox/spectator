@@ -110,11 +110,11 @@ module Spectator::DSL
 
     define_example_group :context
 
-    define_example_group :xexample_group, :pending
+    define_example_group :xexample_group, skip: "Temporarily skipped with xexample_group"
 
-    define_example_group :xdescribe, :pending
+    define_example_group :xdescribe, skip: "Temporarily skipped with xdescribe"
 
-    define_example_group :xcontext, :pending
+    define_example_group :xcontext, skip: "Temporarily skipped with xcontext"
 
     # TODO: sample, random_sample, and given
   end
