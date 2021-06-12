@@ -75,7 +75,8 @@ module Spectator
     # Note: The tags will not be merged with the parent tags.
     def self.pending(name : String? = nil, location : Location? = nil,
                      group : ExampleGroup? = nil, tags = Tags.new)
-      new(name, location, group, tags.add(:pending)) { nil }
+      tags = tags.merge({:pending => nil}) { |_, v, _| v } # Add pending tag if it doesn't exist.
+      new(name, location, group, tags) { nil }
     end
 
     # Executes the test case.

@@ -43,7 +43,7 @@ module Spectator
     # Checks if the node has been marked as pending.
     # Pending items should be skipped during execution.
     def pending?
-      tags.includes?(:pending)
+      tags.has_key?(:pending)
     end
 
     # Constructs the full name or description of the node.

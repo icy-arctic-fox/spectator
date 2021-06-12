@@ -6,15 +6,15 @@ module Spectator::DSL
     private macro _spectator_tags(name, source, *tags, **metadata)
       private def self.{{name.id}}
         %tags = {{source.id}}
-        {% unless tags.empty? %}
-          %tags.concat({ {{tags.map(&.id.symbolize).splat}} })
+        {% for k in tags %}
+          %tags[{{k.id.symbolize}}] = nil
         {% end %}
         {% for k, v in metadata %}
           %cond = begin
             {{v}}
           end
           if %cond
-            %tags.add({{k.id.symbolize}})
+            %tags[{{k.id.symbolize}}] = %cond
           else
             %tags.delete({{k.id.symbolize}})
           end
