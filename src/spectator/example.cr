@@ -89,7 +89,7 @@ module Spectator
       if pending?
         Log.debug { "Skipping example #{self} - marked pending" }
         @finished = true
-        return @result = PendingResult.new
+        return @result = PendingResult.new(Time::Span::ZERO, tags[:pending] || "No reason given")
       end
 
       previous_example = @@current
