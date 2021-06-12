@@ -112,7 +112,7 @@ module Spectator::DSL
           _spectator_example_name(\{{what}}),
           ::Spectator::Location.new(\{{(what || block).filename}}, \{{(what || block).line_number}}, \{{(what || block).end_line_number}}),
           \%tags,
-          "Not yet implemented"
+          \{% if !block %}"Not yet implemented"\{% end %}
         )
       end
     end
