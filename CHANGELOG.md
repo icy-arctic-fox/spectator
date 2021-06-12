@@ -29,6 +29,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Prevent usage of reserved keywords in DSL (such as `initialize`).
 - Other minor internal improvements and cleanup.
 
+### Deprecated
+- `pending` blocks will behave differently in v0.11.0. They will mimic RSpec in that they _compile and run_ the block expecting it to fail. Use a `skip` (or `xit`) block instead to prevent compiling the example.
+
 ### Removed
 - Removed one-liner it syntax without braces (block).
 

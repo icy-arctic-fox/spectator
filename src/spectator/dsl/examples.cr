@@ -130,6 +130,7 @@ module Spectator::DSL
 
     define_example :specify
 
+    @[Deprecated("Behavior of pending blocks will change in Spectator v0.11.0. Use `skip` instead.")]
     define_pending_example :pending
 
     define_pending_example :skip
