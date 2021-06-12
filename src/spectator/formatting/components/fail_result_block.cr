@@ -1,19 +1,25 @@
 require "colorize"
 require "../../example"
+require "../../expectation"
 require "../../fail_result"
 require "./result_block"
 
 module Spectator::Formatting::Components
   # Displays information about a fail result.
   struct FailResultBlock < ResultBlock
+    @expectation : Expectation
+    @longest_key : Int32
+
     # Creates the component.
-    def initialize(index : Int32, example : Example, @result : FailResult)
+    def initialize(index : Int32, example : Example, result : FailResult)
       super(index, example)
+      @expectation = result.expectations.find(&.failed?).not_nil!
+      @longest_key = @expectation.values.max_of { |(key, _value)| key.to_s.size }
     end
 
     # Content displayed on the second line of the block after the label.
     private def subtitle
-      @result.error.message.try(&.each_line.first)
+      @expectation.failure_message
     end
 
     # Prefix for the second line of the block.
@@ -23,7 +29,23 @@ module Spectator::Formatting::Components
 
     # Display expectation match data.
     private def content(io)
-      # TODO: Display match data.
+      indent do
+        @expectation.values.each do |(key, value)|
+          value_line(io, key, value)
+        end
+      end
+
+      io.puts
+    end
+
+    # Display a single line for a match data value.
+    private def value_line(io, key, value)
+      key = key.to_s
+      padding = " " * (@longest_key - key.size)
+
+      line(io) do
+        io << padding << key.colorize(:red) << ": ".colorize(:red) << value
+      end
     end
   end
 end
