@@ -81,7 +81,7 @@ module Spectator
       # TODO: Move this out of harness, maybe to `Example`.
       Example.current.name = expectation.description unless Example.current.name?
 
-      raise ExpectationFailed.new(expectation) if expectation.failed?
+      raise ExpectationFailed.new(expectation, expectation.failure_message) if expectation.failed?
     end
 
     # Stores a block of code to be executed later.
