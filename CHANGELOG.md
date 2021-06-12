@@ -13,6 +13,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Capture and log information for hooks.
 - Tags can be added to examples and example groups.
 - Add matcher to check compiled type of values.
+- Examples can be skipped by using a `:pending` tag. A reason method can be specified: `pending: "Some excuse"`
+- Examples can be skipped during execution by using `skip` or `pending` in the example block.
 
 ### Changed
 - Simplify and reduce defined types and generics. Should speed up compilation times.
