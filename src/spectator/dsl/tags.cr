@@ -5,7 +5,7 @@ module Spectator::DSL
     # Any falsey items from *metadata* are removed.
     private macro _spectator_tags(name, source, *tags, **metadata)
       private def self.{{name.id}}
-        %tags = {{source.id}}
+        %tags = {{source.id}}.dup
         {% for k in tags %}
           %tags[{{k.id.symbolize}}] = nil
         {% end %}
@@ -14,7 +14,7 @@ module Spectator::DSL
             {{v}}
           end
           if %cond
-            %tags[{{k.id.symbolize}}] = %cond
+            %tags[{{k.id.symbolize}}] = %cond.to_s
           else
             %tags.delete({{k.id.symbolize}})
           end
