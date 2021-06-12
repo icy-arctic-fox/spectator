@@ -18,8 +18,6 @@ module Spectator::DSL
     # Default tags can be provided with *tags* and *metadata*.
     # The tags are merged with parent groups.
     # Any items with falsey values from *metadata* remove the corresponding tag.
-    #
-    # TODO: Mark example as pending if block is omitted.
     macro define_example(name, *tags, **metadata)
       # Defines an example.
       #
@@ -40,29 +38,39 @@ module Spectator::DSL
       macro {{name.id}}(what = nil, *tags, **metadata, &block)
         \{% raise "Cannot use '{{name.id}}' inside of a test block" if @def %}
         \{% raise "A description or block must be provided. Cannot use '{{name.id}}' alone." unless what || block %}
-        \{% raise "Block argument count '{{name.id}}' hook must be 0..1" if block.args.size > 1 %}
 
         _spectator_tags(%tags, :tags, {{tags.splat(",")}} {{metadata.double_splat}})
         _spectator_tags(\%tags, %tags, \{{tags.splat(",")}} \{{metadata.double_splat}})
 
-        private def \%test(\{{block.args.splat}}) : Nil
-          \{{block.body}}
-        end
+        \{% if block %}
+          \{% raise "Block argument count '{{name.id}}' hook must be 0..1" if block.args.size > 1 %}
 
-        ::Spectator::DSL::Builder.add_example(
-          _spectator_example_name(\{{what}}),
-          ::Spectator::Location.new(\{{block.filename}}, \{{block.line_number}}, \{{block.end_line_number}}),
-          new.as(::Spectator::Context),
-          \%tags
-        ) do |example|
-          example.with_context(\{{@type.name}}) do
-            \{% if block.args.empty? %}
-              \%test
-            \{% else %}
-              \%test(example)
-            \{% end %}
+          private def \%test(\{{block.args.splat}}) : Nil
+            \{{block.body}}
           end
-        end
+
+          ::Spectator::DSL::Builder.add_example(
+            _spectator_example_name(\{{what}}),
+            ::Spectator::Location.new(\{{block.filename}}, \{{block.line_number}}, \{{block.end_line_number}}),
+            new.as(::Spectator::Context),
+            \%tags
+          ) do |example|
+            example.with_context(\{{@type.name}}) do
+              \{% if block.args.empty? %}
+                \%test
+              \{% else %}
+                \%test(example)
+              \{% end %}
+            end
+          end
+
+        \{% else %}
+          ::Spectator::DSL::Builder.add_pending_example(
+            _spectator_example_name(\{{what}}),
+            ::Spectator::Location.new(\{{what.filename}}, \{{what.line_number}}),
+            \%tags
+          )
+        \{% end %}
       end
 
       define_pending_example :x{{name.id}}, pending: "Temporarily skipped with x{{name.id}}"
@@ -88,23 +96,20 @@ module Spectator::DSL
       # It has no effect on the test and is purely used for output.
       # If omitted, a name is generated from the first assertion in the test.
       #
-      # The example will be marked as pending if the block is omitted.
-      # A block or name must be provided.
-      #
       # Tags can be specified by adding symbols (keywords) after the first argument.
       # Key-value pairs can also be specified.
       # Any falsey items will remove a previously defined tag.
       macro {{name.id}}(what = nil, *tags, **metadata, &block)
         \{% raise "Cannot use '{{name.id}}' inside of a test block" if @def %}
         \{% raise "A description or block must be provided. Cannot use '{{name.id}}' alone." unless what || block %}
-        \{% raise "Block argument count '{{name.id}}' hook must be 0..1" if block.args.size > 1 %}
+        \{% raise "Block argument count '{{name.id}}' hook must be 0..1" if block && block.args.size > 1 %}
 
         _spectator_tags(%tags, :tags, {{tags.splat(",")}} {{metadata.double_splat}})
         _spectator_tags(\%tags, %tags, \{{tags.splat(",")}} \{{metadata.double_splat}})
 
         ::Spectator::DSL::Builder.add_pending_example(
           _spectator_example_name(\{{what}}),
-          ::Spectator::Location.new(\{{block.filename}}, \{{block.line_number}}, \{{block.end_line_number}}),
+          ::Spectator::Location.new(\{{(what || block).filename}}, \{{(what || block).line_number}}, \{{(what || block).end_line_number}}),
           \%tags
         )
       end
