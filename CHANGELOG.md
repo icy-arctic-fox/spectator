@@ -19,6 +19,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Simplify and reduce defined types and generics. Should speed up compilation times.
 - `around_each` hooks wrap `before_all` and `after_all` hooks. [#12](https://github.com/icy-arctic-fox/spectator/issues/12)
+- `given` (now `provided`) blocks changed to produce a single example. `it` can no longer be nested in a `provided` block.
 - The "should" syntax no longer reports the source as inside Spectator.
 - Short-hand "should" syntax must be included by using `require "spectator/should"` - `it { should eq("foo") }`
 - Overhaul example creation and handling.
@@ -31,9 +32,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Deprecated
 - `pending` blocks will behave differently in v0.11.0. They will mimic RSpec in that they _compile and run_ the block expecting it to fail. Use a `skip` (or `xit`) block instead to prevent compiling the example.
+- `given` has been renamed to `provided`. The `given` keyword may be reused later for memoization.
 
 ### Removed
-- Removed one-liner it syntax without braces (block).
+- Removed one-liner `it`-syntax without braces (block).
 
 ## [0.9.38] - 2021-05-27
 ### Fixed

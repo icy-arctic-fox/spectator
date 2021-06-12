@@ -116,6 +116,6 @@ module Spectator::DSL
 
     define_example_group :xcontext, skip: "Temporarily skipped with xcontext"
 
-    # TODO: sample, random_sample, and given
+    # TODO: sample, random_sample
   end
 end
