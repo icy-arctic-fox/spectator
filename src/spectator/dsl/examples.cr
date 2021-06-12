@@ -68,7 +68,8 @@ module Spectator::DSL
           ::Spectator::DSL::Builder.add_pending_example(
             _spectator_example_name(\{{what}}),
             ::Spectator::Location.new(\{{what.filename}}, \{{what.line_number}}),
-            \%tags
+            \%tags,
+            "Not yet implemented"
           )
         \{% end %}
       end
@@ -110,7 +111,8 @@ module Spectator::DSL
         ::Spectator::DSL::Builder.add_pending_example(
           _spectator_example_name(\{{what}}),
           ::Spectator::Location.new(\{{(what || block).filename}}, \{{(what || block).line_number}}, \{{(what || block).end_line_number}}),
-          \%tags
+          \%tags,
+          "Not yet implemented"
         )
       end
     end

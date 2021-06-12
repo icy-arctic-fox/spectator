@@ -116,11 +116,12 @@ module Spectator
       #
       # A set of *tags* can be used for filtering and modifying example behavior.
       # For instance, adding a "pending" tag will mark the test as pending and skip execution.
+      # A default *reason* can be given in case the user didn't provide one.
       #
       # The newly created example is returned.
-      def add_pending_example(name, location, tags = Tags.new) : Example
+      def add_pending_example(name, location, tags = Tags.new, reason = nil) : Example
         Log.trace { "Add pending example: #{name} @ #{location}; tags: #{tags}" }
-        Example.pending(name, location, current_group, tags)
+        Example.pending(name, location, current_group, tags, reason)
         # The example is added to the current group by `Example` initializer.
       end
 

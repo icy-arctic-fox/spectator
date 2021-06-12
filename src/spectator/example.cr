@@ -74,8 +74,9 @@ module Spectator
     # A set of *tags* can be used for filtering and modifying example behavior.
     # Note: The tags will not be merged with the parent tags.
     def self.pending(name : String? = nil, location : Location? = nil,
-                     group : ExampleGroup? = nil, tags = Tags.new)
-      tags = tags.merge({:pending => nil}) { |_, v, _| v } # Add pending tag if it doesn't exist.
+                     group : ExampleGroup? = nil, tags = Tags.new, reason = nil)
+      # Add pending tag and reason if they don't exist.
+      tags = tags.merge({:pending => nil, :reason => reason}) { |_, v, _| v }
       new(name, location, group, tags) { nil }
     end
 
