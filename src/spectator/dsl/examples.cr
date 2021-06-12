@@ -65,7 +65,7 @@ module Spectator::DSL
         end
       end
 
-      define_pending_example :x{{name.id}}
+      define_pending_example :x{{name.id}}, pending: "Temporarily skipped with x{{name.id}}"
     end
 
     # Defines a macro to generate code for a pending example.
