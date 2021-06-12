@@ -19,6 +19,8 @@ module Spectator::DSL
     # end
     # ```
     macro provided(*assignments, &block)
+      {% raise "Cannot use 'provided' inside of a test block" if @def %}
+
       class Given%given < {{@type.id}}
         {% for assignment in assignments %}
           let({{assignment.target}}) { {{assignment.value}} }
@@ -35,6 +37,7 @@ module Spectator::DSL
     # :ditto:
     @[Deprecated("Use `provided` instead.")]
     macro given(*assignments, &block)
+      {% raise "Cannot use 'given' inside of a test block" if @def %}
       provided({{assignments.splat}}) {{block}}
     end
   end
