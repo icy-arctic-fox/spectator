@@ -62,8 +62,12 @@ module Spectator::Formatting::Components::JUnit
       # Adds a failure element to the test case node.
       def fail(result)
         error = result.error
-        @xml.element("failure", message: error.message, type: error.class) do
-          # TODO: Add match-data as text to node.
+        result.expectations.each do |expectation|
+          next unless expectation.failed?
+
+          @xml.element("failure", message: expectation.failure_message, type: error.class) do
+            match_data(expectation.values)
+          end
         end
       end
 
@@ -80,6 +84,17 @@ module Spectator::Formatting::Components::JUnit
       # Adds a skipped element to the test case node.
       def pending(result)
         @xml.element("skipped", message: result.reason)
+      end
+
+      # Writes match data for a failed expectation.
+      private def match_data(values)
+        values.each do |(key, value)|
+          @xml.text("\n")
+          @xml.text(key.to_s)
+          @xml.text(": ")
+          @xml.text(value)
+        end
+        @xml.text("\n")
       end
     end
   end
