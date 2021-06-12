@@ -74,6 +74,7 @@ module Spectator::Formatting::Components::JUnit
       # Adds an error element to the test case node.
       def error(result)
         error = result.error
+        fail(result) # Include failed expectations.
         @xml.element("error", message: error.message, type: error.class) do
           if backtrace = error.backtrace
             @xml.text(backtrace.join("\n"))

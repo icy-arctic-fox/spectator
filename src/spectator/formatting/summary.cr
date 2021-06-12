@@ -38,18 +38,7 @@ module Spectator::Formatting
       io.puts "Failures:"
       io.puts
       examples.each_with_index(1) do |example, index|
-        if result = example.result.as?(ErrorResult)
-          io.puts Components::ErrorResultBlock.new(example, index, result)
-        elsif result = example.result.as?(FailResult)
-          failed_expectations = result.expectations.select(&.failed?)
-          if failed_expectations.size == 1
-            io.puts Components::FailResultBlock.new(example, index, failed_expectations.first)
-          else
-            failed_expectations.each_with_index(1) do |expectation, subindex|
-              io.puts Components::FailResultBlock.new(example, index, expectation, subindex)
-            end
-          end
-        end
+        dump_failed_example(example, index)
       end
     end
 
@@ -69,6 +58,29 @@ module Spectator::Formatting
       return if (failures = report.failures).empty?
 
       io.puts Components::FailureCommandList.new(failures)
+    end
+
+    # Displays one or more blocks for a failed example.
+    # Each block is a failed expectation or error raised in the example.
+    private def dump_failed_example(example, index)
+      result = example.result.as?(ErrorResult)
+      failed_expectations = example.result.expectations.select(&.failed?)
+      block_count = failed_expectations.size
+      block_count += 1 if result
+
+      # Don't use sub-index if there was only one problem.
+      if block_count == 1
+        if result
+          io.puts Components::ErrorResultBlock.new(example, index, result)
+        else
+          io.puts Components::FailResultBlock.new(example, index, failed_expectations.first)
+        end
+      else
+        failed_expectations.each_with_index(1) do |expectation, subindex|
+          io.puts Components::FailResultBlock.new(example, index, expectation, subindex)
+        end
+        io.puts Components::ErrorResultBlock.new(example, index, result, block_count) if result
+      end
     end
   end
 end

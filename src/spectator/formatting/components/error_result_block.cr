@@ -7,8 +7,8 @@ module Spectator::Formatting::Components
   # Displays information about an error result.
   struct ErrorResultBlock < ResultBlock
     # Creates the component.
-    def initialize(example : Example, index : Int32, @result : ErrorResult)
-      super(example, index)
+    def initialize(example : Example, index : Int32, @result : ErrorResult, subindex = 0)
+      super(example, index, subindex)
     end
 
     # Content displayed on the second line of the block after the label.
