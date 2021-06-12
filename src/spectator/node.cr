@@ -7,6 +7,9 @@ module Spectator
   # This is commonly an `Example` or `ExampleGroup`,
   # but can be anything that should be iterated over when running the spec.
   abstract class Node
+    # Default text used if none was given by the user for skipping a node.
+    DEFAULT_PENDING_REASON = "No reason given"
+
     # Location of the node in source code.
     getter! location : Location
 
@@ -44,6 +47,11 @@ module Spectator
     # Pending items should be skipped during execution.
     def pending?
       tags.has_key?(:pending) || tags.has_key?(:skip)
+    end
+
+    # Gets the reason the node has been marked as pending.
+    def pending_reason
+      tags[:pending]? || tags[:skip]? || tags[:reason]? || DEFAULT_PENDING_REASON
     end
 
     # Constructs the full name or description of the node.
