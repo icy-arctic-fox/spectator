@@ -93,6 +93,13 @@ module Spectator
       group << self if group
     end
 
+    # Creates a child that is attched to the group.
+    # Yields zero or more times to create the child.
+    # The group the child should be attached to is provided as a block argument.
+    def create_child
+      yield self
+    end
+
     # Removes the specified *node* from the group.
     # The node will be unassigned from this group.
     def delete(node : Node)

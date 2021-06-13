@@ -19,6 +19,13 @@ module Spectator
       end
     end
 
+    # Creates a child that is attched to the group.
+    # Yields zero or more times to create the child.
+    # The group the child should be attached to is provided as a block argument.
+    def create_child
+      @nodes.each { |child| yield child.as(Iteration(T)) }
+    end
+
     # Adds the specified *node* to the group.
     # Assigns the node to this group.
     # If the node already belongs to a group,

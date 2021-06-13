@@ -119,12 +119,11 @@ module Spectator
       # It will be yielded two arguments - the example created by this method, and the *context* argument.
       # The return value of the block is ignored.
       # It is expected that the test code runs when the block is called.
-      #
-      # The newly created example is returned.
-      def add_example(name, location, context, metadata = Metadata.new, &block : Example -> _) : Example
+      def add_example(name, location, context, metadata = Metadata.new, &block : Example -> _)
         Log.trace { "Add example: #{name} @ #{location}; metadata: #{metadata}" }
-        Example.new(context, block, name, location, current_group, metadata)
-        # The example is added to the current group by `Example` initializer.
+        current_group.create_child do |group|
+          Example.new(context, block, name, location, group, metadata)
+        end
       end
 
       # Defines a new pending example.
@@ -143,8 +142,9 @@ module Spectator
       # The newly created example is returned.
       def add_pending_example(name, location, metadata = Metadata.new, reason = nil) : Example
         Log.trace { "Add pending example: #{name} @ #{location}; metadata: #{metadata}" }
-        Example.pending(name, location, current_group, metadata, reason)
-        # The example is added to the current group by `Example` initializer.
+        current_group.create_child do |group|
+          Example.pending(name, location, group, metadata, reason)
+        end
       end
 
       # Attaches a hook to be invoked before any and all examples in the current group.
