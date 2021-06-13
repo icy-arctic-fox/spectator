@@ -2,6 +2,7 @@ require "../config"
 require "../example"
 require "../example_context_method"
 require "../example_group"
+require "../iterative_example_group"
 require "../spec"
 require "../metadata"
 
@@ -61,6 +62,27 @@ module Spectator
       def start_group(name, location = nil, metadata = Metadata.new) : ExampleGroup
         Log.trace { "Start group: #{name.inspect} @ #{location}; metadata: #{metadata}" }
         ExampleGroup.new(name, location, current_group, metadata).tap do |group|
+          @group_stack << group
+        end
+      end
+
+      # Defines a new iterative example group and pushes it onto the group stack.
+      # Examples and groups defined after calling this method will be nested under the new group.
+      # The group will be finished and popped off the stack when `#end_example` is called.
+      #
+      # The *collection* is the set of items to iterate over.
+      # Child nodes in this group will be executed once for every item in the collection.
+      #
+      # The *location* optionally defined where the group originates in source code.
+      #
+      # A set of *metadata* can be used for filtering and modifying example behavior.
+      # For instance, adding a "pending" tag will mark tests as pending and skip execution.
+      #
+      # The newly created group is returned.
+      # It shouldn't be used outside of this class until a matching `#end_group` is called.
+      def start_iterative_group(collection, location = nil, metadata = Metadata.new) : ExampleGroup
+        Log.trace { "Start iterative group: #{typeof(collection)} @ #{location}; metadata: #{metadata}" }
+        IterativeExampleGroup.new(collection, location, current_group, metadata).tap do |group|
           @group_stack << group
         end
       end

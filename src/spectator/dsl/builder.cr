@@ -21,6 +21,15 @@ module Spectator::DSL
       @@builder.start_group(*args)
     end
 
+    # Defines a new iterative example group and pushes it onto the group stack.
+    # Examples and groups defined after calling this method will be nested under the new group.
+    # The group will be finished and popped off the stack when `#end_example` is called.
+    #
+    # See `Spec::Builder#start_iterative_group` for usage details.
+    def start_iterative_group(*args)
+      @@builder.start_iterative_group(*args)
+    end
+
     # Completes a previously defined example group and pops it off the group stack.
     # Be sure to call `#start_group` and `#end_group` symmetically.
     #
