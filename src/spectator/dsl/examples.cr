@@ -43,7 +43,7 @@ module Spectator::DSL
         _spectator_metadata(\%metadata, %metadata, \{{tags.splat(",")}} \{{metadata.double_splat}})
 
         \{% if block %}
-          \{% raise "Block argument count '{{name.id}}' hook must be 0..1" if block.args.size > 1 %}
+          \{% raise "Block argument count '{{name.id}}' must be 0..1" if block.args.size > 1 %}
 
           private def \%test(\{{block.args.splat}}) : Nil
             \{{block.body}}
@@ -103,7 +103,7 @@ module Spectator::DSL
       macro {{name.id}}(what = nil, *tags, **metadata, &block)
         \{% raise "Cannot use '{{name.id}}' inside of a test block" if @def %}
         \{% raise "A description or block must be provided. Cannot use '{{name.id}}' alone." unless what || block %}
-        \{% raise "Block argument count '{{name.id}}' hook must be 0..1" if block && block.args.size > 1 %}
+        \{% raise "Block argument count '{{name.id}}' must be 0..1" if block && block.args.size > 1 %}
 
         _spectator_metadata(%metadata, :metadata, {{tags.splat(",")}} {{metadata.double_splat}})
         _spectator_metadata(\%metadata, %metadata, \{{tags.splat(",")}} \{{metadata.double_splat}})
