@@ -109,7 +109,7 @@ module Spectator
       #
       # The *location* optionally defined where the example originates in source code.
       #
-      # The *context* is an instance of the context the test code should run in.
+      # The *context_builder* is a proc that creates a context the test code should run in.
       # See `Context` for more information.
       #
       # A set of *metadata* can be used for filtering and modifying example behavior.
@@ -119,9 +119,10 @@ module Spectator
       # It will be yielded two arguments - the example created by this method, and the *context* argument.
       # The return value of the block is ignored.
       # It is expected that the test code runs when the block is called.
-      def add_example(name, location, context, metadata = Metadata.new, &block : Example -> _)
+      def add_example(name, location, context_builder, metadata = Metadata.new, &block : Example -> _)
         Log.trace { "Add example: #{name} @ #{location}; metadata: #{metadata}" }
         current_group.create_child do |group|
+          context = context_builder.call
           Example.new(context, block, name, location, group, metadata)
         end
       end
