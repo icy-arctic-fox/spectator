@@ -116,6 +116,36 @@ module Spectator::DSL
 
     define_example_group :xcontext, skip: "Temporarily skipped with xcontext"
 
-    # TODO: sample, random_sample
+    # Defines a new iterative example group.
+    # This type of group duplicates its contents for each element in *collection*.
+    #
+    # The first argument is the collection of elements to iterate over.
+    #
+    # Tags can be specified by adding symbols (keywords) after the first argument.
+    # Key-value pairs can also be specified.
+    # Any falsey items will remove a previously defined tag.
+    #
+    # TODO: Handle string interpolation in example and group names.
+    macro sample(collection, *tags, **metadata, &block)
+      {% raise "Cannot use 'sample' inside of a test block" if @def %}
+
+      class Group%group < {{@type.id}}
+        _spectator_metadata(:metadata, :super, {{tags.splat(", ")}} {{metadata.double_splat}})
+
+        def self.%collection
+          {{collection}}
+        end
+
+        ::Spectator::DSL::Builder.start_iterative_group(
+          %collection,
+          ::Spectator::Location.new({{block.filename}}, {{block.line_number}}),
+          metadata
+        )
+
+        {{block.body}}
+
+        ::Spectator::DSL::Builder.end_group
+      end
+    end
   end
 end
