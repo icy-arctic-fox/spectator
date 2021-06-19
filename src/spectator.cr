@@ -11,6 +11,7 @@ module Spectator
   VERSION = {{ `shards version #{__DIR__}`.stringify.chomp }}
 
   # Logger for Spectator internals.
+  ::Log.setup_from_env
   Log = ::Log.for(self)
 
   # Flag indicating whether Spectator should automatically run tests.
