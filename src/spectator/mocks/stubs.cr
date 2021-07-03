@@ -59,8 +59,10 @@ module Spectator::Mocks
         original = if (name == :new.id && receiver == "self.".id) ||
                       (t.superclass && t.superclass.has_method?(name) && !t.overrides?(t.superclass, name))
                      :super
-                   else
+                   elsif t.has_method?(name)
                      :previous_def
+                   else
+                     "::#{name}"
                    end.id
       %}
 
