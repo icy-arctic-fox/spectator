@@ -170,4 +170,8 @@ module Spectator::DSL
     {% end %}
     %stubs
   end
+
+  def no_args
+    ::Spectator::Mocks::NoArguments.new
+  end
 end

@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+### Added
+- Added support for `with(no_args)` for method stubs. [#28](https://github.com/icy-arctic-fox/spectator/issues/28)
+
 ## [0.9.38] - 2021-05-27
 ### Fixed
 - Fix `Channel::ClosedError` when using default Crystal Logger. [#27](https://github.com/icy-arctic-fox/spectator/issues/27)
