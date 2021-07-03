@@ -10,10 +10,10 @@ module Spectator::DSL
         type_name = "Double#{safe_name}".id
       %}
 
-      {% if block.is_a?(Nop) %}
-        create_double({{type_name}}, {{name}}, {{stubs.double_splat}})
-      {% else %}
+      {% if block %}
         define_double({{type_name}}, {{name}}, {{stubs.double_splat}}) {{block}}
+      {% else %}
+        create_double({{type_name}}, {{name}}, {{stubs.double_splat}})
       {% end %}
     {% end %}
   end
@@ -64,10 +64,10 @@ module Spectator::DSL
         type_name = "Double#{safe_name}".id
       %}
 
-      {% if block.is_a?(Nop) %}
-        create_null_double({{type_name}}, {{name}}, {{stubs.double_splat}})
-      {% else %}
+      {% if block %}
         define_null_double({{type_name}}, {{name}}, {{stubs.double_splat}}) {{block}}
+      {% else %}
+        create_null_double({{type_name}}, {{name}}, {{stubs.double_splat}})
       {% end %}
     {% end %}
   end
@@ -155,10 +155,10 @@ module Spectator::DSL
 
   macro receive(method_name, _source_file = __FILE__, _source_line = __LINE__, &block)
     %source = ::Spectator::Source.new({{_source_file}}, {{_source_line}})
-    {% if block.is_a?(Nop) %}
-      ::Spectator::Mocks::NilMethodStub.new({{method_name.id.symbolize}}, %source)
-    {% else %}
+    {% if block %}
       ::Spectator::Mocks::ProcMethodStub.create({{method_name.id.symbolize}}, %source) { {{block.body}} }
+    {% else %}
+      ::Spectator::Mocks::NilMethodStub.new({{method_name.id.symbolize}}, %source)
     {% end %}
   end
 
