@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [0.9.39] - 2021-07-02
 ### Fixed
 - Fix `expect().to receive()` syntax not implicitly stubbing the method.
 - Avoid calling `NoReturn` methods from stubs. [#29](https://github.com/icy-arctic-fox/spectator/issues/29)
@@ -274,10 +274,11 @@ This has been changed so that it compiles and raises an error at runtime with a 
 First version ready for public use.
 
 
-[Unreleased]: https://gitlab.com/arctic-fox/spectator/-/compare/v0.9.38...release%2F0.10
-[0.9.37]: https://gitlab.com/arctic-fox/spectator/-/compare/v0.9.37...v0.9.38
-[0.9.36]: https://gitlab.com/arctic-fox/spectator/-/compare/v0.9.36...v0.9.37
-[0.9.35]: https://gitlab.com/arctic-fox/spectator/-/compare/v0.9.35...v0.9.36
+[Unreleased]: https://gitlab.com/arctic-fox/spectator/-/compare/v0.9.39...release%2F0.10
+[0.9.39]: https://gitlab.com/arctic-fox/spectator/-/compare/v0.9.38...v0.9.39
+[0.9.38]: https://gitlab.com/arctic-fox/spectator/-/compare/v0.9.37...v0.9.38
+[0.9.37]: https://gitlab.com/arctic-fox/spectator/-/compare/v0.9.36...v0.9.37
+[0.9.36]: https://gitlab.com/arctic-fox/spectator/-/compare/v0.9.35...v0.9.36
 [0.9.35]: https://gitlab.com/arctic-fox/spectator/-/compare/v0.9.34...v0.9.35
 [0.9.34]: https://gitlab.com/arctic-fox/spectator/-/compare/v0.9.33...v0.9.34
 [0.9.33]: https://gitlab.com/arctic-fox/spectator/-/compare/v0.9.32...v0.9.33
