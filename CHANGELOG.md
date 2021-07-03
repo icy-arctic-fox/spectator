@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Fixed
+- Fix resolution of types with the same name in nested scopes. [#31](https://github.com/icy-arctic-fox/spectator/issues/31)
+
 ### Added
 - Hooks are yielded the current example as a block argument.
 - The `let` and `subject` blocks are yielded the current example as a block argument.
