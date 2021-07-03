@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Added
 - Added support for `with(no_args)` for method stubs. [#28](https://github.com/icy-arctic-fox/spectator/issues/28)
+- Allow creation of doubles without definition block. [#30](https://github.com/icy-arctic-fox/spectator/issues/30)
 
 ## [0.9.38] - 2021-05-27
 ### Fixed

@@ -19,13 +19,17 @@ module Spectator::DSL
   end
 
   macro create_double(type_name, name, **stubs)
-    {% type_name.resolve? || raise("Could not find a double labeled #{name}") %}
-
-    {{type_name}}.new.tap do |%double|
-      {% for name, value in stubs %}
-      allow(%double).to receive({{name.id}}).and_return({{value}})
-      {% end %}
-    end
+    {% if type_name.resolve? %}
+      {{type_name}}.new.tap do |%double|
+        {% for name, value in stubs %}
+        allow(%double).to receive({{name.id}}).and_return({{value}})
+        {% end %}
+      end
+    {% elsif @def %}
+      anonymous_double({{name ? name.stringify : "Anonymous"}}, {{stubs.double_splat}})
+    {% else %}
+      {% raise "Block required for double definition" %}
+    {% end %}
   end
 
   macro define_double(type_name, name, **stubs, &block)
@@ -73,13 +77,17 @@ module Spectator::DSL
   end
 
   macro create_null_double(type_name, name, **stubs)
-    {% type_name.resolve? || raise("Could not find a double labeled #{name}") %}
-
-    {{type_name}}.new(true).tap do |%double|
-      {% for name, value in stubs %}
-      allow(%double).to receive({{name.id}}).and_return({{value}})
-      {% end %}
-    end
+    {% if type_name.resolve? %}
+      {{type_name}}.new(true).tap do |%double|
+        {% for name, value in stubs %}
+        allow(%double).to receive({{name.id}}).and_return({{value}})
+        {% end %}
+      end
+    {% elsif @def %}
+      anonymous_null_double({{name ? name.stringify : "Anonymous"}}, {{stubs.double_splat}})
+    {% else %}
+      {% raise "Block required for double definition" %}
+    {% end %}
   end
 
   macro define_null_double(type_name, name, **stubs, &block)
