@@ -5,6 +5,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Fixed
+- Fix `expect().to receive()` syntax not implicitly stubbing the method.
+- Avoid calling `NoReturn` methods from stubs. [#29](https://github.com/icy-arctic-fox/spectator/issues/29)
+
 ### Added
 - Added support for `with(no_args)` for method stubs. [#28](https://github.com/icy-arctic-fox/spectator/issues/28)
 - Allow creation of doubles without definition block. [#30](https://github.com/icy-arctic-fox/spectator/issues/30)
