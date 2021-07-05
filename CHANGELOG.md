@@ -301,7 +301,8 @@ This has been changed so that it compiles and raises an error at runtime with a 
 First version ready for public use.
 
 
-[Unreleased]: https://gitlab.com/arctic-fox/spectator/-/compare/v0.9.38...release%2F0.10
+[Unreleased]: https://gitlab.com/arctic-fox/spectator/-/compare/v0.9.39...release%2F0.10
+[0.9.39]: https://gitlab.com/arctic-fox/spectator/-/compare/v0.9.38...v0.9.39
 [0.9.38]: https://gitlab.com/arctic-fox/spectator/-/compare/v0.9.37...v0.9.38
 [0.9.37]: https://gitlab.com/arctic-fox/spectator/-/compare/v0.9.36...v0.9.37
 [0.9.36]: https://gitlab.com/arctic-fox/spectator/-/compare/v0.9.35...v0.9.36

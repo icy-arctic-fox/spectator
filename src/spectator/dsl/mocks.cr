@@ -11,22 +11,26 @@ module Spectator::DSL
           type_name = "Double#{safe_name}".id
         %}
 
-        {% if block.is_a?(Nop) %}
-          create_double({{type_name}}, {{name}}, {{stubs.double_splat}})
-        {% else %}
+        {% if block %}
           define_double({{type_name}}, {{name}}, {{stubs.double_splat}}) {{block}}
+        {% else %}
+          create_double({{type_name}}, {{name}}, {{stubs.double_splat}})
         {% end %}
       {% end %}
     end
 
     macro create_double(type_name, name, **stubs)
-      {% type_name.resolve? || raise("Could not find a double labeled #{name}") %}
-
-      {{type_name}}.new.tap do |%double|
-        {% for name, value in stubs %}
-        allow(%double).to receive({{name.id}}).and_return({{value}})
-        {% end %}
-      end
+      {% if type_name.resolve? %}
+        {{type_name}}.new.tap do |%double|
+          {% for name, value in stubs %}
+          allow(%double).to receive({{name.id}}).and_return({{value}})
+          {% end %}
+        end
+      {% elsif @def %}
+        anonymous_double({{name ? name.stringify : "Anonymous"}}, {{stubs.double_splat}})
+      {% else %}
+        {% raise "Block required for double definition" %}
+      {% end %}
     end
 
     macro define_double(type_name, name, **stubs, &block)
@@ -156,10 +160,10 @@ module Spectator::DSL
 
     macro receive(method_name, _source_file = __FILE__, _source_line = __LINE__, &block)
       %location = ::Spectator::Location.new({{_source_file}}, {{_source_line}})
-      {% if block.is_a?(Nop) %}
-        ::Spectator::Mocks::NilMethodStub.new({{method_name.id.symbolize}}, %location)
-      {% else %}
+      {% if block %}
         ::Spectator::Mocks::ProcMethodStub.create({{method_name.id.symbolize}}, %location) { {{block.body}} }
+      {% else %}
+        ::Spectator::Mocks::NilMethodStub.new({{method_name.id.symbolize}}, %location)
       {% end %}
     end
 
@@ -170,6 +174,10 @@ module Spectator::DSL
       %stubs << ::Spectator::Mocks::ValueMethodStub.new({{name.id.symbolize}}, %location, {{value}})
       {% end %}
       %stubs
+    end
+
+    def no_args
+      ::Spectator::Mocks::NoArguments.new
     end
   end
 end
