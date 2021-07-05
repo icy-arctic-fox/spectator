@@ -1,6 +1,6 @@
 require "./config"
 require "./example_group"
-require "./spec/*"
+require "./runner"
 
 module Spectator
   # Contains examples to be tested and configuration for running them.
