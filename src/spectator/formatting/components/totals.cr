@@ -32,13 +32,13 @@ module Spectator::Formatting::Components
 
     # Writes the counts to the output.
     def to_s(io)
-      io << @examples << " examples, " << @failures << " failures, "
+      io << @examples << " examples, " << @failures << " failures"
 
       if @errors > 1
-        io << '(' << @errors << " errors), "
+        io << " (" << @errors << " errors)"
       end
 
-      io << @pending << " pending"
+      io << ", " << @pending << " pending"
     end
   end
 end
