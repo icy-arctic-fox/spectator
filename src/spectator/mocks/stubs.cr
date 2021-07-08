@@ -83,7 +83,7 @@ module Spectator::Mocks
           %harness.mocks.record_call(self, %call)
           if (%stub = %harness.mocks.find_stub(self, %call))
             if typeof({{original}}) == NoReturn
-              return %stub.call!(%args) { nil }
+              return %stub.call!(%args) { raise "Cannot call original implementation of {{name}} - it won't return." }
             else
               return %stub.call!(%args) { {{original}} }
             end
@@ -106,7 +106,7 @@ module Spectator::Mocks
           %harness.mocks.record_call(self, %call)
           if (%stub = %harness.mocks.find_stub(self, %call))
             if typeof({{original}}) == NoReturn
-              return %stub.call!(%args) { nil }
+              return %stub.call!(%args) { raise "Cannot call original implementation of {{name}} - it won't return." }
             else
               return %stub.call!(%args) { {{original}} { |*%ya| yield *%ya } }
             end
