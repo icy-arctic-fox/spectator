@@ -10,7 +10,7 @@ module Spectator
     # Location of the expectation in source code.
     # This can be nil if the location isn't capturable,
     # for instance using the *should* syntax or dynamically created expectations.
-    getter location : Location?
+    getter! location : Location
 
     # Indicates whether the expectation was met.
     def satisfied?
