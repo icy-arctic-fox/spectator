@@ -71,15 +71,11 @@ module Spectator::Mocks
     end
 
     def expect(object, stub : MethodStub) : Nil
-      entry = fetch_instance(object)
-      entry.expected.add(stub)
-      entry.stubs.unshift(stub)
+      fetch_instance(object).expected.add(stub)
     end
 
     def expect(type : T.class, stub : MethodStub) : Nil forall T
-      entry = fetch_type(type)
-      entry.expected.add(stub)
-      entry.stubs.unshift(stub)
+      fetch_type(type).expected.add(stub)
     end
 
     private def fetch_instance(object)
