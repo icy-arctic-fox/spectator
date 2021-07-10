@@ -62,7 +62,7 @@ module Spectator::Mocks
                    elsif t.has_method?(name)
                      :previous_def
                    else
-                     "::#{name}"
+                     name
                    end.id
       %}
 
