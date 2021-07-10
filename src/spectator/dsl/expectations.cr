@@ -12,7 +12,7 @@ module Spectator::DSL
     # Immediately fail the current test.
     # A reason can be specified with *message*.
     def fail(message = "Example failed", *, _file = __FILE__, _line = __LINE__)
-      raise ExpectationFailed.new(Location.new(_file, _line), message)
+      raise ExampleFailed.new(Location.new(_file, _line), message)
     end
 
     # Mark the current test as pending and immediately abort.

@@ -1,4 +1,5 @@
 require "./error_result"
+require "./example_failed"
 require "./example_pending"
 require "./expectation"
 require "./mocks"
@@ -118,7 +119,7 @@ module Spectator
       case error
       when nil
         PassResult.new(elapsed, @expectations)
-      when ExpectationFailed
+      when ExampleFailed
         FailResult.new(elapsed, error, @expectations)
       when ExamplePending
         PendingResult.new(error.message || PendingResult::DEFAULT_REASON, elapsed, @expectations)
