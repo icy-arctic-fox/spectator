@@ -82,18 +82,7 @@ module Spectator::Mocks
           %call = ::Spectator::Mocks::MethodCall.new({{name.symbolize}}, %args)
           %harness.mocks.record_call(self, %call)
           if (%stub = %harness.mocks.find_stub(self, %call))
-            if typeof({{original}}) == NoReturn
-              # NOTE: This may break at some point if the Crystal compiler gets smarter.
-              # The `nil` after raise changes the return type of the method from `NoReturn` to `Nil`.
-              # Technically, the `nil` will never be reached and if the compiler realizes it,
-              # the return type could become `NoReturn`
-              return %stub.call!(%args) do
-                raise "Cannot call original implementation of {{name}} - it won't return."
-                nil
-              end
-            else
-              return %stub.call!(%args) { {{original}} }
-            end
+            return %stub.call!(%args) { {{original}} }
           end
 
           {% if body && !body.is_a?(Nop) || return_type.is_a?(ArrayLiteral) %}
@@ -112,18 +101,7 @@ module Spectator::Mocks
           %call = ::Spectator::Mocks::MethodCall.new({{name.symbolize}}, %args)
           %harness.mocks.record_call(self, %call)
           if (%stub = %harness.mocks.find_stub(self, %call))
-            if typeof({{original}}) == NoReturn
-              # NOTE: This may break at some point if the Crystal compiler gets smarter.
-              # The `nil` after raise changes the return type of the method from `NoReturn` to `Nil`.
-              # Technically, the `nil` will never be reached and if the compiler realizes it,
-              # the return type could become `NoReturn`
-              return %stub.call!(%args) do
-                raise "Cannot call original implementation of {{name}} - it won't return."
-                nil
-              end
-            else
-              return %stub.call!(%args) { {{original}} { |*%ya| yield *%ya } }
-            end
+            return %stub.call!(%args) { {{original}} { |*%ya| yield *%ya } }
           end
 
           {% if body && !body.is_a?(Nop) || return_type.is_a?(ArrayLiteral) %}
