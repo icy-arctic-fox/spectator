@@ -21,6 +21,7 @@ module Spectator
         run_example(result)
         @finished = true
         context.run_after_hooks(self)
+        result.error = nil if result.error.is_a?(SystemExit) && Harness.current.mocks.exit_handled?
         run_deferred(result) unless result.error
       end
     end
