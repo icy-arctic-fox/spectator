@@ -41,6 +41,10 @@ module Spectator::Mocks
       NilMethodStub.new(@name, @source, args)
     end
 
+    def with(args : Arguments)
+      NilMethodStub.new(@name, @source, @args)
+    end
+
     def and_call_original
       OriginalMethodStub.new(@name, @source, @args)
     end
