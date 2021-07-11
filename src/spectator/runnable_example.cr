@@ -59,8 +59,8 @@ module Spectator
       when Nil
         # If no errors occurred, then the example ran successfully.
         SuccessfulResult.new(self, result.elapsed, expectations)
-      when ExpectationFailed
-        # If a required expectation fails, then a `ExpectationRailed` exception will be raised.
+      when ExampleFailed
+        # If a test fails or required expectation is not met, then an `ExampleFailed` exception was raised.
         FailedResult.new(self, result.elapsed, expectations, error)
       else
         # Any other exception that is raised is unexpected and is an errored result.
