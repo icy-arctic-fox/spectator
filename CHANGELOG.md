@@ -4,6 +4,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.9.40] - 2021-07-10
+### Fixed
+- Fix stubbing of class methods.
+- Fix handling of `no_args` in some cases.
+
+### Changed
+- Better handling and stubbing of `Process.exit`.
+
 ## [0.9.39] - 2021-07-02
 ### Fixed
 - Fix `expect().to receive()` syntax not implicitly stubbing the method.
@@ -274,7 +282,8 @@ This has been changed so that it compiles and raises an error at runtime with a 
 First version ready for public use.
 
 
-[Unreleased]: https://gitlab.com/arctic-fox/spectator/-/compare/v0.9.39...release%2F0.10
+[Unreleased]: https://gitlab.com/arctic-fox/spectator/-/compare/v0.9.40...release%2F0.10
+[0.9.40]: https://gitlab.com/arctic-fox/spectator/-/compare/v0.9.39...v0.9.40
 [0.9.39]: https://gitlab.com/arctic-fox/spectator/-/compare/v0.9.38...v0.9.39
 [0.9.38]: https://gitlab.com/arctic-fox/spectator/-/compare/v0.9.37...v0.9.38
 [0.9.37]: https://gitlab.com/arctic-fox/spectator/-/compare/v0.9.36...v0.9.37
