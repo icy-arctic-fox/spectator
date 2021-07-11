@@ -52,6 +52,10 @@ module Spectator::Mocks
         fetch_type(object.class).stubs.find(&.callable?(call))
     end
 
+    def find_stub(type : T.class, call : MethodCall) forall T
+      fetch_type(type).stubs.find(&.callable?(call))
+    end
+
     def record_call(object, call : MethodCall) : Nil
       fetch_instance(object).calls << call
       fetch_type(object.class).calls << call
