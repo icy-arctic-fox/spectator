@@ -35,6 +35,10 @@ module Spectator::Mocks
         fetch_type(object.class).stubs.find(&.callable?(call))
     end
 
+    def find_stub(type : T.class, call : MethodCall) forall T
+      fetch_type(type).stubs.find(&.callable?(call))
+    end
+
     def record_call(object, call : MethodCall) : Nil
       fetch_instance(object).calls << call
       fetch_type(object.class).calls << call
@@ -51,6 +55,14 @@ module Spectator::Mocks
     def expected?(object, call : MethodCall) : Bool
       fetch_instance(object).expected.any?(&.callable?(call)) ||
         fetch_type(object.class).expected.any?(&.callable?(call))
+    end
+
+    def exit_handled? : Bool
+      # Lazily check if an `exit` method was called and it was expected.
+      # This is okay since an `expect().to receive(:exit)` should check the details of the call.
+      (@entries.any? { |_key, entry| entry.expected.any? { |stub| stub.name == :exit } } ||
+        @all_instances.any? { |_key, entry| entry.expected.any? { |stub| stub.name == :exit } }) &&
+        @entries.any? { |_key, entry| entry.calls.any? { |call| call.name == :exit } }
     end
 
     def expect(object, stub : MethodStub) : Nil

@@ -62,7 +62,7 @@ module Spectator::Mocks
                    elsif t.has_method?(name)
                      :previous_def
                    else
-                     "::#{name}"
+                     name
                    end.id
       %}
 
@@ -82,11 +82,7 @@ module Spectator::Mocks
           %call = ::Spectator::Mocks::MethodCall.new({{name.symbolize}}, %args)
           %harness.mocks.record_call(self, %call)
           if (%stub = %harness.mocks.find_stub(self, %call))
-            if typeof({{original}}) == NoReturn
-              return %stub.call!(%args) { nil }
-            else
-              return %stub.call!(%args) { {{original}} }
-            end
+            return %stub.call!(%args) { {{original}} }
           end
 
           {% if body && !body.is_a?(Nop) || return_type.is_a?(ArrayLiteral) %}
@@ -105,11 +101,7 @@ module Spectator::Mocks
           %call = ::Spectator::Mocks::MethodCall.new({{name.symbolize}}, %args)
           %harness.mocks.record_call(self, %call)
           if (%stub = %harness.mocks.find_stub(self, %call))
-            if typeof({{original}}) == NoReturn
-              return %stub.call!(%args) { nil }
-            else
-              return %stub.call!(%args) { {{original}} { |*%ya| yield *%ya } }
-            end
+            return %stub.call!(%args) { {{original}} { |*%ya| yield *%ya } }
           end
 
           {% if body && !body.is_a?(Nop) || return_type.is_a?(ArrayLiteral) %}

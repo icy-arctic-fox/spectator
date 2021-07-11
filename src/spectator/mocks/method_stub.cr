@@ -20,6 +20,8 @@ module Spectator::Mocks
       value = call(args) { |*ya| yield *ya }
       if value.is_a?(RT)
         value.as(RT)
+      elsif value.nil? && RT == NoReturn
+        raise SystemExit.new
       else
         raise TypeCastError.new("The return type of stub #{self} doesn't match the expected type #{RT}")
       end

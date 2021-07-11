@@ -98,6 +98,7 @@ module Spectator
       elapsed = Time.measure do
         error = catch { yield }
       end
+      error = nil if error.is_a?(SystemExit) && mocks.exit_handled?
       {elapsed, error}
     end
 

@@ -40,6 +40,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Removed
 - Removed one-liner `it`-syntax without braces (block).
 
+## [0.9.40] - 2021-07-10
+### Fixed
+- Fix stubbing of class methods.
+- Fix handling of `no_args` in some cases.
+
+### Changed
+- Better handling and stubbing of `Process.exit`.
+
+## [0.9.39] - 2021-07-02
+### Fixed
+- Fix `expect().to receive()` syntax not implicitly stubbing the method.
+- Avoid calling `NoReturn` methods from stubs. [#29](https://github.com/icy-arctic-fox/spectator/issues/29)
+
+### Added
+- Added support for `with(no_args)` for method stubs. [#28](https://github.com/icy-arctic-fox/spectator/issues/28)
+- Allow creation of doubles without definition block. [#30](https://github.com/icy-arctic-fox/spectator/issues/30)
+
 ## [0.9.38] - 2021-05-27
 ### Fixed
 - Fix `Channel::ClosedError` when using default Crystal Logger. [#27](https://github.com/icy-arctic-fox/spectator/issues/27)
@@ -301,7 +318,8 @@ This has been changed so that it compiles and raises an error at runtime with a 
 First version ready for public use.
 
 
-[Unreleased]: https://gitlab.com/arctic-fox/spectator/-/compare/v0.9.39...release%2F0.10
+[Unreleased]: https://gitlab.com/arctic-fox/spectator/-/compare/v0.9.40...release%2F0.10
+[0.9.40]: https://gitlab.com/arctic-fox/spectator/-/compare/v0.9.39...v0.9.40
 [0.9.39]: https://gitlab.com/arctic-fox/spectator/-/compare/v0.9.38...v0.9.39
 [0.9.38]: https://gitlab.com/arctic-fox/spectator/-/compare/v0.9.37...v0.9.38
 [0.9.37]: https://gitlab.com/arctic-fox/spectator/-/compare/v0.9.36...v0.9.37
