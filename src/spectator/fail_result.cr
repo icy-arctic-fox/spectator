@@ -1,4 +1,6 @@
 require "json"
+require "./example_failed"
+require "./location"
 require "./result"
 
 module Spectator
@@ -34,6 +36,15 @@ module Spectator
     # Indicates whether the example failed.
     def fail? : Bool
       true
+    end
+
+    # Attempts to retrieve the location where the example failed.
+    # This only works if the location of the failed expectation was reported.
+    # If available, returns a `Location`, otherwise `nil`.
+    def source : Location?
+      return unless error = @error.as?(ExampleFailed)
+
+      error.location?
     end
 
     # One-word description of the result.
