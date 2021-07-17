@@ -68,7 +68,8 @@ module Spectator::Formatting::Components
       end
     end
 
-    # Produces the (example) location line.
+    # Produces the location line.
+    # This is where the result was determined.
     private def location_line(io)
       location = if (result = @example.result).responds_to?(:location)
                    result.location
