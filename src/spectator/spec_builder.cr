@@ -4,7 +4,7 @@ require "./example_builder"
 require "./example_context_method"
 require "./example_group"
 require "./example_group_builder"
-require "./iterative_example_group"
+require "./iterative_example_group_builder"
 require "./pending_example_builder"
 require "./spec"
 require "./metadata"
@@ -78,7 +78,7 @@ module Spectator
     # For instance, adding a "pending" tag will mark tests as pending and skip execution.
     def start_iterative_group(collection, location = nil, metadata = Metadata.new) : Nil
       Log.trace { "Start iterative group: #{typeof(collection)} @ #{location}; metadata: #{metadata}" }
-      builder = ExampleGroupBuilder.new(collection, location, metadata) # TODO: IterativeExampleGroupBuilder
+      builder = IterativeExampleGroupBuilder.new(collection, location, metadata)
       current << builder
       @stack.push(builder)
     end
