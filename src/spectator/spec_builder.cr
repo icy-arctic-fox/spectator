@@ -132,7 +132,7 @@ module Spectator
     # A default *reason* can be given in case the user didn't provide one.
     def add_pending_example(name, location, metadata = Metadata.new, reason = nil) : Nil
       Log.trace { "Add pending example: #{name} @ #{location}; metadata: #{metadata}" }
-      current << PendingExampleBuilder.new(name, location, metadata)
+      current << PendingExampleBuilder.new(name, location, metadata, reason)
     end
 
     # Attaches a hook to be invoked before any and all examples in the current group.
