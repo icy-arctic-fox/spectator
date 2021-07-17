@@ -11,7 +11,7 @@ module Spectator
     getter reason : String
 
     # Location the pending result was triggered from.
-    getter location : Location?
+    getter! location : Location
 
     # Creates the result.
     # *elapsed* is the length of time it took to run the example.

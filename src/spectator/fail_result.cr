@@ -41,10 +41,17 @@ module Spectator
     # Attempts to retrieve the location where the example failed.
     # This only works if the location of the failed expectation was reported.
     # If available, returns a `Location`, otherwise `nil`.
-    def location : Location?
+    def location? : Location?
       return unless error = @error.as?(ExampleFailed)
 
       error.location?
+    end
+
+    # Attempts to retrieve the location where the example failed.
+    # This only works if the location of the failed expectation was reported.
+    # If available, returns a `Location`, otherwise raises `NilAssertionError`.
+    def location : Location
+      location? || raise(NilAssertionError.new("Source location of result unavailable"))
     end
 
     # One-word description of the result.
