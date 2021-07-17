@@ -17,11 +17,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Tags can be added to examples and example groups.
 - Add matcher to check compiled type of values.
 - Examples can be skipped by using a `:pending` tag. A reason method can be specified: `pending: "Some excuse"`
-- Examples missing a block are marked as pending. [#37](https://gitlab.com/arctic-fox/spectator/-/issues/37)
-- Examples can be skipped during execution by using `skip` or `pending` in the example block.
+- Examples without a test block are marked as pending. [#37](https://gitlab.com/arctic-fox/spectator/-/issues/37)
+- Examples can be skipped during execution by using `skip` or `pending` in the example block. [#17](https://gitlab.com/arctic-fox/spectator/-/issues/17)
 - Sample blocks can be temporarily skipped by using `xsample` or `xrandom_sample`.
 - Add `before_suite` and `after_suite` hooks. [#21](https://gitlab.com/arctic-fox/spectator/-/issues/21)
 - Support defining hooks in `Spectator.configure` block. [#21](https://gitlab.com/arctic-fox/spectator/-/issues/21)
+- Examples with failures or skipped during execution will report the location of that result. [#57](https://gitlab.com/arctic-fox/spectator/-/issues/57)
 
 ### Changed
 - `around_each` hooks wrap `before_all` and `after_all` hooks. [#12](https://github.com/icy-arctic-fox/spectator/issues/12)
