@@ -17,25 +17,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Tags can be added to examples and example groups.
 - Add matcher to check compiled type of values.
 - Examples can be skipped by using a `:pending` tag. A reason method can be specified: `pending: "Some excuse"`
+- Examples missing a block are marked as pending. [#37](https://gitlab.com/arctic-fox/spectator/-/issues/37)
 - Examples can be skipped during execution by using `skip` or `pending` in the example block.
 - Sample blocks can be temporarily skipped by using `xsample` or `xrandom_sample`.
-- Add `before_suite` and `after_suite` hooks.
-- Support defining hooks in `Spectator.configure` block.
+- Add `before_suite` and `after_suite` hooks. [#21](https://gitlab.com/arctic-fox/spectator/-/issues/21)
+- Support defining hooks in `Spectator.configure` block. [#21](https://gitlab.com/arctic-fox/spectator/-/issues/21)
 
 ### Changed
-- Simplify and reduce defined types and generics. Should speed up compilation times.
 - `around_each` hooks wrap `before_all` and `after_all` hooks. [#12](https://github.com/icy-arctic-fox/spectator/issues/12)
 - `given` (now `provided`) blocks changed to produce a single example. `it` can no longer be nested in a `provided` block.
 - The "should" syntax no longer reports the source as inside Spectator.
 - Short-hand "should" syntax must be included by using `require "spectator/should"` - `it { should eq("foo") }`
-- Overhaul example creation and handling.
-- Overhaul storage of test values.
-- Overhaul reporting and formatting. Cleaner output for failures and pending tests.
-- Cleanup and simplify DSL implementation.
 - Better error messages and detection when DSL methods are used when they shouldn't (i.e. `describe` inside `it`).
 - Prevent usage of reserved keywords in DSL (such as `initialize`).
 - The count argument for `sample` and `random_sample` groups must be named (use `count: 5` instead of just `5`).
 - Helper methods used as arguments for `sample` and `random_sample` must be class methods.
+- Simplify and reduce defined types and generics. Should speed up compilation times.
+- Overhaul example creation and handling.
+- Overhaul storage of test values.
+- Overhaul reporting and formatting. Cleaner output for failures and pending tests.
+- Cleanup and simplify DSL implementation.
 - Other minor internal improvements and cleanup.
 
 ### Deprecated
