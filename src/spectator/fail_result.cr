@@ -51,7 +51,7 @@ module Spectator
     # This only works if the location of the failed expectation was reported.
     # If available, returns a `Location`, otherwise raises `NilAssertionError`.
     def location : Location
-      location? || raise(NilAssertionError.new("Source location of result unavailable"))
+      location? || raise(NilAssertionError.new("Source location of failure unavailable"))
     end
 
     # One-word description of the result.
