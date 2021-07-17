@@ -39,6 +39,8 @@ module Spectator::Formatting::Components
       if backtrace = error.backtrace?
         indent { write_backtrace(io, backtrace) }
       end
+
+      io.puts
     end
 
     # Display just the error type.
