@@ -168,5 +168,64 @@ module Spectator::DSL
         ::Spectator::DSL::Builder.end_group
       end
     end
+
+    # Defines a new iterative example group.
+    # This type of group duplicates its contents for each element in *collection*.
+    # This is the same as `#sample` except that the items are shuffled.
+    # The items are selected with a RNG based on the seed.
+    #
+    # The first argument is the collection of elements to iterate over.
+    #
+    # Tags can be specified by adding symbols (keywords) after the first argument.
+    # Key-value pairs can also be specified.
+    # Any falsey items will remove a previously defined tag.
+    #
+    # The number of items iterated can be restricted by specifying a *count* argument.
+    # The first *count* items will be used if specified, otherwise all items will be used.
+    #
+    # TODO: Handle string interpolation in example and group names.
+    macro random_sample(collection, *tags, count = nil, **metadata, &block)
+      {% raise "Cannot use 'sample' inside of a test block" if @def %}
+
+      class Group%group < {{@type.id}}
+        _spectator_metadata(:metadata, :super, {{tags.splat(", ")}} {{metadata.double_splat}})
+
+        def self.%collection
+          {{collection}}
+        end
+
+        {% if count %}
+          def self.%collection
+            previous_def.sample({{count}}, ::Spectator.random)
+          end
+        {% else %}
+          def self.%collection
+            previous_def.to_a.shuffle(::Spectator.random)
+          end
+        {% end %}
+
+        ::Spectator::DSL::Builder.start_iterative_group(
+          %collection,
+          {{collection.stringify}},
+          {{block.args.empty? ? :nil.id : block.args.first.stringify}},
+          ::Spectator::Location.new({{block.filename}}, {{block.line_number}}),
+          metadata
+        )
+
+        {% if block %}
+          {% if block.args.size == 1 %}
+            let({{block.args.first}}) do |example|
+              example.group.as(::Spectator::ExampleGroupIteration(typeof(Group%group.%collection.first))).item
+            end
+          {% elsif block.args.size > 1 %}
+            {% raise "Expected 1 argument for 'sample' block, but got #{block.args.size}" %}
+          {% end %}
+
+          {{block.body}}
+        {% end %}
+
+        ::Spectator::DSL::Builder.end_group
+      end
+    end
   end
 end

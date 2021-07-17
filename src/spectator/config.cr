@@ -62,7 +62,7 @@ module Spectator
 
     # Retrieves the configured random number generator.
     # This will produce the same generator with the same seed every time.
-    private def random
+    def random
       Random.new(random_seed)
     end
   end
