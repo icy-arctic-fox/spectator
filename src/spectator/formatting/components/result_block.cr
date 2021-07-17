@@ -73,9 +73,8 @@ module Spectator::Formatting::Components
     private def location_line(io)
       location = if (result = @example.result).responds_to?(:location)
                    result.location
-                 else
-                   @example.location?
                  end
+      location ||= @example.location?
       return unless location
 
       line(io) { io << Comment.colorize(location) }
