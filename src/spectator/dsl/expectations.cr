@@ -17,14 +17,14 @@ module Spectator::DSL
 
     # Mark the current test as pending and immediately abort.
     # A reason can be specified with *message*.
-    def pending(message = PendingResult::DEFAULT_REASON)
-      raise ExamplePending.new(message)
+    def pending(message = PendingResult::DEFAULT_REASON, *, _file = __FILE__, _line = __LINE__)
+      raise ExamplePending.new(Location.new(_file, _line), message)
     end
 
     # Mark the current test as skipped and immediately abort.
     # A reason can be specified with *message*.
-    def skip(message = PendingResult::DEFAULT_REASON)
-      raise ExamplePending.new(message)
+    def skip(message = PendingResult::DEFAULT_REASON, *, _file = __FILE__, _line = __LINE__)
+      raise ExamplePending.new(Location.new(_file, _line), message)
     end
 
     # Starts an expectation.

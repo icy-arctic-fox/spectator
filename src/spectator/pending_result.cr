@@ -10,10 +10,15 @@ module Spectator
     # Reason the example was skipped or marked pending.
     getter reason : String
 
+    # Location the pending result was triggered from.
+    getter location : Location?
+
     # Creates the result.
     # *elapsed* is the length of time it took to run the example.
     # A *reason* for the skip/pending result can be specified.
-    def initialize(@reason = DEFAULT_REASON, elapsed = Time::Span::ZERO, expectations = [] of Expectation)
+    # If the pending result was triggered inside of an example, then *location* can be set.
+    def initialize(@reason = DEFAULT_REASON, @location = nil,
+      elapsed = Time::Span::ZERO, expectations = [] of Expectation)
       super(elapsed, expectations)
     end
 

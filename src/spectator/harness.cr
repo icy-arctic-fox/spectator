@@ -123,7 +123,7 @@ module Spectator
       when ExampleFailed
         FailResult.new(elapsed, error, @expectations)
       when ExamplePending
-        PendingResult.new(error.message || PendingResult::DEFAULT_REASON, elapsed, @expectations)
+        PendingResult.new(error.message || PendingResult::DEFAULT_REASON, error.location, elapsed, @expectations)
       else
         ErrorResult.new(elapsed, error, @expectations)
       end
