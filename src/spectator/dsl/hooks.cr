@@ -47,6 +47,16 @@ module Spectator::DSL
       end
     end
 
+    # Defines a block of code that will be invoked once before any examples in the suite.
+    # The block will not run in the context of the current running example.
+    # This means that values defined by `let` and `subject` are not available.
+    define_example_group_hook :before_suite
+
+    # Defines a block of code that will be invoked once after all examples in the suite.
+    # The block will not run in the context of the current running example.
+    # This means that values defined by `let` and `subject` are not available.
+    define_example_group_hook :after_suite
+
     # Defines a block of code that will be invoked once before any examples in the group.
     # The block will not run in the context of the current running example.
     # This means that values defined by `let` and `subject` are not available.

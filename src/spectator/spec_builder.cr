@@ -135,6 +135,18 @@ module Spectator
       current << PendingExampleBuilder.new(name, location, metadata, reason)
     end
 
+    # Attaches a hook to be invoked before any and all examples in the test suite.
+    def before_suite(hook)
+      Log.trace { "Add before_suite hook #{hook}" }
+      root.add_before_all_hook(hook)
+    end
+
+    # Defines a block of code to execute before any and all examples in the test suite.
+    def before_suite(&block)
+      Log.trace { "Add before_suite hook" }
+      root.before_all(&block)
+    end
+
     # Attaches a hook to be invoked before any and all examples in the current group.
     def before_all(hook)
       Log.trace { "Add before_all hook #{hook}" }
@@ -159,6 +171,18 @@ module Spectator
     def before_each(&block : Example -> _)
       Log.trace { "Add before_each hook block" }
       current.before_each(&block)
+    end
+
+    # Attaches a hook to be invoked after any and all examples in the test suite.
+    def after_suite(hook)
+      Log.trace { "Add after_suite hook #{hook}" }
+      root.add_after_all_hook(hook)
+    end
+
+    # Defines a block of code to execute after any and all examples in the test suite.
+    def after_suite(&block)
+      Log.trace { "Add after_suite hook" }
+      root.after_all(&block)
     end
 
     # Attaches a hook to be invoked after any and all examples in the current group.
