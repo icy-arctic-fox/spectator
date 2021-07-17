@@ -48,7 +48,7 @@ module Spectator::Formatting::Components
         subtitle_line(io)
         io.puts
         content(io)
-        source_line(io)
+        location_line(io)
       end
     end
 
@@ -68,16 +68,16 @@ module Spectator::Formatting::Components
       end
     end
 
-    # Produces the (example) source line.
-    private def source_line(io)
-      source = if (result = @example.result).responds_to?(:source)
-                 result.source
-               else
-                 @example.location?
-               end
-      return unless source
+    # Produces the (example) location line.
+    private def location_line(io)
+      location = if (result = @example.result).responds_to?(:location)
+                   result.location
+                 else
+                   @example.location?
+                 end
+      return unless location
 
-      line(io) { io << Comment.colorize(source) }
+      line(io) { io << Comment.colorize(location) }
     end
 
     # Computes the number of spaces the index takes

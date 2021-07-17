@@ -15,8 +15,8 @@ module Spectator::Formatting::Components
       io.puts
       @failures.each do |failure|
         # Use failed location if it's available.
-        if (result = failure.result).responds_to?(:source)
-          location = result.source
+        if (result = failure.result).responds_to?(:location)
+          location = result.location
         end
 
         io.puts ExampleCommand.new(failure, location).colorize(:red)
