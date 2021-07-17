@@ -71,6 +71,8 @@ module Spectator
     #
     # The *collection* is the set of items to iterate over.
     # Child nodes in this group will be executed once for every item in the collection.
+    # The *name* should be a string representation of *collection*.
+    # The *iterator* is an optional name given to a single item in *collection*.
     #
     # The *location* optionally defined where the group originates in source code.
     #

@@ -1,5 +1,6 @@
 module Spectator
   abstract class NodeBuilder
-    abstract def build(parent)
+    # Produces a node for a spec.
+    abstract def build(parent = nil)
   end
 end
