@@ -3,9 +3,9 @@ require "./example_group_iteration"
 
 module Spectator
   class IterativeExampleGroupBuilder(T) < ExampleGroupBuilder
-    def initialize(@collection : Enumerable(T),
-      location : Location? = nil, metadata : Metadata = Metadata.new)
-      super(nil, location, metadata)
+    def initialize(@collection : Enumerable(T), name : String? = nil, @iterator : String? = nil,
+                   location : Location? = nil, metadata : Metadata = Metadata.new)
+      super(name, location, metadata)
     end
 
     def build(parent = nil)
@@ -16,7 +16,12 @@ module Spectator
         @after_each_hooks.each { |hook| group.add_after_each_hook(hook) }
         @around_each_hooks.each { |hook| group.add_around_each_hook(hook) }
         @collection.each do |item|
-          ExampleGroupIteration.new(item, item.inspect, @location, group).tap do |iteration|
+          name = if iterator = @iterator
+                   "#{iterator}: #{item.inspect}"
+                 else
+                   item.inspect
+                 end
+          ExampleGroupIteration.new(item, name, @location, group).tap do |iteration|
             @children.each(&.build(iteration))
           end
         end

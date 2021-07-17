@@ -146,6 +146,8 @@ module Spectator::DSL
 
         ::Spectator::DSL::Builder.start_iterative_group(
           %collection,
+          {{collection.stringify}},
+          {{block.args.empty? ? :nil.id : block.args.first.stringify}},
           ::Spectator::Location.new({{block.filename}}, {{block.line_number}}),
           metadata
         )

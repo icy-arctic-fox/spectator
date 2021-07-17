@@ -76,9 +76,9 @@ module Spectator
     #
     # A set of *metadata* can be used for filtering and modifying example behavior.
     # For instance, adding a "pending" tag will mark tests as pending and skip execution.
-    def start_iterative_group(collection, location = nil, metadata = Metadata.new) : Nil
-      Log.trace { "Start iterative group: #{typeof(collection)} @ #{location}; metadata: #{metadata}" }
-      builder = IterativeExampleGroupBuilder.new(collection, location, metadata)
+    def start_iterative_group(collection, name, iterator = nil, location = nil, metadata = Metadata.new) : Nil
+      Log.trace { "Start iterative group: #{name} (#{typeof(collection)}) @ #{location}; metadata: #{metadata}" }
+      builder = IterativeExampleGroupBuilder.new(collection, name, iterator, location, metadata)
       current << builder
       @stack.push(builder)
     end
