@@ -52,6 +52,71 @@ module Spectator::DSL
       end
     end
 
+    # Defines a macro to generate code for an iterative example group.
+    # The *name* is the name given to the macro.
+    #
+    # Default tags can be provided with *tags* and *metadata*.
+    # The tags are merged with parent groups.
+    # Any items with falsey values from *metadata* remove the corresponding tag.
+    #
+    # If provided, a block can be used to modify collection that will be iterated.
+    # It takes a single argument - the original collection from the user.
+    # The modified collection should be returned.
+    #
+    # TODO: Handle string interpolation in example and group names.
+    macro define_iterative_group(name, *tags, **metadata, &block)
+      macro {{name.id}}(collection, *tags, count = nil, **metadata, &block)
+        \{% raise "Cannot use 'sample' inside of a test block" if @def %}
+
+        class Group\%group < \{{@type.id}}
+          _spectator_metadata(:metadata, :super, {{tags.splat(", ")}} {{metadata.double_splat}})
+          _spectator_metadata(:metadata, :previous_def, \{{tags.splat(", ")}} \{{metadata.double_splat}})
+
+          def self.\%collection
+            \{{collection}}
+          end
+
+          {% if block %}
+            def self.%mutate({{block.args.splat}})
+              {{block.body}}
+            end
+
+            def self.\%collection
+              %mutate(previous_def)
+            end
+          {% end %}
+
+          \{% if count %}
+            def self.\%collection
+              previous_def.first(\{{count}})
+            end
+          \{% end %}
+
+          ::Spectator::DSL::Builder.start_iterative_group(
+            \%collection,
+            \{{collection.stringify}},
+            \{{block.args.empty? ? :nil.id : block.args.first.stringify}},
+            ::Spectator::Location.new(\{{block.filename}}, \{{block.line_number}}),
+            metadata
+          )
+
+          \{% if block %}
+            \{% if block.args.size == 1 %}
+              let(\{{block.args.first}}) do |example|
+                example.group.as(::Spectator::ExampleGroupIteration(typeof(Group\%group.\%collection.first))).item
+              end
+            \{% elsif block.args.size > 1 %}
+              \{% raise "Expected 1 argument for 'sample' block, but got #{block.args.size}" %}
+            \{% end %}
+
+            \{{block.body}}
+          \{% end %}
+
+          ::Spectator::DSL::Builder.end_group
+        end
+      end
+    end
+
     # Inserts the correct representation of a group's name.
     # If *what* appears to be a type name, it will be symbolized.
     # If it's a string, then it is dropped in as-is.
@@ -127,47 +192,10 @@ module Spectator::DSL
     #
     # The number of items iterated can be restricted by specifying a *count* argument.
     # The first *count* items will be used if specified, otherwise all items will be used.
-    #
-    # TODO: Handle string interpolation in example and group names.
-    macro sample(collection, *tags, count = nil, **metadata, &block)
-      {% raise "Cannot use 'sample' inside of a test block" if @def %}
+    define_iterative_group :sample
 
-      class Group%group < {{@type.id}}
-        _spectator_metadata(:metadata, :super, {{tags.splat(", ")}} {{metadata.double_splat}})
-
-        def self.%collection
-          {{collection}}
-        end
-
-        {% if count %}
-          def self.%collection
-            previous_def.first({{count}})
-          end
-        {% end %}
-
-        ::Spectator::DSL::Builder.start_iterative_group(
-          %collection,
-          {{collection.stringify}},
-          {{block.args.empty? ? :nil.id : block.args.first.stringify}},
-          ::Spectator::Location.new({{block.filename}}, {{block.line_number}}),
-          metadata
-        )
-
-        {% if block %}
-          {% if block.args.size == 1 %}
-            let({{block.args.first}}) do |example|
-              example.group.as(::Spectator::ExampleGroupIteration(typeof(Group%group.%collection.first))).item
-            end
-          {% elsif block.args.size > 1 %}
-            {% raise "Expected 1 argument for 'sample' block, but got #{block.args.size}" %}
-          {% end %}
-
-          {{block.body}}
-        {% end %}
-
-        ::Spectator::DSL::Builder.end_group
-      end
-    end
+    # :ditto:
+    define_iterative_group :xsample, skip: "Temporarily skipped with xsample"
 
     # Defines a new iterative example group.
     # This type of group duplicates its contents for each element in *collection*.
@@ -182,50 +210,13 @@ module Spectator::DSL
     #
     # The number of items iterated can be restricted by specifying a *count* argument.
     # The first *count* items will be used if specified, otherwise all items will be used.
-    #
-    # TODO: Handle string interpolation in example and group names.
-    macro random_sample(collection, *tags, count = nil, **metadata, &block)
-      {% raise "Cannot use 'sample' inside of a test block" if @def %}
+    define_iterative_group :random_sample do |collection|
+      collection.to_a.shuffle(::Spectator.random)
+    end
 
-      class Group%group < {{@type.id}}
-        _spectator_metadata(:metadata, :super, {{tags.splat(", ")}} {{metadata.double_splat}})
-
-        def self.%collection
-          {{collection}}
-        end
-
-        {% if count %}
-          def self.%collection
-            previous_def.sample({{count}}, ::Spectator.random)
-          end
-        {% else %}
-          def self.%collection
-            previous_def.to_a.shuffle(::Spectator.random)
-          end
-        {% end %}
-
-        ::Spectator::DSL::Builder.start_iterative_group(
-          %collection,
-          {{collection.stringify}},
-          {{block.args.empty? ? :nil.id : block.args.first.stringify}},
-          ::Spectator::Location.new({{block.filename}}, {{block.line_number}}),
-          metadata
-        )
-
-        {% if block %}
-          {% if block.args.size == 1 %}
-            let({{block.args.first}}) do |example|
-              example.group.as(::Spectator::ExampleGroupIteration(typeof(Group%group.%collection.first))).item
-            end
-          {% elsif block.args.size > 1 %}
-            {% raise "Expected 1 argument for 'sample' block, but got #{block.args.size}" %}
-          {% end %}
-
-          {{block.body}}
-        {% end %}
-
-        ::Spectator::DSL::Builder.end_group
-      end
+    # :ditto:
+    define_iterative_group :xrandom_sample, skip: "Temporarily skipped with xrandom_sample" do |collection|
+      collection.to_a.shuffle(::Spectator.random)
     end
   end
 end
