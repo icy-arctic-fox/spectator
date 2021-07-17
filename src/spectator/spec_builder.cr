@@ -43,7 +43,25 @@ module Spectator
     def build : Spec
       raise "Mismatched start and end groups" unless root?
 
-      Spec.new(root.build, config)
+      group = root.build
+
+      # Apply hooks from configuration.
+      config.before_suite_hooks.each { |hook| group.prepend_before_all_hook(hook) }
+      config.after_suite_hooks.each { |hook| group.prepend_after_all_hook(hook) }
+      config.before_each_hooks.each { |hook| group.prepend_before_each_hook(hook) }
+      config.after_each_hooks.each { |hook| group.prepend_after_each_hook(hook) }
+      config.around_each_hooks.each { |hook| group.prepend_around_each_hook(hook) }
+
+      # `before_all` and `after_all` hooks are slightly different.
+      # They are applied to every top-level group (groups just under root).
+      group.each do |node|
+        next unless node.is_a?(Events)
+
+        config.before_all_hooks.reverse_each { |hook| node.prepend_before_all_hook(hook) }
+        config.after_all_hooks.reverse_each { |hook| node.prepend_after_all_hook(hook) }
+      end
+
+      Spec.new(group, config)
     end
 
     # Defines a new example group and pushes it onto the group stack.

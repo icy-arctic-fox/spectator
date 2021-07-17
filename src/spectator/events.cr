@@ -33,6 +33,12 @@ module Spectator
         @%hooks << hook
       end
 
+      # Adds a hook to be invoked when the *{{name.id}}* event occurs.
+      # The hook is added to the front of the list.
+      def prepend_{{name.id}}_hook(hook : ExampleGroupHook) : Nil
+        @%hooks.unshift(hook)
+      end
+
       # Defines a hook for the *{{name.id}}* event.
       # The block of code given to this method is invoked when the event occurs.
       def {{name.id}}(&block : -> _) : Nil
@@ -84,6 +90,12 @@ module Spectator
       # Adds a hook to be invoked when the *{{name.id}}* event occurs.
       def add_{{name.id}}_hook(hook : ExampleHook) : Nil
         @%hooks << hook
+      end
+
+      # Adds a hook to be invoked when the *{{name.id}}* event occurs.
+      # The hook is added to the front of the list.
+      def prepend_{{name.id}}_hook(hook : ExampleHook) : Nil
+        @%hooks.unshift(hook)
       end
 
       # Defines a hook for the *{{name.id}}* event.

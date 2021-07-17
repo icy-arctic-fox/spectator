@@ -20,6 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Examples can be skipped during execution by using `skip` or `pending` in the example block.
 - Sample blocks can be temporarily skipped by using `xsample` or `xrandom_sample`.
 - Add `before_suite` and `after_suite` hooks.
+- Support defining hooks in `Spectator.configure` block.
 
 ### Changed
 - Simplify and reduce defined types and generics. Should speed up compilation times.

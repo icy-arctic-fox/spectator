@@ -20,6 +20,27 @@ module Spectator
     # Filter used to select which examples to run.
     getter example_filter : ExampleFilter
 
+    # List of hooks to run before all examples in the test suite.
+    protected getter before_suite_hooks : Array(ExampleGroupHook)
+
+    # List of hooks to run before each top-level example group.
+    protected getter before_all_hooks : Array(ExampleGroupHook)
+
+    # List of hooks to run before every example.
+    protected getter before_each_hooks : Array(ExampleHook)
+
+    # List of hooks to run after all examples in the test suite.
+    protected getter after_suite_hooks : Array(ExampleGroupHook)
+
+    # List of hooks to run after each top-level example group.
+    protected getter after_all_hooks : Array(ExampleGroupHook)
+
+    # List of hooks to run after every example.
+    protected getter after_each_hooks : Array(ExampleHook)
+
+    # List of hooks to run around every example.
+    protected getter around_each_hooks : Array(ExampleProcsyHook)
+
     # Creates a new configuration.
     # Properties are pulled from *source*.
     # Typically, *source* is a `Config::Builder`.
@@ -28,6 +49,14 @@ module Spectator
       @run_flags = source.run_flags
       @random_seed = source.random_seed
       @example_filter = source.example_filter
+
+      @before_suite_hooks = source.before_suite_hooks
+      @before_all_hooks = source.before_all_hooks
+      @before_each_hooks = source.before_each_hooks
+      @after_suite_hooks = source.after_suite_hooks
+      @after_all_hooks = source.after_all_hooks
+      @after_each_hooks = source.after_each_hooks
+      @around_each_hooks = source.around_each_hooks
     end
 
     # Produces the default configuration.

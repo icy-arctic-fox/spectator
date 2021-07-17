@@ -166,6 +166,12 @@ module Spectator
       @around_hooks << hook
     end
 
+    # Adds a hook to be invoked when the *around_each* event occurs.
+    # The hook is added to the front of the list.
+    def prepend_around_each_hook(hook : ExampleProcsyHook) : Nil
+      @around_hooks.unshift(hook)
+    end
+
     # Defines a hook for the *around_each* event.
     # The block of code given to this method is invoked when the event occurs.
     # The current example is provided as a block argument.

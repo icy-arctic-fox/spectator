@@ -20,6 +20,103 @@ module Spectator
       @additional_formatters = [] of Formatting::Formatter
       @filters = [] of ExampleFilter
 
+      # List of hooks to run before all examples in the test suite.
+      protected getter before_suite_hooks = [] of ExampleGroupHook
+
+      # List of hooks to run before each top-level example group.
+      protected getter before_all_hooks = [] of ExampleGroupHook
+
+      # List of hooks to run before every example.
+      protected getter before_each_hooks = [] of ExampleHook
+
+      # List of hooks to run after all examples in the test suite.
+      protected getter after_suite_hooks = [] of ExampleGroupHook
+
+      # List of hooks to run after each top-level example group.
+      protected getter after_all_hooks = [] of ExampleGroupHook
+
+      # List of hooks to run after every example.
+      protected getter after_each_hooks = [] of ExampleHook
+
+      # List of hooks to run around every example.
+      protected getter around_each_hooks = [] of ExampleProcsyHook
+
+      # Attaches a hook to be invoked before all examples in the test suite.
+      def add_before_suite_hook(hook)
+        @before_suite_hooks << hook
+      end
+
+      # Defines a block of code to execute before all examples in the test suite.
+      def before_suite(&block)
+        @before_suite_hooks << ExampleGroupHook.new(&block)
+      end
+
+      # Attaches a hook to be invoked before each top-level example group.
+      def add_before_all_hook(hook)
+        @before_all_hooks << hook
+      end
+
+      # Defines a block of code to execute before each top-level example group.
+      def before_all(&block)
+        @before_all_hooks << ExampleGroupHook.new(&block)
+      end
+
+      # Attaches a hook to be invoked before every example.
+      # The current example is provided as a block argument.
+      def add_before_each_hook(hook)
+        @before_each_hooks << hook
+      end
+
+      # Defines a block of code to execute before every.
+      # The current example is provided as a block argument.
+      def before_each(&block : Example -> _)
+        @before_each_hooks << ExampleHook.new(&block)
+      end
+
+      # Attaches a hook to be invoked after all examples in the test suite.
+      def add_after_suite_hook(hook)
+        @after_suite_hooks << hook
+      end
+
+      # Defines a block of code to execute after all examples in the test suite.
+      def after_suite(&block)
+        @after_suite_hooks << ExampleGroupHook.new(&block)
+      end
+
+      # Attaches a hook to be invoked after each top-level example group.
+      def add_after_all_hook(hook)
+        @after_all_hooks << hook
+      end
+
+      # Defines a block of code to execute after each top-level example group.
+      def after_all(&block)
+        @after_all_hooks << ExampleGroupHook.new(&block)
+      end
+
+      # Attaches a hook to be invoked after every example.
+      # The current example is provided as a block argument.
+      def add_after_each_hook(hook)
+        @after_each_hooks << hook
+      end
+
+      # Defines a block of code to execute after every example.
+      # The current example is provided as a block argument.
+      def after_each(&block : Example -> _)
+        @after_each_hooks << ExampleHook.new(&block)
+      end
+
+      # Attaches a hook to be invoked around every example.
+      # The current example in procsy form is provided as a block argument.
+      def add_around_each_hook(hook)
+        @around_each_hooks << hook
+      end
+
+      # Defines a block of code to execute around every example.
+      # The current example in procsy form is provided as a block argument.
+      def around_each(&block : Example -> _)
+        @around_each_hooks << ExampleProcsyHook.new(label: "around_each", &block)
+      end
+
       # Creates a configuration.
       def build : Config
         Config.new(self)
