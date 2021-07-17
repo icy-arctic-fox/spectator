@@ -1,8 +1,11 @@
 require "./config"
 require "./example"
+require "./example_builder"
 require "./example_context_method"
 require "./example_group"
+require "./example_group_builder"
 require "./iterative_example_group"
+require "./pending_example_builder"
 require "./spec"
 require "./metadata"
 
@@ -19,7 +22,7 @@ module Spectator
     # The root group should never be removed.
     # The top of the stack (last element) is the current group.
     # New examples should be added to the current group.
-    @stack : Deque(ExampleGroup)
+    @stack : Deque(ExampleGroupBuilder)
 
     # Configuration for the spec.
     @config : Config?
@@ -27,8 +30,8 @@ module Spectator
     # Creates a new spec builder.
     # A root group is pushed onto the group stack.
     def initialize
-      root = ExampleGroup.new
-      @stack = Deque(ExampleGroup).new
+      root = ExampleGroupBuilder.new
+      @stack = Deque(ExampleGroupBuilder).new
       @stack.push(root)
     end
 
@@ -40,7 +43,7 @@ module Spectator
     def build : Spec
       raise "Mismatched start and end groups" unless root?
 
-      Spec.new(root, config)
+      Spec.new(root.build, config)
     end
 
     # Defines a new example group and pushes it onto the group stack.
@@ -55,14 +58,11 @@ module Spectator
     #
     # A set of *metadata* can be used for filtering and modifying example behavior.
     # For instance, adding a "pending" tag will mark tests as pending and skip execution.
-    #
-    # The newly created group is returned.
-    # It shouldn't be used outside of this class until a matching `#end_group` is called.
-    def start_group(name, location = nil, metadata = Metadata.new) : ExampleGroup
+    def start_group(name, location = nil, metadata = Metadata.new) : Nil
       Log.trace { "Start group: #{name.inspect} @ #{location}; metadata: #{metadata}" }
-      ExampleGroup.new(name, location, current, metadata).tap do |group|
-        @stack.push(group)
-      end
+      builder = ExampleGroupBuilder.new(name, location, metadata)
+      current << builder
+      @stack.push(builder)
     end
 
     # Defines a new iterative example group and pushes it onto the group stack.
@@ -76,23 +76,16 @@ module Spectator
     #
     # A set of *metadata* can be used for filtering and modifying example behavior.
     # For instance, adding a "pending" tag will mark tests as pending and skip execution.
-    #
-    # The newly created group is returned.
-    # It shouldn't be used outside of this class until a matching `#end_group` is called.
-    def start_iterative_group(collection, location = nil, metadata = Metadata.new) : ExampleGroup
+    def start_iterative_group(collection, location = nil, metadata = Metadata.new) : Nil
       Log.trace { "Start iterative group: #{typeof(collection)} @ #{location}; metadata: #{metadata}" }
-      IterativeExampleGroup.new(collection, location, current, metadata).tap do |group|
-        @stack.push(group)
-      end
+      builder = ExampleGroupBuilder.new(collection, location, metadata) # TODO: IterativeExampleGroupBuilder
+      current << builder
+      @stack.push(builder)
     end
 
     # Completes a previously defined example group and pops it off the group stack.
     # Be sure to call `#start_group` and `#end_group` symmetically.
-    #
-    # The completed group will be returned.
-    # At this point, it is safe to use the group.
-    # All of its examples and sub-groups have been populated.
-    def end_group : ExampleGroup
+    def end_group : Nil
       Log.trace { "End group: #{current}" }
       raise "Can't pop root group" if root?
 
@@ -118,12 +111,9 @@ module Spectator
     # It will be yielded two arguments - the example created by this method, and the *context* argument.
     # The return value of the block is ignored.
     # It is expected that the test code runs when the block is called.
-    def add_example(name, location, context_builder, metadata = Metadata.new, &block : Example -> _)
+    def add_example(name, location, context_builder, metadata = Metadata.new, &block : Example -> _) : Nil
       Log.trace { "Add example: #{name} @ #{location}; metadata: #{metadata}" }
-      current.create_child do |group|
-        context = context_builder.call
-        Example.new(context, block, name, location, group, metadata)
-      end
+      current << ExampleBuilder.new(context_builder, block, name, location, metadata)
     end
 
     # Defines a new pending example.
@@ -138,13 +128,9 @@ module Spectator
     # A set of *metadata* can be used for filtering and modifying example behavior.
     # For instance, adding a "pending" tag will mark the test as pending and skip execution.
     # A default *reason* can be given in case the user didn't provide one.
-    #
-    # The newly created example is returned.
-    def add_pending_example(name, location, metadata = Metadata.new, reason = nil) : Example
+    def add_pending_example(name, location, metadata = Metadata.new, reason = nil) : Nil
       Log.trace { "Add pending example: #{name} @ #{location}; metadata: #{metadata}" }
-      current.create_child do |group|
-        Example.pending(name, location, group, metadata, reason)
-      end
+      current << PendingExampleBuilder.new(name, location, metadata)
     end
 
     # Attaches a hook to be invoked before any and all examples in the current group.
