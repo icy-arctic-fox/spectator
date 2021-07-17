@@ -18,7 +18,7 @@ module Spectator
     # A *reason* for the skip/pending result can be specified.
     # If the pending result was triggered inside of an example, then *location* can be set.
     def initialize(@reason = DEFAULT_REASON, @location = nil,
-      elapsed = Time::Span::ZERO, expectations = [] of Expectation)
+                   elapsed = Time::Span::ZERO, expectations = [] of Expectation)
       super(elapsed, expectations)
     end
 
