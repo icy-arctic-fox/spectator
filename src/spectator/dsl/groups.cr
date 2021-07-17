@@ -125,8 +125,11 @@ module Spectator::DSL
     # Key-value pairs can also be specified.
     # Any falsey items will remove a previously defined tag.
     #
+    # The number of items iterated can be restricted by specifying a *count* argument.
+    # The first *count* items will be used if specified, otherwise all items will be used.
+    #
     # TODO: Handle string interpolation in example and group names.
-    macro sample(collection, *tags, **metadata, &block)
+    macro sample(collection, *tags, count = nil, **metadata, &block)
       {% raise "Cannot use 'sample' inside of a test block" if @def %}
 
       class Group%group < {{@type.id}}
@@ -135,6 +138,12 @@ module Spectator::DSL
         def self.%collection
           {{collection}}
         end
+
+        {% if count %}
+          def self.%collection
+            previous_def.first({{count}})
+          end
+        {% end %}
 
         ::Spectator::DSL::Builder.start_iterative_group(
           %collection,

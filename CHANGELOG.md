@@ -31,6 +31,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Cleanup and simplify DSL implementation.
 - Better error messages and detection when DSL methods are used when they shouldn't (i.e. `describe` inside `it`).
 - Prevent usage of reserved keywords in DSL (such as `initialize`).
+- The count argument for `sample` and `random_sample` groups must be named (use `count: 5` instead of just `5`).
 - Other minor internal improvements and cleanup.
 
 ### Deprecated
