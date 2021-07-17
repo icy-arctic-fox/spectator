@@ -9,9 +9,9 @@ module Spectator::DSL
     # The block is evaluated only on the first time the getter is used
     # and the return value is saved for subsequent calls.
     macro let(name, &block)
-      {% raise "Block required for 'let'" unless block %}
-      {% raise "Cannot use 'let' inside of a test block" if @def %}
-      {% raise "Block argument count for 'let' must be 0..1" if block.args.size > 1 %}
+      {% raise "Missing block for 'let'" unless block %}
+      {% raise "Expected zero or one arguments for 'let', but got #{block.args.size}" if block.args.size > 1 %}
+      {% raise "Cannot use 'let' inside of an example block" if @def %}
       {% raise "Cannot use '#{name.id}' for 'let'" if ::Spectator::DSL::RESERVED_KEYWORDS.includes?(name.id.symbolize) %}
 
       @%value = ::Spectator::LazyWrapper.new
@@ -31,9 +31,9 @@ module Spectator::DSL
     # The block is evaluated once before the example runs
     # and the return value is saved.
     macro let!(name, &block)
-      {% raise "Block required for 'let!'" unless block %}
-      {% raise "Cannot use 'let!' inside of a test block" if @def %}
-      {% raise "Block argument count for 'let!' must be 0..1" if block.args.size > 1 %}
+      {% raise "Missing block for 'let!'" unless block %}
+      {% raise "Expected zero or one arguments for 'let!', but got #{block.args.size}" if block.args.size > 1 %}
+      {% raise "Cannot use 'let!' inside of an example block" if @def %}
       {% raise "Cannot use '#{name.id}' for 'let!'" if ::Spectator::DSL::RESERVED_KEYWORDS.includes?(name.id.symbolize) %}
 
       let({{name}}) {{block}}
@@ -45,9 +45,9 @@ module Spectator::DSL
     # The block is evaluated only the first time the subject is referenced
     # and the return value is saved for subsequent calls.
     macro subject(&block)
-      {% raise "Block required for 'subject'" unless block %}
-      {% raise "Cannot use 'subject' inside of a test block" if @def %}
-      {% raise "Block argument count for 'subject' must be 0..1" if block.args.size > 1 %}
+      {% raise "Missing block for 'subject'" unless block %}
+      {% raise "Expected zero or one arguments for 'let!', but got #{block.args.size}" if block.args.size > 1 %}
+      {% raise "Cannot use 'subject' inside of an example block" if @def %}
 
       let(subject) {{block}}
     end
@@ -58,9 +58,9 @@ module Spectator::DSL
     # The block is evaluated only the first time the subject is referenced
     # and the return value is saved for subsequent calls.
     macro subject(name, &block)
-      {% raise "Block required for 'subject'" unless block %}
-      {% raise "Cannot use 'subject' inside of a test block" if @def %}
-      {% raise "Block argument count for 'subject' must be 0..1" if block.args.size > 1 %}
+      {% raise "Missing block for 'subject'" unless block %}
+      {% raise "Expected zero or one arguments for 'subject', but got #{block.args.size}" if block.args.size > 1 %}
+      {% raise "Cannot use 'subject' inside of an example block" if @def %}
       {% raise "Cannot use '#{name.id}' for 'subject'" if ::Spectator::DSL::RESERVED_KEYWORDS.includes?(name.id.symbolize) %}
 
       let({{name.id}}) {{block}}
@@ -77,9 +77,9 @@ module Spectator::DSL
     # The block is evaluated once before the example runs
     # and the return value is saved for subsequent calls.
     macro subject!(&block)
-      {% raise "Block required for 'subject!'" unless block %}
-      {% raise "Cannot use 'subject!' inside of a test block" if @def %}
-      {% raise "Block argument count for 'subject!' must be 0..1" if block.args.size > 1 %}
+      {% raise "Missing block for 'subject'" unless block %}
+      {% raise "Expected zero or one arguments for 'subject!', but got #{block.args.size}" if block.args.size > 1 %}
+      {% raise "Cannot use 'subject!' inside of an example block" if @def %}
 
       let!(subject) {{block}}
     end
@@ -90,9 +90,9 @@ module Spectator::DSL
     # The block is evaluated once before the example runs
     # and the return value is saved for subsequent calls.
     macro subject!(name, &block)
-      {% raise "Block required for 'subject!'" unless block %}
-      {% raise "Cannot use 'subject!' inside of a test block" if @def %}
-      {% raise "Block argument count for 'subject!' must be 0..1" if block.args.size > 1 %}
+      {% raise "Missing block for 'subject'" unless block %}
+      {% raise "Expected zero or one arguments for 'subject!', but got #{block.args.size}" if block.args.size > 1 %}
+      {% raise "Cannot use 'subject!' inside of an example block" if @def %}
       {% raise "Cannot use '#{name.id}' for 'subject!'" if ::Spectator::DSL::RESERVED_KEYWORDS.includes?(name.id.symbolize) %}
 
       let!({{name.id}}) {{block}}

@@ -45,7 +45,7 @@ module Spectator::DSL
             metadata
           )
 
-          \{{block.body}}
+          \{{block.body if block}}
 
           ::Spectator::DSL::Builder.end_group
         end
@@ -136,14 +136,6 @@ module Spectator::DSL
           {{collection}}
         end
 
-        {% if block.args.size == 1 %}
-          let({{block.args.first}}) do |example|
-            example.group.as(::Spectator::ExampleGroupIteration(typeof(Group%group.%collection.first))).item
-          end
-        {% elsif block.args.size > 1 %}
-          {% raise "Expected 1 argument for 'sample' block, but got #{block.args.size}" %}
-        {% end %}
-
         ::Spectator::DSL::Builder.start_iterative_group(
           %collection,
           {{collection.stringify}},
@@ -152,7 +144,17 @@ module Spectator::DSL
           metadata
         )
 
-        {{block.body}}
+        {% if block %}
+          {% if block.args.size == 1 %}
+            let({{block.args.first}}) do |example|
+              example.group.as(::Spectator::ExampleGroupIteration(typeof(Group%group.%collection.first))).item
+            end
+          {% elsif block.args.size > 1 %}
+            {% raise "Expected 1 argument for 'sample' block, but got #{block.args.size}" %}
+          {% end %}
+
+          {{block.body}}
+        {% end %}
 
         ::Spectator::DSL::Builder.end_group
       end
