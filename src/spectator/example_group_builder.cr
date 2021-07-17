@@ -31,7 +31,7 @@ module Spectator
     end
 
     # Defines a block of code to execute before any and all examples in the current group.
-    def add_before_all_hook(&block)
+    def before_all(&block)
       @before_all_hooks << ExampleGroupHook.new(&block)
     end
 
@@ -43,7 +43,7 @@ module Spectator
 
     # Defines a block of code to execute before every example in the current group.
     # The current example is provided as a block argument.
-    def add_before_each_hook(&block : Example -> _)
+    def before_each(&block : Example -> _)
       @before_each_hooks << ExampleHook.new(&block)
     end
 
@@ -53,7 +53,7 @@ module Spectator
     end
 
     # Defines a block of code to execute after any and all examples in the current group.
-    def add_after_all_hook(&block)
+    def after_all(&block)
       @after_all_hooks << ExampleGroupHook.new(&block)
     end
 
@@ -65,7 +65,7 @@ module Spectator
 
     # Defines a block of code to execute after every example in the current group.
     # The current example is provided as a block argument.
-    def add_after_each_hook(&block : Example -> _)
+    def after_each(&block : Example -> _)
       @after_each_hooks << ExampleHook.new(&block)
     end
 
@@ -77,7 +77,7 @@ module Spectator
 
     # Defines a block of code to execute around every example in the current group.
     # The current example in procsy form is provided as a block argument.
-    def add_around_each_hook(&block : Example -> _)
+    def around_each(&block : Example -> _)
       @around_each_hooks << ExampleProcsyHook.new(label: "around_each", &block)
     end
 
