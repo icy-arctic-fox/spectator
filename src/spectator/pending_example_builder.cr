@@ -11,7 +11,7 @@ module Spectator
     # The *name*, *location*, and *metadata* will be applied to the `Example` produced by `#build`.
     # A default *reason* can be given in case the user didn't provide one.
     def initialize(@name : String? = nil, @location : Location? = nil,
-      @metadata : Metadata = Metadata.new, @reason : String? = nil)
+                   @metadata : Metadata = Metadata.new, @reason : String? = nil)
     end
 
     # Constructs an example with previously defined attributes.
