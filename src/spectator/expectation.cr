@@ -24,7 +24,13 @@ module Spectator
 
     # If nil, then the match was successful.
     def failure_message?
-      @match_data.as?(Matchers::FailedMatchData).try(&.failure_message)
+      return unless match_data = @match_data.as?(Matchers::FailedMatchData)
+
+      case message = @message
+      when String then message
+      when Proc(String) then @message = message.call # Cache result of call.
+      else match_data.failure_message
+      end
     end
 
     # Description of why the match failed.
@@ -50,7 +56,9 @@ module Spectator
     # Creates the expectation.
     # The *match_data* comes from the result of calling `Matcher#match`.
     # The *location* is the location of the expectation in source code, if available.
-    def initialize(@match_data : Matchers::MatchData, @location : Location? = nil)
+    # A custom *message* can be used in case of a failure.
+    def initialize(@match_data : Matchers::MatchData, @location : Location? = nil,
+      @message : String? | Proc(String) = nil)
     end
 
     # Creates the JSON representation of the expectation.
@@ -92,9 +100,10 @@ module Spectator
       end
 
       # Asserts that some criteria defined by the matcher is satisfied.
-      def to(matcher) : Nil
+      # Allows a custom message to be used.
+      def to(matcher, message = nil) : Nil
         match_data = matcher.match(@expression)
-        report(match_data)
+        report(match_data, message)
       end
 
       def to(stub : Mocks::MethodStub) : Nil
@@ -110,9 +119,16 @@ module Spectator
 
       # Asserts that some criteria defined by the matcher is not satisfied.
       # This is effectively the opposite of `#to`.
-      def to_not(matcher) : Nil
+      # Allows a custom message to be used.
+      def to_not(matcher, message = nil) : Nil
         match_data = matcher.negated_match(@expression)
-        report(match_data)
+        report(match_data, message)
+      end
+
+      # :ditto:
+      @[AlwaysInline]
+      def not_to(matcher, message = nil) : Nil
+        to_not(matcher, message)
       end
 
       def to_not(stub : Mocks::MethodStub) : Nil
@@ -125,16 +141,11 @@ module Spectator
         stubs.each { |stub| to_not(stub) }
       end
 
-      # :ditto:
-      @[AlwaysInline]
-      def not_to(matcher) : Nil
-        to_not(matcher)
-      end
-
       # Asserts that some criteria defined by the matcher is eventually satisfied.
       # The expectation is checked after the example finishes and all hooks have run.
-      def to_eventually(matcher) : Nil
-        Harness.current.defer { to(matcher) }
+      # Allows a custom message to be used.
+      def to_eventually(matcher, message = nil) : Nil
+        Harness.current.defer { to(matcher, message) }
       end
 
       def to_eventually(stub : Mocks::MethodStub) : Nil
@@ -147,8 +158,15 @@ module Spectator
 
       # Asserts that some criteria defined by the matcher is never satisfied.
       # The expectation is checked after the example finishes and all hooks have run.
-      def to_never(matcher) : Nil
-        Harness.current.defer { to_not(matcher) }
+      # Allows a custom message to be used.
+      def to_never(matcher, message = nil) : Nil
+        Harness.current.defer { to_not(matcher, message) }
+      end
+
+      # :ditto:
+      @[AlwaysInline]
+      def never_to(matcher, message = nil) : Nil
+        to_never(matcher, message)
       end
 
       def to_never(stub : Mocks::MethodStub) : Nil
@@ -159,15 +177,9 @@ module Spectator
         to_not(stub)
       end
 
-      # :ditto:
-      @[AlwaysInline]
-      def never_to(matcher) : Nil
-        to_never(matcher)
-      end
-
       # Reports an expectation to the current harness.
-      private def report(match_data : Matchers::MatchData)
-        expectation = Expectation.new(match_data, @location)
+      private def report(match_data : Matchers::MatchData, message : String? | Proc(String) = nil)
+        expectation = Expectation.new(match_data, @location, message)
         Harness.current.report(expectation)
       end
     end
