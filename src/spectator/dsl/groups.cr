@@ -136,6 +136,14 @@ module Spectator::DSL
           {{collection}}
         end
 
+        {% if block.args.size == 1 %}
+          let({{block.args.first}}) do |example|
+            example.group.as(::Spectator::ExampleGroupIteration(typeof(Group%group.%collection.first))).item
+          end
+        {% elsif block.args.size > 1 %}
+          {% raise "Expected 1 argument for 'sample' block, but got #{block.args.size}" %}
+        {% end %}
+
         ::Spectator::DSL::Builder.start_iterative_group(
           %collection,
           ::Spectator::Location.new({{block.filename}}, {{block.line_number}}),
