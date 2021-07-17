@@ -19,7 +19,7 @@ module Spectator
     # The root group should never be removed.
     # The top of the stack (last element) is the current group.
     # New examples should be added to the current group.
-    @group_stack : Deque(ExampleGroup)
+    @stack : Deque(ExampleGroup)
 
     # Configuration for the spec.
     @config : Config?
@@ -27,9 +27,9 @@ module Spectator
     # Creates a new spec builder.
     # A root group is pushed onto the group stack.
     def initialize
-      root_group = ExampleGroup.new
-      @group_stack = Deque(ExampleGroup).new
-      @group_stack.push(root_group)
+      root = ExampleGroup.new
+      @stack = Deque(ExampleGroup).new
+      @stack.push(root)
     end
 
     # Constructs the test spec.
@@ -40,7 +40,7 @@ module Spectator
     def build : Spec
       raise "Mismatched start and end groups" unless root?
 
-      Spec.new(root_group, config)
+      Spec.new(root, config)
     end
 
     # Defines a new example group and pushes it onto the group stack.
@@ -60,8 +60,8 @@ module Spectator
     # It shouldn't be used outside of this class until a matching `#end_group` is called.
     def start_group(name, location = nil, metadata = Metadata.new) : ExampleGroup
       Log.trace { "Start group: #{name.inspect} @ #{location}; metadata: #{metadata}" }
-      ExampleGroup.new(name, location, current_group, metadata).tap do |group|
-        @group_stack << group
+      ExampleGroup.new(name, location, current, metadata).tap do |group|
+        @stack.push(group)
       end
     end
 
@@ -81,8 +81,8 @@ module Spectator
     # It shouldn't be used outside of this class until a matching `#end_group` is called.
     def start_iterative_group(collection, location = nil, metadata = Metadata.new) : ExampleGroup
       Log.trace { "Start iterative group: #{typeof(collection)} @ #{location}; metadata: #{metadata}" }
-      IterativeExampleGroup.new(collection, location, current_group, metadata).tap do |group|
-        @group_stack << group
+      IterativeExampleGroup.new(collection, location, current, metadata).tap do |group|
+        @stack.push(group)
       end
     end
 
@@ -93,10 +93,10 @@ module Spectator
     # At this point, it is safe to use the group.
     # All of its examples and sub-groups have been populated.
     def end_group : ExampleGroup
-      Log.trace { "End group: #{current_group}" }
+      Log.trace { "End group: #{current}" }
       raise "Can't pop root group" if root?
 
-      @group_stack.pop
+      @stack.pop
     end
 
     # Defines a new example.
@@ -120,7 +120,7 @@ module Spectator
     # It is expected that the test code runs when the block is called.
     def add_example(name, location, context_builder, metadata = Metadata.new, &block : Example -> _)
       Log.trace { "Add example: #{name} @ #{location}; metadata: #{metadata}" }
-      current_group.create_child do |group|
+      current.create_child do |group|
         context = context_builder.call
         Example.new(context, block, name, location, group, metadata)
       end
@@ -142,7 +142,7 @@ module Spectator
     # The newly created example is returned.
     def add_pending_example(name, location, metadata = Metadata.new, reason = nil) : Example
       Log.trace { "Add pending example: #{name} @ #{location}; metadata: #{metadata}" }
-      current_group.create_child do |group|
+      current.create_child do |group|
         Example.pending(name, location, group, metadata, reason)
       end
     end
@@ -150,67 +150,67 @@ module Spectator
     # Attaches a hook to be invoked before any and all examples in the current group.
     def before_all(hook)
       Log.trace { "Add before_all hook #{hook}" }
-      current_group.add_before_all_hook(hook)
+      current.add_before_all_hook(hook)
     end
 
     # Defines a block of code to execute before any and all examples in the current group.
     def before_all(&block)
       Log.trace { "Add before_all hook" }
-      current_group.before_all(&block)
+      current.before_all(&block)
     end
 
     # Attaches a hook to be invoked before every example in the current group.
     # The current example is provided as a block argument.
     def before_each(hook)
       Log.trace { "Add before_each hook #{hook}" }
-      current_group.add_before_each_hook(hook)
+      current.add_before_each_hook(hook)
     end
 
     # Defines a block of code to execute before every example in the current group.
     # The current example is provided as a block argument.
     def before_each(&block : Example -> _)
       Log.trace { "Add before_each hook block" }
-      current_group.before_each(&block)
+      current.before_each(&block)
     end
 
     # Attaches a hook to be invoked after any and all examples in the current group.
     def after_all(hook)
       Log.trace { "Add after_all hook #{hook}" }
-      current_group.add_after_all_hook(hook)
+      current.add_after_all_hook(hook)
     end
 
     # Defines a block of code to execute after any and all examples in the current group.
     def after_all(&block)
       Log.trace { "Add after_all hook" }
-      current_group.after_all(&block)
+      current.after_all(&block)
     end
 
     # Attaches a hook to be invoked after every example in the current group.
     # The current example is provided as a block argument.
     def after_each(hook)
       Log.trace { "Add after_each hook #{hook}" }
-      current_group.add_after_each_hook(hook)
+      current.add_after_each_hook(hook)
     end
 
     # Defines a block of code to execute after every example in the current group.
     # The current example is provided as a block argument.
     def after_each(&block : Example -> _)
       Log.trace { "Add after_each hook" }
-      current_group.after_each(&block)
+      current.after_each(&block)
     end
 
     # Attaches a hook to be invoked around every example in the current group.
     # The current example in procsy form is provided as a block argument.
     def around_each(hook)
       Log.trace { "Add around_each hook #{hook}" }
-      current_group.add_around_each_hook(hook)
+      current.add_around_each_hook(hook)
     end
 
     # Defines a block of code to execute around every example in the current group.
     # The current example in procsy form is provided as a block argument.
     def around_each(&block : Example -> _)
       Log.trace { "Add around_each hook" }
-      current_group.around_each(&block)
+      current.around_each(&block)
     end
 
     # Builds the configuration to use for the spec.
@@ -230,18 +230,18 @@ module Spectator
 
     # Checks if the current group is the root group.
     private def root?
-      @group_stack.size == 1
+      @stack.size == 1
     end
 
     # Retrieves the root group.
-    private def root_group
-      @group_stack.first
+    private def root
+      @stack.first
     end
 
     # Retrieves the current group, which is at the top of the stack.
     # This is the group that new examples should be added to.
-    private def current_group
-      @group_stack.last
+    private def current
+      @stack.last
     end
 
     # Retrieves the configuration.
