@@ -96,8 +96,6 @@ module Spectator
             else
               Log.debug { "Randomizing test order (--order rand)" }
             end
-          else
-            nil
           end
         end
       end
