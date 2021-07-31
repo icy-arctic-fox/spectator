@@ -102,8 +102,8 @@ module Spectator
     private def apply_hooks(group)
       @before_all_hooks.each { |hook| group.add_before_all_hook(hook) }
       @before_each_hooks.each { |hook| group.add_before_each_hook(hook) }
-      @after_all_hooks.each { |hook| group.add_after_all_hook(hook) }
-      @after_each_hooks.each { |hook| group.add_after_each_hook(hook) }
+      @after_all_hooks.each { |hook| group.prepend_after_all_hook(hook) }
+      @after_each_hooks.each { |hook| group.prepend_after_each_hook(hook) }
       @around_each_hooks.each { |hook| group.add_around_each_hook(hook) }
     end
   end
