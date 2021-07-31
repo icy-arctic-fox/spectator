@@ -6,42 +6,94 @@ module Spectator::DSL
   module Hooks
     # Defines a macro to create an example group hook.
     # The *type* indicates when the hook runs and must be a method on `Spectator::DSL::Builder`.
-    macro define_example_group_hook(type)
-      macro {{type.id}}(&block)
-        \{% raise "Missing block for '{{type.id}}' hook" unless block %}
-        \{% raise "Cannot use '{{type.id}}' inside of a test block" if @def %}
+    # A custom *name* can be used for the hook method.
+    # If not provided, *type* will be used instead.
+    # Additionally, a block can be provided.
+    # The block can perform any operations necessary and yield to invoke the end-user hook.
+    macro define_example_group_hook(type, name = nil, &block)
+      macro {{(name ||= type).id}}(&block)
+        \{% raise "Missing block for '{{name.id}}' hook" unless block %}
+        \{% raise "Cannot use '{{name.id}}' inside of a test block" if @def %}
 
         private def self.\%hook : Nil
           \{{block.body}}
         end
 
+        {% if block %}
+          private def self.%wrapper : Nil
+            {{block.body}}
+          end
+        {% end %}
+
         ::Spectator::DSL::Builder.{{type.id}}(
           ::Spectator::Location.new(\{{block.filename}}, \{{block.line_number}})
-        ) { \%hook }
+        ) do
+          {% if block %}
+            %wrapper do |*args|
+              \{% if block.args.empty? %}
+                \%hook
+              \{% else %}
+                \%hook(*args)
+              \{% end %}
+            end
+          {% else %}
+            \%hook
+          {% end %}
+        end
       end
     end
 
     # Defines a macro to create an example hook.
     # The *type* indicates when the hook runs and must be a method on `Spectator::DSL::Builder`.
-    macro define_example_hook(type)
-      macro {{type.id}}(&block)
-        \{% raise "Missing block for '{{type.id}}' hook" unless block %}
-        \{% raise "Block argument count '{{type.id}}' hook must be 0..1" if block.args.size > 1 %}
-        \{% raise "Cannot use '{{type.id}}' inside of a test block" if @def %}
+    # A custom *name* can be used for the hook method.
+    # If not provided, *type* will be used instead.
+    # Additionally, a block can be provided that takes the current example as an argument.
+    # The block can perform any operations necessary and yield to invoke the end-user hook.
+    macro define_example_hook(type, name = nil, &block)
+      macro {{(name ||= type).id}}(&block)
+        \{% raise "Missing block for '{{name.id}}' hook" unless block %}
+        \{% raise "Block argument count '{{name.id}}' hook must be 0..1" if block.args.size > 1 %}
+        \{% raise "Cannot use '{{name.id}}' inside of a test block" if @def %}
 
         private def \%hook(\{{block.args.splat}}) : Nil
           \{{block.body}}
         end
 
+        {% if block %}
+          private def %wrapper({{block.args.splat}}) : Nil
+            {{block.body}}
+          end
+        {% end %}
+
         ::Spectator::DSL::Builder.{{type.id}}(
           ::Spectator::Location.new(\{{block.filename}}, \{{block.line_number}})
         ) do |example|
           example.with_context(\{{@type.name}}) do
-            \{% if block.args.empty? %}
-              \%hook
-            \{% else %}
-              \%hook(example)
-            \{% end %}
+            {% if block %}
+              {% if block.args.empty? %}
+                %wrapper do |*args|
+                  \{% if block.args.empty? %}
+                    \%hook
+                  \{% else %}
+                    \%hook(*args)
+                  \{% end %}
+                end
+              {% else %}
+                %wrapper(example) do |*args|
+                  \{% if block.args.empty? %}
+                    \%hook
+                  \{% else %}
+                    \%hook(*args)
+                  \{% end %}
+                end
+              {% end %}
+            {% else %}
+              \{% if block.args.empty? %}
+                \%hook
+              \{% else %}
+                \%hook(example)
+              \{% end %}
+            {% end %}
           end
         end
       end
