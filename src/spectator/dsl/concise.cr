@@ -18,12 +18,15 @@ module Spectator::DSL
     #   expect(x).to eq(42)
     # end
     # ```
-    macro provided(*assignments, &block)
+    macro provided(*assignments, **kwargs, &block)
       {% raise "Cannot use 'provided' inside of a test block" if @def %}
 
       class Given%given < {{@type.id}}
         {% for assignment in assignments %}
           let({{assignment.target}}) { {{assignment.value}} }
+        {% end %}
+        {% for name, value in kwargs %}
+          let({{name}}) { {{value}} }
         {% end %}
 
         {% if block %}
@@ -36,9 +39,9 @@ module Spectator::DSL
 
     # :ditto:
     @[Deprecated("Use `provided` instead.")]
-    macro given(*assignments, &block)
+    macro given(*assignments, **kwargs, &block)
       {% raise "Cannot use 'given' inside of a test block" if @def %}
-      provided({{assignments.splat}}) {{block}}
+      provided({{assignments.splat(",")}} {{kwargs.double_splat}}) {{block}}
     end
   end
 end
