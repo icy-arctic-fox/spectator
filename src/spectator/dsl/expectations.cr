@@ -172,8 +172,8 @@ module Spectator::DSL
     #  expect(false).to be_true
     # end
     # ```
-    def aggregate_failures
-      ::Spectator::Harness.current.aggregate_failures do
+    def aggregate_failures(label = nil)
+      ::Spectator::Harness.current.aggregate_failures(label) do
         yield
       end
     end

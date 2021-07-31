@@ -100,20 +100,20 @@ module Spectator
       @deferred << block
     end
 
-    def aggregate_failures
+    def aggregate_failures(label = nil)
       previous = @aggregate
       @aggregate = aggregate = [] of Expectation
       begin
         yield.tap do
           # If there's an nested aggregate (for some reason), allow the top-level one to handle things.
-          check_aggregate(aggregate) unless previous
+          check_aggregate(aggregate, label) unless previous
         end
       ensure
         @aggregate = previous
       end
     end
 
-    private def check_aggregate(aggregate)
+    private def check_aggregate(aggregate, label)
       failures = aggregate.select(&.failed?)
       case failures.size
       when 0 then return
@@ -121,7 +121,9 @@ module Spectator
         expectation = failures.first
         raise ExpectationFailed.new(expectation, expectation.failure_message)
       else
-        raise MultipleExpectationsFailed.new(failures, "Got #{failures.size} failures from failure aggregation block")
+        message = "Got #{failures.size} failures from failure aggregation block"
+        message += " \"#{label}\"" if label
+        raise MultipleExpectationsFailed.new(failures, message)
       end
     end
 

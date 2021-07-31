@@ -28,5 +28,14 @@ Spectator.describe Spectator do
         end
       end.to_not raise_error(Spectator::ExpectationFailed)
     end
+
+    it "supports naming the block" do
+      expect do
+        aggregate_failures "contradiction" do
+          expect(true).to be_false
+          expect(false).to be_true
+        end
+      end.to raise_error(Spectator::MultipleExpectationsFailed, /contradiction/)
+    end
   end
 end
