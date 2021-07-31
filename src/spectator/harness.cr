@@ -2,7 +2,9 @@ require "./error_result"
 require "./example_failed"
 require "./example_pending"
 require "./expectation"
+require "./expectation_failed"
 require "./mocks"
+require "./multiple_expectations_failed"
 require "./pass_result"
 require "./result"
 
@@ -66,6 +68,7 @@ module Spectator
 
     @deferred = Deque(->).new
     @expectations = [] of Expectation
+    @aggregate : Array(Expectation)? = nil
 
     # Runs test code and produces a result based on the outcome.
     # The test code should be called from within the block given to this method.
@@ -75,20 +78,51 @@ module Spectator
       translate(elapsed + elapsed2, error || error2)
     end
 
-    def report(expectation : Expectation) : Nil
+    def report(expectation : Expectation) : Bool
       Log.debug { "Reporting expectation #{expectation}" }
       @expectations << expectation
 
       # TODO: Move this out of harness, maybe to `Example`.
       Example.current.name = expectation.description unless Example.current.name?
 
-      raise ExpectationFailed.new(expectation, expectation.failure_message) if expectation.failed?
+      if expectation.failed?
+        raise ExpectationFailed.new(expectation, expectation.failure_message) unless (aggregate = @aggregate)
+        aggregate << expectation
+        false
+      else
+        true
+      end
     end
 
     # Stores a block of code to be executed later.
     # All deferred blocks run just before the `#run` method completes.
     def defer(&block) : Nil
       @deferred << block
+    end
+
+    def aggregate_failures
+      previous = @aggregate
+      @aggregate = aggregate = [] of Expectation
+      begin
+        yield.tap do
+          # If there's an nested aggregate (for some reason), allow the top-level one to handle things.
+          check_aggregate(aggregate) unless previous
+        end
+      ensure
+        @aggregate = previous
+      end
+    end
+
+    private def check_aggregate(aggregate)
+      failures = aggregate.select(&.failed?)
+      case failures.size
+      when 0 then return
+      when 1
+        expectation = failures.first
+        raise ExpectationFailed.new(expectation, expectation.failure_message)
+      else
+        raise MultipleExpectationsFailed.new(failures, "Got #{failures.size} failures from failure aggregation block")
+      end
     end
 
     # Yields to run the test code and returns information about the outcome.

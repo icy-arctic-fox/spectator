@@ -25,6 +25,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Examples with failures or skipped during execution will report the location of that result. [#57](https://gitlab.com/arctic-fox/spectator/-/issues/57)
 - Support custom messages for failed expectations. [#28](https://gitlab.com/arctic-fox/spectator/-/issues/28)
 - Allow named arguments and assignments for `provided` (`given`) block.
+- Add `aggregate_failures` to capture and report multiple failed expectations. [#24](https://gitlab.com/arctic-fox/spectator/-/issues/24)
 
 ### Changed
 - `around_each` hooks wrap `before_all` and `after_all` hooks. [#12](https://github.com/icy-arctic-fox/spectator/issues/12)

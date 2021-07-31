@@ -162,5 +162,20 @@ module Spectator::DSL
     macro is_not(expected)
       expect(subject).not_to(eq({{expected}}))
     end
+
+    # Captures multiple possible failures.
+    # Aborts after the block completes if there were any failed expectations in the block.
+    #
+    # ```
+    # aggregate_failures do
+    #  expect(true).to be_false
+    #  expect(false).to be_true
+    # end
+    # ```
+    def aggregate_failures
+      ::Spectator::Harness.current.aggregate_failures do
+        yield
+      end
+    end
   end
 end
