@@ -27,9 +27,9 @@ module Spectator
       return unless match_data = @match_data.as?(Matchers::FailedMatchData)
 
       case message = @message
-      when String then message
+      when String       then message
       when Proc(String) then @message = message.call # Cache result of call.
-      else match_data.failure_message
+      else                   match_data.failure_message
       end
     end
 
@@ -58,7 +58,7 @@ module Spectator
     # The *location* is the location of the expectation in source code, if available.
     # A custom *message* can be used in case of a failure.
     def initialize(@match_data : Matchers::MatchData, @location : Location? = nil,
-      @message : String? | Proc(String) = nil)
+                   @message : String? | Proc(String) = nil)
     end
 
     # Creates the JSON representation of the expectation.

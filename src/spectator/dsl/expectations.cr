@@ -168,8 +168,8 @@ module Spectator::DSL
     #
     # ```
     # aggregate_failures do
-    #  expect(true).to be_false
-    #  expect(false).to be_true
+    #   expect(true).to be_false
+    #   expect(false).to be_true
     # end
     # ```
     def aggregate_failures(label = nil)
