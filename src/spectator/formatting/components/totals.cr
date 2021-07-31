@@ -38,7 +38,9 @@ module Spectator::Formatting::Components
         io << " (" << @errors << " errors)"
       end
 
-      io << ", " << @pending << " pending"
+      if @pending > 1
+        io << ", " << @pending << " pending"
+      end
     end
   end
 end
