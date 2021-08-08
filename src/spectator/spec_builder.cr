@@ -37,12 +37,9 @@ module Spectator
     # New examples should be added to the current group.
     @stack : Deque(ExampleGroupBuilder)
 
-    # Configuration for the spec.
-    @config : Config?
-
     # Creates a new spec builder.
     # A root group is pushed onto the group stack.
-    def initialize
+    def initialize(@config : Config)
       root = ExampleGroupBuilder.new
       @stack = Deque(ExampleGroupBuilder).new
       @stack.push(root)
@@ -58,7 +55,7 @@ module Spectator
 
       group = root.build
       apply_config_hooks(group)
-      Spec.new(group, config)
+      Spec.new(group, @config)
     end
 
     # Defines a new example group and pushes it onto the group stack.
@@ -204,21 +201,6 @@ module Spectator
     # A new hook will be created by passing args to `ExampleGroupHook.new`.
     def append_after_suite(*args, **kwargs, &block) : Nil
       root.append_after_all(*args, **kwargs, &block)
-    end
-
-    # Builds the configuration to use for the spec.
-    # A `Config::Builder` is yielded to the block provided to this method.
-    # That builder will be used to create the configuration.
-    def configure(& : Config::Builder -> _) : Nil
-      builder = Config::Builder.new
-      yield builder
-      @config = builder.build
-    end
-
-    # Sets the configuration of the spec.
-    # This configuration controls how examples run.
-    def config=(config)
-      @config = config
     end
 
     # Checks if the current group is the root group.

@@ -10,7 +10,7 @@ module Spectator::DSL
     extend self
 
     # Underlying spec builder.
-    @@builder = SpecBuilder.new
+    private class_getter(builder) { SpecBuilder.new(Spectator.config) }
 
     # Defines a new example group and pushes it onto the group stack.
     # Examples and groups defined after calling this method will be nested under the new group.
@@ -18,7 +18,7 @@ module Spectator::DSL
     #
     # See `Spec::Builder#start_group` for usage details.
     def start_group(*args)
-      @@builder.start_group(*args)
+      builder.start_group(*args)
     end
 
     # Defines a new iterative example group and pushes it onto the group stack.
@@ -27,7 +27,7 @@ module Spectator::DSL
     #
     # See `Spec::Builder#start_iterative_group` for usage details.
     def start_iterative_group(*args)
-      @@builder.start_iterative_group(*args)
+      builder.start_iterative_group(*args)
     end
 
     # Completes a previously defined example group and pops it off the group stack.
@@ -35,7 +35,7 @@ module Spectator::DSL
     #
     # See `Spec::Builder#end_group` for usage details.
     def end_group(*args)
-      @@builder.end_group(*args)
+      builder.end_group(*args)
     end
 
     # Defines a new example.
@@ -43,7 +43,7 @@ module Spectator::DSL
     #
     # See `Spec::Builder#add_example` for usage details.
     def add_example(*args, &block : Example ->)
-      @@builder.add_example(*args, &block)
+      builder.add_example(*args, &block)
     end
 
     # Defines a new pending example.
@@ -51,98 +51,91 @@ module Spectator::DSL
     #
     # See `Spec::Builder#add_pending_example` for usage details.
     def add_pending_example(*args)
-      @@builder.add_pending_example(*args)
+      builder.add_pending_example(*args)
     end
 
     # Defines a block of code to execute before any and all examples in the test suite.
     def before_suite(location = nil, label = "before_suite", &block)
       hook = ExampleGroupHook.new(location: location, label: label, &block)
-      @@builder.before_suite(hook)
+      builder.before_suite(hook)
     end
 
     # Defines a block of code to execute before any and all examples in the test suite.
     def prepend_before_suite(location = nil, label = "before_suite", &block)
       hook = ExampleGroupHook.new(location: location, label: label, &block)
-      @@builder.prepend_before_suite(hook)
+      builder.prepend_before_suite(hook)
     end
 
     # Defines a block of code to execute before any and all examples in the current group.
     def before_all(location = nil, label = "before_all", &block)
       hook = ExampleGroupHook.new(location: location, label: label, &block)
-      @@builder.before_all(hook)
+      builder.before_all(hook)
     end
 
     # Defines a block of code to execute before any and all examples in the current group.
     def prepend_before_all(location = nil, label = "before_all", &block)
       hook = ExampleGroupHook.new(location: location, label: label, &block)
-      @@builder.prepend_before_all(hook)
+      builder.prepend_before_all(hook)
     end
 
     # Defines a block of code to execute before every example in the current group
     def before_each(location = nil, label = "before_each", &block : Example -> _)
       hook = ExampleHook.new(location: location, label: label, &block)
-      @@builder.before_each(hook)
+      builder.before_each(hook)
     end
 
     # Defines a block of code to execute before every example in the current group
     def prepend_before_each(location = nil, label = "before_each", &block : Example -> _)
       hook = ExampleHook.new(location: location, label: label, &block)
-      @@builder.prepend_before_each(hook)
+      builder.prepend_before_each(hook)
     end
 
     # Defines a block of code to execute after any and all examples in the test suite.
     def after_suite(location = nil, label = "after_suite", &block)
       hook = ExampleGroupHook.new(location: location, label: label, &block)
-      @@builder.after_suite(hook)
+      builder.after_suite(hook)
     end
 
     # Defines a block of code to execute after any and all examples in the test suite.
     def append_after_suite(location = nil, label = "after_suite", &block)
       hook = ExampleGroupHook.new(location: location, label: label, &block)
-      @@builder.append_after_suite(hook)
+      builder.append_after_suite(hook)
     end
 
     # Defines a block of code to execute after any and all examples in the current group.
     def after_all(location = nil, label = "after_all", &block)
       hook = ExampleGroupHook.new(location: location, label: label, &block)
-      @@builder.after_all(hook)
+      builder.after_all(hook)
     end
 
     # Defines a block of code to execute after any and all examples in the current group.
     def append_after_all(location = nil, label = "after_all", &block)
       hook = ExampleGroupHook.new(location: location, label: label, &block)
-      @@builder.append_after_all(hook)
+      builder.append_after_all(hook)
     end
 
     # Defines a block of code to execute after every example in the current group.
     def after_each(location = nil, label = "after_each", &block : Example ->)
       hook = ExampleHook.new(location: location, label: label, &block)
-      @@builder.after_each(hook)
+      builder.after_each(hook)
     end
 
     # Defines a block of code to execute after every example in the current group.
     def append_after_each(location = nil, label = "after_each", &block : Example ->)
       hook = ExampleHook.new(location: location, label: label, &block)
-      @@builder.append_after_each(hook)
+      builder.append_after_each(hook)
     end
 
     # Defines a block of code to execute around every example in the current group.
     def around_each(location = nil, label = "around_each", &block : Example::Procsy ->)
       hook = ExampleProcsyHook.new(location: location, label: label, &block)
-      @@builder.around_each(hook)
+      builder.around_each(hook)
     end
 
     # Defines a block of code to execute around every example in the current group.
     def prepend_around_each(location = nil, label = "around_each", &block : Example::Procsy ->)
       hook = ExampleProcsyHook.new(location: location, label: label, &block)
-      @@builder.prepend_around_each(hook)
-    end
-
-    # Sets the configuration of the spec.
-    #
-    # See `Spec::Builder#config=` for usage details.
-    def config=(config)
-      @@builder.config = config
+      builder.prepend_around_each(hook)
     end
 
     # Constructs the test spec.
@@ -151,7 +144,7 @@ module Spectator::DSL
     # Raises an error if there were not symmetrical calls to `#start_group` and `#end_group`.
     # This would indicate a logical error somewhere in Spectator or an extension of it.
     def build : Spec
-      @@builder.build
+      builder.build
     end
   end
 end

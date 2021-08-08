@@ -68,7 +68,6 @@ module Spectator
     ::Log.setup_from_env(default_level: :none)
 
     # Build the spec and run it.
-    DSL::Builder.config = config
     spec = DSL::Builder.build
     spec.run
   rescue ex
@@ -84,10 +83,8 @@ module Spectator
     false
   end
 
-  # Processes and builds up a configuration to use for running tests.
-  private def config
-    @@config ||= build_config
-  end
+  # Global configuration used by Spectator for running tests.
+  class_getter(config) { build_config }
 
   # Builds the configuration.
   private def build_config
