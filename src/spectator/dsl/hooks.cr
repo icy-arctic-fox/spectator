@@ -104,30 +104,66 @@ module Spectator::DSL
     # This means that values defined by `let` and `subject` are not available.
     define_example_group_hook :before_suite
 
+    # Defines a block of code that will be invoked once before any examples in the suite.
+    # The block will not run in the context of the current running example.
+    # This means that values defined by `let` and `subject` are not available.
+    # The hook is added before all others others of the same type in this context.
+    define_example_group_hook :prepend_before_suite
+
     # Defines a block of code that will be invoked once after all examples in the suite.
     # The block will not run in the context of the current running example.
     # This means that values defined by `let` and `subject` are not available.
     define_example_group_hook :after_suite
+
+    # Defines a block of code that will be invoked once after all examples in the suite.
+    # The block will not run in the context of the current running example.
+    # This means that values defined by `let` and `subject` are not available.
+    # The hook is added after all others others of the same type in this context.
+    define_example_group_hook :append_after_suite
 
     # Defines a block of code that will be invoked once before any examples in the group.
     # The block will not run in the context of the current running example.
     # This means that values defined by `let` and `subject` are not available.
     define_example_group_hook :before_all
 
+    # Defines a block of code that will be invoked once before any examples in the group.
+    # The block will not run in the context of the current running example.
+    # This means that values defined by `let` and `subject` are not available.
+    # The hook is added before all others others of the same type in this context.
+    define_example_group_hook :prepend_before_all
+
     # Defines a block of code that will be invoked once after all examples in the group.
     # The block will not run in the context of the current running example.
     # This means that values defined by `let` and `subject` are not available.
     define_example_group_hook :after_all
+
+    # Defines a block of code that will be invoked once after all examples in the group.
+    # The block will not run in the context of the current running example.
+    # This means that values defined by `let` and `subject` are not available.
+    # The hook is added after all others others of the same type in this context.
+    define_example_group_hook :append_after_all
 
     # Defines a block of code that will be invoked before every example in the group.
     # The block will be run in the context of the current running example.
     # This means that values defined by `let` and `subject` are available.
     define_example_hook :before_each
 
+    # Defines a block of code that will be invoked before every example in the group.
+    # The block will be run in the context of the current running example.
+    # This means that values defined by `let` and `subject` are available.
+    # The hook is added before all others others of the same type in this context.
+    define_example_hook :prepend_before_each
+
     # Defines a block of code that will be invoked after every example in the group.
     # The block will be run in the context of the current running example.
     # This means that values defined by `let` and `subject` are available.
     define_example_hook :after_each
+
+    # Defines a block of code that will be invoked after every example in the group.
+    # The block will be run in the context of the current running example.
+    # This means that values defined by `let` and `subject` are available.
+    # The hook is added after all others others of the same type in this context.
+    define_example_hook :append_after_each
 
     # Defines a block of code that will be invoked around every example in the group.
     # The block will be run in the context of the current running example.
@@ -138,5 +174,16 @@ module Spectator::DSL
     # The `Example::Procsy#run` method should be called to ensure the example runs.
     # More code can run afterwards (in the block).
     define_example_hook :around_each
+
+    # Defines a block of code that will be invoked around every example in the group.
+    # The block will be run in the context of the current running example.
+    # This means that values defined by `let` and `subject` are available.
+    # The hook is added before all others others of the same type in this context.
+    #
+    # The block will execute before the example.
+    # An `Example::Procsy` is passed to the block.
+    # The `Example::Procsy#run` method should be called to ensure the example runs.
+    # More code can run afterwards (in the block).
+    define_example_hook :prepend_around_each
   end
 end
