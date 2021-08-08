@@ -26,7 +26,7 @@ module Spectator
       before_all_hooks.each &.call_once
     end
 
-    define_hook after_all : ExampleGroupHook do
+    define_hook after_all : ExampleGroupHook, :prepend do
       Log.trace { "Processing after_all hooks for #{self}" }
 
       after_all_hooks.each &.call_once if finished?
@@ -42,7 +42,7 @@ module Spectator
       before_each_hooks.each &.call(example)
     end
 
-    define_hook after_each : ExampleHook do |example|
+    define_hook after_each : ExampleHook, :prepend do |example|
       Log.trace { "Processing after_each hooks for #{self}" }
 
       after_each_hooks.each &.call(example)

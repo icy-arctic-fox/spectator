@@ -236,9 +236,9 @@ module Spectator
     # Copy all hooks from config to top-level group.
     private def apply_config_hooks(group)
       config.before_suite_hooks.reverse_each { |hook| group.prepend_before_all(hook) }
-      config.after_suite_hooks.each { |hook| group.after_all(hook) }
+      config.after_suite_hooks.each { |hook| group.append_after_all(hook) }
       config.before_each_hooks.reverse_each { |hook| group.prepend_before_each(hook) }
-      config.after_each_hooks.each { |hook| group.after_each(hook) }
+      config.after_each_hooks.each { |hook| group.append_after_each(hook) }
       config.around_each_hooks.reverse_each { |hook| group.prepend_around_each(hook) }
 
       # `before_all` and `after_all` hooks from config are slightly different.
@@ -247,7 +247,7 @@ module Spectator
         next unless node.is_a?(Hooks)
 
         config.before_all_hooks.reverse_each { |hook| node.prepend_before_all(hook.dup) }
-        config.after_all_hooks.each { |hook| node.after_all(hook.dup) }
+        config.after_all_hooks.each { |hook| node.append_after_all(hook.dup) }
       end
     end
   end

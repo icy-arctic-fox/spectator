@@ -50,8 +50,8 @@ module Spectator
     private def apply_hooks(group)
       before_all_hooks.each { |hook| group.before_all(hook) }
       before_each_hooks.each { |hook| group.before_each(hook) }
-      after_all_hooks.each { |hook| group.after_all(hook) }
-      after_each_hooks.each { |hook| group.after_each(hook) }
+      after_all_hooks.reverse_each { |hook| group.after_all(hook) }
+      after_each_hooks.reverse_each { |hook| group.after_each(hook) }
       around_each_hooks.each { |hook| group.around_each(hook) }
     end
   end
