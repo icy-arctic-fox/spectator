@@ -11,6 +11,7 @@ module Spectator
     getter! label : Label
 
     @proc : ->
+    @called = Atomic::Flag.new
 
     # Creates the hook with a proc.
     # The *proc* will be called when the hook is invoked.
@@ -27,7 +28,16 @@ module Spectator
 
     # Invokes the hook.
     def call : Nil
+      @called.test_and_set
       @proc.call
+    end
+
+    # Invokes the hook if it hasn't already been invoked.
+    # Returns true if the hook was invoked (first time being called).
+    def call_once : Bool
+      first = @called.test_and_set
+      @proc.call if first
+      first
     end
 
     # Produces the string representation of the hook.

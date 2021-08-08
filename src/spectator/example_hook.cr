@@ -4,25 +4,28 @@ require "./location"
 module Spectator
   # Information about a hook tied to an example and a proc to invoke it.
   class ExampleHook
+    # Method signature for example hooks.
+    alias Proc = Example ->
+
     # Location of the hook in source code.
     getter! location : Location
 
     # User-defined description of the hook.
     getter! label : Label
 
-    @proc : Example ->
+    @proc : Proc
 
     # Creates the hook with a proc.
     # The *proc* will be called when the hook is invoked.
     # A *location* and *label* can be provided for debugging.
-    def initialize(@proc : (Example ->), *, @location : Location? = nil, @label : Label = nil)
+    def initialize(@proc : Proc, *, @location : Location? = nil, @label : Label = nil)
     end
 
     # Creates the hook with a block.
     # The block must take a single argument - the current example.
     # The block will be executed when the hook is invoked.
     # A *location* and *label* can be provided for debugging.
-    def initialize(*, @location : Location? = nil, @label : Label = nil, &block : Example -> _)
+    def initialize(*, @location : Location? = nil, @label : Label = nil, &block : Proc)
       @proc = block
     end
 

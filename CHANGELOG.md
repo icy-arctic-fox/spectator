@@ -26,9 +26,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Support custom messages for failed expectations. [#28](https://gitlab.com/arctic-fox/spectator/-/issues/28)
 - Allow named arguments and assignments for `provided` (`given`) block.
 - Add `aggregate_failures` to capture and report multiple failed expectations. [#24](https://gitlab.com/arctic-fox/spectator/-/issues/24)
+- Add `append_` and `prepend_` variants of hook creation methods.
 
 ### Changed
 - `around_each` hooks wrap `before_all` and `after_all` hooks. [#12](https://github.com/icy-arctic-fox/spectator/issues/12)
+- Hook execution order has been tweaked to match RSpec.
 - `given` (now `provided`) blocks changed to produce a single example. `it` can no longer be nested in a `provided` block.
 - The "should" syntax no longer reports the source as inside Spectator.
 - Short-hand "should" syntax must be included by using `require "spectator/should"` - `it { should eq("foo") }`

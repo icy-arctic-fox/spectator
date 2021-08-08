@@ -4,6 +4,7 @@ require "./example_builder"
 require "./example_context_method"
 require "./example_group"
 require "./example_group_builder"
+require "./hooks"
 require "./iterative_example_group_builder"
 require "./pending_example_builder"
 require "./spec"
@@ -16,6 +17,8 @@ module Spectator
   # Adding an example or group will nest it under the group at the top of the stack.
   class SpecBuilder
     Log = ::Spectator::Log.for(self)
+
+    delegate before_all, after_all, before_each, after_each, around_each, to: current
 
     # Stack tracking the current group.
     # The bottom of the stack (first element) is the root group.
@@ -44,23 +47,7 @@ module Spectator
       raise "Mismatched start and end groups" unless root?
 
       group = root.build
-
-      # Apply hooks from configuration.
-      config.before_suite_hooks.each { |hook| group.prepend_before_all_hook(hook) }
-      config.after_suite_hooks.each { |hook| group.prepend_after_all_hook(hook) }
-      config.before_each_hooks.each { |hook| group.prepend_before_each_hook(hook) }
-      config.after_each_hooks.each { |hook| group.prepend_after_each_hook(hook) }
-      config.around_each_hooks.each { |hook| group.prepend_around_each_hook(hook) }
-
-      # `before_all` and `after_all` hooks are slightly different.
-      # They are applied to every top-level group (groups just under root).
-      group.each do |node|
-        next unless node.is_a?(Events)
-
-        config.before_all_hooks.reverse_each { |hook| node.prepend_before_all_hook(hook) }
-        config.after_all_hooks.reverse_each { |hook| node.prepend_after_all_hook(hook) }
-      end
-
+      apply_config_hooks(group)
       Spec.new(group, config)
     end
 
@@ -153,94 +140,60 @@ module Spectator
       current << PendingExampleBuilder.new(name, location, metadata, reason)
     end
 
-    # Attaches a hook to be invoked before any and all examples in the test suite.
-    def before_suite(hook)
-      Log.trace { "Add before_suite hook #{hook}" }
-      root.add_before_all_hook(hook)
+    # Registers a new "before_suite" hook.
+    # The hook will be appended to the list.
+    # A new hook will be created by passing args to `ExampleGroupHook.new`.
+    def before_suite(*args, **kwargs) : Nil
+      root.before_all(*args, **kwargs)
     end
 
-    # Defines a block of code to execute before any and all examples in the test suite.
-    def before_suite(&block)
-      Log.trace { "Add before_suite hook" }
-      root.before_all(&block)
+    # Registers a new "before_suite" hook.
+    # The hook will be appended to the list.
+    # A new hook will be created by passing args to `ExampleGroupHook.new`.
+    def before_suite(*args, **kwargs, &block) : Nil
+      root.before_all(*args, **kwargs, &block)
     end
 
-    # Attaches a hook to be invoked before any and all examples in the current group.
-    def before_all(hook)
-      Log.trace { "Add before_all hook #{hook}" }
-      current.add_before_all_hook(hook)
+    # Registers a new "before_suite" hook.
+    # The hook will be prepended to the list.
+    # A new hook will be created by passing args to `ExampleGroupHook.new`.
+    def prepend_before_suite(*args, **kwargs) : Nil
+      root.prepend_before_all(*args, **kwargs)
     end
 
-    # Defines a block of code to execute before any and all examples in the current group.
-    def before_all(&block)
-      Log.trace { "Add before_all hook" }
-      current.before_all(&block)
+    # Registers a new "before_suite" hook.
+    # The hook will be prepended to the list.
+    # A new hook will be created by passing args to `ExampleGroupHook.new`.
+    def prepend_before_suite(*args, **kwargs, &block) : Nil
+      root.prepend_before_all(*args, **kwargs, &block)
     end
 
-    # Attaches a hook to be invoked before every example in the current group.
-    # The current example is provided as a block argument.
-    def before_each(hook)
-      Log.trace { "Add before_each hook #{hook}" }
-      current.add_before_each_hook(hook)
+    # Registers a new "after_suite" hook.
+    # The hook will be prepended to the list.
+    # A new hook will be created by passing args to `ExampleGroupHook.new`.
+    def after_suite(*args, **kwargs) : Nil
+      root.before_all(*args, **kwargs)
     end
 
-    # Defines a block of code to execute before every example in the current group.
-    # The current example is provided as a block argument.
-    def before_each(&block : Example -> _)
-      Log.trace { "Add before_each hook block" }
-      current.before_each(&block)
+    # Registers a new "after_suite" hook.
+    # The hook will be prepended to the list.
+    # A new hook will be created by passing args to `ExampleGroupHook.new`.
+    def after_suite(*args, **kwargs, &block) : Nil
+      root.after_all(*args, **kwargs, &block)
     end
 
-    # Attaches a hook to be invoked after any and all examples in the test suite.
-    def after_suite(hook)
-      Log.trace { "Add after_suite hook #{hook}" }
-      root.add_after_all_hook(hook)
+    # Registers a new "after_suite" hook.
+    # The hook will be appended to the list.
+    # A new hook will be created by passing args to `ExampleGroupHook.new`.
+    def append_after_suite(*args, **kwargs) : Nil
+      root.append_after_all(*args, **kwargs)
     end
 
-    # Defines a block of code to execute after any and all examples in the test suite.
-    def after_suite(&block)
-      Log.trace { "Add after_suite hook" }
-      root.after_all(&block)
-    end
-
-    # Attaches a hook to be invoked after any and all examples in the current group.
-    def after_all(hook)
-      Log.trace { "Add after_all hook #{hook}" }
-      current.add_after_all_hook(hook)
-    end
-
-    # Defines a block of code to execute after any and all examples in the current group.
-    def after_all(&block)
-      Log.trace { "Add after_all hook" }
-      current.after_all(&block)
-    end
-
-    # Attaches a hook to be invoked after every example in the current group.
-    # The current example is provided as a block argument.
-    def after_each(hook)
-      Log.trace { "Add after_each hook #{hook}" }
-      current.add_after_each_hook(hook)
-    end
-
-    # Defines a block of code to execute after every example in the current group.
-    # The current example is provided as a block argument.
-    def after_each(&block : Example -> _)
-      Log.trace { "Add after_each hook" }
-      current.after_each(&block)
-    end
-
-    # Attaches a hook to be invoked around every example in the current group.
-    # The current example in procsy form is provided as a block argument.
-    def around_each(hook)
-      Log.trace { "Add around_each hook #{hook}" }
-      current.add_around_each_hook(hook)
-    end
-
-    # Defines a block of code to execute around every example in the current group.
-    # The current example in procsy form is provided as a block argument.
-    def around_each(&block : Example -> _)
-      Log.trace { "Add around_each hook" }
-      current.around_each(&block)
+    # Registers a new "after_suite" hook.
+    # The hook will be appended to the list.
+    # A new hook will be created by passing args to `ExampleGroupHook.new`.
+    def append_after_suite(*args, **kwargs, &block) : Nil
+      root.append_after_all(*args, **kwargs, &block)
     end
 
     # Builds the configuration to use for the spec.
@@ -278,6 +231,24 @@ module Spectator
     # If one wasn't previously set, a default configuration is used.
     private def config : Config
       @config || Config.default
+    end
+
+    # Copy all hooks from config to top-level group.
+    private def apply_config_hooks(group)
+      config.before_suite_hooks.reverse_each { |hook| group.prepend_before_all(hook) }
+      config.after_suite_hooks.each { |hook| group.after_all(hook) }
+      config.before_each_hooks.reverse_each { |hook| group.prepend_before_each(hook) }
+      config.after_each_hooks.each { |hook| group.after_each(hook) }
+      config.around_each_hooks.reverse_each { |hook| group.prepend_around_each(hook) }
+
+      # `before_all` and `after_all` hooks from config are slightly different.
+      # They are applied to every top-level group (groups just under root).
+      group.each do |node|
+        next unless node.is_a?(Hooks)
+
+        config.before_all_hooks.reverse_each { |hook| node.prepend_before_all(hook.dup) }
+        config.after_all_hooks.each { |hook| node.after_all(hook.dup) }
+      end
     end
   end
 end

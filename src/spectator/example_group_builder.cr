@@ -2,6 +2,7 @@ require "./example_group"
 require "./example_group_hook"
 require "./example_hook"
 require "./example_procsy_hook"
+require "./hooks"
 require "./label"
 require "./location"
 require "./metadata"
@@ -12,73 +13,20 @@ module Spectator
   # Hooks and builders for child nodes can be added over time to this builder.
   # When done, call `#build` to produce an `ExampleGroup`.
   class ExampleGroupBuilder < NodeBuilder
+    include Hooks
+
+    define_hook before_all : ExampleGroupHook
+    define_hook after_all : ExampleGroupHook, :prepend
+    define_hook before_each : ExampleHook
+    define_hook after_each : ExampleHook, :prepend
+    define_hook around_each : ExampleProcsyHook
+
     @children = [] of NodeBuilder
-    @before_all_hooks = [] of ExampleGroupHook
-    @before_each_hooks = [] of ExampleHook
-    @after_all_hooks = [] of ExampleGroupHook
-    @after_each_hooks = [] of ExampleHook
-    @around_each_hooks = [] of ExampleProcsyHook
 
     # Creates the builder.
     # Initially, the builder will have no children and no hooks.
     # The *name*, *location*, and *metadata* will be applied to the `ExampleGroup` produced by `#build`.
     def initialize(@name : Label = nil, @location : Location? = nil, @metadata : Metadata = Metadata.new)
-    end
-
-    # Attaches a hook to be invoked before any and all examples in the current group.
-    def add_before_all_hook(hook)
-      @before_all_hooks << hook
-    end
-
-    # Defines a block of code to execute before any and all examples in the current group.
-    def before_all(&block)
-      @before_all_hooks << ExampleGroupHook.new(&block)
-    end
-
-    # Attaches a hook to be invoked before every example in the current group.
-    # The current example is provided as a block argument.
-    def add_before_each_hook(hook)
-      @before_each_hooks << hook
-    end
-
-    # Defines a block of code to execute before every example in the current group.
-    # The current example is provided as a block argument.
-    def before_each(&block : Example -> _)
-      @before_each_hooks << ExampleHook.new(&block)
-    end
-
-    # Attaches a hook to be invoked after any and all examples in the current group.
-    def add_after_all_hook(hook)
-      @after_all_hooks << hook
-    end
-
-    # Defines a block of code to execute after any and all examples in the current group.
-    def after_all(&block)
-      @after_all_hooks << ExampleGroupHook.new(&block)
-    end
-
-    # Attaches a hook to be invoked after every example in the current group.
-    # The current example is provided as a block argument.
-    def add_after_each_hook(hook)
-      @after_each_hooks << hook
-    end
-
-    # Defines a block of code to execute after every example in the current group.
-    # The current example is provided as a block argument.
-    def after_each(&block : Example -> _)
-      @after_each_hooks << ExampleHook.new(&block)
-    end
-
-    # Attaches a hook to be invoked around every example in the current group.
-    # The current example in procsy form is provided as a block argument.
-    def add_around_each_hook(hook)
-      @around_each_hooks << hook
-    end
-
-    # Defines a block of code to execute around every example in the current group.
-    # The current example in procsy form is provided as a block argument.
-    def around_each(&block : Example -> _)
-      @around_each_hooks << ExampleProcsyHook.new(label: "around_each", &block)
     end
 
     # Constructs an example group with previously defined attributes, children, and hooks.
@@ -100,11 +48,11 @@ module Spectator
 
     # Adds all previously configured hooks to an example group.
     private def apply_hooks(group)
-      @before_all_hooks.each { |hook| group.add_before_all_hook(hook) }
-      @before_each_hooks.each { |hook| group.add_before_each_hook(hook) }
-      @after_all_hooks.each { |hook| group.prepend_after_all_hook(hook) }
-      @after_each_hooks.each { |hook| group.prepend_after_each_hook(hook) }
-      @around_each_hooks.each { |hook| group.add_around_each_hook(hook) }
+      before_all_hooks.each { |hook| group.before_all(hook) }
+      before_each_hooks.each { |hook| group.before_each(hook) }
+      after_all_hooks.each { |hook| group.after_all(hook) }
+      after_each_hooks.each { |hook| group.after_each(hook) }
+      around_each_hooks.each { |hook| group.around_each(hook) }
     end
   end
 end

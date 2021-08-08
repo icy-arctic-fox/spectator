@@ -98,14 +98,14 @@ module Spectator
 
       begin
         @result = Harness.run do
-          @group.try(&.call_once_before_all)
+          @group.try(&.call_before_all)
           if (parent = @group)
-            parent.call_around_each(self) { run_internal }
+            parent.call_around_each(procsy).call
           else
             run_internal
           end
           if (parent = @group)
-            parent.call_once_after_all if parent.finished?
+            parent.call_after_all if parent.finished?
           end
         end
       ensure
@@ -189,6 +189,11 @@ module Spectator
         end
         @result.to_json(json) if @finished
       end
+    end
+
+    # Creates a procsy from this example that runs the example.
+    def procsy
+      Procsy.new(self) { run_internal }
     end
 
     # Creates a procsy from this example and the provided block.

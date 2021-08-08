@@ -1,12 +1,12 @@
-require "./events"
 require "./example_procsy_hook"
+require "./hooks"
 require "./node"
 
 module Spectator
   # Collection of examples and sub-groups.
   class ExampleGroup < Node
     include Enumerable(Node)
-    include Events
+    include Hooks
     include Iterable(Node)
 
     @nodes = [] of Node
@@ -19,66 +19,44 @@ module Spectator
     # `ExampleGroup` manages the association of nodes to groups.
     protected setter group : ExampleGroup?
 
-    # Calls all hooks from the parent group if there is a parent.
-    # The *hook* is the method name of the group hook to invoke.
-    private macro call_parent_hooks(hook)
-      if (parent = @group)
-        parent.{{hook.id}}
-      end
-    end
-
-    # Calls all hooks from the parent group if there is a parent.
-    # The *hook* is the method name of the example hook to invoke.
-    # The current *example* must be provided.
-    private macro call_parent_hooks(hook, example)
-      if (parent = @group)
-        parent.{{hook.id}}({{example}})
-      end
-    end
-
-    # Calls group hooks of the current group.
-    private def call_hooks(hooks)
-      hooks.each do |hook|
-        Log.trace { "Invoking hook #{hook}" }
-        hook.call
-      end
-    end
-
-    # Calls example hooks of the current group.
-    # Requires the current *example*.
-    private def call_hooks(hooks, example)
-      hooks.each do |hook|
-        Log.trace { "Invoking hook #{hook}" }
-        hook.call(example)
-      end
-    end
-
-    group_event before_all do |hooks|
+    define_hook before_all : ExampleGroupHook do
       Log.trace { "Processing before_all hooks for #{self}" }
 
-      call_parent_hooks(:call_once_before_all)
-      call_hooks(hooks)
+      @group.try &.call_before_all
+      before_all_hooks.each &.call_once
     end
 
-    group_event after_all do |hooks|
+    define_hook after_all : ExampleGroupHook do
       Log.trace { "Processing after_all hooks for #{self}" }
 
-      call_hooks(hooks)
-      call_parent_hooks(:call_once_after_all) if @group.try(&.finished?)
+      after_all_hooks.each &.call_once if finished?
+      if group = @group
+        group.call_after_all if group.finished?
+      end
     end
 
-    example_event before_each do |hooks, example|
+    define_hook before_each : ExampleHook do |example|
       Log.trace { "Processing before_each hooks for #{self}" }
 
-      call_parent_hooks(:call_before_each, example)
-      call_hooks(hooks, example)
+      @group.try &.call_before_each(example)
+      before_each_hooks.each &.call(example)
     end
 
-    example_event after_each do |hooks, example|
+    define_hook after_each : ExampleHook do |example|
       Log.trace { "Processing after_each hooks for #{self}" }
 
-      call_hooks(hooks, example)
-      call_parent_hooks(:call_after_each, example)
+      after_each_hooks.each &.call(example)
+      @group.try &.call_after_each(example)
+    end
+
+    define_hook around_each : ExampleProcsyHook do |procsy|
+      Log.trace { "Processing around_each hooks for #{self}" }
+
+      around_each_hooks.reverse_each { |hook| procsy = hook.wrap(procsy) }
+      if group = @group
+        procsy = group.call_around_each(procsy)
+      end
+      procsy
     end
 
     # Creates the example group.
@@ -157,58 +135,6 @@ module Spectator
       # Add the node to this group and associate with it.
       @nodes << node
       node.group = self
-    end
-
-    @around_hooks = [] of ExampleProcsyHook
-
-    # Adds a hook to be invoked when the *around_each* event occurs.
-    def add_around_each_hook(hook : ExampleProcsyHook) : Nil
-      @around_hooks << hook
-    end
-
-    # Adds a hook to be invoked when the *around_each* event occurs.
-    # The hook is added to the front of the list.
-    def prepend_around_each_hook(hook : ExampleProcsyHook) : Nil
-      @around_hooks.unshift(hook)
-    end
-
-    # Defines a hook for the *around_each* event.
-    # The block of code given to this method is invoked when the event occurs.
-    # The current example is provided as a block argument.
-    def around_each(&block) : Nil
-      hook = ExampleProcsyHook.new(label: "around_each", &block)
-      add_around_each_hook(hook)
-    end
-
-    # Signals that the *around_each* event has occurred.
-    # All hooks associated with the event will be called.
-    def call_around_each(example, &block : -> _) : Nil
-      # Avoid overhead if there's no hooks.
-      return yield if @around_hooks.empty?
-
-      # Start with a procsy that wraps the original code.
-      procsy = example.procsy(&block)
-      procsy = wrap_around_each(procsy)
-      procsy.call
-    end
-
-    # Wraps a procsy with the *around_each* hooks from this example group.
-    # The returned procsy will call each hook then *procsy*.
-    protected def wrap_around_each(procsy)
-      # Avoid overhead if there's no hooks.
-      return procsy if @around_hooks.empty?
-
-      # Wrap each hook with the next.
-      outer = procsy
-      @around_hooks.reverse_each do |hook|
-        outer = hook.wrap(outer)
-      end
-
-      # If there's a parent, wrap the procsy with its hooks.
-      # Otherwise, return the outermost procsy.
-      return outer unless (parent = group?)
-
-      parent.wrap_around_each(outer)
     end
   end
 end

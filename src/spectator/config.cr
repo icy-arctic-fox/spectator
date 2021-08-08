@@ -21,25 +21,25 @@ module Spectator
     getter example_filter : ExampleFilter
 
     # List of hooks to run before all examples in the test suite.
-    protected getter before_suite_hooks : Array(ExampleGroupHook)
+    protected getter before_suite_hooks : Deque(ExampleGroupHook)
 
     # List of hooks to run before each top-level example group.
-    protected getter before_all_hooks : Array(ExampleGroupHook)
+    protected getter before_all_hooks : Deque(ExampleGroupHook)
 
     # List of hooks to run before every example.
-    protected getter before_each_hooks : Array(ExampleHook)
+    protected getter before_each_hooks : Deque(ExampleHook)
 
     # List of hooks to run after all examples in the test suite.
-    protected getter after_suite_hooks : Array(ExampleGroupHook)
+    protected getter after_suite_hooks : Deque(ExampleGroupHook)
 
     # List of hooks to run after each top-level example group.
-    protected getter after_all_hooks : Array(ExampleGroupHook)
+    protected getter after_all_hooks : Deque(ExampleGroupHook)
 
     # List of hooks to run after every example.
-    protected getter after_each_hooks : Array(ExampleHook)
+    protected getter after_each_hooks : Deque(ExampleHook)
 
     # List of hooks to run around every example.
-    protected getter around_each_hooks : Array(ExampleProcsyHook)
+    protected getter around_each_hooks : Deque(ExampleProcsyHook)
 
     # Creates a new configuration.
     # Properties are pulled from *source*.
