@@ -1,10 +1,10 @@
 require "colorize"
 require "option_parser"
 require "../formatting"
-require "../line_example_filter"
+require "../line_node_filter"
 require "../location"
-require "../location_example_filter"
-require "../name_example_filter"
+require "../location_node_filter"
+require "../name_node_filter"
 
 module Spectator
   class Config
@@ -111,8 +111,8 @@ module Spectator
       private def example_option(parser, builder)
         parser.on("-e", "--example STRING", "Run examples whose full nested names include STRING") do |pattern|
           Log.debug { "Filtering for examples named '#{pattern}' (-e '#{pattern}')" }
-          filter = NameExampleFilter.new(pattern)
-          builder.add_example_filter(filter)
+          filter = NameNodeFilter.new(pattern)
+          builder.add_node_filter(filter)
         end
       end
 
@@ -120,8 +120,8 @@ module Spectator
       private def line_option(parser, builder)
         parser.on("-l", "--line LINE", "Run examples whose line matches LINE") do |line|
           Log.debug { "Filtering for examples on line #{line} (-l #{line})" }
-          filter = LineExampleFilter.new(line.to_i)
-          builder.add_example_filter(filter)
+          filter = LineNodeFilter.new(line.to_i)
+          builder.add_node_filter(filter)
         end
       end
 
@@ -130,8 +130,8 @@ module Spectator
         parser.on("--location FILE:LINE", "Run the example at line 'LINE' in the file 'FILE', multiple allowed") do |location|
           Log.debug { "Filtering for examples at #{location} (--location '#{location}')" }
           location = Location.parse(location)
-          filter = LocationExampleFilter.new(location)
-          builder.add_example_filter(filter)
+          filter = LocationNodeFilter.new(location)
+          builder.add_node_filter(filter)
         end
       end
 

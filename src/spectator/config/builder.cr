@@ -1,7 +1,7 @@
-require "../composite_example_filter"
-require "../example_filter"
+require "../composite_node_filter"
+require "../node_filter"
 require "../formatting"
-require "../null_example_filter"
+require "../null_node_filter"
 require "../run_flags"
 
 module Spectator
@@ -18,7 +18,7 @@ module Spectator
 
       @primary_formatter : Formatting::Formatter?
       @additional_formatters = [] of Formatting::Formatter
-      @filters = [] of ExampleFilter
+      @filters = [] of NodeFilter
 
       # List of hooks to run before all examples in the test suite.
       protected getter before_suite_hooks = Deque(ExampleGroupHook).new
@@ -259,18 +259,18 @@ module Spectator
       end
 
       # Adds a filter to determine which examples can run.
-      def add_example_filter(filter : ExampleFilter)
+      def add_node_filter(filter : NodeFilter)
         @filters << filter
       end
 
       # Retrieves a filter that determines which examples can run.
-      # If no filters were added with `#add_example_filter`,
+      # If no filters were added with `#add_node_filter`,
       # then the returned filter will allow all examples to be run.
-      protected def example_filter
+      protected def node_filter
         case (filters = @filters)
-        when .empty? then NullExampleFilter.new
+        when .empty? then NullNodeFilter.new
         when .one?   then filters.first
-        else              CompositeExampleFilter.new(filters)
+        else              CompositeNodeFilter.new(filters)
         end
       end
     end

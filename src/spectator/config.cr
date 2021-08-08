@@ -1,5 +1,5 @@
 require "./config/*"
-require "./example_filter"
+require "./node_filter"
 require "./example_group"
 require "./example_iterator"
 require "./formatting/formatter"
@@ -18,7 +18,7 @@ module Spectator
     getter random_seed : UInt64
 
     # Filter used to select which examples to run.
-    getter example_filter : ExampleFilter
+    getter node_filter : NodeFilter
 
     # List of hooks to run before all examples in the test suite.
     protected getter before_suite_hooks : Deque(ExampleGroupHook)
@@ -48,7 +48,7 @@ module Spectator
       @formatter = source.formatter
       @run_flags = source.run_flags
       @random_seed = source.random_seed
-      @example_filter = source.example_filter
+      @node_filter = source.node_filter
 
       @before_suite_hooks = source.before_suite_hooks
       @before_all_hooks = source.before_all_hooks
@@ -86,7 +86,7 @@ module Spectator
 
     # Creates an iterator configured to select the filtered examples.
     def iterator(group : ExampleGroup)
-      ExampleIterator.new(group).select(@example_filter)
+      ExampleIterator.new(group).select(@node_filter)
     end
 
     # Retrieves the configured random number generator.
