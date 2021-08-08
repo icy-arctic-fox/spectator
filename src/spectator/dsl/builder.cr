@@ -60,22 +60,10 @@ module Spectator::DSL
       builder.before_suite(hook)
     end
 
-    # Defines a block of code to execute before any and all examples in the test suite.
-    def prepend_before_suite(location = nil, label = "before_suite", &block)
-      hook = ExampleGroupHook.new(location: location, label: label, &block)
-      builder.prepend_before_suite(hook)
-    end
-
     # Defines a block of code to execute before any and all examples in the current group.
     def before_all(location = nil, label = "before_all", &block)
       hook = ExampleGroupHook.new(location: location, label: label, &block)
       builder.before_all(hook)
-    end
-
-    # Defines a block of code to execute before any and all examples in the current group.
-    def prepend_before_all(location = nil, label = "before_all", &block)
-      hook = ExampleGroupHook.new(location: location, label: label, &block)
-      builder.prepend_before_all(hook)
     end
 
     # Defines a block of code to execute before every example in the current group
@@ -84,22 +72,10 @@ module Spectator::DSL
       builder.before_each(hook)
     end
 
-    # Defines a block of code to execute before every example in the current group
-    def prepend_before_each(location = nil, label = "before_each", &block : Example -> _)
-      hook = ExampleHook.new(location: location, label: label, &block)
-      builder.prepend_before_each(hook)
-    end
-
     # Defines a block of code to execute after any and all examples in the test suite.
     def after_suite(location = nil, label = "after_suite", &block)
       hook = ExampleGroupHook.new(location: location, label: label, &block)
       builder.after_suite(hook)
-    end
-
-    # Defines a block of code to execute after any and all examples in the test suite.
-    def append_after_suite(location = nil, label = "after_suite", &block)
-      hook = ExampleGroupHook.new(location: location, label: label, &block)
-      builder.append_after_suite(hook)
     end
 
     # Defines a block of code to execute after any and all examples in the current group.
@@ -108,34 +84,16 @@ module Spectator::DSL
       builder.after_all(hook)
     end
 
-    # Defines a block of code to execute after any and all examples in the current group.
-    def append_after_all(location = nil, label = "after_all", &block)
-      hook = ExampleGroupHook.new(location: location, label: label, &block)
-      builder.append_after_all(hook)
-    end
-
     # Defines a block of code to execute after every example in the current group.
     def after_each(location = nil, label = "after_each", &block : Example ->)
       hook = ExampleHook.new(location: location, label: label, &block)
       builder.after_each(hook)
     end
 
-    # Defines a block of code to execute after every example in the current group.
-    def append_after_each(location = nil, label = "after_each", &block : Example ->)
-      hook = ExampleHook.new(location: location, label: label, &block)
-      builder.append_after_each(hook)
-    end
-
     # Defines a block of code to execute around every example in the current group.
     def around_each(location = nil, label = "around_each", &block : Example::Procsy ->)
       hook = ExampleProcsyHook.new(location: location, label: label, &block)
       builder.around_each(hook)
-    end
-
-    # Defines a block of code to execute around every example in the current group.
-    def prepend_around_each(location = nil, label = "around_each", &block : Example::Procsy ->)
-      hook = ExampleProcsyHook.new(location: location, label: label, &block)
-      builder.prepend_around_each(hook)
     end
 
     # Constructs the test spec.

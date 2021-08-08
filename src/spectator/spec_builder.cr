@@ -18,17 +18,7 @@ module Spectator
   class SpecBuilder
     Log = ::Spectator::Log.for(self)
 
-    delegate before_all,
-      prepend_before_all,
-      after_all,
-      append_after_all,
-      before_each,
-      prepend_before_each,
-      after_each,
-      append_after_each,
-      around_each,
-      prepend_around_each,
-      to: current
+    delegate before_all, after_all, before_each, after_each, around_each, to: current
 
     # Stack tracking the current group.
     # The bottom of the stack (first element) is the root group.
@@ -73,6 +63,12 @@ module Spectator
     def start_group(name, location = nil, metadata = Metadata.new) : Nil
       Log.trace { "Start group: #{name.inspect} @ #{location}; metadata: #{metadata}" }
       builder = ExampleGroupBuilder.new(name, location, metadata)
+
+      # `before_all` and `after_all` hooks from config are slightly different.
+      # They are applied to every top-level group (groups just under root).
+      apply_top_level_config_hooks(builder) if root?
+
+      # Add group to the stack.
       current << builder
       @stack.push(builder)
     end
@@ -93,6 +89,12 @@ module Spectator
     def start_iterative_group(collection, name, iterator = nil, location = nil, metadata = Metadata.new) : Nil
       Log.trace { "Start iterative group: #{name} (#{typeof(collection)}) @ #{location}; metadata: #{metadata}" }
       builder = IterativeExampleGroupBuilder.new(collection, name, iterator, location, metadata)
+
+      # `before_all` and `after_all` hooks from config are slightly different.
+      # They are applied to every top-level group (groups just under root).
+      apply_top_level_config_hooks(builder) if root?
+
+      # Add group to the stack.
       current << builder
       @stack.push(builder)
     end
@@ -161,20 +163,6 @@ module Spectator
       root.before_all(*args, **kwargs, &block)
     end
 
-    # Registers a new "before_suite" hook.
-    # The hook will be prepended to the list.
-    # A new hook will be created by passing args to `ExampleGroupHook.new`.
-    def prepend_before_suite(*args, **kwargs) : Nil
-      root.prepend_before_all(*args, **kwargs)
-    end
-
-    # Registers a new "before_suite" hook.
-    # The hook will be prepended to the list.
-    # A new hook will be created by passing args to `ExampleGroupHook.new`.
-    def prepend_before_suite(*args, **kwargs, &block) : Nil
-      root.prepend_before_all(*args, **kwargs, &block)
-    end
-
     # Registers a new "after_suite" hook.
     # The hook will be prepended to the list.
     # A new hook will be created by passing args to `ExampleGroupHook.new`.
@@ -187,20 +175,6 @@ module Spectator
     # A new hook will be created by passing args to `ExampleGroupHook.new`.
     def after_suite(*args, **kwargs, &block) : Nil
       root.after_all(*args, **kwargs, &block)
-    end
-
-    # Registers a new "after_suite" hook.
-    # The hook will be appended to the list.
-    # A new hook will be created by passing args to `ExampleGroupHook.new`.
-    def append_after_suite(*args, **kwargs) : Nil
-      root.append_after_all(*args, **kwargs)
-    end
-
-    # Registers a new "after_suite" hook.
-    # The hook will be appended to the list.
-    # A new hook will be created by passing args to `ExampleGroupHook.new`.
-    def append_after_suite(*args, **kwargs, &block) : Nil
-      root.append_after_all(*args, **kwargs, &block)
     end
 
     # Checks if the current group is the root group.
@@ -219,28 +193,20 @@ module Spectator
       @stack.last
     end
 
-    # Retrieves the configuration.
-    # If one wasn't previously set, a default configuration is used.
-    private def config : Config
-      @config || Config.default
+    # Copy all hooks from config to root group.
+    private def apply_config_hooks(group)
+      @config.before_suite_hooks.each { |hook| group.before_all(hook) }
+      @config.after_suite_hooks.reverse_each { |hook| group.after_all(hook) }
+      @config.before_each_hooks.each { |hook| group.before_each(hook) }
+      @config.after_each_hooks.reverse_each { |hook| group.after_each(hook) }
+      @config.around_each_hooks.each { |hook| group.around_each(hook) }
     end
 
-    # Copy all hooks from config to top-level group.
-    private def apply_config_hooks(group)
-      config.before_suite_hooks.reverse_each { |hook| group.prepend_before_all(hook) }
-      config.after_suite_hooks.each { |hook| group.append_after_all(hook) }
-      config.before_each_hooks.reverse_each { |hook| group.prepend_before_each(hook) }
-      config.after_each_hooks.each { |hook| group.append_after_each(hook) }
-      config.around_each_hooks.reverse_each { |hook| group.prepend_around_each(hook) }
-
-      # `before_all` and `after_all` hooks from config are slightly different.
-      # They are applied to every top-level group (groups just under root).
-      group.each do |node|
-        next unless node.is_a?(Hooks)
-
-        config.before_all_hooks.reverse_each { |hook| node.prepend_before_all(hook.dup) }
-        config.after_all_hooks.each { |hook| node.append_after_all(hook.dup) }
-      end
+    # Copy `before_all` and `after_all` hooks to a group.
+    private def apply_top_level_config_hooks(group)
+      # Hooks are dupped so that they retain their original state (call once).
+      @config.before_all_hooks.each { |hook| group.before_all(hook.dup) }
+      @config.after_all_hooks.reverse_each { |hook| group.after_all(hook.dup) }
     end
   end
 end

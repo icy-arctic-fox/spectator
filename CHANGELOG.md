@@ -7,9 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Fixed
 - Fix resolution of types with the same name in nested scopes. [#31](https://github.com/icy-arctic-fox/spectator/issues/31)
+- `around_each` hooks wrap `before_all` and `after_all` hooks. [#12](https://github.com/icy-arctic-fox/spectator/issues/12)
+- Hook execution order has been tweaked to match RSpec.
 
 ### Added
-- Hooks are yielded the current example as a block argument.
+- `before_each`, `after_each`, and `around_each` hooks are yielded the current example as a block argument.
 - The `let` and `subject` blocks are yielded the current example as a block argument.
 - Add internal logging that uses Crystal's `Log` utility. Provide the `LOG_LEVEL` environment variable to enable.
 - Support dynamic creation of examples.
@@ -26,11 +28,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Support custom messages for failed expectations. [#28](https://gitlab.com/arctic-fox/spectator/-/issues/28)
 - Allow named arguments and assignments for `provided` (`given`) block.
 - Add `aggregate_failures` to capture and report multiple failed expectations. [#24](https://gitlab.com/arctic-fox/spectator/-/issues/24)
-- Add `append_` and `prepend_` variants of hook creation methods.
 
 ### Changed
-- `around_each` hooks wrap `before_all` and `after_all` hooks. [#12](https://github.com/icy-arctic-fox/spectator/issues/12)
-- Hook execution order has been tweaked to match RSpec.
 - `given` (now `provided`) blocks changed to produce a single example. `it` can no longer be nested in a `provided` block.
 - The "should" syntax no longer reports the source as inside Spectator.
 - Short-hand "should" syntax must be included by using `require "spectator/should"` - `it { should eq("foo") }`
@@ -38,7 +37,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Prevent usage of reserved keywords in DSL (such as `initialize`).
 - The count argument for `sample` and `random_sample` groups must be named (use `count: 5` instead of just `5`).
 - Helper methods used as arguments for `sample` and `random_sample` must be class methods.
-- Simplify and reduce defined types and generics. Should speed up compilation times.
+- Simplify and reduce instanced types and generics. Should speed up compilation times.
 - Overhaul example creation and handling.
 - Overhaul storage of test values.
 - Overhaul reporting and formatting. Cleaner output for failures and pending tests.

@@ -16,11 +16,6 @@ module Spectator
     # These take a pre-built hook instance, or arguments to pass to the hook type's initializer.
     # The new hook is added a collection in the order specified by *order*.
     #
-    # Alternate methods are also generated that add hooks in the opposite order of *order*.
-    # These are prefixed with the opposite order word.
-    # For instance, when *order* is "append", the prefix will be "prepend",
-    # resulting in a method named `prepend_some_hook`.
-    #
     # A private getter method is created so that the hooks can be accessed if needed.
     # The getter method has `_hooks` appended to the hook name.
     # For instance, if the *declaration* contains `important_thing`, then the getter is `important_thing_hooks`.
@@ -46,12 +41,8 @@ module Spectator
     macro define_hook(declaration, order = :append, &block)
       {% if order.id == :append.id
            method = :push.id
-           alt_method = :unshift.id
-           alt_prefix = :prepend.id
          elsif order.id == :prepend.id
            method = :unshift.id
-           alt_method = :push.id
-           alt_prefix = :append.id
          else
            raise "Unknown hook order type - #{order}"
          end %}
@@ -79,28 +70,6 @@ module Spectator
       def {{declaration.var}}(*args, **kwargs, &block) : Nil
         hook = {{declaration.type}}.new(*args, **kwargs, &block)
         {{declaration.var}}(hook)
-      end
-
-      # Registers a new "{{declaration.var}}" hook.
-      # The hook will be {{alt_prefix}}ed to the list.
-      def {{alt_prefix}}_{{declaration.var}}(hook : {{declaration.type}}) : Nil
-        @{{declaration.var}}_hooks.{{alt_method}}(hook)
-      end
-
-      # Registers a new "{{declaration.var}}" hook.
-      # The hook will be {{alt_prefix}}ed to the list.
-      # A new hook will be created by passing args to `{{declaration.type}}.new`.
-      def {{alt_prefix}}_{{declaration.var}}(*args, **kwargs) : Nil
-        hook = {{declaration.type}}.new(*args, **kwargs)
-        {{alt_prefix}}_{{declaration.var}}(hook)
-      end
-
-      # Registers a new "{{declaration.var}}" hook.
-      # The hook will be {{alt_prefix}}ed to the list.
-      # A new hook will be created by passing args to `{{declaration.type}}.new`.
-      def {{alt_prefix}}_{{declaration.var}}(*args, **kwargs, &block) : Nil
-        hook = {{declaration.type}}.new(*args, **kwargs, &block)
-        {{alt_prefix}}_{{declaration.var}}(hook)
       end
 
       {% if block %}
