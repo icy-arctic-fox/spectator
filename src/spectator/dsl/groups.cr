@@ -41,7 +41,7 @@ module Spectator::DSL
 
           ::Spectator::DSL::Builder.start_group(
             _spectator_group_name(\{{what}}),
-            ::Spectator::Location.new(\{{block.filename}}, \{{block.line_number}}),
+            ::Spectator::Location.new(\{{block.filename}}, \{{block.line_number}}, \{{block.end_line_number}}),
             metadata
           )
 
@@ -96,7 +96,7 @@ module Spectator::DSL
             \%collection,
             \{{collection.stringify}},
             \{{block.args.empty? ? :nil.id : block.args.first.stringify}},
-            ::Spectator::Location.new(\{{block.filename}}, \{{block.line_number}}),
+            ::Spectator::Location.new(\{{block.filename}}, \{{block.line_number}}, \{{block.end_line_number}}),
             metadata
           )
 

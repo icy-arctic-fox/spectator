@@ -26,7 +26,7 @@ module Spectator::DSL
         {% end %}
 
         ::Spectator::DSL::Builder.{{type.id}}(
-          ::Spectator::Location.new(\{{block.filename}}, \{{block.line_number}})
+          ::Spectator::Location.new(\{{block.filename}}, \{{block.line_number}}, \{{block.end_line_number}})
         ) do
           {% if block %}
             %wrapper do |*args|
