@@ -5,9 +5,8 @@ require "./node"
 module Spectator
   # Collection of examples and sub-groups.
   class ExampleGroup < Node
-    include Enumerable(Node)
     include Hooks
-    include Iterable(Node)
+    include Indexable(Node)
 
     @nodes = [] of Node
 
@@ -71,6 +70,8 @@ module Spectator
       group << self if group
     end
 
+    delegate size, unsafe_fetch, to: @nodes
+
     # Creates a child that is attched to the group.
     # Yields zero or more times to create the child.
     # The group the child should be attached to is provided as a block argument.
@@ -86,16 +87,6 @@ module Spectator
 
       node.group = nil
       @nodes.delete(node)
-    end
-
-    # Yields each node (example and sub-group).
-    def each
-      @nodes.each { |node| yield node }
-    end
-
-    # Returns an iterator for each (example and sub-group).
-    def each
-      @nodes.each
     end
 
     # Checks if all examples and sub-groups have finished.
