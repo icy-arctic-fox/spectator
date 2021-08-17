@@ -18,25 +18,20 @@ module Spectator
     # Retrieves the next `Node`.
     # If there are none left, then `Iterator::Stop` is returned.
     def next
-      # Keep going until either:
-      # a. a node is found.
-      # b. the stack is empty.
-      until @stack.empty?
-        # Retrieve the next node.
-        node = @stack.pop
+      # Nothing left to iterate.
+      return stop if @stack.empty?
 
-        # If the node is a group, add its direct children to the queue
-        # in reverse order so that the tree is traversed in pre-order.
-        if node.is_a?(Indexable(Node))
-          node.reverse_each { |child| @stack.push(child) }
-        end
+      # Retrieve the next node.
+      node = @stack.pop
 
-        # Return the current node.
-        return node
+      # If the node is a group, add its direct children to the queue
+      # in reverse order so that the tree is traversed in pre-order.
+      if node.is_a?(Indexable(Node))
+        node.reverse_each { |child| @stack.push(child) }
       end
 
-      # Nothing left to iterate.
-      stop
+      # Return the current node.
+      node
     end
 
     # Restart the iterator at the beginning.
