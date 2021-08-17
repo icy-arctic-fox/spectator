@@ -24,9 +24,7 @@ module Spectator
     # Selects and shuffles the examples that should run.
     private def examples
       iterator = @config.iterator(@root)
-      iterator.to_a.tap do |examples|
-        @config.shuffle!(examples)
-      end
+      @config.shuffle!(iterator.to_a)
     end
   end
 end
