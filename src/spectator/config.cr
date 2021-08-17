@@ -1,7 +1,7 @@
 require "./config/*"
 require "./node_filter"
 require "./example_group"
-require "./example_iterator"
+require "./filtered_example_iterator"
 require "./formatting/formatter"
 require "./run_flags"
 
@@ -86,7 +86,7 @@ module Spectator
 
     # Creates an iterator configured to select the filtered examples.
     def iterator(group : ExampleGroup)
-      ExampleIterator.new(group).select(@node_filter)
+      FilteredExampleIterator.new(group, @node_filter)
     end
 
     # Retrieves the configured random number generator.
