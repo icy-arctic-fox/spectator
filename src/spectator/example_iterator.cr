@@ -1,5 +1,4 @@
 require "./example"
-require "./example_group"
 require "./node"
 
 module Spectator
@@ -13,7 +12,7 @@ module Spectator
 
     # Creates a new iterator.
     # The *group* is the example group to iterate through.
-    def initialize(@group : ExampleGroup)
+    def initialize(@group : Iterable(Node))
       iter = @group.each.as(Iterator(Node))
       @stack = [iter]
     end
@@ -55,7 +54,7 @@ module Spectator
       # Get the iterator from the top of the stack.
       # Advance the iterator and check what the next item is.
       case (item = top.next)
-      when ExampleGroup
+      when Iterable(Node)
         # If the next thing is a group,
         # we need to traverse its branch.
         # Push its iterator onto the stack and return.
