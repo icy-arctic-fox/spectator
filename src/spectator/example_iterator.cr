@@ -3,18 +3,17 @@ require "./node"
 
 module Spectator
   # Iterates through all examples in a group and its nested groups.
+  # Nodes are iterated in pre-order.
   class ExampleIterator
     include Iterator(Example)
 
-    # Stack that contains the iterators for each group.
     # A stack is used to track where in the tree this iterator is.
-    @stack : Array(Iterator(Node))
+    @stack = Deque(Node).new(1)
 
     # Creates a new iterator.
     # The *group* is the example group to iterate through.
-    def initialize(@group : Iterable(Node))
-      iter = @group.each.as(Iterator(Node))
-      @stack = [iter]
+    def initialize(@group : Node)
+      @stack.push(@group)
     end
 
     # Retrieves the next `Example`.
@@ -24,50 +23,30 @@ module Spectator
       # a. an example is found.
       # b. the stack is empty.
       until @stack.empty?
-        # Retrieve the next "thing".
+        # Retrieve the next node.
         # This could be an `Example` or a group.
-        item = advance
-        # Return the item if it's an example.
+        node = @stack.pop
+
+        # If the node is a group, add its direct children to the queue
+        # in reverse order so that the tree is traversed in pre-order.
+        if node.is_a?(Indexable(Node))
+          node.reverse_each { |child| @stack.push(child) }
+        end
+
+        # Return the node if it's an example.
         # Otherwise, advance and check the next one.
-        return item if item.is_a?(Example)
+        return node if node.is_a?(Example)
       end
+
       # Nothing left to iterate.
       stop
     end
 
     # Restart the iterator at the beginning.
     def rewind
-      # Same code as `#initialize`, but return self.
-      iter = @group.each.as(Iterator(Node))
-      @stack = [iter]
+      @stack.clear
+      @stack.push(@group)
       self
-    end
-
-    # Retrieves the top of the stack.
-    private def top
-      @stack.last
-    end
-
-    # Retrieves the next "thing" from the tree.
-    # This method will return an `Example` or "something else."
-    private def advance
-      # Get the iterator from the top of the stack.
-      # Advance the iterator and check what the next item is.
-      case (item = top.next)
-      when Iterable(Node)
-        # If the next thing is a group,
-        # we need to traverse its branch.
-        # Push its iterator onto the stack and return.
-        @stack.push(item.each)
-      when Iterator::Stop
-        # If a stop instance is encountered,
-        # then the current group is done.
-        # Pop its iterator from the stack and return.
-        @stack.pop
-      else
-        # Found an example, return it.
-        item
-      end
     end
   end
 end
