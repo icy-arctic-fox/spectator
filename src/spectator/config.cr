@@ -20,6 +20,9 @@ module Spectator
     # Filter used to select which examples to run.
     getter node_filter : NodeFilter
 
+    # Filter used to select which examples to _not_ run.
+    getter node_reject : NodeFilter
+
     # List of hooks to run before all examples in the test suite.
     protected getter before_suite_hooks : Deque(ExampleGroupHook)
 
@@ -49,6 +52,7 @@ module Spectator
       @run_flags = source.run_flags
       @random_seed = source.random_seed
       @node_filter = source.node_filter
+      @node_reject = source.node_reject
 
       @before_suite_hooks = source.before_suite_hooks
       @before_all_hooks = source.before_all_hooks
@@ -86,7 +90,7 @@ module Spectator
 
     # Creates an iterator configured to select the filtered examples.
     def iterator(group : ExampleGroup)
-      FilteredExampleIterator.new(group, @node_filter)
+      FilteredExampleIterator.new(group, @node_filter).reject(@node_reject)
     end
 
     # Retrieves the configured random number generator.

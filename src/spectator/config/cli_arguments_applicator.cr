@@ -148,8 +148,13 @@ module Spectator
             tag = parts.first
             value = parts.last
           end
+
           filter = TagNodeFilter.new(tag, value)
-          builder.add_node_filter(filter)
+          if negated
+            builder.add_node_reject(filter)
+          else
+            builder.add_node_filter(filter)
+          end
         end
       end
 

@@ -19,6 +19,7 @@ module Spectator
       @primary_formatter : Formatting::Formatter?
       @additional_formatters = [] of Formatting::Formatter
       @filters = [] of NodeFilter
+      @rejects = [] of NodeFilter
 
       # List of hooks to run before all examples in the test suite.
       protected getter before_suite_hooks = Deque(ExampleGroupHook).new
@@ -263,6 +264,11 @@ module Spectator
         @filters << filter
       end
 
+      # Adds a filter to prevent examples from running.
+      def add_node_reject(filter : NodeFilter)
+        @rejects << filter
+      end
+
       # Retrieves a filter that determines which examples can run.
       # If no filters were added with `#add_node_filter`,
       # then the returned filter will allow all examples to be run.
@@ -271,6 +277,17 @@ module Spectator
         when .empty? then NullNodeFilter.new
         when .one?   then filters.first
         else              CompositeNodeFilter.new(filters)
+        end
+      end
+
+      # Retrieves a filter that prevents examples from running.
+      # If no filters were added with `#add_node_reject`,
+      # then the returned filter will allow all examples to be run.
+      protected def node_reject
+        case (filters = @rejects)
+        when .empty? then NullNodeFilter.new(false)
+        when .one?   then filters.first
+        else         CompositeNodeFilter.new(filters)
         end
       end
     end
