@@ -28,6 +28,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Support custom messages for failed expectations. [#28](https://gitlab.com/arctic-fox/spectator/-/issues/28)
 - Allow named arguments and assignments for `provided` (`given`) block.
 - Add `aggregate_failures` to capture and report multiple failed expectations. [#24](https://gitlab.com/arctic-fox/spectator/-/issues/24)
+- Supports matching groups. [#25](https://gitlab.com/arctic-fox/spectator/-/issues/25) [#24](https://github.com/icy-arctic-fox/spectator/issues/24)
 
 ### Changed
 - `given` (now `provided`) blocks changed to produce a single example. `it` can no longer be nested in a `provided` block.
