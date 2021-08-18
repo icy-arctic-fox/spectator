@@ -218,6 +218,15 @@ module Spectator
         end
       end
 
+      # Adds the HTML output option to the parser.
+      private def junit_option(parser, builder)
+        parser.on("--html_output OUTPUT_DIR", "Generate HTML output") do |output_dir|
+          Log.debug { "Setting output format to HTML (--html_output '#{output_dir}')" }
+          formatter = Formatting::HTMLFormatter.new(output_dir)
+          builder.add_formatter(formatter)
+        end
+      end
+
       # Adds the "no color" output option to the parser.
       private def no_color_option(parser, builder)
         parser.on("--no-color", "Disable colored output") do
