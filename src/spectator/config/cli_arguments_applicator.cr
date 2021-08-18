@@ -5,6 +5,7 @@ require "../line_node_filter"
 require "../location"
 require "../location_node_filter"
 require "../name_node_filter"
+require "../tag_node_filter"
 
 module Spectator
   class Config
@@ -105,6 +106,7 @@ module Spectator
         example_option(parser, builder)
         line_option(parser, builder)
         location_option(parser, builder)
+        tag_option(parser, builder)
       end
 
       # Adds the example filter option to the parser.
@@ -131,6 +133,17 @@ module Spectator
           Log.debug { "Filtering for examples at #{location} (--location '#{location}')" }
           location = Location.parse(location)
           filter = LocationNodeFilter.new(location)
+          builder.add_node_filter(filter)
+        end
+      end
+
+      # Adds the tag filter option to the parser.
+      private def tag_option(parser, builder)
+        parser.on("--tag TAG", "run examples with the specified TAG, or exclude examples by adding ~ before the TAG.") do |tag|
+          negated = tag.starts_with?('~')
+          tag = tag.lchop('~')
+          Log.debug { "Filtering for example with tag #{tag}" }
+          filter = TagNodeFilter.new(tag)
           builder.add_node_filter(filter)
         end
       end
