@@ -300,7 +300,7 @@ module Spectator
         case (filters = @rejects)
         when .empty? then NullNodeFilter.new(false)
         when .one?   then filters.first
-        else         CompositeNodeFilter.new(filters)
+        else              CompositeNodeFilter.new(filters)
         end
       end
     end
