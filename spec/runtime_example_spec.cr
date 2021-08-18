@@ -9,7 +9,7 @@ require "./spec_helper"
 # Some specs are too complex to be ran normally.
 # Additionally, this allows examples to easily check specific failure cases.
 # Plus, it makes testing user-reported issues easy.
-Spectator.describe "Runtime compilation" do
+Spectator.describe "Runtime compilation", :slow, :compile do
   given_example passing_example do
     it "does something" do
       expect(true).to be_true
