@@ -1,6 +1,7 @@
 require "../composite_node_filter"
 require "../node_filter"
 require "../formatting"
+require "../metadata"
 require "../null_node_filter"
 require "../run_flags"
 require "../tag_node_filter"
@@ -16,6 +17,8 @@ module Spectator
 
       # Toggles indicating how the test spec should execute.
       property run_flags = RunFlags::None
+
+      protected getter match_filters : Metadata = {:focus => nil.as(String?)}
 
       @primary_formatter : Formatting::Formatter?
       @additional_formatters = [] of Formatting::Formatter
@@ -280,6 +283,12 @@ module Spectator
       def filter_run_excluding(*tags : Symbol, **values)
         tags.each { |tag| @rejects << TagNodeFilter.new(tag) }
         values.each { |tag, value| @rejects << TagNodeFilter.new(tag, value.to_s) }
+      end
+
+      # Specifies one or more tags to filter on only if they're present in the spec.
+      def filter_run_when_matching(*tags : Symbol, **values)
+        tags.each { |tag| @match_filters[tag] = nil }
+        values.each { |tag, value| @match_filters[tag] = value.to_s }
       end
 
       # Retrieves a filter that determines which examples can run.

@@ -3,6 +3,7 @@ require "./node_filter"
 require "./example_group"
 require "./filtered_example_iterator"
 require "./formatting/formatter"
+require "./node_iterator"
 require "./run_flags"
 
 module Spectator
@@ -22,6 +23,9 @@ module Spectator
 
     # Filter used to select which examples to _not_ run.
     getter node_reject : NodeFilter
+
+    # Tags to filter on if they're present in a spec.
+    protected getter match_filters : Metadata
 
     # List of hooks to run before all examples in the test suite.
     protected getter before_suite_hooks : Deque(ExampleGroupHook)
@@ -53,6 +57,7 @@ module Spectator
       @random_seed = source.random_seed
       @node_filter = source.node_filter
       @node_reject = source.node_reject
+      @match_filters = source.match_filters
 
       @before_suite_hooks = source.before_suite_hooks
       @before_all_hooks = source.before_all_hooks
@@ -90,7 +95,20 @@ module Spectator
 
     # Creates an iterator configured to select the filtered examples.
     def iterator(group : ExampleGroup)
-      FilteredExampleIterator.new(group, @node_filter).reject(@node_reject)
+      match_filter = match_filter(group)
+      iterator = FilteredExampleIterator.new(group, @node_filter)
+      iterator = iterator.select(match_filter) if match_filter
+      iterator.reject(@node_reject)
+    end
+
+    # Creates a node filter if any conditionally matching filters apply to an example group.
+    private def match_filter(group : ExampleGroup) : NodeFilter?
+      iterator = NodeIterator.new(group)
+      filters = @match_filters.compact_map do |key, value|
+        filter = TagNodeFilter.new(key.to_s, value)
+        filter.as(NodeFilter) if iterator.rewind.any?(filter)
+      end
+      CompositeNodeFilter.new(filters) unless filters.empty?
     end
 
     # Retrieves the configured random number generator.
