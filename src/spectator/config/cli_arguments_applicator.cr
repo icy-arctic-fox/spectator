@@ -139,11 +139,16 @@ module Spectator
 
       # Adds the tag filter option to the parser.
       private def tag_option(parser, builder)
-        parser.on("--tag TAG", "run examples with the specified TAG, or exclude examples by adding ~ before the TAG.") do |tag|
+        parser.on("--tag TAG[:VALUE]", "Run examples with the specified TAG, or exclude examples by adding ~ before the TAG.") do |tag|
           negated = tag.starts_with?('~')
           tag = tag.lchop('~')
           Log.debug { "Filtering for example with tag #{tag}" }
-          filter = TagNodeFilter.new(tag)
+          parts = tag.split(':', 2, remove_empty: true)
+          if parts.size > 1
+            tag = parts.first
+            value = parts.last
+          end
+          filter = TagNodeFilter.new(tag, value)
           builder.add_node_filter(filter)
         end
       end

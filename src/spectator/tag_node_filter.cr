@@ -5,12 +5,12 @@ module Spectator
   class TagNodeFilter < NodeFilter
     # Creates the filter.
     # The *tag* indicates which tag the node must have in its metadata.
-    def initialize(@tag : String)
+    def initialize(@tag : String, @value : String? = nil)
     end
 
     # Checks whether the node satisfies the filter.
     def includes?(node) : Bool
-      node.metadata.each_key.any? { |key| key.to_s == @tag }
+      node.metadata.any? { |key, value| key.to_s == @tag && (!@value || value == @value) }
     end
   end
 end
