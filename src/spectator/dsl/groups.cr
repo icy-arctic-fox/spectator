@@ -181,6 +181,12 @@ module Spectator::DSL
 
     define_example_group :xcontext, skip: "Temporarily skipped with xcontext"
 
+    define_example_group :fexample_group, focus: true
+
+    define_example_group :fdescribe, focus: true
+
+    define_example_group :fcontext, focus: true
+
     # Defines a new iterative example group.
     # This type of group duplicates its contents for each element in *collection*.
     #
@@ -196,6 +202,8 @@ module Spectator::DSL
 
     # :ditto:
     define_iterative_group :xsample, skip: "Temporarily skipped with xsample"
+
+    define_iterative_group :fsample, focus: true
 
     # Defines a new iterative example group.
     # This type of group duplicates its contents for each element in *collection*.
@@ -216,6 +224,11 @@ module Spectator::DSL
 
     # :ditto:
     define_iterative_group :xrandom_sample, skip: "Temporarily skipped with xrandom_sample" do |collection|
+      collection.to_a.shuffle(::Spectator.random)
+    end
+
+    # :ditto:
+    define_iterative_group :frandom_sample, focus: true do |collection|
       collection.to_a.shuffle(::Spectator.random)
     end
   end

@@ -29,6 +29,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Allow named arguments and assignments for `provided` (`given`) block.
 - Add `aggregate_failures` to capture and report multiple failed expectations. [#24](https://gitlab.com/arctic-fox/spectator/-/issues/24)
 - Supports matching groups. [#25](https://gitlab.com/arctic-fox/spectator/-/issues/25) [#24](https://github.com/icy-arctic-fox/spectator/issues/24)
+- Add `filter_run_including`, `filter_run_excluding`, and `filter_run_when_matching` to config block.
+- By default, only run tests when any are marked with `focus: true`.
+- Add "f-prefix" blocks for examples and groups (`fit`, `fdescribe`, etc.) as a short-hand for specifying `focus: true`.
 
 ### Changed
 - `given` (now `provided`) blocks changed to produce a single example. `it` can no longer be nested in a `provided` block.

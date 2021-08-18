@@ -137,6 +137,12 @@ module Spectator::DSL
 
     define_example :specify
 
+    define_example :fexample, focus: true
+
+    define_example :fit, focus: true
+
+    define_example :fspecify, focus: true
+
     @[Deprecated("Behavior of pending blocks will change in Spectator v0.11.0. Use `skip` instead.")]
     define_pending_example :pending
 
