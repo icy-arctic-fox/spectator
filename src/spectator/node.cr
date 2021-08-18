@@ -59,10 +59,15 @@ module Spectator
       Tags.new(metadata.keys)
     end
 
+    # Non-nil name used to show the node name.
+    def display_name
+      @name || "<anonymous>"
+    end
+
     # Constructs the full name or description of the node.
     # This prepends names of groups this node is part of.
     def to_s(io)
-      (@name || "<anonymous>").to_s(io)
+      display_name.to_s(io)
     end
 
     # Exposes information about the node useful for debugging.
