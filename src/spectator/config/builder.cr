@@ -3,6 +3,7 @@ require "../node_filter"
 require "../formatting"
 require "../null_node_filter"
 require "../run_flags"
+require "../tag_node_filter"
 
 module Spectator
   class Config
@@ -264,9 +265,21 @@ module Spectator
         @filters << filter
       end
 
+      # Specifies one or more tags to constrain running examples to.
+      def filter_run_including(*tags : Symbol, **values)
+        tags.each { |tag| @filters << TagNodeFilter.new(tag) }
+        values.each { |tag, value| @filters << TagNodeFilter.new(tag, value.to_s) }
+      end
+
       # Adds a filter to prevent examples from running.
       def add_node_reject(filter : NodeFilter)
         @rejects << filter
+      end
+
+      # Specifies one or more tags to exclude from running examples.
+      def filter_run_excluding(*tags : Symbol, **values)
+        tags.each { |tag| @rejects << TagNodeFilter.new(tag) }
+        values.each { |tag, value| @rejects << TagNodeFilter.new(tag, value.to_s) }
       end
 
       # Retrieves a filter that determines which examples can run.
