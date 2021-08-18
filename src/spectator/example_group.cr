@@ -72,11 +72,13 @@ module Spectator
 
     delegate size, unsafe_fetch, to: @nodes
 
-    # Creates a child that is attched to the group.
-    # Yields zero or more times to create the child.
-    # The group the child should be attached to is provided as a block argument.
-    def create_child
-      yield self
+    # Yields this group and all parent groups.
+    def ascend
+      group = self
+      while group
+        yield group
+        group = group.group?
+      end
     end
 
     # Removes the specified *node* from the group.

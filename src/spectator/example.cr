@@ -151,6 +151,15 @@ module Spectator
       klass.cast(@context)
     end
 
+    # Yields this example and all parent groups.
+    def ascend
+      node = self
+      while node
+        yield node
+        node = node.group?
+      end
+    end
+
     # Constructs the full name or description of the example.
     # This prepends names of groups this example is part of.
     def to_s(io)
