@@ -1,43 +1,43 @@
 <div id="summary" class="<%= summary_result(report) %>">
   <h1>Test Results</h1>
-  <span class="result <%= summary_result(report) %>"><% escape(Components::Totals.new(report.counts)) %></span>
+  <span class="totals <%= summary_result(report) %>"><% escape(totals(report)) %></span>
   <span class="elapsed" title="<% escape(report.runtime) %>"><% escape(runtime(report.runtime)) %></span>
 </div>
 
 <%- if report.counts.fail > 0 -%>
-<div id="failure-list">
-  <h2>Failures</h2>
+<h2>Failures</h2>
+<ul id="failure-list">
   <%- report.failures.each do |example| -%>
-  <div class="example fail">
+  <li class="example fail">
     <a href="#example-<%= example.object_id %>" title="Jump to result">
       <h3 class="full-name"><% escape(example) %></h3>
     </a>
-  </div>
+  </li>
   <%- end -%>
-</div>
+</ul>
 <%- end -%>
 
 <%- if report.counts.pending > 0 -%>
-<div id="pending-list">
-  <h2>Pending</h2>
+<h2>Pending</h2>
+<ul id="pending-list">
   <%- report.pending.each do |example| -%>
-  <div class="example pending">
+  <li class="example pending">
     <a href="#example-<%= example.object_id %>" title="Jump to result">
       <h3 class="full-name"><% escape(example) %></h3>
     </a>
-  </div>
+  </li>
   <%- end -%>
-</div>
+</ul>
 <%- end -%>
 
-<div id="example-list">
-  <h2>Examples</h2>
+<h2>Examples</h2>
+<ul id="example-list">
   <%- report.examples.each do |example| -%>
-  <div class="example <%= example.result %>">
+  <li class="example <%= example.result %>">
     <h3 id="#example-<%= example.object_id %>" class="full-name"><% escape(example) %></h3>
     <span class="result <%= example.result %>"><%= example.result %></span>
     <span class="elapsed" title="<% escape(example.result.elapsed) %>"><% escape(runtime(example.result.elapsed)) %></span>
-    <% if result = example.result.as?(PendingResult) %><span class="message"><% escape(result.reason) -%></span>
+    <% if result = example.result.as?(PendingResult) %><span class="message"><% escape(result.reason) %></span>
 
     <%- elsif result = example.result.as?(ErrorResult) -%>
     <span class="error">
@@ -59,10 +59,11 @@
     <%- if example.result.expectations.empty? -%>
     <span class="muted">No expectations reported</span>
     <%- else -%>
-    <div class="expectation-list">
+    <h4>Expectations</h4>
+    <ol class="expectation-list">
       <%- example.result.expectations.each do |expectation| -%>
-      <div class="expectation <%= expectation.satisfied? ? "pass" : "fail" %>">
-        <h4><% escape(expectation.description) %></h4>
+      <li class="expectation <%= expectation.satisfied? ? "pass" : "fail" %>">
+        <h5><% escape(expectation.description) %></h5>
         <%- if expectation.satisfied? -%>
         <span class="result">pass</span>
         <%- else -%>
@@ -76,10 +77,10 @@
         </dl>
         <%- end -%>
         <% if location = expectation.location? %><span class="location"><% escape(location) %></span><% end %>
-      </div>
+      </li>
       <%- end -%>
-    </div>
+    </ol>
     <%- end -%>
-  </div>
+  </li>
   <%- end -%>
-</div>
+</ul>
