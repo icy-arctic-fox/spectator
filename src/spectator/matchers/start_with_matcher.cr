@@ -45,9 +45,9 @@ module Spectator::Matchers
     # This method expects (and uses) the `#starts_with?` method on the value.
     private def match_starts_with(actual_value, actual_label)
       if actual_value.starts_with?(expected.value)
-        SuccessfulMatchData.new(description)
+        SuccessfulMatchData.new(match_data_description(actual_label))
       else
-        FailedMatchData.new(description, "#{actual_label} does not start with #{expected.label} (using #starts_with?)",
+        FailedMatchData.new(match_data_description(actual_label), "#{actual_label} does not start with #{expected.label} (using #starts_with?)",
           expected: expected.value.inspect,
           actual: actual_value.inspect
         )
@@ -61,9 +61,9 @@ module Spectator::Matchers
       first = list.first
 
       if expected.value === first
-        SuccessfulMatchData.new(description)
+        SuccessfulMatchData.new(match_data_description(actual_label))
       else
-        FailedMatchData.new(description, "#{actual_label} does not start with #{expected.label} (using expected === first)",
+        FailedMatchData.new(match_data_description(actual_label), "#{actual_label} does not start with #{expected.label} (using expected === first)",
           expected: expected.value.inspect,
           actual: first.inspect,
           list: list.inspect
@@ -75,12 +75,12 @@ module Spectator::Matchers
     # This method expects (and uses) the `#starts_with?` method on the value.
     private def negated_match_starts_with(actual_value, actual_label)
       if actual_value.starts_with?(expected.value)
-        FailedMatchData.new(description, "#{actual_label} starts with #{expected.label} (using #starts_with?)",
+        FailedMatchData.new(match_data_description(actual_label), "#{actual_label} starts with #{expected.label} (using #starts_with?)",
           expected: "Not #{expected.value.inspect}",
           actual: actual_value.inspect
         )
       else
-        SuccessfulMatchData.new(description)
+        SuccessfulMatchData.new(match_data_description(actual_label))
       end
     end
 
@@ -91,13 +91,13 @@ module Spectator::Matchers
       first = list.first
 
       if expected.value === first
-        FailedMatchData.new(description, "#{actual_label} starts with #{expected.label} (using expected === first)",
+        FailedMatchData.new(match_data_description(actual_label), "#{actual_label} starts with #{expected.label} (using expected === first)",
           expected: "Not #{expected.value.inspect}",
           actual: first.inspect,
           list: list.inspect
         )
       else
-        SuccessfulMatchData.new(description)
+        SuccessfulMatchData.new(match_data_description(actual_label))
       end
     end
   end

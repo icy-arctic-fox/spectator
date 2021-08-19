@@ -17,9 +17,9 @@ module Spectator::Matchers
     def match(actual : Expression(T)) : MatchData forall T
       snapshot = snapshot_values(actual.value)
       if snapshot.values.all?
-        SuccessfulMatchData.new(description)
+        SuccessfulMatchData.new(match_data_description(actual))
       else
-        FailedMatchData.new(description, "#{actual.label} does not respond to #{label}", values(snapshot).to_a)
+        FailedMatchData.new(match_data_description(actual), "#{actual.label} does not respond to #{label}", values(snapshot).to_a)
       end
     end
 
@@ -29,9 +29,9 @@ module Spectator::Matchers
       snapshot = snapshot_values(actual.value)
       # Intentionally check truthiness of each value.
       if snapshot.values.any? # ameba:disable Performance/AnyInsteadOfEmpty
-        FailedMatchData.new(description, "#{actual.label} responds to #{label}", values(snapshot).to_a)
+        FailedMatchData.new(match_data_description(actual), "#{actual.label} responds to #{label}", values(snapshot).to_a)
       else
-        SuccessfulMatchData.new(description)
+        SuccessfulMatchData.new(match_data_description(actual))
       end
     end
 

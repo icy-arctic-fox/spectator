@@ -32,10 +32,10 @@ module Spectator::Matchers
 
       if missing.empty? && extra.empty?
         # Contents are identical.
-        SuccessfulMatchData.new(description)
+        SuccessfulMatchData.new(match_data_description(actual))
       else
         # Content differs.
-        FailedMatchData.new(description, "#{actual.label} does not contain exactly #{expected.label}",
+        FailedMatchData.new(match_data_description(actual), "#{actual.label} does not contain exactly #{expected.label}",
           expected: expected_elements.inspect,
           actual: actual_elements.inspect,
           missing: missing.empty? ? "None" : missing.inspect,
@@ -56,13 +56,13 @@ module Spectator::Matchers
 
       if missing.empty? && extra.empty?
         # Contents are identical.
-        FailedMatchData.new(description, "#{actual.label} contains exactly #{expected.label}",
+        FailedMatchData.new(match_data_description(actual), "#{actual.label} contains exactly #{expected.label}",
           expected: "Not #{expected_elements.inspect}",
           actual: actual_elements.inspect
         )
       else
         # Content differs.
-        SuccessfulMatchData.new(description)
+        SuccessfulMatchData.new(match_data_description(actual))
       end
     end
 

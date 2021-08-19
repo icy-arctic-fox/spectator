@@ -29,10 +29,10 @@ module Spectator::Matchers
 
       if missing.empty?
         # Contents are present.
-        SuccessfulMatchData.new(description)
+        SuccessfulMatchData.new(match_data_description(actual))
       else
         # Content is missing.
-        FailedMatchData.new(description, "#{actual.label} does not contain #{expected.label}",
+        FailedMatchData.new(match_data_description(actual), "#{actual.label} does not contain #{expected.label}",
           expected: expected.value.inspect,
           actual: actual_value.inspect,
           missing: missing.inspect,
@@ -52,13 +52,13 @@ module Spectator::Matchers
 
       if satisfied
         # Contents are present.
-        FailedMatchData.new(description, "#{actual.label} contains #{expected.label}",
+        FailedMatchData.new(match_data_description(actual), "#{actual.label} contains #{expected.label}",
           expected: "Not #{expected.value.inspect}",
           actual: actual_value.inspect
         )
       else
         # Content is missing.
-        SuccessfulMatchData.new(description)
+        SuccessfulMatchData.new(match_data_description(actual))
       end
     end
 

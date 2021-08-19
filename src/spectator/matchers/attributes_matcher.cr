@@ -28,9 +28,9 @@ module Spectator::Matchers
     def match(actual : Expression(T)) : MatchData forall T
       snapshot = snapshot_values(actual.value)
       if match?(snapshot)
-        SuccessfulMatchData.new(description)
+        SuccessfulMatchData.new(match_data_description(actual))
       else
-        FailedMatchData.new(description, "#{actual.label} does not have attributes #{expected.label}", values(snapshot).to_a)
+        FailedMatchData.new(match_data_description(actual), "#{actual.label} does not have attributes #{expected.label}", values(snapshot).to_a)
       end
     end
 
@@ -39,9 +39,9 @@ module Spectator::Matchers
     def negated_match(actual : Expression(T)) : MatchData forall T
       snapshot = snapshot_values(actual.value)
       if match?(snapshot)
-        FailedMatchData.new(description, "#{actual.label} has attributes #{expected.label}", negated_values(snapshot).to_a)
+        FailedMatchData.new(match_data_description(actual), "#{actual.label} has attributes #{expected.label}", negated_values(snapshot).to_a)
       else
-        SuccessfulMatchData.new(description)
+        SuccessfulMatchData.new(match_data_description(actual))
       end
     end
 

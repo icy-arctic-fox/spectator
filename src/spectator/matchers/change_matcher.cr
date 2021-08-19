@@ -25,12 +25,12 @@ module Spectator::Matchers
     def match(actual : Expression(T)) : MatchData forall T
       before, after = change(actual)
       if before == after
-        FailedMatchData.new(description, "#{actual.label} did not change #{expression.label}",
+        FailedMatchData.new(match_data_description(actual), "#{actual.label} did not change #{expression.label}",
           before: before.inspect,
           after: after.inspect
         )
       else
-        SuccessfulMatchData.new(description)
+        SuccessfulMatchData.new(match_data_description(actual))
       end
     end
 
@@ -39,9 +39,9 @@ module Spectator::Matchers
     def negated_match(actual : Expression(T)) : MatchData forall T
       before, after = change(actual)
       if before == after
-        SuccessfulMatchData.new(description)
+        SuccessfulMatchData.new(match_data_description(actual))
       else
-        FailedMatchData.new(description, "#{actual.label} changed #{expression.label}",
+        FailedMatchData.new(match_data_description(actual), "#{actual.label} changed #{expression.label}",
           before: before.inspect,
           after: after.inspect
         )

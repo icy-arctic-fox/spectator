@@ -39,10 +39,10 @@ module Spectator::Matchers
 
       if missing.empty?
         # Contents are present.
-        SuccessfulMatchData.new(description)
+        SuccessfulMatchData.new(match_data_description(actual_label))
       else
         # Content is missing.
-        FailedMatchData.new(description, "#{actual_label} does not have #{expected.label}",
+        FailedMatchData.new(match_data_description(actual_label), "#{actual_label} does not have #{expected.label}",
           expected: expected.value.inspect,
           actual: actual_value.inspect,
           missing: missing.inspect,
@@ -58,9 +58,9 @@ module Spectator::Matchers
       end
 
       if missing.empty?
-        SuccessfulMatchData.new(description)
+        SuccessfulMatchData.new(match_data_description(actual_label))
       else
-        FailedMatchData.new(description, "#{actual_label} does not have #{expected.label}",
+        FailedMatchData.new(match_data_description(actual_label), "#{actual_label} does not have #{expected.label}",
           expected: expected.value.inspect,
           actual: actual_value.inspect,
           missing: missing.inspect,
@@ -89,13 +89,13 @@ module Spectator::Matchers
 
       if satisfied
         # Contents are present.
-        FailedMatchData.new(description, "#{actual_label} has #{expected.label}",
+        FailedMatchData.new(match_data_description(actual_label), "#{actual_label} has #{expected.label}",
           expected: "Not #{expected.value.inspect}",
           actual: actual_value.inspect
         )
       else
         # Content is missing.
-        SuccessfulMatchData.new(description)
+        SuccessfulMatchData.new(match_data_description(actual_label))
       end
     end
 
@@ -107,9 +107,9 @@ module Spectator::Matchers
       end
 
       if satisfied
-        SuccessfulMatchData.new(description)
+        SuccessfulMatchData.new(match_data_description(actual_label))
       else
-        FailedMatchData.new(description, "#{actual_label} does not have #{expected.label}",
+        FailedMatchData.new(match_data_description(actual_label), "#{actual_label} does not have #{expected.label}",
           expected: expected.value.inspect,
           actual: actual_value.inspect,
           missing: missing.inspect,
