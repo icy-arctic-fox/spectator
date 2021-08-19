@@ -13,7 +13,7 @@ module Spectator::Matchers
     private getter expected
 
     # Creates a new change matcher.
-    def initialize(@expression : TestBlock(ExpressionType), @expected : ToType)
+    def initialize(@expression : Block(ExpressionType), @expected : ToType)
     end
 
     # Short text about the matcher's purpose.
@@ -24,18 +24,18 @@ module Spectator::Matchers
     end
 
     # Actually performs the test against the expression.
-    def match(actual : TestExpression(T)) : MatchData forall T
+    def match(actual : Expression(T)) : MatchData forall T
       before, after = change(actual)
       if before == after
-        FailedMatchData.new(description, "#{actual.label} did not change #{expression.label}",
+        FailedMatchData.new(match_data_description(actual), "#{actual.label} did not change #{expression.label}",
           before: before.inspect,
           after: after.inspect,
           expected: expected.inspect
         )
       elsif expected == after
-        SuccessfulMatchData.new(description)
+        SuccessfulMatchData.new(match_data_description(actual))
       else
-        FailedMatchData.new(description, "#{actual.label} did not change #{expression.label} to #{expected}",
+        FailedMatchData.new(match_data_description(actual), "#{actual.label} did not change #{expression.label} to #{expected}",
           before: before.inspect,
           after: after.inspect,
           expected: expected.inspect
@@ -52,7 +52,7 @@ module Spectator::Matchers
     # but it is the expected value?
     #
     # RSpec doesn't support this syntax either.
-    def negated_match(actual : TestExpression(T)) : MatchData forall T
+    def negated_match(actual : Expression(T)) : MatchData forall T
       {% raise "The `expect { }.to_not change { }.to()` syntax is not supported (ambiguous)." %}
     end
 

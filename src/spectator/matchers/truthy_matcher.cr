@@ -28,7 +28,7 @@ module Spectator::Matchers
     # expect(0).to be < 1
     # ```
     def <(value)
-      expected = TestValue.new(value)
+      expected = Value.new(value)
       LessThanMatcher.new(expected)
     end
 
@@ -38,7 +38,7 @@ module Spectator::Matchers
     # expect(0).to be <= 1
     # ```
     def <=(value)
-      expected = TestValue.new(value)
+      expected = Value.new(value)
       LessThanEqualMatcher.new(expected)
     end
 
@@ -48,7 +48,7 @@ module Spectator::Matchers
     # expect(2).to be > 1
     # ```
     def >(value)
-      expected = TestValue.new(value)
+      expected = Value.new(value)
       GreaterThanMatcher.new(expected)
     end
 
@@ -58,7 +58,7 @@ module Spectator::Matchers
     # expect(2).to be >= 1
     # ```
     def >=(value)
-      expected = TestValue.new(value)
+      expected = Value.new(value)
       GreaterThanEqualMatcher.new(expected)
     end
 
@@ -68,7 +68,7 @@ module Spectator::Matchers
     # expect(0).to be == 0
     # ```
     def ==(value)
-      expected = TestValue.new(value)
+      expected = Value.new(value)
       EqualityMatcher.new(expected)
     end
 
@@ -78,7 +78,7 @@ module Spectator::Matchers
     # expect(0).to be != 1
     # ```
     def !=(value)
-      expected = TestValue.new(value)
+      expected = Value.new(value)
       InequalityMatcher.new(expected)
     end
 
@@ -103,7 +103,7 @@ module Spectator::Matchers
     end
 
     # Checks whether the matcher is satisifed with the expression given to it.
-    private def match?(actual : TestExpression(T)) : Bool forall T
+    private def match?(actual : Expression(T)) : Bool forall T
       @truthy == !!actual.value
     end
 

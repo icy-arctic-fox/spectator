@@ -8,7 +8,7 @@ module Spectator::Matchers
     private getter expected
 
     # Creates the matcher with an expected value.
-    def initialize(@expected : TestValue(Array(ExpectedType)))
+    def initialize(@expected : Value(Array(ExpectedType)))
     end
 
     # Short text about the matcher's purpose.
@@ -19,7 +19,7 @@ module Spectator::Matchers
     end
 
     # Actually performs the test against the expression.
-    def match(actual : TestExpression(T)) : MatchData forall T
+    def match(actual : Expression(T)) : MatchData forall T
       actual_value = actual.value
       return unexpected(actual_value, actual.label) unless actual_value.responds_to?(:to_a)
 
@@ -28,9 +28,9 @@ module Spectator::Matchers
       missing, extra = array_diff(expected_elements, actual_elements)
 
       if missing.empty? && extra.empty?
-        SuccessfulMatchData.new(description)
+        SuccessfulMatchData.new(match_data_description(actual))
       else
-        FailedMatchData.new(description, "#{actual.label} does not contain #{expected.label} (unordered)",
+        FailedMatchData.new(match_data_description(actual), "#{actual.label} does not contain #{expected.label} (unordered)",
           expected: expected_elements.inspect,
           actual: actual_elements.inspect,
           missing: missing.inspect,
@@ -41,7 +41,7 @@ module Spectator::Matchers
 
     # Performs the test against the expression, but inverted.
     # A successful match with `#match` should normally fail for this method, and vice-versa.
-    def negated_match(actual : TestExpression(T)) : MatchData forall T
+    def negated_match(actual : Expression(T)) : MatchData forall T
       actual_value = actual.value
       return unexpected(actual_value, actual.label) unless actual_value.responds_to?(:to_a)
 
@@ -50,12 +50,12 @@ module Spectator::Matchers
       missing, extra = array_diff(expected_elements, actual_elements)
 
       if missing.empty? && extra.empty?
-        FailedMatchData.new(description, "#{actual.label} contains #{expected.label} (unordered)",
+        FailedMatchData.new(match_data_description(actual), "#{actual.label} contains #{expected.label} (unordered)",
           expected: "Not #{expected_elements.inspect}",
           actual: actual_elements.inspect,
         )
       else
-        SuccessfulMatchData.new(description)
+        SuccessfulMatchData.new(match_data_description(actual))
       end
     end
 

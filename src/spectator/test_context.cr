@@ -1,82 +1,40 @@
-require "./example_hooks"
-require "./test_values"
+require "./context"
+require "./dsl"
+require "./lazy_wrapper"
+require "./metadata"
 
-module Spectator
-  class TestContext
-    getter! parent
+# Class used as the base for all specs using the DSL.
+# It adds methods and macros necessary to use the DSL from the spec.
+# This type is intentionally outside the `Spectator` module.
+# The reason for this is to prevent name collision when using the DSL to define a spec.
+class SpectatorTestContext < SpectatorContext
+  include ::Spectator::DSL::Concise
+  include ::Spectator::DSL::Examples
+  include ::Spectator::DSL::Expectations
+  include ::Spectator::DSL::Groups
+  include ::Spectator::DSL::Hooks
+  include ::Spectator::DSL::Matchers
+  include ::Spectator::DSL::Memoize
+  include ::Spectator::DSL::Mocks
 
-    getter values
+  @subject = ::Spectator::LazyWrapper.new
 
-    getter stubs : Hash(String, Deque(Mocks::MethodStub))
+  # Initial implicit subject for tests.
+  # This method should be overridden by example groups when an object is described.
+  private def _spectator_implicit_subject
+    nil
+  end
 
-    def initialize(@parent : TestContext?,
-                   @hooks : ExampleHooks,
-                   @conditions : ExampleConditions,
-                   @values : TestValues,
-                   @stubs : Hash(String, Deque(Mocks::MethodStub)))
-      @before_all_hooks_run = false
-      @after_all_hooks_run = false
-    end
+  # Initial subject for tests.
+  # Returns the implicit subject.
+  # This method should be overridden when an explicit subject is defined by the DSL.
+  private def subject
+    @subject.get { _spectator_implicit_subject }
+  end
 
-    def run_before_hooks(example : Example)
-      run_before_all_hooks
-      run_before_each_hooks(example)
-    end
-
-    protected def run_before_all_hooks
-      return if @before_all_hooks_run
-
-      @parent.try &.run_before_all_hooks
-      @hooks.run_before_all
-    ensure
-      @before_all_hooks_run = true
-    end
-
-    protected def run_before_each_hooks(example : Example)
-      @parent.try &.run_before_each_hooks(example)
-      @hooks.run_before_each(example.test_wrapper, example)
-    end
-
-    def run_after_hooks(example : Example)
-      run_after_each_hooks(example)
-      run_after_all_hooks(example.group)
-    end
-
-    protected def run_after_all_hooks(group : ExampleGroup, *, ignore_unfinished = false)
-      return if @after_all_hooks_run
-      return unless ignore_unfinished || group.finished?
-
-      @hooks.run_after_all
-      @parent.try do |parent_context|
-        parent_group = group.as(NestedExampleGroup).parent
-        parent_context.run_after_all_hooks(parent_group, ignore_unfinished: ignore_unfinished)
-      end
-    ensure
-      @after_all_hooks_run = true
-    end
-
-    protected def run_after_each_hooks(example : Example)
-      @hooks.run_after_each(example.test_wrapper, example)
-      @parent.try &.run_after_each_hooks(example)
-    end
-
-    def wrap_around_each_hooks(test, &block : ->)
-      wrapper = @hooks.wrap_around_each(test, block)
-      if (parent = @parent)
-        parent.wrap_around_each_hooks(test, &wrapper)
-      else
-        wrapper
-      end
-    end
-
-    def run_pre_conditions(example)
-      @parent.try &.run_pre_conditions(example)
-      @conditions.run_pre_conditions(example.test_wrapper, example)
-    end
-
-    def run_post_conditions(example)
-      @conditions.run_post_conditions(example.test_wrapper, example)
-      @parent.try &.run_post_conditions(example)
-    end
+  # Initial metadata for tests.
+  # This method should be overridden by example groups and examples.
+  private def self.metadata
+    ::Spectator::Metadata.new
   end
 end

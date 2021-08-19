@@ -3,113 +3,130 @@ require "./result"
 module Spectator
   # Outcome of all tests in a suite.
   class Report
-    include Enumerable(Result)
+    # Records the number of examples that had each type of result.
+    record Counts, pass = 0, fail = 0, error = 0, pending = 0, remaining = 0 do
+      # Number of examples that actually ran.
+      def run
+        pass + fail + pending
+      end
+
+      # Total number of examples in the suite that were selected to run.
+      def total
+        run + remaining
+      end
+
+      # Indicates whether there were skipped tests
+      # because of a failure causing the test suite to abort.
+      def remaining?
+        remaining > 0
+      end
+    end
+
+    # Retrieves all examples that were planned to run as part of the suite.
+    getter examples : Array(Example)
 
     # Total length of time it took to execute the test suite.
     # This includes examples, hooks, and framework processes.
     getter runtime : Time::Span
 
-    # Number of passing examples.
-    getter successful_count = 0
+    # Number of examples of each result type.
+    getter counts : Counts
 
-    # Number of failing examples (includes errors).
-    getter failed_count = 0
-
-    # Number of examples that had errors.
-    getter error_count = 0
-
-    # Number of pending examples.
-    getter pending_count = 0
-
-    # Number of remaining tests.
-    # This will be greater than zero only in fail-fast mode.
-    getter remaining_count
-
-    # Random seed used to determine test ordering.
+    # Seed used for random number generation.
     getter! random_seed : UInt64?
 
     # Creates the report.
-    # The *results* are from running the examples in the test suite.
+    # The *examples* are all examples in the test suite that were selected to run.
     # The *runtime* is the total time it took to execute the suite.
-    # The *remaining_count* is the number of tests skipped due to fail-fast.
-    # The *fail_blank* flag indicates whether it is a failure if there were no tests run.
+    # The *counts* is the number of examples for each type of result.
     # The *random_seed* is the seed used for random number generation.
-    def initialize(@results : Array(Result), @runtime, @remaining_count = 0, @fail_blank = false, @random_seed = nil)
-      @results.each do |result|
-        case result
-        when SuccessfulResult
-          @successful_count += 1
-        when ErroredResult
-          @error_count += 1
-          @failed_count += 1
-        when FailedResult
-          @failed_count += 1
-        when PendingResult
-          @pending_count += 1
-        when Result
-          # This case isn't possible, but gets the compiler to stop complaining.
-          nil
+    def initialize(@examples : Array(Example), @runtime, @counts : Counts, @random_seed = nil)
+    end
+
+    # Generates the report from a set of examples.
+    def self.generate(examples : Enumerable(Example), runtime, random_seed = nil)
+      counts = count_examples(examples)
+      new(examples.to_a, runtime, counts, random_seed)
+    end
+
+    # Counts the number of examples for each result type.
+    private def self.count_examples(examples)
+      visitor = CountVisitor.new
+
+      # Number of tests not run.
+      remaining = 0
+
+      # Iterate through each example and count the number of each type of result.
+      # If an example hasn't run (indicated by `Node#finished?`), then count is as "remaining."
+      # This typically happens in fail-fast mode.
+      examples.each do |example|
+        if example.finished?
+          example.result.accept(visitor)
+        else
+          remaining += 1
         end
       end
+
+      visitor.counts(remaining)
     end
 
-    # Creates the report.
-    # This constructor is intended for reports of subsets of results.
-    # The *results* are from running the examples in the test suite.
-    # The runtime is calculated from the *results*.
-    def initialize(results : Array(Result))
-      runtime = results.each.compact_map(&.as?(FinishedResult)).sum(&.elapsed)
-      initialize(results, runtime)
-    end
-
-    # Yields each result in turn.
-    def each
-      @results.each do |result|
-        yield result
-      end
-    end
-
-    # Number of examples.
-    def example_count
-      @results.size
-    end
-
-    # Number of examples run (not skipped or pending).
-    def examples_ran
-      @successful_count + @failed_count
-    end
-
-    # Indicates whether the test suite failed.
-    def failed?
-      failed_count > 0 || (@fail_blank && examples_ran == 0)
-    end
-
-    # Indicates whether there were skipped tests
-    # because of a failure causing the test to abort.
-    def remaining?
-      remaining_count > 0
-    end
-
-    # Returns a set of results for all failed examples.
+    # Returns a collection of all failed examples.
     def failures
-      @results.each.compact_map(&.as?(FailedResult))
+      @examples.select(&.result.fail?)
     end
 
-    # Returns a set of results for all errored examples.
-    def errors
-      @results.each.compact_map(&.as?(ErroredResult))
+    # Returns a collection of all pending (skipped) examples.
+    def pending
+      @examples.select(&.result.pending?)
     end
 
     # Length of time it took to run just example code.
     # This does not include hooks,
     # but it does include pre- and post-conditions.
     def example_runtime
-      @results.each.compact_map(&.as?(FinishedResult)).sum(&.elapsed)
+      @examples.sum(&.result.elapsed)
     end
 
     # Length of time spent in framework processes and hooks.
     def overhead_time
       @runtime - example_runtime
+    end
+
+    # Totals up the number of each type of result.
+    # Defines methods for the different types of results.
+    # Call `#counts` to retrieve the `Counts` instance.
+    private class CountVisitor
+      @pass = 0
+      @fail = 0
+      @error = 0
+      @pending = 0
+
+      # Increments the number of passing examples.
+      def pass(_result)
+        @pass += 1
+      end
+
+      # Increments the number of failing (non-error) examples.
+      def fail(_result)
+        @fail += 1
+      end
+
+      # Increments the number of error (and failed) examples.
+      def error(result)
+        fail(result)
+        @error += 1
+      end
+
+      # Increments the number of pending (skipped) examples.
+      def pending(_result)
+        @pending += 1
+      end
+
+      # Produces the total counts.
+      # The *remaining* number of examples should be provided.
+      def counts(remaining)
+        Counts.new(@pass, @fail, @error, @pending, remaining)
+      end
     end
   end
 end

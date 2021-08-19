@@ -15,7 +15,7 @@ module Spectator::Matchers
     def inclusive
       label = expected.label
       new_range = Range.new(range.begin, range.end, exclusive: false)
-      expected = TestValue.new(new_range, label)
+      expected = Value.new(new_range, label)
       RangeMatcher.new(expected)
     end
 
@@ -23,12 +23,12 @@ module Spectator::Matchers
     def exclusive
       label = expected.label
       new_range = Range.new(range.begin, range.end, exclusive: true)
-      expected = TestValue.new(new_range, label)
+      expected = Value.new(new_range, label)
       RangeMatcher.new(expected)
     end
 
     # Checks whether the matcher is satisifed with the expression given to it.
-    private def match?(actual : TestExpression(T)) : Bool forall T
+    private def match?(actual : Expression(T)) : Bool forall T
       expected.value.includes?(actual.value)
     end
 

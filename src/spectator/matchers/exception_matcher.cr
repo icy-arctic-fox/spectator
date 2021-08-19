@@ -1,4 +1,4 @@
-require "../test_value"
+require "../value"
 require "./failed_match_data"
 require "./matcher"
 require "./successful_match_data"
@@ -11,11 +11,11 @@ module Spectator::Matchers
 
     # Creates the matcher with no expectation of the message.
     def initialize
-      @expected = TestValue.new(nil, ExceptionType.to_s)
+      @expected = Value.new(nil, ExceptionType.to_s)
     end
 
     # Creates the matcher with an expected message.
-    def initialize(@expected : TestValue(ExpectedType))
+    def initialize(@expected : Value(ExpectedType))
     end
 
     # Short text about the matcher's purpose.
@@ -30,19 +30,19 @@ module Spectator::Matchers
     end
 
     # Actually performs the test against the expression.
-    def match(actual : TestExpression(T)) : MatchData forall T
+    def match(actual : Expression(T)) : MatchData forall T
       exception = capture_exception { actual.value }
       if exception.nil?
-        FailedMatchData.new(description, "#{actual.label} did not raise", expected: ExceptionType.inspect)
+        FailedMatchData.new(match_data_description(actual), "#{actual.label} did not raise", expected: ExceptionType.inspect)
       else
         if exception.is_a?(ExceptionType)
           if (value = expected.value).nil?
-            SuccessfulMatchData.new(description)
+            SuccessfulMatchData.new(match_data_description(actual))
           else
             if value === exception.message
-              SuccessfulMatchData.new(description)
+              SuccessfulMatchData.new(match_data_description(actual))
             else
-              FailedMatchData.new(description, "#{actual.label} raised #{exception.class}, but the message is not #{expected.label}",
+              FailedMatchData.new(match_data_description(actual), "#{actual.label} raised #{exception.class}, but the message is not #{expected.label}",
                 "expected type": ExceptionType.inspect,
                 "actual type": exception.class.inspect,
                 "expected message": value.inspect,
@@ -51,7 +51,7 @@ module Spectator::Matchers
             end
           end
         else
-          FailedMatchData.new(description, "#{actual.label} did not raise #{ExceptionType}",
+          FailedMatchData.new(match_data_description(actual), "#{actual.label} did not raise #{ExceptionType}",
             expected: ExceptionType.inspect,
             actual: exception.class.inspect
           )
@@ -61,37 +61,37 @@ module Spectator::Matchers
 
     # Performs the test against the expression, but inverted.
     # A successful match with `#match` should normally fail for this method, and vice-versa.
-    def negated_match(actual : TestExpression(T)) : MatchData forall T
+    def negated_match(actual : Expression(T)) : MatchData forall T
       exception = capture_exception { actual.value }
       if exception.nil?
-        SuccessfulMatchData.new(description)
+        SuccessfulMatchData.new(match_data_description(actual))
       else
         if exception.is_a?(ExceptionType)
           if (value = expected.value).nil?
-            FailedMatchData.new(description, "#{actual.label} raised #{exception.class}",
+            FailedMatchData.new(match_data_description(actual), "#{actual.label} raised #{exception.class}",
               expected: "Not #{ExceptionType}",
               actual: exception.class.inspect
             )
           else
             if value === exception.message
-              FailedMatchData.new(description, "#{actual.label} raised #{exception.class} with message matching #{expected.label}",
+              FailedMatchData.new(match_data_description(actual), "#{actual.label} raised #{exception.class} with message matching #{expected.label}",
                 "expected type": ExceptionType.inspect,
                 "actual type": exception.class.inspect,
                 "expected message": value.inspect,
                 "actual message": exception.message.to_s
               )
             else
-              SuccessfulMatchData.new(description)
+              SuccessfulMatchData.new(match_data_description(actual))
             end
           end
         else
-          SuccessfulMatchData.new(description)
+          SuccessfulMatchData.new(match_data_description(actual))
         end
       end
     end
 
     def with_message(message : T) forall T
-      value = TestValue.new(message)
+      value = Value.new(message)
       ExceptionMatcher(ExceptionType, T).new(value)
     end
 
@@ -114,13 +114,13 @@ module Spectator::Matchers
 
     # Creates a new exception matcher with a message check.
     def self.create(value, label : String)
-      expected = TestValue.new(value, label)
+      expected = Value.new(value, label)
       ExceptionMatcher(Exception, typeof(value)).new(expected)
     end
 
     # Creates a new exception matcher with a type and message check.
     def self.create(exception_type : T.class, value, label : String) forall T
-      expected = TestValue.new(value, label)
+      expected = Value.new(value, label)
       ExceptionMatcher(T, typeof(value)).new(expected)
     end
   end

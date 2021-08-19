@@ -1,0 +1,86 @@
+<div id="summary" class="<%= summary_result(report) %>">
+  <h1>Test Results</h1>
+  <span class="totals <%= summary_result(report) %>"><% escape(totals(report)) %></span>
+  <span class="elapsed" title="<% escape(report.runtime) %>"><% escape(runtime(report.runtime)) %></span>
+</div>
+
+<%- if report.counts.fail > 0 -%>
+<h2>Failures (<%= report.counts.fail %>)</h2>
+<ol id="failure-list">
+  <%- report.failures.each do |example| -%>
+  <li class="example fail">
+    <a href="#example-<%= example.object_id %>" title="Jump to result">
+      <span class="full-name"><% escape(example) %></h3>
+    </a>
+  </li>
+  <%- end -%>
+</ol>
+<%- end -%>
+
+<%- if report.counts.pending > 0 -%>
+<h2>Pending (<%= report.counts.pending %>)</h2>
+<ol id="pending-list">
+  <%- report.pending.each do |example| -%>
+  <li class="example pending">
+    <a href="#example-<%= example.object_id %>" title="Jump to result">
+      <span class="full-name"><% escape(example) %></h3>
+    </a>
+  </li>
+  <%- end -%>
+</ol>
+<%- end -%>
+
+<h2>Examples (<%= report.counts.total %>)</h2>
+<ul id="example-list">
+  <%- report.examples.each do |example| -%>
+  <li id="example-<%= example.object_id %>" class="example <%= example.result %>">
+    <h3 class="full-name"><% escape(example) %></h3>
+    <span class="result <%= example.result %>"><%= example.result %></span>
+    <span class="elapsed" title="<% escape(example.result.elapsed) %>">Took <% escape(runtime(example.result.elapsed)) %></span>
+    <% if location = example.location? %><span class="location"><% escape(location) %></span><% end %>
+    <% if result = example.result.as?(PendingResult) %><p class="message"><% escape(result.reason) %></p>
+
+    <%- elsif result = example.result.as?(ErrorResult) -%>
+    <p class="message error">
+      <em class="type-name"><% escape(result.error.class) %></em>
+      <% escape(result.error.message) %>
+    </p>
+    <%- if backtrace = result.error.backtrace? -%>
+    <div class="stacktrace">
+      <%- backtrace.each do |line| -%>
+      <code class="backtrace-line<% unless line.starts_with?(/(src|spec)\//) %> muted<% end %>"><% escape(line) %></code>
+      <%- end -%>
+    </div>
+    <%- end -%>
+
+    <%- elsif result = example.result.as?(FailResult) -%>
+    <p class="message fail"><% escape(result.error.message) %></span>
+    <%- end -%>
+
+    <%- if example.result.expectations.empty? -%>
+    <span class="muted">No expectations reported</span>
+    <%- else -%>
+    <h4>Expectations</h4>
+    <ol class="expectation-list">
+      <%- example.result.expectations.each do |expectation| -%>
+      <li class="expectation <%= expectation.satisfied? ? "pass" : "fail" %>"<% if location = expectation.location? %> title="<% escape(location) %>"<% end %>>
+        <span><% escape(expectation.description) %></h5>
+        <%- if expectation.satisfied? -%>
+        <span class="result pass">pass</span>
+        <%- else -%>
+        <span class="result fail">fail</span>
+        <p class="message"><% escape(expectation.failure_message) %></span>
+        <dl class="expectation-values">
+          <%- expectation.values.each do |key, value| -%>
+          <dt><% escape(key) %></dt>
+          <dd><% escape(value) %></dd>
+          <%- end -%>
+        </dl>
+        <%- end -%>
+      </li>
+      <%- end -%>
+    </ol>
+    <%- end -%>
+  </li>
+  <%- end -%>
+</ul>

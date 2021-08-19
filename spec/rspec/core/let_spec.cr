@@ -11,7 +11,7 @@ Spectator.describe "Let and let!" do
     describe "let" do
       let(:count) { @@count += 1 }
 
-      it "memoizes thte value" do
+      it "memoizes the value" do
         expect(count).to eq(1)
         expect(count).to eq(1)
       end

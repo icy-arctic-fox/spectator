@@ -1,4 +1,4 @@
-require "../test_value"
+require "../value"
 require "./range_matcher"
 require "./value_matcher"
 
@@ -13,7 +13,7 @@ module Spectator::Matchers
     end
 
     # Checks whether the matcher is satisifed with the expression given to it.
-    private def match?(actual : TestExpression(T)) : Bool forall T
+    private def match?(actual : Expression(T)) : Bool forall T
       expected.value.includes?(actual.value)
     end
 
@@ -55,8 +55,8 @@ module Spectator::Matchers
       lower = center - diff
       upper = center + diff
       range = Range.new(lower, upper)
-      test_value = TestValue.new(range, "#{center} ± #{expected.label}")
-      RangeMatcher.new(test_value)
+      value = Value.new(range, "#{center} ± #{expected.label}")
+      RangeMatcher.new(value)
     end
   end
 end

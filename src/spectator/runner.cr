@@ -1,81 +1,98 @@
-require "./harness"
+require "./example"
+require "./formatting/formatter"
+require "./profile"
+require "./report"
+require "./run_flags"
+require "./runner_events"
 
 module Spectator
-  # Main driver for executing tests and feeding results to formatters.
-  class Runner
-    # Creates the test suite runner.
-    # Specify the test *suite* to run and any additonal configuration.
-    def initialize(@suite : TestSuite, @config : Config)
+  # Logic for executing examples and collecting results.
+  struct Runner
+    include RunnerEvents
+
+    # Formatter to send events to.
+    private getter formatter : Formatting::Formatter
+
+    # Creates the runner.
+    # The collection of *examples* should be pre-filtered and shuffled.
+    # This runner will run each example in the order provided.
+    # The *formatter* will be called for various events.
+    def initialize(@examples : Array(Example), @formatter : Formatting::Formatter,
+                   @run_flags = RunFlags::None, @random_seed : UInt64? = nil)
     end
 
-    # Runs the test suite.
-    # This will run the selected examples
-    # and invoke the formatter to output results.
-    # True will be returned if the test suite ran successfully,
+    # Runs the spec.
+    # This will run the provided examples
+    # and invoke the reporters to communicate results.
+    # True will be returned if the spec ran successfully,
     # or false if there was at least one failure.
     def run : Bool
-      # Indicate the suite is starting.
-      @config.each_formatter(&.start_suite(@suite))
+      start
+      elapsed = Time.measure { run_examples }
+      stop
 
-      # Run all examples and capture the results.
-      results = Array(Result).new(@suite.size)
-      elapsed = Time.measure do
-        collect_results(results)
-      end
+      report = Report.generate(@examples, elapsed, @random_seed)
+      profile = Profile.generate(@examples) if @run_flags.profile? && report.counts.run > 0
+      summarize(report, profile)
 
-      # Generate a report and pass it along to the formatter.
-      remaining = @suite.size - results.size
-      seed = (@config.random_seed? if @config.randomize?)
-      report = Report.new(results, elapsed, remaining, @config.fail_blank?, seed)
-      @config.each_formatter(&.end_suite(report, profile(report)))
-
-      !report.failed?
+      report.counts.fail.zero?
+    ensure
+      close
     end
 
-    # Runs all examples and adds results to a list.
-    private def collect_results(results)
-      example_order.each do |example|
-        result = run_example(example).as(Result)
-        results << result
-        if @config.fail_fast? && result.is_a?(FailedResult)
-          example.group.context.run_after_all_hooks(example.group, ignore_unfinished: true)
-          break
-        end
-      end
-    end
+    # Attempts to run all examples.
+    # Returns a list of examples that ran.
+    private def run_examples
+      @examples.each do |example|
+        result = run_example(example)
 
-    # Retrieves an enumerable for the examples to run.
-    # The order of examples is randomized
-    # if specified by the configuration.
-    private def example_order
-      @suite.to_a.tap do |examples|
-        examples.shuffle!(@config.random) if @config.randomize?
+        # Bail out if the example failed
+        # and configured to stop after the first failure.
+        break fail_fast if fail_fast? && result.fail?
       end
     end
 
     # Runs a single example and returns the result.
     # The formatter is given the example and result information.
     private def run_example(example)
-      @config.each_formatter(&.start_example(example))
-      result = if @config.dry_run? && example.is_a?(RunnableExample)
-                 dry_run_result(example)
+      example_started(example)
+      result = if dry_run?
+                 # TODO: Pending examples return a pending result instead of pass in RSpec dry-run.
+                 dry_run_result
                else
-                 Harness.run(example)
+                 example.run
                end
-      @config.each_formatter(&.end_example(result))
+      example_finished(example)
       result
     end
 
-    # Creates a fake result for an example.
-    private def dry_run_result(example)
-      expectations = [] of Expectations::Expectation
-      example_expectations = Expectations::ExampleExpectations.new(expectations)
-      SuccessfulResult.new(example, Time::Span.zero, example_expectations)
+    # Creates a fake result.
+    private def dry_run_result
+      expectations = [] of Expectation
+      PassResult.new(Time::Span.zero, expectations)
     end
 
     # Generates and returns a profile if one should be displayed.
     private def profile(report)
       Profile.generate(report) if @config.profile?
+    end
+
+    # Indicates whether examples should be simulated, but not run.
+    private def dry_run?
+      @run_flags.dry_run?
+    end
+
+    # Indicates whether test execution should stop after the first failure.
+    private def fail_fast?
+      @run_flags.fail_fast?
+    end
+
+    private def fail_fast : Nil
+    end
+
+    # Number of examples configured to run.
+    private def example_count
+      @examples.size
     end
   end
 end

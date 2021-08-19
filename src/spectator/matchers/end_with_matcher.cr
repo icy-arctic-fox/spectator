@@ -11,7 +11,7 @@ module Spectator::Matchers
     private getter expected
 
     # Creates the matcher with an expected value.
-    def initialize(@expected : TestValue(ExpectedType))
+    def initialize(@expected : Value(ExpectedType))
     end
 
     # Short text about the matcher's purpose.
@@ -22,7 +22,7 @@ module Spectator::Matchers
     end
 
     # Actually performs the test against the expression.
-    def match(actual : TestExpression(T)) : MatchData forall T
+    def match(actual : Expression(T)) : MatchData forall T
       value = actual.value
       if value.is_a?(String) || value.responds_to?(:ends_with?)
         match_ends_with(value, actual.label)
@@ -33,7 +33,7 @@ module Spectator::Matchers
 
     # Performs the test against the expression, but inverted.
     # A successful match with `#match` should normally fail for this method, and vice-versa.
-    def negated_match(actual : TestExpression(T)) : MatchData forall T
+    def negated_match(actual : Expression(T)) : MatchData forall T
       value = actual.value
       if value.is_a?(String) || value.responds_to?(:ends_with?)
         negated_match_ends_with(value, actual.label)
@@ -46,9 +46,9 @@ module Spectator::Matchers
     # This method expects (and uses) the `#ends_with?` method on the value.
     private def match_ends_with(actual_value, actual_label)
       if actual_value.ends_with?(expected.value)
-        SuccessfulMatchData.new(description)
+        SuccessfulMatchData.new(match_data_description(actual_label))
       else
-        FailedMatchData.new(description, "#{actual_label} does not end with #{expected.label} (using #ends_with?)",
+        FailedMatchData.new(match_data_description(actual_label), "#{actual_label} does not end with #{expected.label} (using #ends_with?)",
           expected: expected.value.inspect,
           actual: actual_value.inspect
         )
@@ -62,9 +62,9 @@ module Spectator::Matchers
       last = list.last
 
       if expected.value === last
-        SuccessfulMatchData.new(description)
+        SuccessfulMatchData.new(match_data_description(actual_label))
       else
-        FailedMatchData.new(description, "#{actual_label} does not end with #{expected.label} (using expected === last)",
+        FailedMatchData.new(match_data_description(actual_label), "#{actual_label} does not end with #{expected.label} (using expected === last)",
           expected: expected.value.inspect,
           actual: last.inspect,
           list: list.inspect
@@ -76,12 +76,12 @@ module Spectator::Matchers
     # This method expects (and uses) the `#ends_with?` method on the value.
     private def negated_match_ends_with(actual_value, actual_label)
       if actual_value.ends_with?(expected.value)
-        FailedMatchData.new(description, "#{actual_label} ends with #{expected.label} (using #ends_with?)",
+        FailedMatchData.new(match_data_description(actual_label), "#{actual_label} ends with #{expected.label} (using #ends_with?)",
           expected: "Not #{expected.value.inspect}",
           actual: actual_value.inspect
         )
       else
-        SuccessfulMatchData.new(description)
+        SuccessfulMatchData.new(match_data_description(actual_label))
       end
     end
 
@@ -92,13 +92,13 @@ module Spectator::Matchers
       last = list.last
 
       if expected.value === last
-        FailedMatchData.new(description, "#{actual_label} ends with #{expected.label} (using expected === last)",
+        FailedMatchData.new(match_data_description(actual_label), "#{actual_label} ends with #{expected.label} (using expected === last)",
           expected: "Not #{expected.value.inspect}",
           actual: last.inspect,
           list: list.inspect
         )
       else
-        SuccessfulMatchData.new(description)
+        SuccessfulMatchData.new(match_data_description(actual_label))
       end
     end
   end

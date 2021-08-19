@@ -3,12 +3,12 @@ require "./generic_method_stub"
 
 module Spectator::Mocks
   class ProcMethodStub(ReturnType) < GenericMethodStub(ReturnType)
-    def initialize(name, source, @proc : -> ReturnType, args = nil)
-      super(name, source, args)
+    def initialize(name, location, @proc : -> ReturnType, args = nil)
+      super(name, location, args)
     end
 
-    def self.create(name, source, args = nil, &block : -> T) forall T
-      ProcMethodStub.new(name, source, block, args)
+    def self.create(name, location, args = nil, &block : -> T) forall T
+      ProcMethodStub.new(name, location, block, args)
     end
 
     def call(_args : GenericArguments(T, NT), &_original : -> RT) forall T, NT, RT

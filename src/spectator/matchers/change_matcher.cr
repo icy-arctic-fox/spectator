@@ -11,7 +11,7 @@ module Spectator::Matchers
     private getter expression
 
     # Creates a new change matcher.
-    def initialize(@expression : TestBlock(ExpressionType))
+    def initialize(@expression : Block(ExpressionType))
     end
 
     # Short text about the matcher's purpose.
@@ -22,26 +22,26 @@ module Spectator::Matchers
     end
 
     # Actually performs the test against the expression.
-    def match(actual : TestExpression(T)) : MatchData forall T
+    def match(actual : Expression(T)) : MatchData forall T
       before, after = change(actual)
       if before == after
-        FailedMatchData.new(description, "#{actual.label} did not change #{expression.label}",
+        FailedMatchData.new(match_data_description(actual), "#{actual.label} did not change #{expression.label}",
           before: before.inspect,
           after: after.inspect
         )
       else
-        SuccessfulMatchData.new(description)
+        SuccessfulMatchData.new(match_data_description(actual))
       end
     end
 
     # Performs the test against the expression, but inverted.
     # A successful match with `#match` should normally fail for this method, and vice-versa.
-    def negated_match(actual : TestExpression(T)) : MatchData forall T
+    def negated_match(actual : Expression(T)) : MatchData forall T
       before, after = change(actual)
       if before == after
-        SuccessfulMatchData.new(description)
+        SuccessfulMatchData.new(match_data_description(actual))
       else
-        FailedMatchData.new(description, "#{actual.label} changed #{expression.label}",
+        FailedMatchData.new(match_data_description(actual), "#{actual.label} changed #{expression.label}",
           before: before.inspect,
           after: after.inspect
         )

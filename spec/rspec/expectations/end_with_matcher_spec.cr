@@ -18,10 +18,9 @@ Spectator.describe "`end_with` matcher" do
   context "array usage" do
     describe [0, 1, 2, 3, 4] do
       it { is_expected.to end_with 4 }
-      # TODO: Add support for multiple items at the end of an array.
-      # it { is_expected.to end_with 3, 4 }
+      skip reason: "Add support for multiple items at the end of an array." { is_expected.to end_with 3, 4 }
       it { is_expected.not_to end_with 3 }
-      # it { is_expected.not_to end_with 0, 1, 2, 3, 4, 5 }
+      skip reason: "Add support for multiple items at the end of an array." { is_expected.not_to end_with 0, 1, 2, 3, 4, 5 }
 
       # deliberate failures
       it_fails { is_expected.not_to end_with 4 }

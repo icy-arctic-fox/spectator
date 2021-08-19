@@ -4,7 +4,7 @@ module Spectator::Mocks
   module Reflection
     private macro _spectator_reflect
       {% for meth in @type.methods %}
-        %source = ::Spectator::Source.new({{meth.filename}}, {{meth.line_number}})
+        %location = ::Spectator::Location.new({{meth.filename}}, {{meth.line_number}})
         %args = ::Spectator::Mocks::GenericArguments.create(
           {% for arg, i in meth.args %}
             {% matcher = if arg.restriction
@@ -19,7 +19,7 @@ module Spectator::Mocks
             {{matcher}}{% if i < meth.args.size %},{% end %}
           {% end %}
         )
-        ::Spectator::Mocks::TypeRegistry.add({{@type.id.stringify}}, {{meth.name.symbolize}}, %source, %args)
+        ::Spectator::Mocks::TypeRegistry.add({{@type.id.stringify}}, {{meth.name.symbolize}}, %location, %args)
       {% end %}
     end
   end

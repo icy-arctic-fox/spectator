@@ -10,7 +10,7 @@ module Spectator::Matchers
     private getter expected
 
     # Creates the matcher with a expected values.
-    def initialize(@expected : TestValue(ExpectedType))
+    def initialize(@expected : Value(ExpectedType))
     end
 
     # Short text about the matcher's purpose.
@@ -21,23 +21,23 @@ module Spectator::Matchers
     end
 
     # Actually performs the test against the expression.
-    def match(actual : TestExpression(T)) : MatchData forall T
+    def match(actual : Expression(T)) : MatchData forall T
       snapshot = snapshot_values(actual.value)
       if match?(snapshot)
-        SuccessfulMatchData.new(description)
+        SuccessfulMatchData.new(match_data_description(actual))
       else
-        FailedMatchData.new(description, "#{actual.label} is not #{expected.label}", values(snapshot).to_a)
+        FailedMatchData.new(match_data_description(actual), "#{actual.label} is not #{expected.label}", values(snapshot).to_a)
       end
     end
 
     # Performs the test against the expression, but inverted.
     # A successful match with `#match` should normally fail for this method, and vice-versa.
-    def negated_match(actual : TestExpression(T)) : MatchData forall T
+    def negated_match(actual : Expression(T)) : MatchData forall T
       snapshot = snapshot_values(actual.value)
       if match?(snapshot)
-        FailedMatchData.new(description, "#{actual.label} is #{expected.label}", values(snapshot).to_a)
+        FailedMatchData.new(match_data_description(actual), "#{actual.label} is #{expected.label}", values(snapshot).to_a)
       else
-        SuccessfulMatchData.new(description)
+        SuccessfulMatchData.new(match_data_description(actual))
       end
     end
 

@@ -1,9 +1,9 @@
+require "../block"
 require "../matchers"
-require "../test_block"
-require "../test_value"
+require "../value"
 
-module Spectator
-  module DSL
+module Spectator::DSL
+  module Matchers
     # Indicates that some value should equal another.
     # The == operator is used for this check.
     # The value passed to this method is the expected value.
@@ -13,8 +13,8 @@ module Spectator
     # expect(1 + 2).to eq(3)
     # ```
     macro eq(expected)
-      %test_value = ::Spectator::TestValue.new({{expected}}, {{expected.stringify}})
-      ::Spectator::Matchers::EqualityMatcher.new(%test_value)
+      %value = ::Spectator::Value.new({{expected}}, {{expected.stringify}})
+      ::Spectator::Matchers::EqualityMatcher.new(%value)
     end
 
     # Indicates that some value should not equal another.
@@ -26,8 +26,8 @@ module Spectator
     # expect(1 + 2).to ne(5)
     # ```
     macro ne(expected)
-      %test_value = ::Spectator::TestValue.new({{expected}}, {{expected.stringify}})
-      ::Spectator::Matchers::InequalityMatcher.new(%test_value)
+      %value = ::Spectator::Value.new({{expected}}, {{expected.stringify}})
+      ::Spectator::Matchers::InequalityMatcher.new(%value)
     end
 
     # Indicates that some value when compared to another satisfies an operator.
@@ -61,8 +61,8 @@ module Spectator
     # expect(obj.dup).to_not be(obj)
     # ```
     macro be(expected)
-      %test_value = ::Spectator::TestValue.new({{expected}}, {{expected.stringify}})
-      ::Spectator::Matchers::ReferenceMatcher.new(%test_value)
+      %value = ::Spectator::Value.new({{expected}}, {{expected.stringify}})
+      ::Spectator::Matchers::ReferenceMatcher.new(%value)
     end
 
     # Indicates that some value should be of a specified type.
@@ -123,7 +123,7 @@ module Spectator
     end
 
     # Indicates that some value should be of a specified type.
-    # The value's runtime class is checked.
+    # The value's runtime type is checked.
     # A type name or type union should be used for *expected*.
     #
     # Examples:
@@ -135,7 +135,7 @@ module Spectator
     end
 
     # Indicates that some value should be of a specified type.
-    # The value's runtime class is checked.
+    # The value's runtime type is checked.
     # A type name or type union should be used for *expected*.
     # This method is identical to `#be_an_instance_of`,
     # and exists just to improve grammar.
@@ -146,6 +146,19 @@ module Spectator
     # ```
     macro be_an_instance_of(expected)
       be_instance_of({{expected}})
+    end
+
+    # Indicates that some value should be of a specified type at compile time.
+    # The value's compile time type is checked.
+    # This can test is a variable or value returned by a method is inferred to the expected type.
+    #
+    # Examples:
+    # ```
+    # value = 42 || "foobar"
+    # expect(value).to compile_as(Int32 | String)
+    # ```
+    macro compile_as(expected)
+      ::Spectator::Matchers::CompiledTypeMatcher({{expected}}).new
     end
 
     # Indicates that some value should respond to a method call.
@@ -173,8 +186,8 @@ module Spectator
     # expect(3 - 1).to be_lt(3)
     # ```
     macro be_lt(expected)
-      %test_value = ::Spectator::TestValue.new({{expected}}, {{expected.stringify}})
-      ::Spectator::Matchers::LessThanMatcher.new(%test_value)
+      %value = ::Spectator::Value.new({{expected}}, {{expected.stringify}})
+      ::Spectator::Matchers::LessThanMatcher.new(%value)
     end
 
     # Indicates that some value should be less than or equal to another.
@@ -186,8 +199,8 @@ module Spectator
     # expect(3 - 1).to be_le(3)
     # ```
     macro be_le(expected)
-      %test_value = ::Spectator::TestValue.new({{expected}}, {{expected.stringify}})
-      ::Spectator::Matchers::LessThanEqualMatcher.new(%test_value)
+      %value = ::Spectator::Value.new({{expected}}, {{expected.stringify}})
+      ::Spectator::Matchers::LessThanEqualMatcher.new(%value)
     end
 
     # Indicates that some value should be greater than another.
@@ -199,8 +212,8 @@ module Spectator
     # expect(3 + 1).to be_gt(3)
     # ```
     macro be_gt(expected)
-      %test_value = ::Spectator::TestValue.new({{expected}}, {{expected.stringify}})
-      ::Spectator::Matchers::GreaterThanMatcher.new(%test_value)
+      %value = ::Spectator::Value.new({{expected}}, {{expected.stringify}})
+      ::Spectator::Matchers::GreaterThanMatcher.new(%value)
     end
 
     # Indicates that some value should be greater than or equal to another.
@@ -212,8 +225,8 @@ module Spectator
     # expect(3 + 1).to be_ge(3)
     # ```
     macro be_ge(expected)
-      %test_value = ::Spectator::TestValue.new({{expected}}, {{expected.stringify}})
-      ::Spectator::Matchers::GreaterThanEqualMatcher.new(%test_value)
+      %value = ::Spectator::Value.new({{expected}}, {{expected.stringify}})
+      ::Spectator::Matchers::GreaterThanEqualMatcher.new(%value)
     end
 
     # Indicates that some value should match another.
@@ -230,8 +243,8 @@ module Spectator
     # expect({:foo, 5}).to match({Symbol, Int32})
     # ```
     macro match(expected)
-      %test_value = ::Spectator::TestValue.new({{expected}}, {{expected.stringify}})
-      ::Spectator::Matchers::CaseMatcher.new(%test_value)
+      %value = ::Spectator::Value.new({{expected}}, {{expected.stringify}})
+      ::Spectator::Matchers::CaseMatcher.new(%value)
     end
 
     # Indicates that some value should be true.
@@ -321,8 +334,8 @@ module Spectator
     # NOTE: Do not attempt to mix the two use cases.
     # It likely won't work and will result in a compilation error.
     macro be_within(expected)
-      %test_value = ::Spectator::TestValue.new({{expected}}, {{expected.stringify}})
-      ::Spectator::Matchers::CollectionMatcher.new(%test_value)
+      %value = ::Spectator::Value.new({{expected}}, {{expected.stringify}})
+      ::Spectator::Matchers::CollectionMatcher.new(%value)
     end
 
     # Indicates that some value should be between a lower and upper-bound.
@@ -344,8 +357,8 @@ module Spectator
     macro be_between(min, max)
       %range = Range.new({{min}}, {{max}})
       %label = [{{min.stringify}}, {{max.stringify}}].join(" to ")
-      %test_value = ::Spectator::TestValue.new(%range, %label)
-      ::Spectator::Matchers::RangeMatcher.new(%test_value)
+      %value = ::Spectator::Value.new(%range, %label)
+      ::Spectator::Matchers::RangeMatcher.new(%value)
     end
 
     # Indicates that some value should be within a delta of an expected value.
@@ -403,8 +416,8 @@ module Spectator
     # expect(%w[foo bar]).to start_with(/foo/)
     # ```
     macro start_with(expected)
-      %test_value = ::Spectator::TestValue.new({{expected}}, {{expected.stringify}})
-      ::Spectator::Matchers::StartWithMatcher.new(%test_value)
+      %value = ::Spectator::Value.new({{expected}}, {{expected.stringify}})
+      ::Spectator::Matchers::StartWithMatcher.new(%value)
     end
 
     # Indicates that some value or set should end with another value.
@@ -426,8 +439,8 @@ module Spectator
     # expect(%w[foo bar]).to end_with(/bar/)
     # ```
     macro end_with(expected)
-      %test_value = ::Spectator::TestValue.new({{expected}}, {{expected.stringify}})
-      ::Spectator::Matchers::EndWithMatcher.new(%test_value)
+      %value = ::Spectator::Value.new({{expected}}, {{expected.stringify}})
+      ::Spectator::Matchers::EndWithMatcher.new(%value)
     end
 
     # Indicates that some value or set should contain another value.
@@ -451,11 +464,11 @@ module Spectator
     # ```
     macro contain(*expected)
       {% if expected.id.starts_with?("{*") %}
-        %test_value = ::Spectator::TestValue.new({{expected.id[2...-1]}}, {{expected.splat.stringify}})
-        ::Spectator::Matchers::ContainMatcher.new(%test_value)
+        %value = ::Spectator::Value.new({{expected.id[2...-1]}}, {{expected.splat.stringify}})
+        ::Spectator::Matchers::ContainMatcher.new(%value)
       {% else %}
-        %test_value = ::Spectator::TestValue.new({{expected}}, {{expected.splat.stringify}})
-        ::Spectator::Matchers::ContainMatcher.new(%test_value)
+        %value = ::Spectator::Value.new({{expected}}, {{expected.splat.stringify}})
+        ::Spectator::Matchers::ContainMatcher.new(%value)
       {% end %}
     end
 
@@ -475,8 +488,8 @@ module Spectator
     # expect(%i[a b c]).to contain_elements(%i[a b])
     # ```
     macro contain_elements(expected)
-      %test_value = ::Spectator::TestValue.new({{expected}}, {{expected.stringify}})
-      ::Spectator::Matchers::ContainMatcher.new(%test_value)
+      %value = ::Spectator::Value.new({{expected}}, {{expected.stringify}})
+      ::Spectator::Matchers::ContainMatcher.new(%value)
     end
 
     # Indicates that some range (or collection) should contain another value.
@@ -497,11 +510,11 @@ module Spectator
     # ```
     macro cover(*expected)
       {% if expected.id.starts_with?("{*") %}
-        %test_value = ::Spectator::TestValue.new({{expected.id[2...-1]}}, {{expected.splat.stringify}})
-        ::Spectator::Matchers::ContainMatcher.new(%test_value)
+        %value = ::Spectator::Value.new({{expected.id[2...-1]}}, {{expected.splat.stringify}})
+        ::Spectator::Matchers::ContainMatcher.new(%value)
       {% else %}
-        %test_value = ::Spectator::TestValue.new({{expected}}, {{expected.splat.stringify}})
-        ::Spectator::Matchers::ContainMatcher.new(%test_value)
+        %value = ::Spectator::Value.new({{expected}}, {{expected.splat.stringify}})
+        ::Spectator::Matchers::ContainMatcher.new(%value)
       {% end %}
     end
 
@@ -532,11 +545,11 @@ module Spectator
     # ```
     macro have(*expected)
       {% if expected.id.starts_with?("{*") %}
-        %test_value = ::Spectator::TestValue.new({{expected.id[2...-1]}}, {{expected.splat.stringify}})
-        ::Spectator::Matchers::HaveMatcher.new(%test_value)
+        %value = ::Spectator::Value.new({{expected.id[2...-1]}}, {{expected.splat.stringify}})
+        ::Spectator::Matchers::HaveMatcher.new(%value)
       {% else %}
-        %test_value = ::Spectator::TestValue.new({{expected}}, {{expected.splat.stringify}})
-        ::Spectator::Matchers::HaveMatcher.new(%test_value)
+        %value = ::Spectator::Value.new({{expected}}, {{expected.splat.stringify}})
+        ::Spectator::Matchers::HaveMatcher.new(%value)
       {% end %}
     end
 
@@ -559,8 +572,8 @@ module Spectator
     # expect([1, 2, 3, :a, :b, :c]).to have_elements([Int32, Symbol])
     # ```
     macro have_elements(expected)
-      %test_value = ::Spectator::TestValue.new({{expected}}, {{expected.stringify}})
-      ::Spectator::Matchers::HaveMatcher.new(%test_value)
+      %value = ::Spectator::Value.new({{expected}}, {{expected.stringify}})
+      ::Spectator::Matchers::HaveMatcher.new(%value)
     end
 
     # Indicates that some set, such as a `Hash`, has a given key.
@@ -572,8 +585,8 @@ module Spectator
     # expect({"lucky" => 7}).to have_key("lucky")
     # ```
     macro have_key(expected)
-      %test_value = ::Spectator::TestValue.new({{expected}}, {{expected.stringify}})
-      ::Spectator::Matchers::HaveKeyMatcher.new(%test_value)
+      %value = ::Spectator::Value.new({{expected}}, {{expected.stringify}})
+      ::Spectator::Matchers::HaveKeyMatcher.new(%value)
     end
 
     # :ditto:
@@ -590,8 +603,8 @@ module Spectator
     # expect({"lucky" => 7}).to have_value(7)
     # ```
     macro have_value(expected)
-      %test_value = ::Spectator::TestValue.new({{expected}}, {{expected.stringify}})
-      ::Spectator::Matchers::HaveValueMatcher.new(%test_value)
+      %value = ::Spectator::Value.new({{expected}}, {{expected.stringify}})
+      ::Spectator::Matchers::HaveValueMatcher.new(%value)
     end
 
     # :ditto:
@@ -607,11 +620,11 @@ module Spectator
     # ```
     macro contain_exactly(*expected)
       {% if expected.id.starts_with?("{*") %}
-        %test_value = ::Spectator::TestValue.new(({{expected.id[2...-1]}}).to_a, {{expected.stringify}})
-        ::Spectator::Matchers::ArrayMatcher.new(%test_value)
+        %value = ::Spectator::Value.new(({{expected.id[2...-1]}}).to_a, {{expected.stringify}})
+        ::Spectator::Matchers::ArrayMatcher.new(%value)
       {% else %}
-        %test_value = ::Spectator::TestValue.new(({{expected}}).to_a, {{expected.stringify}})
-        ::Spectator::Matchers::ArrayMatcher.new(%test_value)
+        %value = ::Spectator::Value.new(({{expected}}).to_a, {{expected.stringify}})
+        ::Spectator::Matchers::ArrayMatcher.new(%value)
       {% end %}
     end
 
@@ -623,8 +636,8 @@ module Spectator
     # expect([1, 2, 3]).to match_array([3, 2, 1])
     # ```
     macro match_array(expected)
-      %test_value = ::Spectator::TestValue.new(({{expected}}).to_a, {{expected.stringify}})
-      ::Spectator::Matchers::ArrayMatcher.new(%test_value)
+      %value = ::Spectator::Value.new(({{expected}}).to_a, {{expected.stringify}})
+      ::Spectator::Matchers::ArrayMatcher.new(%value)
     end
 
     # Indicates that some set should have a specified size.
@@ -634,8 +647,8 @@ module Spectator
     # expect([1, 2, 3]).to have_size(3)
     # ```
     macro have_size(expected)
-      %test_value = ::Spectator::TestValue.new({{expected}}, {{expected.stringify}})
-      ::Spectator::Matchers::SizeMatcher.new(%test_value)
+      %value = ::Spectator::Value.new({{expected}}, {{expected.stringify}})
+      ::Spectator::Matchers::SizeMatcher.new(%value)
     end
 
     # Indicates that some set should have the same size (number of elements) as another set.
@@ -645,8 +658,8 @@ module Spectator
     # expect([1, 2, 3]).to have_size_of(%i[x y z])
     # ```
     macro have_size_of(expected)
-      %test_value = ::Spectator::TestValue.new({{expected}}, {{expected.stringify}})
-      ::Spectator::Matchers::SizeOfMatcher.new(%test_value)
+      %value = ::Spectator::Value.new({{expected}}, {{expected.stringify}})
+      ::Spectator::Matchers::SizeOfMatcher.new(%value)
     end
 
     # Indicates that some value should have a set of attributes matching some conditions.
@@ -661,11 +674,11 @@ module Spectator
     # ```
     macro have_attributes(**expected)
       {% if expected.id.starts_with?("{**") %}
-        %test_value = ::Spectator::TestValue.new({{expected.id[3...-1]}}, {{expected.double_splat.stringify}})
-        ::Spectator::Matchers::AttributesMatcher.new(%test_value)
+        %value = ::Spectator::Value.new({{expected.id[3...-1]}}, {{expected.double_splat.stringify}})
+        ::Spectator::Matchers::AttributesMatcher.new(%value)
       {% else %}
-        %test_value = ::Spectator::TestValue.new({{expected}}, {{expected.double_splat.stringify}})
-        ::Spectator::Matchers::AttributesMatcher.new(%test_value)
+        %value = ::Spectator::Value.new({{expected}}, {{expected.double_splat.stringify}})
+        ::Spectator::Matchers::AttributesMatcher.new(%value)
       {% end %}
     end
 
@@ -718,37 +731,18 @@ module Spectator
     # expect { subject << :foo }.to change(&.size).by(1)
     # ```
     macro change(&expression)
-      {% if expression.is_a?(Nop) %}
-        {% raise "Block must be provided to change matcher" %}
-      {% end %}
-
-      # Check if the short-hand method syntax is used.
-      # This is a hack, since macros don't get this as a "literal" or something similar.
-      # The Crystal compiler will translate:
-      # ```
-      # &.foo
-      # ```
-      # to:
-      # ```
-      # { |__arg0| __arg0.foo }
-      # ```
-      # The hack used here is to check if it looks like a compiler-generated block.
-      {% if expression.args == ["__arg0".id] && expression.body.is_a?(Call) && expression.body.id =~ /^__arg0\./ %}
-        # Extract the method name to make it clear to the user what is tested.
-        # The raw block can't be used because it's not clear to the user.
+      {% if expression.args.size == 1 && expression.args[0] =~ /^__arg\d+$/ && expression.body.is_a?(Call) && expression.body.id =~ /^__arg\d+\./ %}
         {% method_name = expression.body.id.split('.')[1..-1].join('.') %}
-        %proc = ->{ subject.{{method_name.id}} }
-        %test_block = ::Spectator::TestBlock.create(%proc, {{"#" + method_name}})
+        %block = ::Spectator::Block.new({{"#" + method_name}}) do
+          subject.{{method_name.id}}
+        end
       {% elsif expression.args.empty? %}
-        # In this case, it looks like the short-hand method syntax wasn't used.
-        # Capture the block as a proc and pass along.
-        %proc = ->{{expression}}
-        %test_block = ::Spectator::TestBlock.create(%proc, {{"`" + expression.body.stringify + "`"}})
+        %block = ::Spectator::Block.new({{"`" + expression.body.stringify + "`"}}) {{expression}}
       {% else %}
-        {% raise "Unexpected block arguments in change matcher" %}
+        {% raise "Unexpected block arguments in 'expect' call" %}
       {% end %}
 
-      ::Spectator::Matchers::ChangeMatcher.new(%test_block)
+      ::Spectator::Matchers::ChangeMatcher.new(%block)
     end
 
     # Indicates that some block should raise an error.
@@ -828,8 +822,8 @@ module Spectator
     end
 
     macro have_received(method)
-      %test_value = ::Spectator::TestValue.new(({{method.id.symbolize}}), {{method.id.stringify}})
-      ::Spectator::Matchers::ReceiveMatcher.new(%test_value)
+      %value = ::Spectator::Value.new(({{method.id.symbolize}}), {{method.id.stringify}})
+      ::Spectator::Matchers::ReceiveMatcher.new(%value)
     end
 
     # Used to create predicate matchers.
@@ -872,8 +866,8 @@ module Spectator
         {% end %}
         label << ')'
       {% end %}
-      test_value = ::Spectator::TestValue.new(descriptor, label.to_s)
-      ::Spectator::Matchers::{{matcher.id}}.new(test_value)
+      value = ::Spectator::Value.new(descriptor, label.to_s)
+      ::Spectator::Matchers::{{matcher.id}}.new(value)
     end
   end
 end

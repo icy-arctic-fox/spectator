@@ -5,7 +5,7 @@ module Spectator::Matchers
   struct ReceiveTypeMatcher < StandardMatcher
     alias Range = ::Range(Int32, Int32) | ::Range(Nil, Int32) | ::Range(Int32, Nil)
 
-    def initialize(@expected : TestExpression(Symbol), @args : Mocks::Arguments? = nil, @range : Range? = nil)
+    def initialize(@expected : Expression(Symbol), @args : Mocks::Arguments? = nil, @range : Range? = nil)
     end
 
     def description : String
@@ -13,7 +13,7 @@ module Spectator::Matchers
       "received message #{@expected.label} #{range ? "#{humanize_range(range)} time(s)" : "At least once"} with #{@args || "any arguments"}"
     end
 
-    def match?(actual : TestExpression(T)) : Bool forall T
+    def match?(actual : Expression(T)) : Bool forall T
       calls = Harness.current.mocks.calls_for_type(actual.value, @expected.value)
       calls.select! { |call| @args === call.args } if @args
       if (range = @range)
@@ -23,17 +23,17 @@ module Spectator::Matchers
       end
     end
 
-    def failure_message(actual : TestExpression(T)) : String forall T
+    def failure_message(actual : Expression(T)) : String forall T
       range = @range
       "#{actual.label} did not receive #{@expected.label} #{range ? "#{humanize_range(range)} time(s)" : "at least once"} with #{@args || "any arguments"}"
     end
 
-    def failure_message_when_negated(actual : TestExpression(T)) : String forall T
+    def failure_message_when_negated(actual : Expression(T)) : String forall T
       range = @range
       "#{actual.label} received #{@expected.label} #{range ? "#{humanize_range(range)} time(s)" : "at least once"} with #{@args || "any arguments"}"
     end
 
-    def values(actual : TestExpression(T)) forall T
+    def values(actual : Expression(T)) forall T
       calls = Harness.current.mocks.calls_for_type(T, @expected.value)
       calls.select! { |call| @args === call.args } if @args
       range = @range
@@ -43,7 +43,7 @@ module Spectator::Matchers
       }
     end
 
-    def negated_values(actual : TestExpression(T)) forall T
+    def negated_values(actual : Expression(T)) forall T
       calls = Harness.current.mocks.calls_for_type(T, @expected.value)
       calls.select! { |call| @args === call.args } if @args
       range = @range
@@ -115,7 +115,7 @@ module Spectator::Matchers
     end
 
     private struct Count
-      def initialize(@expected : TestExpression(Symbol), @args : Mocks::Arguments?, @range : Range)
+      def initialize(@expected : Expression(Symbol), @args : Mocks::Arguments?, @range : Range)
       end
 
       def times

@@ -12,13 +12,13 @@ module Spectator::Matchers
     end
 
     # Checks whether the matcher is satisifed with the expression given to it.
-    private def match?(actual : TestExpression(T)) : Bool forall T
+    private def match?(actual : Expression(T)) : Bool forall T
       expected.value === actual.value
     end
 
     # Overload that takes a regex so that the operands are flipped.
     # This mimics RSpec's behavior.
-    private def match?(actual : TestExpression(Regex)) : Bool forall T
+    private def match?(actual : Expression(Regex)) : Bool forall T
       actual.value === expected.value
     end
 

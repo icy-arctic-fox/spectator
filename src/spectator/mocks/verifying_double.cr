@@ -100,9 +100,7 @@ module Spectator::Mocks
     end
 
     def to_s(io)
-      io << "Double("
-      io << T
-      io << ')'
+      io << "Double(" << T << ')'
     end
   end
 end

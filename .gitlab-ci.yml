@@ -14,21 +14,37 @@ before_script:
 spec:
   script:
     - shards
-    - crystal spec --error-on-warnings
+    - crystal spec --error-on-warnings --junit_output=.
+  artifacts:
+    when: always
+    paths:
+      - output.xml
+    reports:
+      junit: output.xml
+
+format:
+  script:
+    - shards
+    - crystal tool format --check
 
 style:
   script:
     - shards
     - bin/ameba
-    - crystal tool format --check
 
 nightly:
   image: "crystallang/crystal:nightly"
   allow_failure: true
   script:
     - shards --ignore-crystal-version
-    - crystal spec --error-on-warnings
+    - crystal spec --error-on-warnings --junit_output=.
     - crystal tool format --check
+  artifacts:
+    when: always
+    paths:
+      - output.xml
+    reports:
+      junit: output.xml
 
 pages:
   stage: deploy

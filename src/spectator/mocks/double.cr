@@ -124,9 +124,7 @@ module Spectator::Mocks
     end
 
     def to_s(io)
-      io << "Double("
-      io << @spectator_double_name
-      io << ')'
+      io << "Double(" << @spectator_double_name << ')'
     end
   end
 end

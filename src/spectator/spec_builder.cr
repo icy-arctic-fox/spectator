@@ -1,110 +1,212 @@
-require "./spec_builder/*"
+require "./config"
+require "./example"
+require "./example_builder"
+require "./example_context_method"
+require "./example_group"
+require "./example_group_builder"
+require "./hooks"
+require "./iterative_example_group_builder"
+require "./pending_example_builder"
+require "./spec"
+require "./metadata"
 
 module Spectator
-  # Global builder used to create the runtime instance of the spec.
-  # The DSL methods call into this module to generate parts of the spec.
-  # Once the DSL is done, the `#build` method can be invoked
-  # to create the entire spec as a runtime instance.
-  module SpecBuilder
-    extend self
+  # Progressively builds a test spec.
+  #
+  # A stack is used to track the current example group.
+  # Adding an example or group will nest it under the group at the top of the stack.
+  class SpecBuilder
+    Log = ::Spectator::Log.for(self)
 
-    @@stack = ExampleGroupStack.new
+    delegate before_all, after_all, before_each, after_each, around_each, to: current
 
-    # Begins a new nested group in the spec.
-    # A corresponding `#end_group` call must be made
-    # when the group being started is finished.
-    # See `NestedExampleGroupBuilder#initialize` for the arguments
-    # as arguments to this method are passed directly to it.
-    def start_group(*args) : Nil
-      group = NestedExampleGroupBuilder.new(*args)
-      @@stack.push(group)
+    # Stack tracking the current group.
+    # The bottom of the stack (first element) is the root group.
+    # The root group should never be removed.
+    # The top of the stack (last element) is the current group.
+    # New examples should be added to the current group.
+    @stack : Deque(ExampleGroupBuilder)
+
+    # Creates a new spec builder.
+    # A root group is pushed onto the group stack.
+    def initialize(@config : Config)
+      root = ExampleGroupBuilder.new
+      @stack = Deque(ExampleGroupBuilder).new
+      @stack.push(root)
     end
 
-    # Begins a new sample group in the spec -
-    # that is, a group defined by the `StructureDSL#sample` macro in the DSL.
-    # A corresponding `#end_group` call must be made
-    # when the group being started is finished.
-    # See `SampleExampleGroupBuilder#initialize` for the arguments
-    # as arguments to this method are passed directly to it.
-    def start_sample_group(*args, &block : TestValues -> Array(T)) : Nil forall T
-      group = SampleExampleGroupBuilder(T).new(*args, block)
-      @@stack.push(group)
+    # Constructs the test spec.
+    # Returns the spec instance.
+    #
+    # Raises an error if there were not symmetrical calls to `#start_group` and `#end_group`.
+    # This would indicate a logical error somewhere in Spectator or an extension of it.
+    def build : Spec
+      raise "Mismatched start and end groups" unless root?
+
+      group = root.build
+      apply_config_hooks(group)
+      Spec.new(group, @config)
     end
 
-    # Marks the end of a group in the spec.
-    # This must be called for every `#start_group` and `#start_sample_group` call.
-    # It is also important to line up the start and end calls.
-    # Otherwise examples might get placed into wrong groups.
+    # Defines a new example group and pushes it onto the group stack.
+    # Examples and groups defined after calling this method will be nested under the new group.
+    # The group will be finished and popped off the stack when `#end_example` is called.
+    #
+    # The *name* is the name or brief description of the group.
+    # This should be a symbol when describing a type - the type name is represented as a symbol.
+    # Otherwise, a string should be used.
+    #
+    # The *location* optionally defined where the group originates in source code.
+    #
+    # A set of *metadata* can be used for filtering and modifying example behavior.
+    # For instance, adding a "pending" tag will mark tests as pending and skip execution.
+    def start_group(name, location = nil, metadata = Metadata.new) : Nil
+      Log.trace { "Start group: #{name.inspect} @ #{location}; metadata: #{metadata}" }
+      builder = ExampleGroupBuilder.new(name, location, metadata)
+
+      # `before_all` and `after_all` hooks from config are slightly different.
+      # They are applied to every top-level group (groups just under root).
+      apply_top_level_config_hooks(builder) if root?
+
+      # Add group to the stack.
+      current << builder
+      @stack.push(builder)
+    end
+
+    # Defines a new iterative example group and pushes it onto the group stack.
+    # Examples and groups defined after calling this method will be nested under the new group.
+    # The group will be finished and popped off the stack when `#end_example` is called.
+    #
+    # The *collection* is the set of items to iterate over.
+    # Child nodes in this group will be executed once for every item in the collection.
+    # The *name* should be a string representation of *collection*.
+    # The *iterator* is an optional name given to a single item in *collection*.
+    #
+    # The *location* optionally defined where the group originates in source code.
+    #
+    # A set of *metadata* can be used for filtering and modifying example behavior.
+    # For instance, adding a "pending" tag will mark tests as pending and skip execution.
+    def start_iterative_group(collection, name, iterator = nil, location = nil, metadata = Metadata.new) : Nil
+      Log.trace { "Start iterative group: #{name} (#{typeof(collection)}) @ #{location}; metadata: #{metadata}" }
+      builder = IterativeExampleGroupBuilder.new(collection, name, iterator, location, metadata)
+
+      # `before_all` and `after_all` hooks from config are slightly different.
+      # They are applied to every top-level group (groups just under root).
+      apply_top_level_config_hooks(builder) if root?
+
+      # Add group to the stack.
+      current << builder
+      @stack.push(builder)
+    end
+
+    # Completes a previously defined example group and pops it off the group stack.
+    # Be sure to call `#start_group` and `#end_group` symmetically.
     def end_group : Nil
-      @@stack.pop
+      Log.trace { "End group: #{current}" }
+      raise "Can't pop root group" if root?
+
+      @stack.pop
     end
 
-    # Adds an example type to the current group.
-    # The class name of the example should be passed as an argument.
-    # The example will be instantiated later.
-    def add_example(description : String?, source : Source,
-                    example_type : ::SpectatorTest.class, &runner : ::SpectatorTest ->) : Nil
-      builder = ->(values : TestValues) { example_type.new(values).as(::SpectatorTest) }
-      factory = RunnableExampleBuilder.new(description, source, builder, runner)
-      @@stack.current.add_child(factory)
+    # Defines a new example.
+    # The example is added to the group currently on the top of the stack.
+    #
+    # The *name* is the name or brief description of the example.
+    # This should be a string or nil.
+    # When nil, the example's name will be populated by the first expectation run inside of the test code.
+    #
+    # The *location* optionally defined where the example originates in source code.
+    #
+    # The *context_builder* is a proc that creates a context the test code should run in.
+    # See `Context` for more information.
+    #
+    # A set of *metadata* can be used for filtering and modifying example behavior.
+    # For instance, adding a "pending" tag will mark the test as pending and skip execution.
+    #
+    # A block must be provided.
+    # It will be yielded two arguments - the example created by this method, and the *context* argument.
+    # The return value of the block is ignored.
+    # It is expected that the test code runs when the block is called.
+    def add_example(name, location, context_builder, metadata = Metadata.new, &block : Example -> _) : Nil
+      Log.trace { "Add example: #{name} @ #{location}; metadata: #{metadata}" }
+      current << ExampleBuilder.new(context_builder, block, name, location, metadata)
     end
 
-    # Adds an example type to the current group.
-    # The class name of the example should be passed as an argument.
-    # The example will be instantiated later.
-    def add_pending_example(description : String?, source : Source,
-                            example_type : ::SpectatorTest.class, &runner : ::SpectatorTest ->) : Nil
-      builder = ->(values : TestValues) { example_type.new(values).as(::SpectatorTest) }
-      factory = PendingExampleBuilder.new(description, source, builder, runner)
-      @@stack.current.add_child(factory)
+    # Defines a new pending example.
+    # The example is added to the group currently on the top of the stack.
+    #
+    # The *name* is the name or brief description of the example.
+    # This should be a string or nil.
+    # When nil, the example's name will be an anonymous example reference.
+    #
+    # The *location* optionally defined where the example originates in source code.
+    #
+    # A set of *metadata* can be used for filtering and modifying example behavior.
+    # For instance, adding a "pending" tag will mark the test as pending and skip execution.
+    # A default *reason* can be given in case the user didn't provide one.
+    def add_pending_example(name, location, metadata = Metadata.new, reason = nil) : Nil
+      Log.trace { "Add pending example: #{name} @ #{location}; metadata: #{metadata}" }
+      current << PendingExampleBuilder.new(name, location, metadata, reason)
     end
 
-    # Adds a block of code to run before all examples in the current group.
-    def add_before_all_hook(&block : ->) : Nil
-      @@stack.current.add_before_all_hook(block)
+    # Registers a new "before_suite" hook.
+    # The hook will be appended to the list.
+    # A new hook will be created by passing args to `ExampleGroupHook.new`.
+    def before_suite(*args, **kwargs) : Nil
+      root.before_all(*args, **kwargs)
     end
 
-    # Adds a block of code to run before each example in the current group.
-    def add_before_each_hook(&block : TestMetaMethod) : Nil
-      @@stack.current.add_before_each_hook(block)
+    # Registers a new "before_suite" hook.
+    # The hook will be appended to the list.
+    # A new hook will be created by passing args to `ExampleGroupHook.new`.
+    def before_suite(*args, **kwargs, &block) : Nil
+      root.before_all(*args, **kwargs, &block)
     end
 
-    # Adds a block of code to run after all examples in the current group.
-    def add_after_all_hook(&block : ->) : Nil
-      @@stack.current.add_after_all_hook(block)
+    # Registers a new "after_suite" hook.
+    # The hook will be prepended to the list.
+    # A new hook will be created by passing args to `ExampleGroupHook.new`.
+    def after_suite(*args, **kwargs) : Nil
+      root.before_all(*args, **kwargs)
     end
 
-    # Adds a block of code to run after each example in the current group.
-    def add_after_each_hook(&block : TestMetaMethod) : Nil
-      @@stack.current.add_after_each_hook(block)
+    # Registers a new "after_suite" hook.
+    # The hook will be prepended to the list.
+    # A new hook will be created by passing args to `ExampleGroupHook.new`.
+    def after_suite(*args, **kwargs, &block) : Nil
+      root.after_all(*args, **kwargs, &block)
     end
 
-    # Adds a block of code to run before and after each example in the current group.
-    # The block of code will be given another hook as an argument.
-    # It is expected that the block will call the hook.
-    def add_around_each_hook(&block : ::SpectatorTest, Proc(Nil) ->) : Nil
-      @@stack.current.add_around_each_hook(block)
+    # Checks if the current group is the root group.
+    private def root?
+      @stack.size == 1
     end
 
-    # Adds a pre-condition to run at the start of every example in the current group.
-    def add_pre_condition(&block : TestMetaMethod) : Nil
-      @@stack.current.add_pre_condition(block)
+    # Retrieves the root group.
+    private def root
+      @stack.first
     end
 
-    # Adds a post-condition to run at the end of every example in the current group.
-    def add_post_condition(&block : TestMetaMethod) : Nil
-      @@stack.current.add_post_condition(block)
+    # Retrieves the current group, which is at the top of the stack.
+    # This is the group that new examples should be added to.
+    private def current
+      @stack.last
     end
 
-    def add_default_stub(*args) : Nil
-      @@stack.current.add_default_stub(*args)
+    # Copy all hooks from config to root group.
+    private def apply_config_hooks(group)
+      @config.before_suite_hooks.each { |hook| group.before_all(hook) }
+      @config.after_suite_hooks.reverse_each { |hook| group.after_all(hook) }
+      @config.before_each_hooks.each { |hook| group.before_each(hook) }
+      @config.after_each_hooks.reverse_each { |hook| group.after_each(hook) }
+      @config.around_each_hooks.each { |hook| group.around_each(hook) }
     end
 
-    # Builds the entire spec and returns it as a test suite.
-    # This should be called only once after the entire spec has been defined.
-    protected def build(filter : ExampleFilter) : TestSuite
-      group = @@stack.root.build
-      TestSuite.new(group, filter)
+    # Copy `before_all` and `after_all` hooks to a group.
+    private def apply_top_level_config_hooks(group)
+      # Hooks are dupped so that they retain their original state (call once).
+      @config.before_all_hooks.each { |hook| group.before_all(hook.dup) }
+      @config.after_all_hooks.reverse_each { |hook| group.after_all(hook.dup) }
     end
   end
 end

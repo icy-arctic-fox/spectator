@@ -1,13 +1,13 @@
-require "../source"
+require "../location"
 require "./method_call"
 
 module Spectator::Mocks
   abstract class MethodStub
     getter name : Symbol
 
-    getter source : Source
+    getter location : Location
 
-    def initialize(@name, @source)
+    def initialize(@name, @location)
     end
 
     def callable?(call : MethodCall) : Bool
@@ -28,8 +28,7 @@ module Spectator::Mocks
     end
 
     def to_s(io)
-      io << '#'
-      io << @name
+      io << '#' << @name
     end
   end
 end

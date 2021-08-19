@@ -15,7 +15,7 @@ module Spectator::Matchers
     private getter expected_after
 
     # Creates a new change matcher.
-    def initialize(@expression : TestBlock(ExpressionType), @expected_before : FromType, @expected_after : ToType)
+    def initialize(@expression : Block(ExpressionType), @expected_before : FromType, @expected_after : ToType)
     end
 
     # Short text about the matcher's purpose.
@@ -26,25 +26,25 @@ module Spectator::Matchers
     end
 
     # Actually performs the test against the expression.
-    def match(actual : TestExpression(T)) : MatchData forall T
+    def match(actual : Expression(T)) : MatchData forall T
       before, after = change(actual)
       if expected_before == before
         if before == after
-          FailedMatchData.new(description, "#{actual.label} did not change #{expression.label}",
+          FailedMatchData.new(match_data_description(actual), "#{actual.label} did not change #{expression.label}",
             before: before.inspect,
             after: after.inspect
           )
         elsif expected_after == after
-          SuccessfulMatchData.new(description)
+          SuccessfulMatchData.new(match_data_description(actual))
         else
-          FailedMatchData.new(description, "#{actual.label} did not change #{expression.label} to #{expected_after.inspect}",
+          FailedMatchData.new(match_data_description(actual), "#{actual.label} did not change #{expression.label} to #{expected_after.inspect}",
             before: before.inspect,
             after: after.inspect,
             expected: expected_after.inspect
           )
         end
       else
-        FailedMatchData.new(description, "#{expression.label} was not initially #{expected_before.inspect}",
+        FailedMatchData.new(match_data_description(actual), "#{expression.label} was not initially #{expected_before.inspect}",
           expected: expected_before.inspect,
           actual: before.inspect,
         )
@@ -53,19 +53,19 @@ module Spectator::Matchers
 
     # Performs the test against the expression, but inverted.
     # A successful match with `#match` should normally fail for this method, and vice-versa.
-    def negated_match(actual : TestExpression(T)) : MatchData forall T
+    def negated_match(actual : Expression(T)) : MatchData forall T
       before, after = change(actual)
       if expected_before == before
         if expected_after == after
-          FailedMatchData.new(description, "#{actual.label} changed #{expression.label} from #{expected_before.inspect} to #{expected_after.inspect}",
+          FailedMatchData.new(match_data_description(actual), "#{actual.label} changed #{expression.label} from #{expected_before.inspect} to #{expected_after.inspect}",
             before: before.inspect,
             after: after.inspect
           )
         else
-          SuccessfulMatchData.new(description)
+          SuccessfulMatchData.new(match_data_description(actual))
         end
       else
-        FailedMatchData.new(description, "#{expression.label} was not initially #{expected_before.inspect}",
+        FailedMatchData.new(match_data_description(actual), "#{expression.label} was not initially #{expected_before.inspect}",
           expected: expected_before.inspect,
           actual: before.inspect,
         )

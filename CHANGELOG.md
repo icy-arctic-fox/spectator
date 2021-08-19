@@ -4,6 +4,58 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+### Fixed
+- Fix resolution of types with the same name in nested scopes. [#31](https://github.com/icy-arctic-fox/spectator/issues/31)
+- `around_each` hooks wrap `before_all` and `after_all` hooks. [#12](https://github.com/icy-arctic-fox/spectator/issues/12)
+- Hook execution order has been tweaked to match RSpec.
+
+### Added
+- `before_each`, `after_each`, and `around_each` hooks are yielded the current example as a block argument.
+- The `let` and `subject` blocks are yielded the current example as a block argument.
+- Add internal logging that uses Crystal's `Log` utility. Provide the `LOG_LEVEL` environment variable to enable.
+- Support dynamic creation of examples.
+- Capture and log information for hooks.
+- Tags can be added to examples and example groups.
+- Add matcher to check compiled type of values.
+- Examples can be skipped by using a `:pending` tag. A reason method can be specified: `pending: "Some excuse"`
+- Examples without a test block are marked as pending. [#37](https://gitlab.com/arctic-fox/spectator/-/issues/37)
+- Examples can be skipped during execution by using `skip` or `pending` in the example block. [#17](https://gitlab.com/arctic-fox/spectator/-/issues/17)
+- Sample blocks can be temporarily skipped by using `xsample` or `xrandom_sample`.
+- Add `before_suite` and `after_suite` hooks. [#21](https://gitlab.com/arctic-fox/spectator/-/issues/21)
+- Support defining hooks in `Spectator.configure` block. [#21](https://gitlab.com/arctic-fox/spectator/-/issues/21)
+- Examples with failures or skipped during execution will report the location of that result. [#57](https://gitlab.com/arctic-fox/spectator/-/issues/57)
+- Support custom messages for failed expectations. [#28](https://gitlab.com/arctic-fox/spectator/-/issues/28)
+- Allow named arguments and assignments for `provided` (`given`) block.
+- Add `aggregate_failures` to capture and report multiple failed expectations. [#24](https://gitlab.com/arctic-fox/spectator/-/issues/24)
+- Supports matching groups. [#25](https://gitlab.com/arctic-fox/spectator/-/issues/25) [#24](https://github.com/icy-arctic-fox/spectator/issues/24)
+- Add `filter_run_including`, `filter_run_excluding`, and `filter_run_when_matching` to config block.
+- By default, only run tests when any are marked with `focus: true`.
+- Add "f-prefix" blocks for examples and groups (`fit`, `fdescribe`, etc.) as a short-hand for specifying `focus: true`.
+- Add HTML formatter. Operates the same as the JUnit formatter. Specify `--html_output=DIR` to use. [#22](https://gitlab.com/arctic-fox/spectator/-/issues/22) [#3](https://github.com/icy-arctic-fox/spectator/issues/3)
+
+### Changed
+- `given` (now `provided`) blocks changed to produce a single example. `it` can no longer be nested in a `provided` block.
+- The "should" syntax no longer reports the source as inside Spectator.
+- Short-hand "should" syntax must be included by using `require "spectator/should"` - `it { should eq("foo") }`
+- Better error messages and detection when DSL methods are used when they shouldn't (i.e. `describe` inside `it`).
+- Prevent usage of reserved keywords in DSL (such as `initialize`).
+- The count argument for `sample` and `random_sample` groups must be named (use `count: 5` instead of just `5`).
+- Helper methods used as arguments for `sample` and `random_sample` must be class methods.
+- Simplify and reduce instanced types and generics. Should speed up compilation times.
+- Overhaul example creation and handling.
+- Overhaul storage of test values.
+- Overhaul reporting and formatting. Cleaner output for failures and pending tests.
+- Cleanup and simplify DSL implementation.
+- Other minor internal improvements and cleanup.
+
+### Deprecated
+- `pending` blocks will behave differently in v0.11.0. They will mimic RSpec in that they _compile and run_ the block expecting it to fail. Use a `skip` (or `xit`) block instead to prevent compiling the example.
+- `given` has been renamed to `provided`. The `given` keyword may be reused later for memoization.
+
+### Removed
+- Removed one-liner `it`-syntax without braces (block).
+
 ## [0.9.40] - 2021-07-10
 ### Fixed
 - Fix stubbing of class methods.

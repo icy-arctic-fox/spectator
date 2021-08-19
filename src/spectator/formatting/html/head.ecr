@@ -1,0 +1,213 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="generator" content="Spectator">
+
+  <title>Test Results</title>
+
+  <style>
+body {
+  font-family: "sans-serif";
+  background-color: #e2e2e2;
+}
+
+#summary, #failure-list, #pending-list, #example-list li.example {
+  background-color: #fafafa;
+  border: #aaaaaa solid 1px;
+  margin: 1em 0;
+  padding: 1em 0.5em;
+}
+
+#example-list {
+  list-style: none;
+}
+
+#summary.pass, #example-list li.example.pass {
+  border-left: #00aa00 solid 0.5em;
+}
+
+#summary.fail, #summary.error, #failure-list, #example-list li.example.fail, #example-list li.example.error {
+  border-left: #aa0000 solid 0.5em;
+}
+
+#summary.pending, #pending-list, #example-list li.example.pending {
+  border-left: #eeee00 solid 0.5em;
+}
+
+.totals {
+  display: block;
+}
+
+.result {
+  float: right;
+}
+
+.result.pass {
+  color: #00aa00;
+}
+
+.result.fail, .result.error {
+  color: #aa0000;
+}
+
+.result.pending {
+  color: #666666;
+}
+
+span {
+  margin: 0.25em 0;
+}
+
+.message {
+  font-weight: bold;
+}
+
+.muted {
+  color: #888888;
+  font-style: italic;
+}
+
+h3.full-name {
+  display: inline-block;
+  margin-top: 0;
+}
+
+h1 {
+  margin-top: 0;
+}
+
+h1, h2, h4 {
+  margin-bottom: 0.5em;
+}
+
+.example .elapsed, .example .location {
+  display: block;
+  padding-left: 1em;
+}
+
+#summary, #failure-list, #pending-list {
+  margin: 0 1em;
+}
+
+#example-list {
+  padding: 0 1em;
+}
+
+li.example {
+  border-top: #dddddd solid 1px;
+  margin: 0 0 0 2em;
+}
+
+li.example:hover {
+  background-color: #dddddd;
+}
+
+li.example:last-of-type {
+  border-bottom: #dddddd solid 1px;
+}
+
+li.example a {
+  display: block;
+  text-decoration: none;
+  color: #000000;
+  padding: 0.5em;
+}
+
+.expectation .result {
+  font-size: smaller;
+}
+
+li.expectation {
+  border-top: #dddddd solid 1px;
+  padding: 0.5em;
+}
+
+li.expectation:hover {
+  background-color: #dddddd;
+}
+
+li.expectation:last-of-type {
+  border-bottom: #dddddd solid 1px;
+}
+
+.message.fail, .message.error, .expectation.fail .message {
+  color: #aa0000;
+}
+
+.type-name {
+  font-family: "monospace";
+}
+
+.stacktrace {
+  padding: 1em;
+  margin: 1em;
+  background: #e2e2e2;
+}
+
+.stacktrace code {
+  display: block;
+}
+
+.stacktrace code:hover {
+  background-color: #fafafa;
+}
+
+.stacktrace code.muted:hover {
+  background-color: #e2e2e2;
+}
+
+dl.expectation-values {
+  border: #aaaaaa solid 1px;
+  background-color: #e2e2e2;
+  margin: 0.5em;
+  padding: 0.5em;
+}
+
+.expectation-values dt {
+  float: left;
+  clear: left;
+  width: 15%;
+  text-align: right;
+  font-weight: bold;
+}
+
+.expectation-values dt::after {
+  content: ":";
+}
+
+.expectation-values dd {
+  margin: 0 0 0 15%;
+  padding: 0 0 0.25em 0.5em;
+}
+
+.elapsed:before {
+  content: "\023F1";
+  padding-right: 0.5em;
+}
+
+.location:before {
+  content: "\01f4c4";
+  padding-right: 0.5em;
+}
+
+.totals.pass:before, .result.pass:before {
+  content: "\02714";
+  padding-right: 0.25em;
+}
+
+.totals.fail:before, .totals.error:before, .result.fail:before, .result.error:before {
+  content: "\0274c";
+  padding-right: 0.25em;
+}
+
+.totals.pending:before, .result.pending:before {
+  content: "\026a0";
+  padding-right: 0.25em;
+}
+  </style>
+</head>
+
+<body>

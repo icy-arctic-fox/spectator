@@ -7,8 +7,8 @@ module Spectator::Mocks
   abstract class GenericMethodStub(ReturnType) < MethodStub
     getter! arguments : Arguments
 
-    def initialize(name, source, @args : Arguments? = nil)
-      super(name, source)
+    def initialize(name, location, @args : Arguments? = nil)
+      super(name, location)
     end
 
     def callable?(call : MethodCall) : Bool
@@ -18,14 +18,9 @@ module Spectator::Mocks
     def to_s(io)
       super(io)
       if @args
-        io << '('
-        io << @args
-        io << ')'
+        io << '(' << @args << ')'
       end
-      io << " : "
-      io << ReturnType
-      io << " at "
-      io << @source
+      io << " : " << ReturnType << " at " << @location
     end
   end
 end

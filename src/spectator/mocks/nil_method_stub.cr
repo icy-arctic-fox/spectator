@@ -13,40 +13,40 @@ module Spectator::Mocks
     end
 
     def and_return(value)
-      ValueMethodStub.new(@name, @source, value, @args)
+      ValueMethodStub.new(@name, @location, value, @args)
     end
 
     def and_return(*values)
-      MultiValueMethodStub.new(@name, @source, values.to_a, @args)
+      MultiValueMethodStub.new(@name, @location, values.to_a, @args)
     end
 
     def and_raise(exception_type : Exception.class)
-      ExceptionMethodStub.new(@name, @source, exception_type.new, @args)
+      ExceptionMethodStub.new(@name, @location, exception_type.new, @args)
     end
 
     def and_raise(exception : Exception)
-      ExceptionMethodStub.new(@name, @source, exception, @args)
+      ExceptionMethodStub.new(@name, @location, exception, @args)
     end
 
     def and_raise(message : String)
-      ExceptionMethodStub.new(@name, @source, Exception.new(message), @args)
+      ExceptionMethodStub.new(@name, @location, Exception.new(message), @args)
     end
 
     def and_raise(exception_type : Exception.class, *args) forall T
-      ExceptionMethodStub.new(@name, @source, exception_type.new(*args), @args)
+      ExceptionMethodStub.new(@name, @location, exception_type.new(*args), @args)
     end
 
     def with(*args : *T, **opts : **NT) forall T, NT
       args = GenericArguments.new(args, opts)
-      NilMethodStub.new(@name, @source, args)
+      NilMethodStub.new(@name, @location, args)
     end
 
     def with(args : Arguments)
-      NilMethodStub.new(@name, @source, @args)
+      NilMethodStub.new(@name, @location, @args)
     end
 
     def and_call_original
-      OriginalMethodStub.new(@name, @source, @args)
+      OriginalMethodStub.new(@name, @location, @args)
     end
   end
 end

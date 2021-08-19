@@ -2,94 +2,65 @@ require "json"
 require "./formatter"
 
 module Spectator::Formatting
-  # Produces a JSON document containing the test results.
-  class JsonFormatter < Formatter
+  # Produces a JSON document with results of the test suite.
+  class JSONFormatter < Formatter
     # Creates the formatter.
     # By default, output is sent to STDOUT.
-    def initialize(io : IO = STDOUT)
-      @json = ::JSON::Builder.new(io)
+    def initialize(io = STDOUT)
+      @json = JSON::Builder.new(io)
     end
 
-    # Called when a test suite is starting to execute.
-    def start_suite(suite : TestSuite)
+    # Begins the JSON document output.
+    def start(_notification)
       @json.start_document
       @json.start_object
+      @json.field("version", Spectator::VERSION)
+
+      # Start examples array.
       @json.string("examples")
       @json.start_array
     end
 
-    # Called when a test suite finishes.
-    # The results from the entire suite are provided.
-    # The *profile* value is not nil when profiling results should be displayed.
-    def end_suite(report : Report, profile : Profile?)
-      @json.end_array # examples
-      totals(report)
-      timing(report)
-      profile(profile) if profile
-      @json.field("result", report.failed? ? "fail" : "success")
-      @json.end_object
+    # Adds an object containing fields about the example.
+    def example_finished(notification)
+      notification.example.to_json(@json)
     end
 
-    # Called before a test starts.
-    def start_example(example : Example)
+    # Marks the end of the examples array.
+    def stop
+      @json.end_array # Close examples array.
     end
 
-    # Called when a test finishes.
-    # The result of the test is provided.
-    def end_example(result : Result)
-      result.to_json(@json)
-    end
-
-    # Adds the totals section of the document.
-    private def totals(report)
-      @json.field("totals") do
-        @json.object do
-          @json.field("examples", report.example_count)
-          @json.field("success", report.successful_count)
-          @json.field("fail", report.failed_count)
-          @json.field("error", report.error_count)
-          @json.field("pending", report.pending_count)
-          @json.field("remaining", report.remaining_count)
-        end
-      end
-    end
-
-    # Adds the timings section of the document.
-    private def timing(report)
-      @json.field("timing") do
-        @json.object do
-          @json.field("runtime", report.runtime.total_seconds)
-          @json.field("examples", report.example_runtime.total_seconds)
-          @json.field("overhead", report.overhead_time.total_seconds)
-        end
-      end
-    end
-
-    # Adds the profile information to the document.
-    private def profile(profile)
+    # Adds the profiling information to the document.
+    def dump_profile(notification)
       @json.field("profile") do
-        @json.object do
-          @json.field("count", profile.size)
-          @json.field("time", profile.total_time.total_seconds)
-          @json.field("percentage", profile.percentage)
-          @json.field("results") do
-            @json.array do
-              profile.each do |result|
-                profile_entry(result)
-              end
-            end
-          end
-        end
+        notification.profile.to_json(@json)
       end
     end
 
-    # Adds a profile entry to the document.
-    private def profile_entry(result)
-      @json.object do
-        @json.field("example", result.example)
-        @json.field("time", result.elapsed.total_seconds)
-        @json.field("source", result.example.source)
+    # Adds the summary object to the document.
+    def dump_summary(notification)
+      report = notification.report
+
+      @json.field("summary") do
+        @json.object do
+          @json.field("duration", report.runtime.total_seconds)
+          @json.field("example_count", report.counts.total)
+          @json.field("failure_count", report.counts.fail)
+          @json.field("error_count", report.counts.error)
+          @json.field("pending_count", report.counts.pending)
+        end
       end
+
+      totals = Components::Totals.new(report.counts)
+      @json.field("summary_line", totals.to_s)
+    end
+
+    # Ends the JSON document and flushes output.
+    def close
+      @json.end_object
+      @json.end_document
+      @json.flush
     end
   end
 end

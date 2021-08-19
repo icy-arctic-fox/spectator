@@ -1,15 +1,16 @@
 require "./example_failed"
+require "./expectation"
 
 module Spectator
-  # Exception that indicates a required expectation was not met in an example.
+  # Exception that indicates an expectation from a test failed.
+  # When raised within a test, the test should abort.
   class ExpectationFailed < ExampleFailed
     # Expectation that failed.
-    getter expectation : Expectations::Expectation
+    getter expectation : Expectation
 
     # Creates the exception.
-    # The exception string is generated from the expecation message.
-    def initialize(@expectation)
-      super(@expectation.failure_message)
+    def initialize(@expectation : Expectation, message : String? = nil, cause : Exception? = nil)
+      super(expectation.location?, message, cause)
     end
   end
 end

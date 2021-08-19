@@ -1,58 +1,71 @@
+require "./formatter"
+
 module Spectator::Formatting
-  # Formatter for the "Test Anything Protocol".
-  # For details, see: https://testanything.org/
+  # Produces TAP output from test results.
+  # See: https://testanything.org/
+  # Version 12 of the specification is used.
   class TAPFormatter < Formatter
+    @counter = 0
+
     # Creates the formatter.
-    # By default, output is sent to STDOUT.
     def initialize(@io : IO = STDOUT)
-      @index = 1
     end
 
-    # Called when a test suite is starting to execute.
-    def start_suite(suite : TestSuite)
+    # Invoked when the test suite begins.
+    def start(notification)
       @io << "1.."
-      @io.puts suite.size
+      @io.puts notification.example_count
     end
 
-    # Called when a test suite finishes.
-    # The results from the entire suite are provided.
-    # The *profile* value is not nil when profiling results should be displayed.
-    def end_suite(report : Report, profile : Profile?)
-      @io.puts "Bail out!" if report.remaining?
-      profile(profile) if profile
+    # Invoked just after an example completes.
+    def example_finished(_notification)
+      @counter += 1
     end
 
-    # Called before a test starts.
-    def start_example(example : Example)
+    # Invoked after an example completes successfully.
+    def example_passed(notification)
+      @io << "ok " << @counter << " - "
+      @io.puts notification.example
     end
 
-    # Called when a test finishes.
-    # The result of the test is provided.
-    def end_example(result : Result)
-      @io.puts TAPTestLine.new(@index, result)
-      @index += 1
-    end
+    # Invoked after an example is skipped or marked as pending.
+    def example_pending(notification)
+      # TODO: Skipped tests should report ok.
+      @io << "not ok " << @counter << " - "
+      @io << notification.example << " # TODO "
 
-    # Displays profiling information.
-    private def profile(profile)
-      @io.puts(Comment.new(ProfileSummary.new(profile)))
-
-      indent = Indent.new(@io)
-      indent.increase do
-        profile.each do |result|
-          profile_entry(indent, result)
-        end
+      # This should never be false.
+      if (result = notification.example.result).responds_to?(:reason)
+        @io.puts result.reason
       end
     end
 
-    # Adds a profile result entry to the output.
-    private def profile_entry(indent, result)
+    # Invoked after an example fails.
+    def example_failed(notification)
+      @io << "not ok " << @counter << " - "
+      @io.puts notification.example
+    end
+
+    # Invoked after an example fails from an unexpected error.
+    def example_error(notification)
+      example_failed(notification)
+    end
+
+    # Called whenever the example or framework produces a message.
+    # This is typically used for logging.
+    def message(notification)
       @io << "# "
-      indent.line(result.example)
-      indent.increase do
-        @io << "# "
-        indent.line(SourceTiming.new(result.elapsed, result.example.source))
-      end
+      @io.puts notification.message
+    end
+
+    # Invoked after testing completes with profiling information.
+    def dump_profile(notification)
+      @io << Components::TAPProfile.new(notification.profile)
+    end
+
+    # Invoked after testing completes with summarized information from the test suite.
+    def dump_summary(notification)
+      @io.puts "Bail out!" if notification.report.counts.remaining?
     end
   end
 end

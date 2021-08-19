@@ -11,23 +11,6 @@ module Spectator::Mocks
     @all_instances = {} of String => Entry
     @entries = {} of Key => Entry
 
-    def initialize(context : TestContext)
-      current_context = context
-      while current_context
-        current_context.stubs.each do |k, v|
-          stubs = if @all_instances.has_key?(k)
-                    @all_instances[k].stubs
-                  else
-                    entry = Entry.new
-                    @all_instances[k] = entry
-                    entry.stubs
-                  end
-          stubs.concat(v)
-        end
-        current_context = current_context.parent?
-      end
-    end
-
     def reset : Nil
       @entries.clear
     end
@@ -112,11 +95,11 @@ module Spectator::Mocks
       end
     end
 
-    private def unique_key(reference : Reference)
+    private def unique_key(reference : ::Reference)
       {reference.class.name, reference.object_id}
     end
 
-    private def unique_key(value : Value)
+    private def unique_key(value : ::Value)
       {value.class.name, value.hash}
     end
   end

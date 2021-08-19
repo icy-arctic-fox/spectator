@@ -14,23 +14,24 @@ module Spectator::Matchers
     end
 
     # Actually performs the test against the expression.
-    def match(actual : TestExpression(T)) : MatchData forall T
+    def match(actual : Expression(T)) : MatchData forall T
       snapshot = snapshot_values(actual.value)
       if snapshot.values.all?
-        SuccessfulMatchData.new(description)
+        SuccessfulMatchData.new(match_data_description(actual))
       else
-        FailedMatchData.new(description, "#{actual.label} does not respond to #{label}", values(snapshot).to_a)
+        FailedMatchData.new(match_data_description(actual), "#{actual.label} does not respond to #{label}", values(snapshot).to_a)
       end
     end
 
     # Performs the test against the expression, but inverted.
     # A successful match with `#match` should normally fail for this method, and vice-versa.
-    def negated_match(actual : TestExpression(T)) : MatchData forall T
+    def negated_match(actual : Expression(T)) : MatchData forall T
       snapshot = snapshot_values(actual.value)
-      if snapshot.values.any?
-        FailedMatchData.new(description, "#{actual.label} responds to #{label}", values(snapshot).to_a)
+      # Intentionally check truthiness of each value.
+      if snapshot.values.any? # ameba:disable Performance/AnyInsteadOfEmpty
+        FailedMatchData.new(match_data_description(actual), "#{actual.label} responds to #{label}", values(snapshot).to_a)
       else
-        SuccessfulMatchData.new(description)
+        SuccessfulMatchData.new(match_data_description(actual))
       end
     end
 

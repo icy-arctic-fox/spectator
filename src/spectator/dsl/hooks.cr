@@ -1,79 +1,142 @@
-module Spectator
-  module DSL
-    macro before_each(&block)
-      def %hook({{block.args.splat}}) : Nil
-        {{block.body}}
-      end
+require "../location"
+require "./builder"
 
-      ::Spectator::SpecBuilder.add_before_each_hook do |test, example|
-        cast_test = test.as({{@type.id}})
-        {% if block.args.empty? %}
-          cast_test.%hook
-        {% else %}
-          cast_test.%hook(example)
+module Spectator::DSL
+  # DSL methods for adding custom logic to key times of the spec execution.
+  module Hooks
+    # Defines a macro to create an example group hook.
+    # The *type* indicates when the hook runs and must be a method on `Spectator::DSL::Builder`.
+    # A custom *name* can be used for the hook method.
+    # If not provided, *type* will be used instead.
+    # Additionally, a block can be provided.
+    # The block can perform any operations necessary and yield to invoke the end-user hook.
+    macro define_example_group_hook(type, name = nil, &block)
+      macro {{(name ||= type).id}}(&block)
+        \{% raise "Missing block for '{{name.id}}' hook" unless block %}
+        \{% raise "Cannot use '{{name.id}}' inside of a test block" if @def %}
+
+        private def self.\%hook : Nil
+          \{{block.body}}
+        end
+
+        {% if block %}
+          private def self.%wrapper : Nil
+            {{block.body}}
+          end
         {% end %}
+
+        ::Spectator::DSL::Builder.{{type.id}}(
+          ::Spectator::Location.new(\{{block.filename}}, \{{block.line_number}}, \{{block.end_line_number}})
+        ) do
+          {% if block %}
+            %wrapper do |*args|
+              \{% if block.args.empty? %}
+                \%hook
+              \{% else %}
+                \%hook(*args)
+              \{% end %}
+            end
+          {% else %}
+            \%hook
+          {% end %}
+        end
       end
     end
 
-    macro after_each(&block)
-      def %hook({{block.args.splat}}) : Nil
-        {{block.body}}
-      end
+    # Defines a macro to create an example hook.
+    # The *type* indicates when the hook runs and must be a method on `Spectator::DSL::Builder`.
+    # A custom *name* can be used for the hook method.
+    # If not provided, *type* will be used instead.
+    # Additionally, a block can be provided that takes the current example as an argument.
+    # The block can perform any operations necessary and yield to invoke the end-user hook.
+    macro define_example_hook(type, name = nil, &block)
+      macro {{(name ||= type).id}}(&block)
+        \{% raise "Missing block for '{{name.id}}' hook" unless block %}
+        \{% raise "Block argument count '{{name.id}}' hook must be 0..1" if block.args.size > 1 %}
+        \{% raise "Cannot use '{{name.id}}' inside of a test block" if @def %}
 
-      ::Spectator::SpecBuilder.add_after_each_hook do |test, example|
-        cast_test = test.as({{@type.id}})
-        {% if block.args.empty? %}
-          cast_test.%hook
-        {% else %}
-          cast_test.%hook(example)
+        private def \%hook(\{{block.args.splat}}) : Nil
+          \{{block.body}}
+        end
+
+        {% if block %}
+          private def %wrapper({{block.args.splat}}) : Nil
+            {{block.body}}
+          end
         {% end %}
+
+        ::Spectator::DSL::Builder.{{type.id}}(
+          ::Spectator::Location.new(\{{block.filename}}, \{{block.line_number}})
+        ) do |example|
+          example.with_context(\{{@type.name}}) do
+            {% if block %}
+              {% if block.args.empty? %}
+                %wrapper do |*args|
+                  \{% if block.args.empty? %}
+                    \%hook
+                  \{% else %}
+                    \%hook(*args)
+                  \{% end %}
+                end
+              {% else %}
+                %wrapper(example) do |*args|
+                  \{% if block.args.empty? %}
+                    \%hook
+                  \{% else %}
+                    \%hook(*args)
+                  \{% end %}
+                end
+              {% end %}
+            {% else %}
+              \{% if block.args.empty? %}
+                \%hook
+              \{% else %}
+                \%hook(example)
+              \{% end %}
+            {% end %}
+          end
+        end
       end
     end
 
-    macro before_all(&block)
-      ::Spectator::SpecBuilder.add_before_all_hook {{block}}
-    end
+    # Defines a block of code that will be invoked once before any examples in the suite.
+    # The block will not run in the context of the current running example.
+    # This means that values defined by `let` and `subject` are not available.
+    define_example_group_hook :before_suite
 
-    macro after_all(&block)
-      ::Spectator::SpecBuilder.add_after_all_hook {{block}}
-    end
+    # Defines a block of code that will be invoked once after all examples in the suite.
+    # The block will not run in the context of the current running example.
+    # This means that values defined by `let` and `subject` are not available.
+    define_example_group_hook :after_suite
 
-    macro around_each(&block)
-      def %hook({{block.args.first || :example.id}}) : Nil
-        {{block.body}}
-      end
+    # Defines a block of code that will be invoked once before any examples in the group.
+    # The block will not run in the context of the current running example.
+    # This means that values defined by `let` and `subject` are not available.
+    define_example_group_hook :before_all
 
-      ::Spectator::SpecBuilder.add_around_each_hook { |test, proc| test.as({{@type.id}}).%hook(proc) }
-    end
+    # Defines a block of code that will be invoked once after all examples in the group.
+    # The block will not run in the context of the current running example.
+    # This means that values defined by `let` and `subject` are not available.
+    define_example_group_hook :after_all
 
-    macro pre_condition(&block)
-      def %hook({{block.args.splat}}) : Nil
-        {{block.body}}
-      end
+    # Defines a block of code that will be invoked before every example in the group.
+    # The block will be run in the context of the current running example.
+    # This means that values defined by `let` and `subject` are available.
+    define_example_hook :before_each
 
-      ::Spectator::SpecBuilder.add_pre_condition do |test, example|
-        cast_test = test.as({{@type.id}})
-        {% if block.args.empty? %}
-          cast_test.%hook
-        {% else %}
-          cast_test.%hook(example)
-        {% end %}
-      end
-    end
+    # Defines a block of code that will be invoked after every example in the group.
+    # The block will be run in the context of the current running example.
+    # This means that values defined by `let` and `subject` are available.
+    define_example_hook :after_each
 
-    macro post_condition(&block)
-      def %hook({{block.args.splat}}) : Nil
-        {{block.body}}
-      end
-
-      ::Spectator::SpecBuilder.add_post_condition do |test, example|
-        cast_test = test.as({{@type.id}})
-        {% if block.args.empty? %}
-          cast_test.%hook
-        {% else %}
-          cast_test.%hook(example)
-        {% end %}
-      end
-    end
+    # Defines a block of code that will be invoked around every example in the group.
+    # The block will be run in the context of the current running example.
+    # This means that values defined by `let` and `subject` are available.
+    #
+    # The block will execute before the example.
+    # An `Example::Procsy` is passed to the block.
+    # The `Example::Procsy#run` method should be called to ensure the example runs.
+    # More code can run afterwards (in the block).
+    define_example_hook :around_each
   end
 end

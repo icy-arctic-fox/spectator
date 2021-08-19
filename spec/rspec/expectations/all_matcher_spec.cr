@@ -21,17 +21,15 @@ Spectator.describe "`all` matcher" do
     # Changed `include` to `contain` to match our own.
     # `include` is a keyword and can't be used as a method name in Crystal.
 
-    # TODO: Add support for compound matchers.
     describe ["anything", "everything", "something"] do
-      xit { is_expected.to all(be_a(String)) }    # .and contain("thing") ) }
-      xit { is_expected.to all(be_a(String)) }    # .and end_with("g") ) }
-      xit { is_expected.to all(start_with("s")) } # .or contain("y") ) }
+      skip reason: "Add support for compound matchers." { is_expected.to all(be_a(String).and contain("thing")) }
+      skip reason: "Add support for compound matchers." { is_expected.to all(be_a(String).and end_with("g")) }
+      skip reason: "Add support for compound matchers." { is_expected.to all(start_with("s").or contain("y")) }
 
       # deliberate failures
-      # TODO: Add support for compound matchers.
-      xit { is_expected.to all(contain("foo")) }  # .and contain("bar") ) }
-      xit { is_expected.to all(be_a(String)) }    # .and start_with("a") ) }
-      xit { is_expected.to all(start_with("a")) } # .or contain("z") ) }
+      skip reason: "Add support for compound matchers." { is_expected.to all(contain("foo").and contain("bar")) }
+      skip reason: "Add support for compound matchers." { is_expected.to all(be_a(String).and start_with("a")) }
+      skip reason: "Add support for compound matchers." { is_expected.to all(start_with("a").or contain("z")) }
     end
   end
 end
