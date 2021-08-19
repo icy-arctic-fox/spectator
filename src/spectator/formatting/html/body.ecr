@@ -10,7 +10,7 @@
   <%- report.failures.each do |example| -%>
   <li class="example fail">
     <a href="#example-<%= example.object_id %>" title="Jump to result">
-      <h3 class="full-name"><% escape(example) %></h3>
+      <span class="full-name"><% escape(example) %></h3>
     </a>
   </li>
   <%- end -%>
@@ -23,7 +23,7 @@
   <%- report.pending.each do |example| -%>
   <li class="example pending">
     <a href="#example-<%= example.object_id %>" title="Jump to result">
-      <h3 class="full-name"><% escape(example) %></h3>
+      <span class="full-name"><% escape(example) %></h3>
     </a>
   </li>
   <%- end -%>
@@ -37,6 +37,7 @@
     <h3 id="#example-<%= example.object_id %>" class="full-name"><% escape(example) %></h3>
     <span class="result <%= example.result %>"><%= example.result %></span>
     <span class="elapsed" title="<% escape(example.result.elapsed) %>"><% escape(runtime(example.result.elapsed)) %></span>
+    <% if location = example.location? %><span class="location"><% escape(location) %></span><% end %>
     <% if result = example.result.as?(PendingResult) %><span class="message"><% escape(result.reason) %></span>
 
     <%- elsif result = example.result.as?(ErrorResult) -%>
@@ -63,12 +64,12 @@
     <ol class="expectation-list">
       <%- example.result.expectations.each do |expectation| -%>
       <li class="expectation <%= expectation.satisfied? ? "pass" : "fail" %>">
-        <h5><% escape(expectation.description) %></h5>
+        <span<% if location = expectation.location? %> title="<% escape(location) %>"<% end %>><% escape(expectation.description) %></h5>
         <%- if expectation.satisfied? -%>
         <span class="result">pass</span>
         <%- else -%>
         <span class="result">fail</span>
-        <span class="message"><% escape(expectation.failure_message) %></span>
+        <p class="message"><% escape(expectation.failure_message) %></span>
         <dl class="expectation-values">
           <%- expectation.values.each do |key, value| -%>
           <dt><% escape(key) %></dt>
@@ -76,7 +77,6 @@
           <%- end -%>
         </dl>
         <%- end -%>
-        <% if location = expectation.location? %><span class="location"><% escape(location) %></span><% end %>
       </li>
       <%- end -%>
     </ol>
