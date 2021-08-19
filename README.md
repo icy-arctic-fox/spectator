@@ -277,13 +277,14 @@ For details on mocks and doubles, see the [wiki](https://gitlab.com/arctic-fox/s
 
 Spectator matches Crystal's default Spec output with some minor changes.
 JUnit and TAP are also supported output formats.
-There is also a highly detailed JSON output.
+There are also highly detailed JSON and HTML outputs.
 
 Development
 -----------
 
-This shard is still under development and is not recommended for production use (same as Crystal).
-However, feel free to play around with it and use it for non-critical projects.
+This shard is still in active development.
+New features are being added and existing functionality improved.
+Spectator is well-tested, but may have some yet-to-be-found bugs.
 
 ### Feature Progress
 
@@ -344,20 +345,20 @@ Items not marked as completed may have partial implementations.
     - [ ] Message ordering - `expect().to receive().ordered`
     - [X] Null doubles
     - [X] Verifying doubles
-- [ ] Runner
+- [X] Runner
     - [X] Fail fast
-    - [ ] Test filtering - by name, context, and tags
+    - [X] Test filtering - by name, context, and tags
     - [X] Fail on no tests
     - [X] Randomize test order
     - [X] Dry run - for validation and checking formatted output
     - [X] Config block in `spec_helper.cr`
     - [X] Config file - `.spectator`
-- [ ] Reporter and formatting
+- [X] Reporter and formatting
     - [X] RSpec/Crystal Spec default
     - [X] JSON
     - [X] JUnit
     - [X] TAP
-    - [ ] HTML
+    - [X] HTML
 
 ### How it Works (in a nutshell)
 
@@ -383,9 +384,10 @@ The CI build checks for properly formatted code.
 Documentation is automatically generated and published to GitLab pages.
 It can be found here: https://arctic-fox.gitlab.io/spectator
 
-This project is developed on [GitLab](https://gitlab.com/arctic-fox/spectator),
-and mirrored to [GitHub](https://github.com/icy-arctic-fox/spectator).
-Issues and PRs/MRs are accepted on both.
+This project's home is (and primarily developed) on [GitLab](https://gitlab.com/arctic-fox/spectator).
+A mirror is maintained to [GitHub](https://github.com/icy-arctic-fox/spectator).
+Issues, pull requests (merge requests), and discussion are welcome on both.
+Maintainers will ensure your contributions make it in.
 
 ### Testing
 

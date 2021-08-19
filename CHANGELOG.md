@@ -32,6 +32,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add `filter_run_including`, `filter_run_excluding`, and `filter_run_when_matching` to config block.
 - By default, only run tests when any are marked with `focus: true`.
 - Add "f-prefix" blocks for examples and groups (`fit`, `fdescribe`, etc.) as a short-hand for specifying `focus: true`.
+- Add HTML formatter. Operates the same as the JUnit formatter. Specify `--html_output=DIR` to use. [#22](https://gitlab.com/arctic-fox/spectator/-/issues/22) [#3](https://github.com/icy-arctic-fox/spectator/issues/3)
 
 ### Changed
 - `given` (now `provided`) blocks changed to produce a single example. `it` can no longer be nested in a `provided` block.
