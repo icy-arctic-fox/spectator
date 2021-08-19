@@ -34,11 +34,11 @@ module Spectator::Formatting::Components
     def to_s(io)
       io << @examples << " examples, " << @failures << " failures"
 
-      if @errors > 1
+      if @errors > 0
         io << " (" << @errors << " errors)"
       end
 
-      if @pending > 1
+      if @pending > 0
         io << ", " << @pending << " pending"
       end
     end
