@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [0.10.0] - 2021-09-19
 ### Fixed
 - Fix resolution of types with the same name in nested scopes. [#31](https://github.com/icy-arctic-fox/spectator/issues/31)
 - `around_each` hooks wrap `before_all` and `after_all` hooks. [#12](https://github.com/icy-arctic-fox/spectator/issues/12)
@@ -334,7 +334,8 @@ This has been changed so that it compiles and raises an error at runtime with a 
 First version ready for public use.
 
 
-[Unreleased]: https://gitlab.com/arctic-fox/spectator/-/compare/v0.9.40...release%2F0.10
+[Unreleased]: https://gitlab.com/arctic-fox/spectator/-/compare/v0.10.0...master
+[0.10.0]: https://gitlab.com/arctic-fox/spectator/-/compare/v0.9.40...v0.10.0
 [0.9.40]: https://gitlab.com/arctic-fox/spectator/-/compare/v0.9.39...v0.9.40
 [0.9.39]: https://gitlab.com/arctic-fox/spectator/-/compare/v0.9.38...v0.9.39
 [0.9.38]: https://gitlab.com/arctic-fox/spectator/-/compare/v0.9.37...v0.9.38
