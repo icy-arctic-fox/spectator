@@ -33,8 +33,8 @@
 <h2>Examples (<%= report.counts.total %>)</h2>
 <ul id="example-list">
   <%- report.examples.each do |example| -%>
-  <li class="example <%= example.result %>">
-    <h3 id="#example-<%= example.object_id %>" class="full-name"><% escape(example) %></h3>
+  <li id="example-<%= example.object_id %>" class="example <%= example.result %>">
+    <h3 class="full-name"><% escape(example) %></h3>
     <span class="result <%= example.result %>"><%= example.result %></span>
     <span class="elapsed" title="<% escape(example.result.elapsed) %>">Took <% escape(runtime(example.result.elapsed)) %></span>
     <% if location = example.location? %><span class="location"><% escape(location) %></span><% end %>
