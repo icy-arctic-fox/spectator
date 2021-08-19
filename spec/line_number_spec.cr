@@ -15,7 +15,7 @@ Spectator.describe Spectator do
 
     it "handles multiple lines and examples" do
       # Offset is important.
-      expect(location.line).to eq(__LINE__ - 3)
+      expect(location.line).to eq(__LINE__ - 2)
       # This line fails, refer to https://github.com/crystal-lang/crystal/issues/10562
       # expect(location.end_line).to eq(__LINE__ + 2)
       # Offset is still important.
