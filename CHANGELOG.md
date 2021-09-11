@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+### Fixed
+- Fix `Spectator.configure` block calls to `filter_run_excluding` and `filter_run_including`. [#61](https://gitlab.com/arctic-fox/spectator/-/issues/61)
+
 ## [0.10.0] - 2021-09-19
 ### Fixed
 - Fix resolution of types with the same name in nested scopes. [#31](https://github.com/icy-arctic-fox/spectator/issues/31)

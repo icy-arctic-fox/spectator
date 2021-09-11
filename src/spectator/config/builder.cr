@@ -270,8 +270,8 @@ module Spectator
 
       # Specifies one or more tags to constrain running examples to.
       def filter_run_including(*tags : Symbol, **values)
-        tags.each { |tag| @filters << TagNodeFilter.new(tag) }
-        values.each { |tag, value| @filters << TagNodeFilter.new(tag, value.to_s) }
+        tags.each { |tag| @filters << TagNodeFilter.new(tag.to_s) }
+        values.each { |tag, value| @filters << TagNodeFilter.new(tag.to_s, value.to_s) }
       end
 
       # Adds a filter to prevent examples from running.
@@ -281,8 +281,8 @@ module Spectator
 
       # Specifies one or more tags to exclude from running examples.
       def filter_run_excluding(*tags : Symbol, **values)
-        tags.each { |tag| @rejects << TagNodeFilter.new(tag) }
-        values.each { |tag, value| @rejects << TagNodeFilter.new(tag, value.to_s) }
+        tags.each { |tag| @rejects << TagNodeFilter.new(tag.to_s) }
+        values.each { |tag, value| @rejects << TagNodeFilter.new(tag.to_s, value.to_s) }
       end
 
       # Specifies one or more tags to filter on only if they're present in the spec.
