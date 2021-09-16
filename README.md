@@ -25,7 +25,7 @@ Add this to your application's `shard.yml`:
 development_dependencies:
   spectator:
     gitlab: arctic-fox/spectator
-    version: ~> 0.10.0
+    version: ~> 0.10.1
 ```
 
 Usage
