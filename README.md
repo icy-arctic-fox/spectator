@@ -371,11 +371,11 @@ Each group class includes all test values and hooks.
 Contributing
 ------------
 
-1. Fork it (<https://gitlab.com/arctic-fox/spectator/fork/new>)
+1. Fork it (GitHub <https://github.com/icy-arctic-fox/spectator/fork> or GitLab <https://gitlab.com/arctic-fox/spectator/fork/new>)
 2. Create your feature branch (`git checkout -b my-new-feature`)
 3. Commit your changes (`git commit -am 'Add some feature'`)
 4. Push to the branch (`git push origin my-new-feature`)
-5. Create a new Merge Request
+5. Create a new Pull/Merge Request
 
 Please make sure to run `crystal tool format` before submitting.
 The CI build checks for properly formatted code.
