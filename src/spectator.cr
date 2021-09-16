@@ -8,7 +8,7 @@ module Spectator
   include DSL::Top
 
   # Current version of the Spectator library.
-  VERSION = {{ `shards version #{__DIR__}`.stringify.chomp }}
+  VERSION = {{ `shards version "#{__DIR__}"`.stringify.chomp }}
 
   # Logger for Spectator internals.
   ::Log.setup_from_env
