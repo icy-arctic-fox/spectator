@@ -10,7 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fix shard version constant creation when lib is in a directory with spaces in the path. [#33](https://gitlab.com/arctic-fox/spectator/-/merge_requests/33) Thanks @toddsundsted !
 - Re-add pre- and post-condition hooks. [#62](https://gitlab.com/arctic-fox/spectator/-/issues/62)
 
-## [0.10.0] - 2021-09-19
+## [0.10.0] - 2021-08-19
 ### Fixed
 - Fix resolution of types with the same name in nested scopes. [#31](https://github.com/icy-arctic-fox/spectator/issues/31)
 - `around_each` hooks wrap `before_all` and `after_all` hooks. [#12](https://github.com/icy-arctic-fox/spectator/issues/12)
