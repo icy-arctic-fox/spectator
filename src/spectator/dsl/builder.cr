@@ -96,6 +96,18 @@ module Spectator::DSL
       builder.around_each(hook)
     end
 
+    # Defines a block of code to execute before every example in the current group
+    def pre_condition(location = nil, label = "pre_condition", &block : Example -> _)
+      hook = ExampleHook.new(location: location, label: label, &block)
+      builder.pre_condition(hook)
+    end
+
+    # Defines a block of code to execute after every example in the current group.
+    def post_condition(location = nil, label = "post_condition", &block : Example ->)
+      hook = ExampleHook.new(location: location, label: label, &block)
+      builder.post_condition(hook)
+    end
+
     # Constructs the test spec.
     # Returns the spec instance.
     #

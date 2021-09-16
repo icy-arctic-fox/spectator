@@ -115,10 +115,16 @@ module Spectator
     end
 
     private def run_internal
-      @group.try(&.call_before_each(self))
+      if group = @group
+        group.call_before_each(self)
+        group.call_pre_condition(self)
+      end
       @entrypoint.call(self)
       @finished = true
-      @group.try(&.call_after_each(self))
+      if group = @group
+        group.call_post_condition(self)
+        group.call_after_each(self)
+      end
     end
 
     # Executes code within the example's test context.

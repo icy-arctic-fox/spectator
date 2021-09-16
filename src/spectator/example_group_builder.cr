@@ -19,6 +19,8 @@ module Spectator
     define_hook after_all : ExampleGroupHook, :prepend
     define_hook before_each : ExampleHook
     define_hook after_each : ExampleHook, :prepend
+    define_hook pre_condition : ExampleHook
+    define_hook post_condition : ExampleHook, :prepend
     define_hook around_each : ExampleProcsyHook
 
     @children = [] of NodeBuilder
@@ -53,6 +55,8 @@ module Spectator
       after_all_hooks.reverse_each { |hook| group.after_all(hook) }
       after_each_hooks.reverse_each { |hook| group.after_each(hook) }
       around_each_hooks.each { |hook| group.around_each(hook) }
+      pre_condition_hooks.each { |hook| group.pre_condition(hook) }
+      post_condition_hooks.reverse_each { |hook| group.post_condition(hook) }
     end
   end
 end

@@ -58,6 +58,20 @@ module Spectator
       procsy
     end
 
+    define_hook pre_condition : ExampleHook do |example|
+      Log.trace { "Processing pre_condition hooks for #{self}" }
+
+      @group.try &.call_pre_condition(example)
+      pre_condition_hooks.each &.call(example)
+    end
+
+    define_hook post_condition : ExampleHook, :prepend do |example|
+      Log.trace { "Processing post_condition hooks for #{self}" }
+
+      post_condition_hooks.each &.call(example)
+      @group.try &.call_post_condition(example)
+    end
+
     # Creates the example group.
     # The *name* describes the purpose of the group.
     # It can be a `Symbol` to describe a type.

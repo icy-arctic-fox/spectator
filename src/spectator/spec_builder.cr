@@ -18,7 +18,7 @@ module Spectator
   class SpecBuilder
     Log = ::Spectator::Log.for(self)
 
-    delegate before_all, after_all, before_each, after_each, around_each, to: current
+    delegate before_all, after_all, before_each, after_each, around_each, pre_condition, post_condition, to: current
 
     # Stack tracking the current group.
     # The bottom of the stack (first element) is the root group.

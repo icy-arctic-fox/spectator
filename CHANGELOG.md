@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Fixed
 - Fix `Spectator.configure` block calls to `filter_run_excluding` and `filter_run_including`. [#61](https://gitlab.com/arctic-fox/spectator/-/issues/61)
+- Re-add pre- and post-condition hooks. [#62](https://gitlab.com/arctic-fox/spectator/-/issues/62)
 
 ## [0.10.0] - 2021-09-19
 ### Fixed
