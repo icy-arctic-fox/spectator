@@ -4,9 +4,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [0.10.1] - 2021-09-16
 ### Fixed
 - Fix `Spectator.configure` block calls to `filter_run_excluding` and `filter_run_including`. [#61](https://gitlab.com/arctic-fox/spectator/-/issues/61)
+- Fix shard version constant creation when lib is in a directory with spaces in the path. [#33](https://gitlab.com/arctic-fox/spectator/-/merge_requests/33) Thanks @toddsundsted !
 - Re-add pre- and post-condition hooks. [#62](https://gitlab.com/arctic-fox/spectator/-/issues/62)
 
 ## [0.10.0] - 2021-09-19
@@ -339,7 +340,8 @@ This has been changed so that it compiles and raises an error at runtime with a 
 First version ready for public use.
 
 
-[Unreleased]: https://gitlab.com/arctic-fox/spectator/-/compare/v0.10.0...master
+[Unreleased]: https://gitlab.com/arctic-fox/spectator/-/compare/v0.10.1...master
+[0.10.1]: https://gitlab.com/arctic-fox/spectator/-/compare/v0.10.0...v0.10.1
 [0.10.0]: https://gitlab.com/arctic-fox/spectator/-/compare/v0.9.40...v0.10.0
 [0.9.40]: https://gitlab.com/arctic-fox/spectator/-/compare/v0.9.39...v0.9.40
 [0.9.39]: https://gitlab.com/arctic-fox/spectator/-/compare/v0.9.38...v0.9.39
