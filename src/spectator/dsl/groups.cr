@@ -203,6 +203,7 @@ module Spectator::DSL
     # :ditto:
     define_iterative_group :xsample, skip: "Temporarily skipped with xsample"
 
+    # :ditto:
     define_iterative_group :fsample, focus: true
 
     # Defines a new iterative example group.
