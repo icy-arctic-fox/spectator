@@ -88,7 +88,7 @@ module Spectator::Matchers
     # expect("foobar").to be === /foo/
     # ```
     def ===(value)
-      expected = TestValue.new(value)
+      expected = Value.new(value)
       PatternMatcher.new(expected)
     end
 
@@ -98,7 +98,7 @@ module Spectator::Matchers
     # expect("foobar").to be =~ /foo/
     # ```
     def =~(value)
-      expected = TestValue.new(value)
+      expected = Value.new(value)
       PatternMatcher.new(expected)
     end
 
