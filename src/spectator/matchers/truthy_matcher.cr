@@ -99,7 +99,7 @@ module Spectator::Matchers
     # ```
     def =~(value)
       expected = Value.new(value)
-      PatternMatcher.new(expected)
+      RegexMatcher.new(expected)
     end
 
     # Checks whether the matcher is satisifed with the expression given to it.
