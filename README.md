@@ -142,26 +142,26 @@ sample various_integers do |int|
 end
 ```
 
-Another context type is `given`.
+Another context type is `provided`.
 This context drastically reduces the amount of code needed in some scenarios.
 It can be used where one (or more inputs) changes the output of multiple methods.
-The `given` context gives a concise syntax for this use case.
+The `provided` context gives a concise syntax for this use case.
 
 ```crystal
 subject(user) { User.new(age) }
 
-# Each expression in the `given` block is its own test.
-given age = 10 do
+# Each expression in the `provided` block is its own test.
+provided age = 10 do
   expect(user.can_drive?).to be_false
   expect(user.can_vote?).to be_false
 end
 
-given age = 16 do
+provided age = 16 do
   expect(user.can_drive?).to be_true
   expect(user.can_vote?).to be_false
 end
 
-given age = 18 do
+provided age = 18 do
   expect(user.can_drive?).to be_true
   expect(user.can_vote?).to be_true
 end
@@ -295,7 +295,7 @@ Items not marked as completed may have partial implementations.
     - [X] `describe` and `context` blocks
     - [X] Contextual values with `let`, `let!`, `subject`, `described_class`
     - [X] Test multiple and generated values - `sample`, `random_sample`
-    - [X] Concise syntax - `given`
+    - [X] Concise syntax - `provided` (was the now deprecated `given`)
     - [X] Before and after hooks - `before_each`, `before_all`, `after_each`, `after_all`, `around_each`
     - [X] Pre- and post-conditions - `pre_condition`, `post_condition`
     - [ ] Other hooks - `on_success`, `on_failure`, `on_error`
