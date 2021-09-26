@@ -8,6 +8,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Fix usage of `be ===` and `be =~` [#34](https://github.com/icy-arctic-fox/spectator/issues/34)
 
+### Changed
+- Elegantly handle missing/undefined methods with `have_attributes` matcher.
+
 ## [0.10.1] - 2021-09-16
 ### Fixed
 - Fix `Spectator.configure` block calls to `filter_run_excluding` and `filter_run_including`. [#61](https://gitlab.com/arctic-fox/spectator/-/issues/61)

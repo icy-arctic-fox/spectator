@@ -10,6 +10,16 @@ module Spectator::Matchers
   # Each key in the tuple is the attribute/method name,
   # and the corresponding value is the expected value to match against.
   struct AttributesMatcher(ExpectedType) < Matcher
+    # Stand-in for undefined methods on types.
+    private module Undefined
+      extend self
+
+      # Text displayed when a method is undefined.
+      def inspect(io)
+        io << "<Method undefined>"
+      end
+    end
+
     # Expected value and label.
     private getter expected
 
@@ -51,7 +61,7 @@ module Spectator::Matchers
       {% begin %}
       {
         {% for attribute in ExpectedType.keys %}
-        {{attribute}}: object.{{attribute}},
+        {{attribute}}: object.responds_to?({{attribute.symbolize}}) ? object.{{attribute}} : Undefined,
         {% end %}
       }
       {% end %}
