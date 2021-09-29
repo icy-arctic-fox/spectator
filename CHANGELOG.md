@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Fixed
 - Fix usage of `be ===` and `be =~` [#34](https://github.com/icy-arctic-fox/spectator/issues/34)
+- Better handling of the `be(nil)` when used with value types. [#37](https://github.com/icy-arctic-fox/spectator/issues/37)
 
 ### Changed
 - Elegantly handle missing/undefined methods with `have_attributes` matcher.
