@@ -1,4 +1,4 @@
-require "./spec_helper"
+require "../spec_helper"
 
 Spectator.describe Spectator do
   it "supports custom expectation messages" do
