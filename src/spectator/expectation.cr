@@ -137,8 +137,16 @@ module Spectator
         to_never(matcher)
       end
 
+      def not_to(stub : Mocks::MethodStub) : Nil
+        to_not(stub)
+      end
+
       def to_not(stubs : Enumerable(Mocks::MethodStub)) : Nil
         stubs.each { |stub| to_not(stub) }
+      end
+
+      def not_to(stubs : Enumerable(Mocks::MethodStub)) : Nil
+        to_not(stubs)
       end
 
       # Asserts that some criteria defined by the matcher is eventually satisfied.
