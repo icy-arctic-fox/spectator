@@ -21,6 +21,10 @@ module Spectator::Mocks
       fetch_instance(object).stubs.unshift(stub)
     end
 
+    def add_stub(type : T.class, stub : MethodStub) : Nil forall T
+      add_type_stub(type, stub)
+    end
+
     def add_type_stub(type, stub : MethodStub) : Nil
       fetch_type(type).stubs.unshift(stub)
     end

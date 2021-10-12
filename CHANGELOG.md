@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Better handling of the `be(nil)` when used with value types. [#37](https://github.com/icy-arctic-fox/spectator/issues/37)
 - Fix missing arguments for stubbed top-level methods (`system`, `exit`, etc.). [#36](https://github.com/icy-arctic-fox/spectator/issues/36)
 - Fix outdated naming when using `expect_any_instance_of`.
+- Fix adding stubs to class methods on mocked types.
 
 ### Changed
 - Elegantly handle missing/undefined methods with `have_attributes` matcher.
