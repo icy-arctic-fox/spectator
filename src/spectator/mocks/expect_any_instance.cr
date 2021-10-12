@@ -10,8 +10,8 @@ module Spectator::Mocks
       Harness.current.mocks.expect(T, stub)
       value = Value.new(stub.name, stub.to_s)
       matcher = Matchers::ReceiveTypeMatcher.new(value, stub.arguments?)
-      partial = Expectations::ExpectationPartial.new(actual, @location)
-      partial.to_eventually(matcher)
+      target = Expectation::Target.new(actual, @location)
+      target.to_eventually(matcher)
     end
 
     def to(stubs : Enumerable(MethodStub)) : Nil
