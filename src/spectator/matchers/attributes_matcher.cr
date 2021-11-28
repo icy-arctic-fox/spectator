@@ -67,7 +67,7 @@ module Spectator::Matchers
       {% end %}
     end
 
-    # Checks if all attributes from the snapshot of them are satisified.
+    # Checks if all attributes from the snapshot of them are satisfied.
     private def match?(snapshot)
       # Test that every attribute has the expected value.
       {% for attribute in ExpectedType.keys %}

@@ -16,12 +16,12 @@ module Spectator::Matchers
       "is a #{Expected}"
     end
 
-    # Checks whether the matcher is satisifed with the expression given to it.
+    # Checks whether the matcher is satisfied with the expression given to it.
     private def match?(actual : Expression(T)) : Bool forall T
       actual.value.is_a?(Expected)
     end
 
-    # Message displayed when the matcher isn't satisifed.
+    # Message displayed when the matcher isn't satisfied.
     #
     # This is only called when `#match?` returns false.
     #
@@ -31,7 +31,7 @@ module Spectator::Matchers
       "#{actual.label} is not a #{Expected}"
     end
 
-    # Message displayed when the matcher isn't satisifed and is negated.
+    # Message displayed when the matcher isn't satisfied and is negated.
     # This is essentially what would satisfy the matcher if it wasn't negated.
     #
     # This is only called when `#does_not_match?` returns false.

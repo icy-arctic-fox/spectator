@@ -52,7 +52,7 @@ module Spectator
       end
     end
 
-    # Instanciates a new harness and yields it.
+    # Instantiates a new harness and yields it.
     # The `.current` harness is set to the new harness for the duration of the block.
     # `.current` is reset to the previous value (probably nil) afterwards, even if the block raises.
     # The result of the block is returned.

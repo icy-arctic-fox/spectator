@@ -8,7 +8,7 @@ module Spectator
   # or nil if one isn't available.
   #
   # This base class is provided so that all generic sub-classes can be stored as this one type.
-  # The value of the expression can be retrieved by downcasting to the expected type with `#cast`.
+  # The value of the expression can be retrieved by down-casting to the expected type with `#cast`.
   #
   # NOTE: This is intentionally a class and not a struct.
   # If it were a struct, changes made to the value held by an instance may not be kept when passing it around.

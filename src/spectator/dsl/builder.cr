@@ -31,7 +31,7 @@ module Spectator::DSL
     end
 
     # Completes a previously defined example group and pops it off the group stack.
-    # Be sure to call `#start_group` and `#end_group` symmetically.
+    # Be sure to call `#start_group` and `#end_group` symmetrically.
     #
     # See `Spec::Builder#end_group` for usage details.
     def end_group(*args)

@@ -4,7 +4,7 @@ require "./label"
 module Spectator
   # Represents a block from a test.
   # This is typically captured by an `expect` macro.
-  # It consists of a label and parameterless block.
+  # It consists of a label and parameter-less block.
   # The label should be a string recognizable by the user,
   # or nil if one isn't available.
   class Block(T) < Expression(T)

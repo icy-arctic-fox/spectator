@@ -6,11 +6,11 @@ module Spectator::Matchers
   #
   # Matchers based on this class need to define `#match?` and `#failure_message`.
   # If the matcher can be negated,
-  # the `#failure_message_when_negated` method needs to be overriden.
+  # the `#failure_message_when_negated` method needs to be overridden.
   # Additionally, the `#does_not_match?` method can be specified
   # if there's custom behavior for negated matches.
   # If the matcher operates on or has extra data that is useful for debug,
-  # then the `#values` and `#negated_values` methods can be overriden.
+  # then the `#values` and `#negated_values` methods can be overridden.
   # Finally, define a `#description` message that can be used for the one-liner "it" syntax.
   #
   # The failure messages should typically only contain the test expression labels.

@@ -2,7 +2,7 @@ require "json"
 require "./example"
 
 module Spectator
-  # Information about the runtimes of examples.
+  # Information about the runtime of examples.
   class Profile
     include Indexable(Example)
 

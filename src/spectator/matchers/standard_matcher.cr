@@ -10,11 +10,11 @@ module Spectator::Matchers
   # that is suitable for most matchers.
   # Matchers based on this class need to define `#match?` and `#failure_message`.
   # If the matcher can be negated,
-  # the `#failure_message_when_negated` method needs to be overriden.
+  # the `#failure_message_when_negated` method needs to be overridden.
   # Additionally, the `#does_not_match?` method can be specified
   # if there's custom behavior for negated matches.
   # If the matcher operates on or has extra data that is useful for debug,
-  # then the `#values` and `#negated_values` methods can be overriden.
+  # then the `#values` and `#negated_values` methods can be overridden.
   # Finally, define a `#description` message that can be used for the one-liner "it" syntax.
   abstract struct StandardMatcher < Matcher
     # Actually performs the test against the expression (value or block).
@@ -47,7 +47,7 @@ module Spectator::Matchers
       end
     end
 
-    # Message displayed when the matcher isn't satisifed.
+    # Message displayed when the matcher isn't satisfied.
     #
     # This is only called when `#match?` returns false.
     #
@@ -55,7 +55,7 @@ module Spectator::Matchers
     # Actual values should be returned by `#values`.
     private abstract def failure_message(actual : Expression(T)) : String forall T
 
-    # Message displayed when the matcher isn't satisifed and is negated.
+    # Message displayed when the matcher isn't satisfied and is negated.
     # This is essentially what would satisfy the matcher if it wasn't negated.
     #
     # This is only called when `#does_not_match?` returns false.
@@ -70,14 +70,14 @@ module Spectator::Matchers
       raise "Negation with #{self.class} is not supported."
     end
 
-    # Checks whether the matcher is satisifed with the expression given to it.
+    # Checks whether the matcher is satisfied with the expression given to it.
     private abstract def match?(actual : Expression(T)) : Bool forall T
 
     # If the expectation is negated, then this method is called instead of `#match?`.
     #
     # The default implementation of this method is to invert the result of `#match?`.
     # If the matcher requires custom handling of negated matches,
-    # then this method should be overriden.
+    # then this method should be overridden.
     # Remember to override `#failure_message_when_negated` as well.
     private def does_not_match?(actual : Expression(T)) : Bool forall T
       !match?(actual)

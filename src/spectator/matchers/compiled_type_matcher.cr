@@ -12,12 +12,12 @@ module Spectator::Matchers
       "compiles as #{Expected}"
     end
 
-    # Checks whether the matcher is satisifed with the expression given to it.
+    # Checks whether the matcher is satisfied with the expression given to it.
     private def match?(actual : Expression(T)) : Bool forall T
       Expected == typeof(actual.value)
     end
 
-    # Message displayed when the matcher isn't satisifed.
+    # Message displayed when the matcher isn't satisfied.
     #
     # This is only called when `#match?` returns false.
     #
@@ -27,7 +27,7 @@ module Spectator::Matchers
       "#{actual.label} does not compile as #{Expected}"
     end
 
-    # Message displayed when the matcher isn't satisifed and is negated.
+    # Message displayed when the matcher isn't satisfied and is negated.
     # This is essentially what would satisfy the matcher if it wasn't negated.
     #
     # This is only called when `#does_not_match?` returns false.

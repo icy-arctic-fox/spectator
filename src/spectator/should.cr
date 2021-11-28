@@ -38,13 +38,13 @@ class Object
     ::Spectator::Harness.current.report(expectation)
   end
 
-  # Works the same as `#should` except that the condition check is postphoned.
+  # Works the same as `#should` except that the condition check is postponed.
   # The expectation is checked after the example finishes and all hooks have run.
   def should_eventually(matcher, message = nil)
     ::Spectator::Harness.current.defer { should(matcher, message) }
   end
 
-  # Works the same as `#should_not` except that the condition check is postphoned.
+  # Works the same as `#should_not` except that the condition check is postponed.
   # The expectation is checked after the example finishes and all hooks have run.
   def should_never(matcher, message = nil)
     ::Spectator::Harness.current.defer { should_not(matcher, message) }

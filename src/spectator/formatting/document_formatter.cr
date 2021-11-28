@@ -9,7 +9,7 @@ module Spectator::Formatting
   class DocumentFormatter < Formatter
     include Summary
 
-    # Identation string.
+    # Indentation string.
     private INDENT = "  "
 
     # String used for groups and examples that don't have a name.

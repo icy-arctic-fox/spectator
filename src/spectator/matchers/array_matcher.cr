@@ -83,7 +83,7 @@ module Spectator::Matchers
     # The first array is the missing elements (present in expected, missing in actual).
     # The second array array is the extra elements (not present in expected, present in actual).
     private def compare_arrays(expected_elements, actual_elements)
-      # Produce hashes where the array elements are the keys, and the values are the number of occurances.
+      # Produce hashes where the array elements are the keys, and the values are the number of occurrences.
       expected_hash = expected_elements.group_by(&.itself).map { |k, v| {k, v.size} }.to_h
       actual_hash = actual_elements.group_by(&.itself).map { |k, v| {k, v.size} }.to_h
 
@@ -96,11 +96,11 @@ module Spectator::Matchers
     # Expects two hashes, with values as counts for keys.
     # Produces an array of differences with elements repeated if needed.
     private def hash_count_difference(first, second)
-      # Subtract the number of occurances from the other array.
+      # Subtract the number of occurrences from the other array.
       # A duplicate hash is used here because the original can't be modified,
       # since it there's a two-way comparison.
       #
-      # Then reject elements that have zero (or less) occurances.
+      # Then reject elements that have zero (or less) occurrences.
       # Lastly, expand to the correct number of elements.
       first.map do |element, count|
         if second_count = second[element]?

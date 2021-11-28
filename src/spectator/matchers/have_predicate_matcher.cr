@@ -35,7 +35,7 @@ module Spectator::Matchers
       end
     end
 
-    # Message displayed when the matcher isn't satisifed.
+    # Message displayed when the matcher isn't satisfied.
     #
     # This is only called when `#match?` returns false.
     #
@@ -45,7 +45,7 @@ module Spectator::Matchers
       "#{actual.label} does not have #{expected.label}"
     end
 
-    # Message displayed when the matcher isn't satisifed and is negated.
+    # Message displayed when the matcher isn't satisfied and is negated.
     # This is essentially what would satisfy the matcher if it wasn't negated.
     #
     # This is only called when `#does_not_match?` returns false.
@@ -68,7 +68,7 @@ module Spectator::Matchers
       {% end %}
     end
 
-    # Checks if all predicate methods from the snapshot of them are satisified.
+    # Checks if all predicate methods from the snapshot of them are satisfied.
     private def match?(snapshot) : Bool
       # Test each predicate and immediately return false if one is false.
       {% for attribute in ExpectedType.keys %}

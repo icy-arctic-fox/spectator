@@ -239,7 +239,7 @@ module Spectator::DSL
     # expect("foo").to match(/foo|bar/)
     # expect("BAR").to match(/foo|bar/i)
     # expect(1 + 2).to match(3)
-    # expect(5).to match(Int32) # Using `#be_a` instead is recommened here.
+    # expect(5).to match(Int32) # Using `#be_a` instead is recommended here.
     # expect({:foo, 5}).to match({Symbol, Int32})
     # ```
     macro match(expected)
@@ -368,7 +368,7 @@ module Spectator::DSL
     # expect(pi).to be_close(3.14159265359, 0.0000001)
     # ```
     #
-    # This is functionly equivalent to:
+    # This is functionally equivalent to:
     # ```
     # be_within(expected).of(delta)
     # ```
@@ -400,7 +400,7 @@ module Spectator::DSL
     # Indicates that some value or set should start with another value.
     # This is typically used on a `String` or `Array` (any `Enumerable` works).
     # The *expected* argument can be a `String`, `Char`, or `Regex`
-    # when the actual type (being comapred against) is a `String`.
+    # when the actual type (being compared against) is a `String`.
     # For `Enumerable` types, only the first item is inspected.
     # It is compared with the === operator,
     # so that values, types, regular expressions, and others can be tested.
@@ -423,7 +423,7 @@ module Spectator::DSL
     # Indicates that some value or set should end with another value.
     # This is typically used on a `String` or `Array` (any `Indexable` works).
     # The *expected* argument can be a `String`, `Char`, or `Regex`
-    # when the actual type (being comapred against) is a `String`.
+    # when the actual type (being compared against) is a `String`.
     # For `Indexable` types, only the last item is inspected.
     # It is compared with the === operator,
     # so that values, types, regular expressions, and others can be tested.
@@ -446,8 +446,8 @@ module Spectator::DSL
     # Indicates that some value or set should contain another value.
     # This is typically used on a `String` or `Array` (any `Enumerable` works).
     # The *expected* argument can be a `String` or `Char`
-    # when the actual type (being comapred against) is a `String`.
-    # For `Enumerable` types, items are compared using the underying implementation.
+    # when the actual type (being compared against) is a `String`.
+    # For `Enumerable` types, items are compared using the underlying implementation.
     # In both cases, the `includes?` method is used.
     #
     # Examples:
@@ -475,8 +475,8 @@ module Spectator::DSL
     # Indicates that some value or set should contain specific items.
     # This is typically used on a `String` or `Array` (any `Enumerable` works).
     # The *expected* argument can be a `String` or `Char`
-    # when the actual type (being comapred against) is a `String`.
-    # For `Enumerable` types, items are compared using the underying implementation.
+    # when the actual type (being compared against) is a `String`.
+    # For `Enumerable` types, items are compared using the underlying implementation.
     # In both cases, the `includes?` method is used.
     #
     # This is identical to `#contain`, but accepts an array (or enumerable type) instead of multiple arguments.
@@ -522,7 +522,7 @@ module Spectator::DSL
     # This is similar to `#contain`, but uses a different method for matching.
     # Typically a `String` or `Array` (any `Enumerable` works) is checked against.
     # The *expected* argument can be a `String` or `Char`
-    # when the actual type (being comapred against) is a `String`.
+    # when the actual type (being compared against) is a `String`.
     # The `includes?` method is used for this case.
     # For `Enumerable` types, each item is inspected until one matches.
     # The === operator is used for this case, which allows for equality, type, regex, and other matches.
@@ -557,7 +557,7 @@ module Spectator::DSL
     # This is similar to `#contain_elements`, but uses a different method for matching.
     # Typically a `String` or `Array` (any `Enumerable` works) is checked against.
     # The *expected* argument can be a `String` or `Char`
-    # when the actual type (being comapred against) is a `String`.
+    # when the actual type (being compared against) is a `String`.
     # The `includes?` method is used for this case.
     # For `Enumerable` types, each item is inspected until one matches.
     # The === operator is used for this case, which allows for equality, type, regex, and other matches.

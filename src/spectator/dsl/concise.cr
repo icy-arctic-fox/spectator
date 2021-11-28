@@ -7,7 +7,7 @@ module Spectator::DSL
   module Concise
     # Defines an example and input values in a shorter syntax.
     # The only arguments given to this macro are one or more assignments.
-    # The names in the assigments will be available in the example code.
+    # The names in the assignments will be available in the example code.
     #
     # If the code block is omitted, then the example is skipped (marked as not implemented).
     #

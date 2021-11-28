@@ -8,7 +8,7 @@ module Spectator
   # such as whether it was successful and a description of the operation.
   struct Expectation
     # Location of the expectation in source code.
-    # This can be nil if the location isn't capturable,
+    # This can be nil if the location can't be captured,
     # for instance using the *should* syntax or dynamically created expectations.
     getter! location : Location
 

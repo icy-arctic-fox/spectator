@@ -66,7 +66,7 @@ module Spectator::Formatting
     # The *notification* will be an `ExampleNotification` type of object.
     #
     # NOTE: Errors are normally considered failures,
-    # however `#example_error` is called instead if one occurs in an exmaple.
+    # however `#example_error` is called instead if one occurs in an example.
     def example_failed(_notification)
     end
 

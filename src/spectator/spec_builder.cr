@@ -100,7 +100,7 @@ module Spectator
     end
 
     # Completes a previously defined example group and pops it off the group stack.
-    # Be sure to call `#start_group` and `#end_group` symmetically.
+    # Be sure to call `#start_group` and `#end_group` symmetrically.
     def end_group : Nil
       Log.trace { "End group: #{current}" }
       raise "Can't pop root group" if root?
@@ -164,14 +164,14 @@ module Spectator
     end
 
     # Registers a new "after_suite" hook.
-    # The hook will be prepended to the list.
+    # The hook will be pre-pended to the list.
     # A new hook will be created by passing args to `ExampleGroupHook.new`.
     def after_suite(*args, **kwargs) : Nil
       root.before_all(*args, **kwargs)
     end
 
     # Registers a new "after_suite" hook.
-    # The hook will be prepended to the list.
+    # The hook will be pre-pended to the list.
     # A new hook will be created by passing args to `ExampleGroupHook.new`.
     def after_suite(*args, **kwargs, &block) : Nil
       root.after_all(*args, **kwargs, &block)
