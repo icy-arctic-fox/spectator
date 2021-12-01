@@ -389,6 +389,8 @@ A mirror is maintained to [GitHub](https://github.com/icy-arctic-fox/spectator).
 Issues, pull requests (merge requests), and discussion are welcome on both.
 Maintainers will ensure your contributions make it in.
 
+For more information, see: [CONTRIBUTING.md](CONTRIBUTING.md)
+
 ### Testing
 
 Tests must be written for any new functionality.
