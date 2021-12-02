@@ -14,8 +14,9 @@ module Spectator::DSL
     # Tags and metadata cannot be used with this macro.
     #
     # ```
-    # given x = 42 do
+    # provided x = 42, y: 123 do
     #   expect(x).to eq(42)
+    #   expect(y).to eq(123)
     # end
     # ```
     macro provided(*assignments, **kwargs, &block)
@@ -26,13 +27,21 @@ module Spectator::DSL
           let({{assignment.target}}) { {{assignment.value}} }
         {% end %}
         {% for name, value in kwargs %}
-          let({{name}}) { {{value}} }
+          {% if name != :it %}let({{name}}) { {{value}} }{% end %}
         {% end %}
 
         {% if block %}
-          example {{block}}
+          {% if description = kwargs[:it] %}
+            example {{description}} {{block}}
+          {% else %}
+            example {{block}}
+          {% end %}
         {% else %}
-          example {{assignments.splat.stringify}}
+          {% if description = kwargs[:it] %}
+            example {{description}} {{block}}
+          {% else %}
+            example {{assignments.splat.stringify}}
+          {% end %}
         {% end %}
       end
     end
