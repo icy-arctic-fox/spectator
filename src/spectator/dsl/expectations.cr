@@ -39,6 +39,8 @@ module Spectator::DSL
     # Where the actual value is returned by the system under test,
     # and the expected value is what the actual value should be to satisfy the condition.
     macro expect(actual)
+      {% raise "Cannot use 'expect' outside of a test block" unless @def %}
+
       %actual = begin
         {{actual}}
       end
@@ -85,6 +87,8 @@ module Spectator::DSL
     # { |__arg0| __arg0.foo }
     # ```
     macro expect(&block)
+      {% raise "Cannot use 'expect' outside of a test block" unless @def %}
+
       {% if block.args.size == 1 && block.args[0] =~ /^__arg\d+$/ && block.body.is_a?(Call) && block.body.id =~ /^__arg\d+\./ %}
         {% method_name = block.body.id.split('.')[1..-1].join('.') %}
         %block = ::Spectator::Block.new({{"#" + method_name}}) do
@@ -108,6 +112,8 @@ module Spectator::DSL
     # is_expected.to eq("foo")
     # ```
     macro is_expected
+      {% raise "Cannot use 'is_expected' outside of a test block" unless @def %}
+
       expect(subject)
     end
 
@@ -134,6 +140,8 @@ module Spectator::DSL
     #
     # See also: `#is_not`
     macro is(expected)
+      {% raise "Cannot use 'is' outside of a test block" unless @def %}
+
       expect(subject).to(eq({{expected}}))
     end
 
@@ -160,6 +168,8 @@ module Spectator::DSL
     #
     # See also: `#is`
     macro is_not(expected)
+      {% raise "Cannot use 'is_not' outside of a test block" unless @def %}
+
       expect(subject).not_to(eq({{expected}}))
     end
 
