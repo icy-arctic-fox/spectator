@@ -45,5 +45,13 @@ module Spectator::Formatting::Components
         io << padding << key.colorize(:red) << ": ".colorize(:red) << value
       end
     end
+
+    # Produces the location line.
+    # This is where the result was determined.
+    private def location_line(io)
+      return unless location = @expectation.location? || @example.location?
+
+      line(io) { io << Comment.colorize(location) }
+    end
   end
 end
