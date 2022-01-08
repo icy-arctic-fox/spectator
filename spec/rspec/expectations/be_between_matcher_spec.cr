@@ -11,7 +11,7 @@ Spectator.describe "`be_between` matcher" do
       # boundaries check
       it { is_expected.to be_between(0, 7) }
       it { is_expected.to be_between(7, 10) }
-      it { is_expected.not_to (be_between(0, 7).exclusive) }
+      it { is_expected.not_to(be_between(0, 7).exclusive) }
     end
   end
 end

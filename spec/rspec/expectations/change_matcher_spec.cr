@@ -34,7 +34,7 @@ Spectator.describe "`change` matcher" do
 
   context "expect no change" do
     describe "Counter#increment" do # TODO: Allow multiple arguments to context/describe.
-    # deliberate failures
+      # deliberate failures
       it_fails "should not increment the count by 1 (using not_to)" do
         expect { Counter.increment }.not_to change { Counter.count }
       end
