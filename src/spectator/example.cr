@@ -28,11 +28,12 @@ module Spectator
     # Is pending if the example hasn't run.
     getter result : Result = PendingResult.new("Example not run")
 
+    @name_proc : Proc(Example, String)?
+
     # Creates the example.
     # An instance to run the test code in is given by *context*.
     # The *entrypoint* defines the test code (typically inside *context*).
     # The *name* describes the purpose of the example.
-    # It can be a `Symbol` to describe a type.
     # The *location* tracks where the example exists in source code.
     # The example will be assigned to *group* if it is provided.
     # A set of *metadata* can be used for filtering and modifying example behavior.
@@ -41,6 +42,24 @@ module Spectator
                    name : String? = nil, location : Location? = nil,
                    @group : ExampleGroup? = nil, metadata = Metadata.new)
       super(name, location, metadata)
+
+      # Ensure group is linked.
+      group << self if group
+    end
+
+    # Creates the example.
+    # An instance to run the test code in is given by *context*.
+    # The *entrypoint* defines the test code (typically inside *context*).
+    # The *name* describes the purpose of the example.
+    # It can be a proc to be evaluated in the context of the example.
+    # The *location* tracks where the example exists in source code.
+    # The example will be assigned to *group* if it is provided.
+    # A set of *metadata* can be used for filtering and modifying example behavior.
+    # Note: The metadata will not be merged with the parent metadata.
+    def initialize(@context : Context, @entrypoint : self ->,
+                   @name_proc : Example -> String, location : Location? = nil,
+                   @group : ExampleGroup? = nil, metadata = Metadata.new)
+      super(nil, location, metadata)
 
       # Ensure group is linked.
       group << self if group
@@ -98,6 +117,10 @@ module Spectator
 
       begin
         @result = Harness.run do
+          if proc = @name_proc.as?(Proc(Example, String))
+            self.name = proc.call(self)
+          end
+
           @group.try(&.call_before_all)
           if (parent = @group)
             parent.call_around_each(procsy).call

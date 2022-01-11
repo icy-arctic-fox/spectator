@@ -122,10 +122,12 @@ module Spectator::DSL
     # For anything else, it is stringified.
     # This is intended to be used to convert a description from the spec DSL to `Node#name`.
     private macro _spectator_example_name(what)
-      {% if what.is_a?(StringLiteral) ||
-              what.is_a?(StringInterpolation) ||
-              what.is_a?(NilLiteral) %}
+      {% if what.is_a?(StringLiteral) || what.is_a?(NilLiteral) %}
         {{what}}
+      {% elsif what.is_a?(StringInterpolation) %}
+        ->(example : ::Spectator::Example) do
+          example.with_context(\{{@type.name}}) { {{what}} }
+        end
       {% else %}
         {{what.stringify}}
       {% end %}
