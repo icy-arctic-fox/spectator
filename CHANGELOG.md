@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [0.10.4] - 2022-01-11
 ### Added
 - Support string interpolation for example name/description. [#41](https://github.com/icy-arctic-fox/spectator/issues/41)
 - Support multiple block arguments in `sample` block (`Hash#each`). [#41](https://github.com/icy-arctic-fox/spectator/issues/41#issuecomment-1010192486)
@@ -367,7 +367,8 @@ This has been changed so that it compiles and raises an error at runtime with a 
 First version ready for public use.
 
 
-[Unreleased]: https://gitlab.com/arctic-fox/spectator/-/compare/v0.10.3...master
+[Unreleased]: https://gitlab.com/arctic-fox/spectator/-/compare/v0.10.4...master
+[0.10.3]: https://gitlab.com/arctic-fox/spectator/-/compare/v0.10.3...v0.10.4
 [0.10.3]: https://gitlab.com/arctic-fox/spectator/-/compare/v0.10.2...v0.10.3
 [0.10.2]: https://gitlab.com/arctic-fox/spectator/-/compare/v0.10.1...v0.10.2
 [0.10.1]: https://gitlab.com/arctic-fox/spectator/-/compare/v0.10.0...v0.10.1
