@@ -5,8 +5,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+- Support string interpolation for example name/description. [#41](https://github.com/icy-arctic-fox/spectator/issues/41)
+
 ### Changed
 - Source line reported by failure list changed to line containing `expect` instead of example start line.
+- Better compiler error when using string interpolation in group name/description. [#41](https://github.com/icy-arctic-fox/spectator/issues/41)
 
 ## [0.10.3] - 2021-10-13
 ### Fixed
