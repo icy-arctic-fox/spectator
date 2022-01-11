@@ -95,18 +95,16 @@ module Spectator::DSL
           ::Spectator::DSL::Builder.start_iterative_group(
             \%collection,
             \{{collection.stringify}},
-            \{{block.args.empty? ? :nil.id : block.args.first.stringify}},
+            [\{{block.args.empty? ? "".id : block.args.map(&.stringify).splat}}] of String,
             ::Spectator::Location.new(\{{block.filename}}, \{{block.line_number}}, \{{block.end_line_number}}),
             metadata
           )
 
           \{% if block %}
-            \{% if block.args.size == 1 %}
-              let(\{{block.args.first}}) do |example|
-                example.group.as(::Spectator::ExampleGroupIteration(typeof(Group\%group.\%collection.first))).item
+            \{% for arg, i in block.args %}
+              let(\{{arg}}) do |example|
+                example.group.as(::Spectator::ExampleGroupIteration(typeof(Group\%group.\%collection.first))).item[\{{i}}]
               end
-            \{% elsif block.args.size > 1 %}
-              \{% raise "Expected 1 argument for 'sample' block, but got #{block.args.size}" %}
             \{% end %}
 
             \{{block.body}}

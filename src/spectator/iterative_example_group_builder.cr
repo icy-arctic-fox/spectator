@@ -13,8 +13,8 @@ module Spectator
     # Initially, the builder will have no children and no hooks.
     # The *name*, *location*, and *metadata* will be applied to the `ExampleGroup` produced by `#build`.
     # The *collection* is the set of items to create sub-nodes for.
-    # The *iterator* is an optional name given to a single item in the collection.
-    def initialize(@collection : Enumerable(T), name : String? = nil, @iterator : String? = nil,
+    # The *iterators* is a list of optional names given to items in the collection.
+    def initialize(@collection : Enumerable(T), name : String? = nil, @iterators : Array(String) = [] of String,
                    location : Location? = nil, metadata : Metadata = Metadata.new)
       super(name, location, metadata)
     end
@@ -38,10 +38,20 @@ module Spectator
 
     # Constructs the name of an example group iteration.
     private def iteration_name(item)
-      if iterator = @iterator
-        "#{iterator}: #{item.inspect}"
+      if item.is_a?(Tuple) && @iterators.size > 1
+        item.zip?(@iterators).map do |(subitem, iterator)|
+          if iterator
+            "#{iterator}: #{subitem.inspect}"
+          else
+            subitem.inspect
+          end
+        end.join("; ")
       else
-        item.inspect
+        if iterator = @iterators.first?
+          "#{iterator}: #{item.inspect}"
+        else
+          item.inspect
+        end
       end
     end
   end

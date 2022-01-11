@@ -16,4 +16,14 @@ Spectator.describe "Spec metadata" do
       expect(example.name).to eq("works with #{string}")
     end
   end
+
+  def self.a_hash
+    {"foo" => 42, "bar" => 123, "baz" => 7}
+  end
+
+  sample a_hash do |key, value|
+    it "works with #{key} = #{value}" do |example|
+      expect(example.name).to eq("works with #{key} = #{value}")
+    end
+  end
 end

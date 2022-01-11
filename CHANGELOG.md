@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Added
 - Support string interpolation for example name/description. [#41](https://github.com/icy-arctic-fox/spectator/issues/41)
+- Support multiple block arguments in `sample` block (`Hash#each`). [#41](https://github.com/icy-arctic-fox/spectator/issues/41#issuecomment-1010192486)
 
 ### Changed
 - Source line reported by failure list changed to line containing `expect` instead of example start line.
