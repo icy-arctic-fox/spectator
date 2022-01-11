@@ -15,7 +15,7 @@ module Spectator::SpecHelpers
     # Instructs the Crystal compiler to compile the test.
     # Returns an instance of `JSON::Any`.
     # This will be the outcome and information about the test.
-    # Output will be surpressed for the test.
+    # Output will be suppressed for the test.
     # If an error occurs while attempting to compile and run the test, an error will be raised.
     def compile
       # Create a temporary file containing the test.
