@@ -130,9 +130,10 @@ module Spectator::DSL
               what.resolve?.is_a?(TypeNode) %}
         {{what.symbolize}}
       {% elsif what.is_a?(StringLiteral) ||
-                 what.is_a?(StringInterpolation) ||
                  what.is_a?(NilLiteral) %}
         {{what}}
+      {% elsif what.is_a?(StringInterpolation) %}
+        {% raise "String interpolation isn't supported for example group names" %}
       {% else %}
         {{what.stringify}}
       {% end %}
