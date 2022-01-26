@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+###
+- Fixed usage of `sample` with single block argument. [#41](https://github.com/icy-arctic-fox/spectator/issues/41#issuecomment-1022525702)
+
 ## [0.10.4] - 2022-01-11
 ### Added
 - Support string interpolation for example name/description. [#41](https://github.com/icy-arctic-fox/spectator/issues/41)

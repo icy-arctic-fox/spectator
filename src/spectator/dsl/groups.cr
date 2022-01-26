@@ -101,9 +101,15 @@ module Spectator::DSL
           )
 
           \{% if block %}
-            \{% for arg, i in block.args %}
-              let(\{{arg}}) do |example|
-                example.group.as(::Spectator::ExampleGroupIteration(typeof(Group\%group.\%collection.first))).item[\{{i}}]
+            \{% if block.args.size > 1 %}
+              \{% for arg, i in block.args %}
+                let(\{{arg}}) do |example|
+                  example.group.as(::Spectator::ExampleGroupIteration(typeof(Group\%group.\%collection.first))).item[\{{i}}]
+                end
+              \{% end %}
+            \{% else %}
+              let(\{{block.args[0]}}) do |example|
+                example.group.as(::Spectator::ExampleGroupIteration(typeof(Group\%group.\%collection.first))).item
               end
             \{% end %}
 
