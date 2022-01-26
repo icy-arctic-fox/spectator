@@ -4,12 +4,6 @@ require "./system_exit"
 module Spectator
   # Functionality for mocking existing types.
   module Mocks
-    def self.run(context : TestContext)
-      Registry.prepare(context)
-      yield
-    ensure
-      Registry.reset
-    end
   end
 end
 
@@ -17,8 +11,8 @@ end
 # This captures *most* (technically not all) attempts to exit the process.
 # This stub only takes effect in example code.
 # It intercepts `exit` calls and raises `Spectator::SystemExit` to prevent killing the test.
-class ::Process
-  include ::Spectator::Mocks::Stubs
+# class ::Process
+#   include ::Spectator::Mocks::Stubs
 
-  stub self.exit(code) { raise ::Spectator::SystemExit.new }
-end
+#   stub self.exit(code) { raise ::Spectator::SystemExit.new }
+# end
