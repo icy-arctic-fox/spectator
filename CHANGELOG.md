@@ -4,8 +4,8 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
-###
+## [0.10.5] - 2022-01-27
+### Fixed
 - Fixed usage of `sample` with single block argument. [#41](https://github.com/icy-arctic-fox/spectator/issues/41#issuecomment-1022525702)
 
 ## [0.10.4] - 2022-01-11
@@ -371,8 +371,9 @@ This has been changed so that it compiles and raises an error at runtime with a 
 First version ready for public use.
 
 
-[Unreleased]: https://gitlab.com/arctic-fox/spectator/-/compare/v0.10.4...master
-[0.10.3]: https://gitlab.com/arctic-fox/spectator/-/compare/v0.10.3...v0.10.4
+[Unreleased]: https://gitlab.com/arctic-fox/spectator/-/compare/v0.10.5...master
+[0.10.5]: https://gitlab.com/arctic-fox/spectator/-/compare/v0.10.4...v0.10.5
+[0.10.4]: https://gitlab.com/arctic-fox/spectator/-/compare/v0.10.3...v0.10.4
 [0.10.3]: https://gitlab.com/arctic-fox/spectator/-/compare/v0.10.2...v0.10.3
 [0.10.2]: https://gitlab.com/arctic-fox/spectator/-/compare/v0.10.1...v0.10.2
 [0.10.1]: https://gitlab.com/arctic-fox/spectator/-/compare/v0.10.0...v0.10.1
