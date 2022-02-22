@@ -283,6 +283,12 @@ module Spectator
 
       # Allow instance to behave like an example.
       forward_missing_to @example
+
+      # Constructs the full name or description of the example.
+      # This prepends names of groups this example is part of.
+      def to_s(io) : Nil
+        @example.to_s(io)
+      end
     end
   end
 end
