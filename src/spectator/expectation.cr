@@ -106,17 +106,6 @@ module Spectator
         report(match_data, message)
       end
 
-      def to(stub : Mocks::MethodStub) : Nil
-        Harness.current.mocks.expect(@expression.value, stub)
-        value = Value.new(stub.name, stub.to_s)
-        matcher = Matchers::ReceiveMatcher.new(value, stub.arguments?)
-        to_eventually(matcher)
-      end
-
-      def to(stubs : Enumerable(Mocks::MethodStub)) : Nil
-        stubs.each { |stub| to(stub) }
-      end
-
       # Asserts that some criteria defined by the matcher is not satisfied.
       # This is effectively the opposite of `#to`.
       # Allows a custom message to be used.
@@ -131,37 +120,11 @@ module Spectator
         to_not(matcher, message)
       end
 
-      def to_not(stub : Mocks::MethodStub) : Nil
-        value = Value.new(stub.name, stub.to_s)
-        matcher = Matchers::ReceiveMatcher.new(value, stub.arguments?)
-        to_never(matcher)
-      end
-
-      def not_to(stub : Mocks::MethodStub) : Nil
-        to_not(stub)
-      end
-
-      def to_not(stubs : Enumerable(Mocks::MethodStub)) : Nil
-        stubs.each { |stub| to_not(stub) }
-      end
-
-      def not_to(stubs : Enumerable(Mocks::MethodStub)) : Nil
-        to_not(stubs)
-      end
-
       # Asserts that some criteria defined by the matcher is eventually satisfied.
       # The expectation is checked after the example finishes and all hooks have run.
       # Allows a custom message to be used.
       def to_eventually(matcher, message = nil) : Nil
         Harness.current.defer { to(matcher, message) }
-      end
-
-      def to_eventually(stub : Mocks::MethodStub) : Nil
-        to(stub)
-      end
-
-      def to_eventually(stubs : Enumerable(Mocks::MethodStub)) : Nil
-        to(stub)
       end
 
       # Asserts that some criteria defined by the matcher is never satisfied.
@@ -175,14 +138,6 @@ module Spectator
       @[AlwaysInline]
       def never_to(matcher, message = nil) : Nil
         to_never(matcher, message)
-      end
-
-      def to_never(stub : Mocks::MethodStub) : Nil
-        to_not(stub)
-      end
-
-      def to_never(stub : Enumerable(Mocks::MethodStub)) : Nil
-        to_not(stub)
       end
 
       # Reports an expectation to the current harness.

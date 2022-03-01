@@ -3,7 +3,6 @@ require "./example_failed"
 require "./example_pending"
 require "./expectation"
 require "./expectation_failed"
-require "./mocks"
 require "./multiple_expectations_failed"
 require "./pass_result"
 require "./result"
@@ -38,8 +37,6 @@ module Spectator
 
     # Retrieves the harness for the current running example.
     class_getter! current : self
-
-    getter mocks = Mocks::Registry.new
 
     # Wraps an example with a harness and runs test code.
     # A block provided to this method is considered to be the test code.
@@ -134,7 +131,6 @@ module Spectator
       elapsed = Time.measure do
         error = catch { yield }
       end
-      error = nil if error.is_a?(SystemExit) && mocks.exit_handled?
       {elapsed, error}
     end
 
