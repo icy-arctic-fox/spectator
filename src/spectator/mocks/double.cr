@@ -8,9 +8,9 @@ module Spectator
     # Utility returning the double's name as a string.
     private def _spectator_double_name : String
       if name = @name
-        "\"#{name}\""
+        "#<Double #{name.inspect}>"
       else
-        "Anonymous"
+        "#<Double Anonymous>"
       end
     end
 
@@ -36,7 +36,7 @@ module Spectator
                 @messages[{{meth.name.symbolize}}]
               {% end %}
             \{% else %}
-              raise UnexpectedMessage.new("Double<#{_spectator_double_name}> received unexpected message :{{meth.name}} (masking ancestor) with (<TODO: ARGS>).")
+              raise UnexpectedMessage.new("#{_spectator_double_name} received unexpected message :{{meth.name}} (masking ancestor) with (<TODO: ARGS>).")
             \{% end %}
           end
         {% end %}
@@ -61,7 +61,7 @@ module Spectator
                 @messages[{{meth.name.symbolize}}]
               {% end %}
             \{% else %}
-              raise UnexpectedMessage.new("Double<#{_spectator_double_name}> received unexpected message :{{meth.name}} (masking ancestor) with (<TODO: ARGS>).")
+              raise UnexpectedMessage.new("#{_spectator_double_name} received unexpected message :{{meth.name}} (masking ancestor) with (<TODO: ARGS>).")
             \{% end %}
           end
         {% end %}
@@ -86,7 +86,7 @@ module Spectator
                 @messages[{{meth.name.symbolize}}]
               {% end %}
             \{% else %}
-              raise UnexpectedMessage.new("Double<#{_spectator_double_name}> received unexpected message :{{meth.name}} (masking ancestor) with (<TODO: ARGS>).")
+              raise UnexpectedMessage.new("#{_spectator_double_name} received unexpected message :{{meth.name}} (masking ancestor) with (<TODO: ARGS>).")
             \{% end %}
           end
         {% end %}
@@ -97,7 +97,7 @@ module Spectator
       \{% if Messages.keys.includes?({{call.name.symbolize}}.id) %}
         @messages[{{call.name.symbolize}}]
       \{% else %}
-        raise UnexpectedMessage.new("Double<#{_spectator_double_name}> received unexpected message :{{call.name}} with (<TODO: ARGS>).")
+        raise UnexpectedMessage.new("#{_spectator_double_name} received unexpected message :{{call.name}} with (<TODO: ARGS>).")
       \{% end %}
     end
   end
