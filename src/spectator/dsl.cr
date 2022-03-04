@@ -9,6 +9,6 @@ module Spectator
   module DSL
     # Keywords that cannot be used in specs using the DSL.
     # These are either problematic or reserved for internal use.
-    RESERVED_KEYWORDS = %i[initialize]
+    RESERVED_KEYWORDS = %i[initialize _spectator_double_name]
   end
 end

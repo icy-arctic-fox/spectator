@@ -5,6 +5,15 @@ module Spectator
     def initialize(@name : String? = nil, **@messages : **Messages)
     end
 
+    # Utility returning the double's name as a string.
+    private def _spectator_double_name : String
+      if name = @name
+        "\"#{name}\""
+      else
+        "Anonymous"
+      end
+    end
+
     # TODO: Define macro to redefine a type's method.
     # TODO: Better error for type mismatch
     macro finished
@@ -27,7 +36,7 @@ module Spectator
                 @messages[{{meth.name.symbolize}}]
               {% end %}
             \{% else %}
-              raise UnexpectedMessage.new("Double<#{_name}> received unexpected message :{{meth.name}} (masking ancestor) with (<TODO: ARGS>).")
+              raise UnexpectedMessage.new("Double<#{_spectator_double_name}> received unexpected message :{{meth.name}} (masking ancestor) with (<TODO: ARGS>).")
             \{% end %}
           end
         {% end %}
@@ -52,7 +61,7 @@ module Spectator
                 @messages[{{meth.name.symbolize}}]
               {% end %}
             \{% else %}
-              raise UnexpectedMessage.new("Double<#{_name}> received unexpected message :{{meth.name}} (masking ancestor) with (<TODO: ARGS>).")
+              raise UnexpectedMessage.new("Double<#{_spectator_double_name}> received unexpected message :{{meth.name}} (masking ancestor) with (<TODO: ARGS>).")
             \{% end %}
           end
         {% end %}
@@ -77,26 +86,18 @@ module Spectator
                 @messages[{{meth.name.symbolize}}]
               {% end %}
             \{% else %}
-              raise UnexpectedMessage.new("Double<#{_name}> received unexpected message :{{meth.name}} (masking ancestor) with (<TODO: ARGS>).")
+              raise UnexpectedMessage.new("Double<#{_spectator_double_name}> received unexpected message :{{meth.name}} (masking ancestor) with (<TODO: ARGS>).")
             \{% end %}
           end
         {% end %}
       {% end %}
-
-      private def _name
-        if name = @name
-          "\"#{name}\""
-        else
-          "Anonymous"
-        end
-      end
     end
 
     macro method_missing(call)
       \{% if Messages.keys.includes?({{call.name.symbolize}}.id) %}
         @messages[{{call.name.symbolize}}]
       \{% else %}
-        raise UnexpectedMessage.new("Double<#{_name}> received unexpected message :{{call.name}} with (<TODO: ARGS>).")
+        raise UnexpectedMessage.new("Double<#{_spectator_double_name}> received unexpected message :{{call.name}} with (<TODO: ARGS>).")
       \{% end %}
     end
   end
