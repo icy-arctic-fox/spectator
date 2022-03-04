@@ -1,7 +1,7 @@
 require "../../spec_helper"
 
 Spectator.describe Spectator::Double do
-  subject(dbl) { Spectator::Double.new(foo: 42, bar: "baz") }
+  subject(dbl) { Spectator::Double.new("foobar", foo: 42, bar: "baz") }
 
   it "responds to defined messages" do
     aggregate_failures do
@@ -12,6 +12,18 @@ Spectator.describe Spectator::Double do
 
   it "fails on undefined messages" do
     expect { dbl.baz }.to raise_error(Spectator::UnexpectedMessage)
+  end
+
+  it "reports the name in errors" do
+    expect { dbl.baz }.to raise_error(/foobar/)
+  end
+
+  context "without a double name" do
+    subject(dbl) { Spectator::Double.new(foo: 42) }
+
+    it "reports as anonymous" do
+      expect { dbl.baz }.to raise_error(/anonymous/i)
+    end
   end
 
   context "with common object methods" do

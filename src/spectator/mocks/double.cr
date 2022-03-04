@@ -2,7 +2,7 @@ require "./unexpected_message"
 
 module Spectator
   class Double(Messages)
-    def initialize(**@messages : **Messages)
+    def initialize(@name : String? = nil, **@messages : **Messages)
     end
 
     # TODO: Define macro to redefine a type's method.
@@ -27,7 +27,7 @@ module Spectator
                 @messages[{{meth.name.symbolize}}]
               {% end %}
             \{% else %}
-              raise UnexpectedMessage.new("Received unexpected message {{meth.name}} on double <TODO:NAME> (masking ancestor).")
+              raise UnexpectedMessage.new("Double<#{_name}> received unexpected message :{{meth.name}} (masking ancestor) with (<TODO: ARGS>).")
             \{% end %}
           end
         {% end %}
@@ -52,7 +52,7 @@ module Spectator
                 @messages[{{meth.name.symbolize}}]
               {% end %}
             \{% else %}
-              raise UnexpectedMessage.new("Received unexpected message {{meth.name}} on double <TODO:NAME> (masking ancestor).")
+              raise UnexpectedMessage.new("Double<#{_name}> received unexpected message :{{meth.name}} (masking ancestor) with (<TODO: ARGS>).")
             \{% end %}
           end
         {% end %}
@@ -77,18 +77,26 @@ module Spectator
                 @messages[{{meth.name.symbolize}}]
               {% end %}
             \{% else %}
-              raise UnexpectedMessage.new("Received unexpected message {{meth.name}} on double <TODO:NAME> (masking ancestor).")
+              raise UnexpectedMessage.new("Double<#{_name}> received unexpected message :{{meth.name}} (masking ancestor) with (<TODO: ARGS>).")
             \{% end %}
           end
         {% end %}
       {% end %}
+
+      private def _name
+        if name = @name
+          "\"#{name}\""
+        else
+          "Anonymous"
+        end
+      end
     end
 
     macro method_missing(call)
       \{% if Messages.keys.includes?({{call.name.symbolize}}.id) %}
         @messages[{{call.name.symbolize}}]
       \{% else %}
-        raise UnexpectedMessage.new("Received unexpected message {{call.name}} on double <TODO:NAME>.")
+        raise UnexpectedMessage.new("Double<#{_name}> received unexpected message :{{call.name}} with (<TODO: ARGS>).")
       \{% end %}
     end
   end
