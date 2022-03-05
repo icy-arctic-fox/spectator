@@ -140,5 +140,22 @@ Spectator.describe Spectator::Double do
     it "raises an error when argument count doesn't match" do
       expect { dbl.foo }.to raise_error(Spectator::UnexpectedMessage)
     end
+
+    context "with common object methods" do
+      let(response) { Spectator::Response.new(:"same?", true, arguments).as(Spectator::AbstractResponse) }
+      subject(dbl) { Spectator::Double({"same?": Bool}).new([response]) }
+
+      it "returns the response when constraint satisfied" do
+        expect(dbl.same?("foobar")).to eq(true)
+      end
+
+      it "raises an error when constraint unsatisfied" do
+        expect { dbl.same?("baz") }.to raise_error(Spectator::UnexpectedMessage, /mask/)
+      end
+
+      it "raises an error when argument count doesn't match" do
+        expect { dbl.same? }.to raise_error(Spectator::UnexpectedMessage)
+      end
+    end
   end
 end
