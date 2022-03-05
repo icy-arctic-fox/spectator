@@ -68,10 +68,10 @@ module Spectator
 
                   if response
                     # Return configured response.
-                    response.as(Response(\{{NT[{{meth.name.symbolize}}]}})).value
+                    response.as(Response(\{{type}})).value
                   else
                     # Response not configured for this method/message.
-                    raise UnexpectedMessage.new("#{_spectator_double_name} received unexpected message :{{meth.name}} with (<TODO: ARGS>).")
+                    raise UnexpectedMessage.new("#{_spectator_double_name} received unexpected message :{{meth.name}} (masking ancestor) with (<TODO: ARGS>).")
                   end
                 \{% else %}
                   # Return type doesn't match configured type.
@@ -88,10 +88,10 @@ module Spectator
 
                 if response
                   # Return configured response.
-                  response.as(Response(\{{NT[{{meth.name.symbolize}}]}})).value
+                  response.as(Response(\{{type}})).value
                 else
                   # Response not configured for this method/message.
-                  raise UnexpectedMessage.new("#{_spectator_double_name} received unexpected message :{{meth.name}} with (<TODO: ARGS>).")
+                  raise UnexpectedMessage.new("#{_spectator_double_name} received unexpected message :{{meth.name}} (masking ancestor) with (<TODO: ARGS>).")
                 end
               {% end %}
             \{% else %}
@@ -111,14 +111,14 @@ module Spectator
     # Handle all methods but only respond to configured messages.
     # Raises an `UnexpectedMessage` error for non-configures messages.
     macro method_missing(call)
-      \{% if NT.keys.includes?({{call.name.symbolize}}.id) %}
+      \{% if type = NT[{{call.name.symbolize}}] %}
         # Find a suitable response.
         call = MethodCall.capture({{call.name.symbolize}}, {{call.args.splat}})
         response = @responses.find &.===(call)
 
         if response
           # Return configured response.
-          response.as(Response(\{{NT[{{call.name.symbolize}}]}})).value
+          response.as(Response(\{{type}})).value
         else
           # Response not configured for this method/message.
           raise UnexpectedMessage.new("#{_spectator_double_name} received unexpected message :{{call.name}} with (<TODO: ARGS>).")
