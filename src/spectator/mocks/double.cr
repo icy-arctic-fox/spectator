@@ -52,18 +52,23 @@ module Spectator
       {% for meth in type.methods %}
         {% if !meth.abstract? && !DSL::RESERVED_KEYWORDS.includes?(meth.name.symbolize) %}
           {% if meth.visibility != :public %}{{meth.visibility.id}}{% end %} def {{meth.receiver}}{{meth.name}}(
-            {{meth.args.splat}}{% if !meth.args.empty? %}, {% end %}
+            {{meth.args.splat(",")}}
             {% if meth.double_splat %}**{{meth.double_splat}}, {% end %}
             {% if meth.block_arg %}&{{meth.block_arg}}{% elsif meth.accepts_block? %}&{% end %}
           ){% if meth.return_type %} : {{meth.return_type}}{% end %}{% if !meth.free_vars.empty? %} forall {{meth.free_vars.splat}}{% end %}
+            # Capture call information.
+            arguments = Arguments.capture(
+              {{meth.args.map(&.internal_name).splat}}{% if !meth.args.empty? %}, {% end %}
+              {% if meth.double_splat %}**{{meth.double_splat}}, {% end %}
+            )
+            call = MethodCall.new({{meth.name.symbolize}}, arguments)
+
             \{% if type = NT[{{meth.name.symbolize}}] %}
               {% if meth.return_type %}
                 \{% if type <= {{meth.return_type}} %}
                   # Return type appears to match configured type.
-                  # Respond with configured value.
 
                   # Find a suitable response.
-                  call = MethodCall.capture({{meth.name.symbolize}}, {{meth.args.map(&.internal_name).splat}})
                   response = @responses.find &.===(call)
 
                   if response
@@ -71,7 +76,7 @@ module Spectator
                     response.as(Response(\{{type}})).value
                   else
                     # Response not configured for this method/message.
-                    raise UnexpectedMessage.new("#{_spectator_double_name} received unexpected message :{{meth.name}} (masking ancestor) with (<TODO: ARGS>).")
+                    raise UnexpectedMessage.new("#{_spectator_double_name} received unexpected message :{{meth.name}} (masking ancestor) with #{arguments}")
                   end
                 \{% else %}
                   # Return type doesn't match configured type.
@@ -83,7 +88,6 @@ module Spectator
                 # No return type restriction, return configured response.
 
                 # Find a suitable response.
-                call = MethodCall.capture({{meth.name.symbolize}}, {{meth.args.map(&.internal_name).splat}})
                 response = @responses.find &.===(call)
 
                 if response
@@ -91,12 +95,12 @@ module Spectator
                   response.as(Response(\{{type}})).value
                 else
                   # Response not configured for this method/message.
-                  raise UnexpectedMessage.new("#{_spectator_double_name} received unexpected message :{{meth.name}} (masking ancestor) with (<TODO: ARGS>).")
+                  raise UnexpectedMessage.new("#{_spectator_double_name} received unexpected message :{{meth.name}} (masking ancestor) with #{arguments}")
                 end
               {% end %}
             \{% else %}
               # Response not configured for this method/message.
-              raise UnexpectedMessage.new("#{_spectator_double_name} received unexpected message :{{meth.name}} (masking ancestor) with (<TODO: ARGS>).")
+              raise UnexpectedMessage.new("#{_spectator_double_name} received unexpected message :{{meth.name}} (masking ancestor) with #{arguments}")
             \{% end %}
           end
         {% end %}
@@ -111,9 +115,11 @@ module Spectator
     # Handle all methods but only respond to configured messages.
     # Raises an `UnexpectedMessage` error for non-configures messages.
     macro method_missing(call)
+      arguments = Arguments.capture({{call.args.splat(", ")}}{% if call.named_args %}{{call.named_args.splat}}{% end %})
+      call = MethodCall.new({{call.name.symbolize}}, arguments)
+
       \{% if type = NT[{{call.name.symbolize}}] %}
         # Find a suitable response.
-        call = MethodCall.capture({{call.name.symbolize}}, {{call.args.splat}})
         response = @responses.find &.===(call)
 
         if response
@@ -121,11 +127,11 @@ module Spectator
           response.as(Response(\{{type}})).value
         else
           # Response not configured for this method/message.
-          raise UnexpectedMessage.new("#{_spectator_double_name} received unexpected message :{{call.name}} with (<TODO: ARGS>).")
+          raise UnexpectedMessage.new("#{_spectator_double_name} received unexpected message :{{call.name}} with #{arguments}")
         end
       \{% else %}
         # Response not configured for this method/message.
-        raise UnexpectedMessage.new("#{_spectator_double_name} received unexpected message :{{call.name}} with (<TODO: ARGS>).")
+        raise UnexpectedMessage.new("#{_spectator_double_name} received unexpected message :{{call.name}} with #{arguments}")
       \{% end %}
     end
   end

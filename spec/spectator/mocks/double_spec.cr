@@ -1,7 +1,7 @@
 require "../../spec_helper"
 
 Spectator.describe Spectator::Double do
-  subject(dbl) { Spectator::Double({foo: Int32, bar: String}).new("foobar", foo: 42, bar: "baz") }
+  subject(dbl) { Spectator::Double({foo: Int32, bar: String}).new("dbl-name", foo: 42, bar: "baz") }
 
   it "responds to defined messages" do
     aggregate_failures do
@@ -11,11 +11,15 @@ Spectator.describe Spectator::Double do
   end
 
   it "fails on undefined messages" do
-    expect { dbl.baz }.to raise_error(Spectator::UnexpectedMessage)
+    expect { dbl.baz }.to raise_error(Spectator::UnexpectedMessage, /baz/)
   end
 
   it "reports the name in errors" do
-    expect { dbl.baz }.to raise_error(/foobar/)
+    expect { dbl.baz }.to raise_error(/dbl-name/)
+  end
+
+  it "reports arguments" do
+    expect { dbl.baz(123, "qux", field: :value) }.to raise_error(Spectator::UnexpectedMessage, /\(123, "qux", field: :value\)/)
   end
 
   context "without a double name" do
@@ -121,6 +125,10 @@ Spectator.describe Spectator::Double do
         expect { dbl.same?(dbl) }.to raise_error(Spectator::UnexpectedMessage, /mask/)
         expect { dbl.same?(nil) }.to raise_error(Spectator::UnexpectedMessage, /mask/)
       end
+    end
+
+    it "reports arguments" do
+      expect { dbl.same?(123) }.to raise_error(Spectator::UnexpectedMessage, /\(123\)/)
     end
   end
 
