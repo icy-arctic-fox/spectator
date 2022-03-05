@@ -17,9 +17,17 @@ module Spectator
     end
 
     def initialize(@name : String? = nil, **methods : **NT)
-      @responses = methods.map do |method, value|
-        Response.new(method, value).as(AbstractResponse)
-      end
+      @responses = {% if NT.keys.empty? %}
+                     [] of AbstractResponse
+                   {% else %}
+                     {% begin %}
+                       [
+                         {% for key in NT.keys %}
+                           Response.new({{key.symbolize}}, methods[{{key.symbolize}}]).as(AbstractResponse),
+                         {% end %}
+                       ]
+                     {% end %}
+                   {% end %}
     end
 
     # Utility returning the double's name as a string.
@@ -53,7 +61,18 @@ module Spectator
                 \{% if type <= {{meth.return_type}} %}
                   # Return type appears to match configured type.
                   # Respond with configured value.
-                  @messages[{{meth.name.symbolize}}].as({{meth.return_type}})
+
+                  # Find a suitable response.
+                  call = MethodCall.capture({{meth.name.symbolize}}, {{meth.args.map(&.name).splat}})
+                  response = @responses.find &.===(call)
+
+                  if response
+                    # Return configured response.
+                    response.as(Response(\{{NT[{{meth.name.symbolize}}]}})).value
+                  else
+                    # Response not configured for this method/message.
+                    raise UnexpectedMessage.new("#{_spectator_double_name} received unexpected message :{{meth.name}} with (<TODO: ARGS>).")
+                  end
                 \{% else %}
                   # Return type doesn't match configured type.
                   # Can't return the configured response as the type mismatches (won't compile).
@@ -62,7 +81,18 @@ module Spectator
                 \{% end %}
               {% else %}
                 # No return type restriction, return configured response.
-                @messages[{{meth.name.symbolize}}]
+
+                # Find a suitable response.
+                call = MethodCall.capture({{meth.name.symbolize}}, {{meth.args.map(&.name).splat}})
+                response = @responses.find &.===(call)
+
+                if response
+                  # Return configured response.
+                  response.as(Response(\{{NT[{{meth.name.symbolize}}]}})).value
+                else
+                  # Response not configured for this method/message.
+                  raise UnexpectedMessage.new("#{_spectator_double_name} received unexpected message :{{meth.name}} with (<TODO: ARGS>).")
+                end
               {% end %}
             \{% else %}
               # Response not configured for this method/message.
@@ -85,8 +115,14 @@ module Spectator
         # Find a suitable response.
         call = MethodCall.capture({{call.name.symbolize}}, {{call.args.splat}})
         response = @responses.find &.===(call)
-        # Return configured response.
-        @messages[{{call.name.symbolize}}]
+
+        if response
+          # Return configured response.
+          response.as(Response(\{{NT[{{call.name.symbolize}}]}})).value
+        else
+          # Response not configured for this method/message.
+          raise UnexpectedMessage.new("#{_spectator_double_name} received unexpected message :{{call.name}} with (<TODO: ARGS>).")
+        end
       \{% else %}
         # Response not configured for this method/message.
         raise UnexpectedMessage.new("#{_spectator_double_name} received unexpected message :{{call.name}} with (<TODO: ARGS>).")
