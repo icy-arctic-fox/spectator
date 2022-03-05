@@ -63,7 +63,7 @@ module Spectator
                   # Respond with configured value.
 
                   # Find a suitable response.
-                  call = MethodCall.capture({{meth.name.symbolize}}, {{meth.args.map(&.name).splat}})
+                  call = MethodCall.capture({{meth.name.symbolize}}, {{meth.args.map(&.internal_name).splat}})
                   response = @responses.find &.===(call)
 
                   if response
@@ -83,7 +83,7 @@ module Spectator
                 # No return type restriction, return configured response.
 
                 # Find a suitable response.
-                call = MethodCall.capture({{meth.name.symbolize}}, {{meth.args.map(&.name).splat}})
+                call = MethodCall.capture({{meth.name.symbolize}}, {{meth.args.map(&.internal_name).splat}})
                 response = @responses.find &.===(call)
 
                 if response
