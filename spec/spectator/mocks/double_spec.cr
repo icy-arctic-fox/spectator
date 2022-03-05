@@ -123,4 +123,22 @@ Spectator.describe Spectator::Double do
       end
     end
   end
+
+  context "with arguments constraints" do
+    let(arguments) { Spectator::Arguments.capture(/foo/) }
+    let(response) { Spectator::Response.new(:foo, "bar", arguments).as(Spectator::AbstractResponse) }
+    subject(dbl) { Spectator::Double({foo: String}).new([response]) }
+
+    it "returns the response when constraint satisfied" do
+      expect(dbl.foo("foobar")).to eq("bar")
+    end
+
+    it "raises an error when constraint unsatisfied" do
+      expect { dbl.foo("baz") }.to raise_error(Spectator::UnexpectedMessage)
+    end
+
+    it "raises an error when argument count doesn't match" do
+      expect { dbl.foo }.to raise_error(Spectator::UnexpectedMessage)
+    end
+  end
 end
