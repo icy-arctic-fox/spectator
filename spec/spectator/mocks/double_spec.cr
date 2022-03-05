@@ -1,7 +1,7 @@
 require "../../spec_helper"
 
 Spectator.describe Spectator::Double do
-  subject(dbl) { Spectator::Double.new("foobar", foo: 42, bar: "baz") }
+  subject(dbl) { Spectator::Double({foo: Int32, bar: String}).new("foobar", foo: 42, bar: "baz") }
 
   it "responds to defined messages" do
     aggregate_failures do

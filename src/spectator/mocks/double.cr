@@ -1,3 +1,4 @@
+require "./abstract_response"
 require "./unexpected_message"
 
 module Spectator
@@ -5,10 +6,20 @@ module Spectator
   #
   # Handles all messages (method calls), but only responds to those configured.
   # Methods called that were not configured will raise `UnexpectedMessage`.
-  class Double(Messages)
+  # `NT` must be a type of `NamedTuple` that maps method names to their return types.
+  class Double(NT)
+    # Stores responses to messages (method calls).
+    @responses : Array(AbstractResponse)
+
     # Creates a double with pre-configures responses.
     # A *name* can be provided, otherwise it is considered an anonymous double.
-    def initialize(@name : String? = nil, **@messages : **Messages)
+    def initialize(@responses : Array(AbstractResponse), @name : String? = nil)
+    end
+
+    def initialize(@name : String? = nil, **methods : **NT)
+      @responses = methods.map do |method, value|
+        Response.new(method, value).as(AbstractResponse)
+      end
     end
 
     # Utility returning the double's name as a string.
@@ -37,7 +48,7 @@ module Spectator
             {% if meth.double_splat %}**{{meth.double_splat}}, {% end %}
             {% if meth.block_arg %}&{{meth.block_arg}}{% elsif meth.accepts_block? %}&{% end %}
           ){% if meth.return_type %} : {{meth.return_type}}{% end %}{% if !meth.free_vars.empty? %} forall {{meth.free_vars.splat}}{% end %}
-            \{% if type = Messages[{{meth.name.symbolize}}] %}
+            \{% if type = NT[{{meth.name.symbolize}}] %}
               {% if meth.return_type %}
                 \{% if type <= {{meth.return_type}} %}
                   # Return type appears to match configured type.
@@ -70,7 +81,10 @@ module Spectator
     # Handle all methods but only respond to configured messages.
     # Raises an `UnexpectedMessage` error for non-configures messages.
     macro method_missing(call)
-      \{% if Messages.keys.includes?({{call.name.symbolize}}.id) %}
+      \{% if NT.keys.includes?({{call.name.symbolize}}.id) %}
+        # Find a suitable response.
+        call = MethodCall.capture({{call.name.symbolize}}, {{call.args.splat}})
+        response = @responses.find &.===(call)
         # Return configured response.
         @messages[{{call.name.symbolize}}]
       \{% else %}

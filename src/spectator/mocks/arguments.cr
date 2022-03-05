@@ -1,10 +1,12 @@
+require "./abstract_arguments"
+
 module Spectator
   # Arguments used in a method call.
   #
   # Can also be used to match arguments.
   # *T* must be a `Tuple` type representing the positional arguments.
   # *NT* must be a `NamedTuple` type representing the keyword arguments.
-  class Arguments(T, NT)
+  class Arguments(T, NT) < AbstractArguments
     # Positional arguments.
     getter args : T
 
@@ -18,6 +20,11 @@ module Spectator
     # Constructs an instance from literal arguments.
     def self.capture(*args, **kwargs) : self
       new(args, kwargs)
+    end
+
+    # Constructs an instance of empty arguments.
+    macro empty
+      {{@type.name(generic_args: false)}}.capture
     end
 
     # Constructs a string representation of the arguments.
