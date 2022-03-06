@@ -1,5 +1,6 @@
-require "./abstract_response"
 require "./unexpected_message"
+require "./stub"
+require "./value_stub"
 
 module Spectator
   # Stands in for an object for testing that a SUT calls expected methods.
@@ -9,25 +10,25 @@ module Spectator
   # `NT` must be a type of `NamedTuple` that maps method names to their return types.
   class Double(NT)
     # Stores responses to messages (method calls).
-    @responses : Array(AbstractResponse)
+    @stubs : Array(Stub)
 
     # Creates a double with pre-configures responses.
     # A *name* can be provided, otherwise it is considered an anonymous double.
-    def initialize(@responses : Array(AbstractResponse), @name : String? = nil)
+    def initialize(@stubs : Array(Stub), @name : String? = nil)
     end
 
     def initialize(@name : String? = nil, **methods : **NT)
-      @responses = {% if NT.keys.empty? %}
-                     [] of AbstractResponse
-                   {% else %}
-                     {% begin %}
-                       [
-                         {% for key in NT.keys %}
-                           Response.new({{key.symbolize}}, methods[{{key.symbolize}}]).as(AbstractResponse),
-                         {% end %}
-                       ]
+      @stubs = {% if NT.keys.empty? %}
+                 [] of Stub
+               {% else %}
+                 {% begin %}
+                   [
+                     {% for key in NT.keys %}
+                       ValueStub.new({{key.symbolize}}, methods[{{key.symbolize}}]).as(Stub),
                      {% end %}
-                   {% end %}
+                   ]
+                 {% end %}
+               {% end %}
     end
 
     # Utility returning the double's name as a string.
@@ -68,12 +69,12 @@ module Spectator
                 \{% if type <= {{meth.return_type}} %}
                   # Return type appears to match configured type.
 
-                  # Find a suitable response.
-                  response = @responses.find &.===(call)
+                  # Find a suitable stub.
+                  stub = @stubs.find &.===(call)
 
-                  if response
+                  if stub
                     # Return configured response.
-                    response.as(Response(\{{type}})).value
+                    stub.as(ValueStub(\{{type}})).value
                   else
                     # Response not configured for this method/message.
                     raise UnexpectedMessage.new("#{_spectator_double_name} received unexpected message :{{meth.name}} (masking ancestor) with #{arguments}")
@@ -87,12 +88,12 @@ module Spectator
               {% else %}
                 # No return type restriction, return configured response.
 
-                # Find a suitable response.
-                response = @responses.find &.===(call)
+                # Find a suitable stub.
+                stub = @stubs.find &.===(call)
 
-                if response
+                if stub
                   # Return configured response.
-                  response.as(Response(\{{type}})).value
+                  stub.as(ValueStub(\{{type}})).value
                 else
                   # Response not configured for this method/message.
                   raise UnexpectedMessage.new("#{_spectator_double_name} received unexpected message :{{meth.name}} (masking ancestor) with #{arguments}")
@@ -119,12 +120,12 @@ module Spectator
       call = MethodCall.new({{call.name.symbolize}}, arguments)
 
       \{% if type = NT[{{call.name.symbolize}}] %}
-        # Find a suitable response.
-        response = @responses.find &.===(call)
+        # Find a suitable stub.
+        stub = @stubs.find &.===(call)
 
-        if response
+        if stub
           # Return configured response.
-          response.as(Response(\{{type}})).value
+          stub.as(ValueStub(\{{type}})).value
         else
           # Response not configured for this method/message.
           raise UnexpectedMessage.new("#{_spectator_double_name} received unexpected message :{{call.name}} with #{arguments}")

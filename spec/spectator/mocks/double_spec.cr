@@ -134,8 +134,8 @@ Spectator.describe Spectator::Double do
 
   context "with arguments constraints" do
     let(arguments) { Spectator::Arguments.capture(/foo/) }
-    let(response) { Spectator::Response.new(:foo, "bar", arguments).as(Spectator::AbstractResponse) }
-    subject(dbl) { Spectator::Double({foo: String}).new([response]) }
+    let(stub) { Spectator::ValueStub.new(:foo, "bar", arguments).as(Spectator::Stub) }
+    subject(dbl) { Spectator::Double({foo: String}).new([stub]) }
 
     it "returns the response when constraint satisfied" do
       expect(dbl.foo("foobar")).to eq("bar")
@@ -150,8 +150,8 @@ Spectator.describe Spectator::Double do
     end
 
     context "with common object methods" do
-      let(response) { Spectator::Response.new(:"same?", true, arguments).as(Spectator::AbstractResponse) }
-      subject(dbl) { Spectator::Double({"same?": Bool}).new([response]) }
+      let(stub) { Spectator::ValueStub.new(:"same?", true, arguments).as(Spectator::Stub) }
+      subject(dbl) { Spectator::Double({"same?": Bool}).new([stub]) }
 
       it "returns the response when constraint satisfied" do
         expect(dbl.same?("foobar")).to eq(true)
