@@ -23,7 +23,11 @@ module Spectator
           {% if !method.abstract? %}
             %stub.as(::Spectator::ValueStub(typeof(previous_def))).value
           {% elsif method.return_type %}
-            %stub.as(::Spectator::ValueStub({{method.return_type}})).value
+            if %cast = %stub.as?(::Spectator::ValueStub({{method.return_type}}))
+              %cast.value
+            else
+              %stub.value.as({{method.return_type}})
+            end
           {% else %}
             %stub.value
           {% end %}
