@@ -7,7 +7,7 @@ module Spectator
       {% original = ((@type.has_method?(method.name) || !@type.ancestors.any? { |a| a.has_method?(method.name) }) ? :previous_def : :super).id %}
 
       {% if method.visibility != :public %}{{method.visibility.id}}{% end %} def {{method.receiver}}{{method.name}}(
-        {{method.args.splat(",")}}
+        {% for arg, i in method.args %}{% if i == method.splat_index %}*{% end %}{{arg}}, {% end %}
         {% if method.double_splat %}**{{method.double_splat}}, {% end %}
         {% if method.block_arg %}&{{method.block_arg}}{% elsif method.accepts_block? %}&{% end %}
       ){% if method.return_type %} : {{method.return_type}}{% end %}{% if !method.free_vars.empty? %} forall {{method.free_vars.splat}}{% end %}
@@ -45,7 +45,7 @@ module Spectator
       {% raise "Cannot stub method with reserved keyword as name - #{method.name}" if ::Spectator::DSL::RESERVED_KEYWORDS.includes?(method.name.symbolize) %}
 
       {% if method.visibility != :public %}{{method.visibility.id}}{% end %} def {{method.receiver}}{{method.name}}(
-        {{method.args.splat(",")}}
+        {% for arg, i in method.args %}{% if i == method.splat_index %}*{% end %}{{arg}}, {% end %}
         {% if method.double_splat %}**{{method.double_splat}}, {% end %}
         {% if method.block_arg %}&{{method.block_arg}}{% elsif method.accepts_block? %}&{% end %}
       ){% if method.return_type %} : {{method.return_type}}{% end %}{% if !method.free_vars.empty? %} forall {{method.free_vars.splat}}{% end %}
