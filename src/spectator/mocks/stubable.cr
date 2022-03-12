@@ -4,9 +4,7 @@ module Spectator
       {% raise "stub requires a method definition" if !method.is_a?(Def) %}
       {% raise "Cannot stub method with reserved keyword as name - #{method.name}" if ::Spectator::DSL::RESERVED_KEYWORDS.includes?(method.name.symbolize) %}
 
-      {% unless method.abstract? %}
-        {{method}}
-      {% end %}
+      {% original = ((@type.has_method?(method.name) || !@type.ancestors.any? { |a| a.has_method?(method.name) }) ? :previous_def : :super).id %}
 
       {% if method.visibility != :public %}{{method.visibility.id}}{% end %} def {{method.receiver}}{{method.name}}(
         {{method.args.splat(",")}}
@@ -21,7 +19,7 @@ module Spectator
 
         if %stub = _spectator_find_stub(%call)
           {% if !method.abstract? %}
-            %stub.as(::Spectator::ValueStub(typeof(previous_def))).value
+            %stub.as(::Spectator::ValueStub(typeof({{original}}))).value
           {% elsif method.return_type %}
             if %cast = %stub.as?(::Spectator::ValueStub({{method.return_type}}))
               %cast.value
@@ -36,7 +34,7 @@ module Spectator
             # Response not configured for this method/message.
             raise ::Spectator::UnexpectedMessage.new("#{_spectator_double_name} received unexpected message :{{method.name}} with #{%args}")
           {% else %}
-            previous_def
+            {{original}}
           {% end %}
         end
       end
