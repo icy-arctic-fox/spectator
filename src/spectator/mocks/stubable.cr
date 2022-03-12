@@ -1,5 +1,49 @@
 module Spectator
+  # Mix-in for mocks and doubles providing method stubs.
+  #
+  # Macros in this module can override existing methods.
+  # Stubbed methods will look for stubs to evaluate in place of their original functionality.
+  # The primary macro of interest is `#stub`.
+  # The macros are intended to be called from within the type being stubbed.
+  #
+  # Types including this module must define `#_spectator_find_stub` and `#_spectator_stubbed_name`.
+  # These are internal, reserved method names by Spectator, hence the `_spectator` prefix.
+  # These methods can't (and shouldn't) be stubbed.
   module Stubable
+    # Attempts to find a stub that satisfies a method call.
+    #
+    # Returns a stub that matches the method *call*
+    # or nil if no stubs satisfy it.
+    abstract def _spectator_find_stub(call : MethodCall) : Stub?
+
+    # Utility returning the mock or double's name as a string.
+    abstract def _spectator_stubbed_name : String
+
+    # Redefines a method to accept stubs.
+    #
+    # The *method* should be a `Def`.
+    # That is, a normal looking method definition should follow the `stub` keyword.
+    #
+    # ```
+    # stub def stubbed_method
+    #   "foobar"
+    # end
+    # ```
+    #
+    # The method being stubbed must already exist in the type, parent, or included/extend module.
+    # If it doesn't exist, and a new stubable method is being added, use `#inject_stub` instead.
+    # The original's method is called if there are no applicable stubs for the invocation.
+    # The body of the method passed to this macro is ignored.
+    #
+    # The method can be abstract.
+    # If an abstract method is invoked that doesn't have a stub, an `UnexpectedMessage` error is raised.
+    # The abstract method should have a return type annotation, otherwise the compiled return type will probably end up as a giant union.
+    #
+    # ```
+    # stub abstract def stubbed_method : String
+    # ```
+    #
+    # Stubbed methods will call `#_spectator_find_stub` with the method call information.
     private macro stub(method)
       {% raise "stub requires a method definition" if !method.is_a?(Def) %}
       {% raise "Cannot stub method with reserved keyword as name - #{method.name}" if ::Spectator::DSL::RESERVED_KEYWORDS.includes?(method.name.symbolize) %}
@@ -40,6 +84,29 @@ module Spectator
       end
     end
 
+    # Redefines a method to require stubs.
+    #
+    # This macro is similar to `#stub` but requires that a stub is defined for the method if it's called.
+    #
+    # The *method* should be a `Def`.
+    # That is, a normal looking method definition should follow the `stub` keyword.
+    #
+    # ```
+    # abstract_stub def stubbed_method
+    #   "foobar"
+    # end
+    # ```
+    #
+    # The method being stubbed doesn't need to exist yet.
+    # Its body of the method passed to this macro is ignored.
+    # The method can be abstract.
+    # It should have a return type annotation, otherwise the compiled return type will probably end up as a giant union.
+    #
+    # ```
+    # abstract_stub abstract def stubbed_method : String
+    # ```
+    #
+    # Stubbed methods will call `#_spectator_find_stub` with the method call information.
     private macro abstract_stub(method)
       {% raise "abstract_stub requires a method definition" if !method.is_a?(Def) %}
       {% raise "Cannot stub method with reserved keyword as name - #{method.name}" if ::Spectator::DSL::RESERVED_KEYWORDS.includes?(method.name.symbolize) %}
@@ -72,6 +139,7 @@ module Spectator
       end
     end
 
+    # Utility for defining a stubbed method and a fallback.
     private macro inject_stub(method)
       {{method}}
       stub {{method}}
