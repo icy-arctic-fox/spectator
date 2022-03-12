@@ -76,5 +76,19 @@ module Spectator
       {{method}}
       stub {{method}}
     end
+
+    # Redefines all methods on a type to conditionally respond to messages.
+    # Methods will raise `UnexpectedMessage` if they're called when they shouldn't be.
+    # Otherwise, they'll return the configured response.
+    private macro stub_all(type_name, *, with style = :abstract_stub)
+      {% type = type_name.resolve %}
+      {% if type.superclass %}
+        stub_all({{type.superclass}}, with: {{style}})
+      {% end %}
+
+      {% for meth in type.methods.reject { |m| DSL::RESERVED_KEYWORDS.includes?(m.name.symbolize) } %}
+        {{style.id}} {{meth}}
+      {% end %}
+    end
   end
 end

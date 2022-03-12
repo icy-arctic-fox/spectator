@@ -43,23 +43,9 @@ module Spectator
       {% end %}
     end
 
-    # Redefines all methods on a type to conditionally respond to messages.
-    # Methods will raise `UnexpectedMessage` if they're called when they shouldn't be.
-    # Otherwise, they'll return the configured response.
-    private macro _spectator_mask_methods(type_name)
-      {% type = type_name.resolve %}
-      {% if type.superclass %}
-        _spectator_mask_methods({{type.superclass}})
-      {% end %}
-
-      {% for meth in type.methods.reject { |m| DSL::RESERVED_KEYWORDS.includes?(m.name.symbolize) } %}
-        abstract_stub {{meth}}
-      {% end %}
-    end
-
     # "Hide" existing methods and methods from ancestors by overriding them.
     macro finished
-      _spectator_mask_methods({{@type.name(generic_args: false)}})
+      stub_all {{@type.name(generic_args: false)}}
     end
 
     # Handle all methods but only respond to configured messages.
