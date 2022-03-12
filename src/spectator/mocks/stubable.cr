@@ -12,7 +12,7 @@ module Spectator
         {% if method.block_arg %}&{{method.block_arg}}{% elsif method.accepts_block? %}&{% end %}
       ){% if method.return_type %} : {{method.return_type}}{% end %}{% if !method.free_vars.empty? %} forall {{method.free_vars.splat}}{% end %}
         %args = ::Spectator::Arguments.capture(
-          {{method.args.map(&.internal_name).splat(",")}}
+          {% for arg, i in method.args %}{% if i == method.splat_index %}*{% end %}{{arg.internal_name}}, {% end %}
           {% if method.double_splat %}**{{method.double_splat}}{% end %}
         )
         %call = ::Spectator::MethodCall.new({{method.name.symbolize}}, %args)
@@ -50,7 +50,7 @@ module Spectator
         {% if method.block_arg %}&{{method.block_arg}}{% elsif method.accepts_block? %}&{% end %}
       ){% if method.return_type %} : {{method.return_type}}{% end %}{% if !method.free_vars.empty? %} forall {{method.free_vars.splat}}{% end %}
         %args = ::Spectator::Arguments.capture(
-          {{method.args.map(&.internal_name).splat(",")}}
+          {% for arg, i in method.args %}{% if i == method.splat_index %}*{% end %}{{arg.internal_name}}, {% end %}
           {% if method.double_splat %}**{{method.double_splat}}{% end %}
         )
         %call = ::Spectator::MethodCall.new({{method.name.symbolize}}, %args)
