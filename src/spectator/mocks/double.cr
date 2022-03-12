@@ -19,7 +19,7 @@ module Spectator
       {% if name %}@[DoubleName({{name}})]{% end %}
       class {{type_name.id}} < {{@type.name}}
         {% for key, value in value_methods %}
-          stub def {{key.id}}
+          inject_stub def {{key.id}}
             {{value}}
           end
         {% end %}

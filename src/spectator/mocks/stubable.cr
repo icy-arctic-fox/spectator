@@ -71,5 +71,10 @@ module Spectator
         end
       end
     end
+
+    private macro inject_stub(method)
+      {{method}}
+      stub {{method}}
+    end
   end
 end
