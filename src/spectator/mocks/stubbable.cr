@@ -9,7 +9,7 @@ module Spectator
   # Types including this module must define `#_spectator_find_stub` and `#_spectator_stubbed_name`.
   # These are internal, reserved method names by Spectator, hence the `_spectator` prefix.
   # These methods can't (and shouldn't) be stubbed.
-  module Stubable
+  module Stubbable
     # Attempts to find a stub that satisfies a method call.
     #
     # Returns a stub that matches the method *call*
@@ -31,7 +31,7 @@ module Spectator
     # ```
     #
     # The method being stubbed must already exist in the type, parent, or included/extend module.
-    # If it doesn't exist, and a new stubable method is being added, use `#inject_stub` instead.
+    # If it doesn't exist, and a new stubbable method is being added, use `#inject_stub` instead.
     # The original's method is called if there are no applicable stubs for the invocation.
     # The body of the method passed to this macro is ignored.
     #

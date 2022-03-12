@@ -1,7 +1,7 @@
 require "./arguments"
 require "./method_call"
 require "./stub"
-require "./stubable"
+require "./stubbable"
 require "./stubbed_name"
 require "./unexpected_message"
 require "./value_stub"
@@ -17,7 +17,7 @@ module Spectator
   # Only methods defined in the double's type can have stubs.
   # New methods are not defines when a stub is added that doesn't have a matching method name.
   abstract class Double
-    include Stubable
+    include Stubbable
 
     Log = Spectator::Log.for(self)
 
