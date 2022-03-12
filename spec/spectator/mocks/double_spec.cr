@@ -209,4 +209,41 @@ Spectator.describe Spectator::Double do
       end
     end
   end
+
+  describe "#_spectator_define_stub" do
+    subject(dbl) { FooBarDouble.new }
+    let(stub3) { Spectator::ValueStub.new(:foo, 3) }
+    let(stub5) { Spectator::ValueStub.new(:foo, 5) }
+    let(stub7) { Spectator::ValueStub.new(:foo, 7, Spectator::Arguments.capture(:lucky)) }
+
+    it "overrides an existing method" do
+      expect { dbl._spectator_define_stub(stub3) }.to change { dbl.foo }.from(42).to(3)
+    end
+
+    it "replaces an existing stub" do
+      dbl._spectator_define_stub(stub3)
+      expect { dbl._spectator_define_stub(stub5) }.to change { dbl.foo }.from(3).to(5)
+    end
+
+    it "doesn't affect other methods" do
+      expect { dbl._spectator_define_stub(stub5) }.to_not change { dbl.bar }
+    end
+
+    it "picks the correct stub based on arguments" do
+      dbl._spectator_define_stub(stub5)
+      dbl._spectator_define_stub(stub7)
+      aggregate_failures do
+        expect(dbl.foo).to eq(5)
+        expect(dbl.foo(:lucky)).to eq(7)
+      end
+    end
+
+    it "only uses a stub if an argument constraint is met" do
+      dbl._spectator_define_stub(stub7)
+      aggregate_failures do
+        expect(dbl.foo).to eq(42)
+        expect(dbl.foo(:lucky)).to eq(7)
+      end
+    end
+  end
 end

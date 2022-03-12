@@ -9,6 +9,6 @@ module Spectator
   module DSL
     # Keywords that cannot be used in specs using the DSL.
     # These are either problematic or reserved for internal use.
-    RESERVED_KEYWORDS = %i[initialize _spectator_stubbed_name _spectator_find_stub]
+    RESERVED_KEYWORDS = %i[initialize _spectator_stubbed_name _spectator_find_stub _spectator_define_stub]
   end
 end

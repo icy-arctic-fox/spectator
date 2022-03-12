@@ -37,6 +37,10 @@ module Spectator
     def initialize(@stubs : Array(Stub) = [] of Stub)
     end
 
+    protected def _spectator_define_stub(stub : Stub) : Nil
+      @stubs.unshift(stub)
+    end
+
     private def _spectator_find_stub(call) : Stub?
       Log.debug { "Finding stub for #{call}" }
       stub = @stubs.find &.===(call)
