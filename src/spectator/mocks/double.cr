@@ -20,6 +20,8 @@ module Spectator
   abstract class Double
     include Stubable
 
+    Log = Spectator::Log.for(self)
+
     macro define(type_name, name = nil, **value_methods, &block)
       {% if name %}@[::Spectator::StubbedName({{name}})]{% end %}
       class {{type_name.id}} < {{@type.name}}
@@ -32,11 +34,14 @@ module Spectator
       end
     end
 
-    # Stores responses to messages (method calls).
-    @stubs = [] of Stub
+    def initialize(@stubs : Array(Stub) = [] of Stub)
+    end
 
     private def _spectator_find_stub(call) : Stub?
-      @stubs.find &.===(call)
+      Log.debug { "Finding stub for #{call}" }
+      stub = @stubs.find &.===(call)
+      Log.debug { stub ? "Found stub #{stub} for #{call}" : "Did not find stub for #{call}" }
+      stub
     end
 
     # Utility returning the double's name as a string.
@@ -56,6 +61,7 @@ module Spectator
     # Handle all methods but only respond to configured messages.
     # Raises an `UnexpectedMessage` error for non-configures messages.
     macro method_missing(call)
+      Log.debug { "Got undefined method " + {{call.stringify}} }
       args = ::Spectator::Arguments.capture({{call.args.splat(", ")}}{% if call.named_args %}{{call.named_args.splat}}{% end %})
       call = ::Spectator::MethodCall.new({{call.name.symbolize}}, args)
       raise ::Spectator::UnexpectedMessage.new("#{_spectator_stubbed_name} received unexpected message :{{call.name}} with #{args}")
