@@ -25,7 +25,6 @@ module Spectator
         {% end %}
         {% if block %}{{block.body}}{% end %}
       end
-      {% debug %}
     end
 
     # Stores responses to messages (method calls).
@@ -47,37 +46,14 @@ module Spectator
     # Redefines all methods on a type to conditionally respond to messages.
     # Methods will raise `UnexpectedMessage` if they're called when they shouldn't be.
     # Otherwise, they'll return the configured response.
-    # TODO: Better error for type mismatch
     private macro _spectator_mask_methods(type_name)
       {% type = type_name.resolve %}
       {% if type.superclass %}
         _spectator_mask_methods({{type.superclass}})
       {% end %}
 
-      {% for meth in type.methods %}
-        {% if !meth.abstract? && !DSL::RESERVED_KEYWORDS.includes?(meth.name.symbolize) %}
-          {% if meth.visibility != :public %}{{meth.visibility.id}}{% end %} def {{meth.receiver}}{{meth.name}}(
-            {{meth.args.splat(",")}}
-            {% if meth.double_splat %}**{{meth.double_splat}}, {% end %}
-            {% if meth.block_arg %}&{{meth.block_arg}}{% elsif meth.accepts_block? %}&{% end %}
-          ){% if meth.return_type %} : {{meth.return_type}}{% end %}{% if !meth.free_vars.empty? %} forall {{meth.free_vars.splat}}{% end %}
-            # Capture call information.
-            %args = Arguments.capture(
-              {{meth.args.map(&.internal_name).splat}}{% if !meth.args.empty? %}, {% end %}
-              {% if meth.double_splat %}**{{meth.double_splat}}, {% end %}
-            )
-            %call = MethodCall.new({{meth.name.symbolize}}, %args)
-
-            # Find a suitable stub.
-            if %stub = @stubs.find &.===(%call)
-              # Return configured response.
-              %stub.value
-            else
-              # Response not configured for this method/message.
-              raise UnexpectedMessage.new("#{_spectator_double_name} received unexpected message :{{meth.name}} (masking ancestor) with #{%args}")
-            end
-          end
-        {% end %}
+      {% for meth in type.methods.reject { |m| DSL::RESERVED_KEYWORDS.includes?(m.name.symbolize) } %}
+        abstract_stub {{meth}}
       {% end %}
     end
 
@@ -92,7 +68,6 @@ module Spectator
       arguments = ::Spectator::Arguments.capture({{call.args.splat(", ")}}{% if call.named_args %}{{call.named_args.splat}}{% end %})
       call = ::Spectator::MethodCall.new({{call.name.symbolize}}, arguments)
       raise ::Spectator::UnexpectedMessage.new("#{_spectator_double_name} received unexpected message :{{call.name}} with #{arguments}")
-      {% debug %}
     end
   end
 end
