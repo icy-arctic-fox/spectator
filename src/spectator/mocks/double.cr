@@ -26,7 +26,7 @@ module Spectator
       {% if name %}@[::Spectator::StubbedName({{name}})]{% end %}
       class {{type_name.id}} < {{@type.name}}
         {% for key, value in value_methods %}
-          inject_stub def {{key.id}}
+          inject_stub def {{key.id}}(*_args, **_kwargs)
             {{value}}
           end
         {% end %}
