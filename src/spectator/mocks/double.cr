@@ -1,12 +1,17 @@
-require "./unexpected_message"
-require "./stub"
-require "./stubable"
-require "./value_stub"
 require "./arguments"
 require "./method_call"
+require "./stub"
+require "./stubable"
+require "./unexpected_message"
+require "./value_stub"
 
 module Spectator
-  annotation DoubleName; end
+  # Defines the name of a double or mock.
+  #
+  # When present on a stubbed type, this annotation indicates its name in output such as exceptions.
+  # Must have one argument - the name of the double or mock.
+  # This can be a symbol, string literal, or type name.
+  annotation StubbedName; end
 
   # Stands in for an object for testing that a SUT calls expected methods.
   #
@@ -16,7 +21,7 @@ module Spectator
     include Stubable
 
     macro define(type_name, name = nil, **value_methods, &block)
-      {% if name %}@[DoubleName({{name}})]{% end %}
+      {% if name %}@[::Spectator::StubbedName({{name}})]{% end %}
       class {{type_name.id}} < {{@type.name}}
         {% for key, value in value_methods %}
           inject_stub def {{key.id}}
@@ -35,9 +40,9 @@ module Spectator
     end
 
     # Utility returning the double's name as a string.
-    private def _spectator_double_name : String
-      {% if anno = @type.annotation(DoubleName) %}
-        "#<Double {{anno[0]}}"
+    private def _spectator_stubbed_name : String
+      {% if anno = @type.annotation(StubbedName) %}
+        "#<Double " + {{(anno[0] || :Anonymous.id).stringify}} + ">"
       {% else %}
         "#<Double Anonymous>"
       {% end %}
@@ -51,9 +56,9 @@ module Spectator
     # Handle all methods but only respond to configured messages.
     # Raises an `UnexpectedMessage` error for non-configures messages.
     macro method_missing(call)
-      arguments = ::Spectator::Arguments.capture({{call.args.splat(", ")}}{% if call.named_args %}{{call.named_args.splat}}{% end %})
-      call = ::Spectator::MethodCall.new({{call.name.symbolize}}, arguments)
-      raise ::Spectator::UnexpectedMessage.new("#{_spectator_double_name} received unexpected message :{{call.name}} with #{arguments}")
+      args = ::Spectator::Arguments.capture({{call.args.splat(", ")}}{% if call.named_args %}{{call.named_args.splat}}{% end %})
+      call = ::Spectator::MethodCall.new({{call.name.symbolize}}, args)
+      raise ::Spectator::UnexpectedMessage.new("#{_spectator_stubbed_name} received unexpected message :{{call.name}} with #{args}")
       nil # Necessary for compiler to infer return type as nil. Avoids runtime "can't execute ... `x` has no type errors".
     end
   end

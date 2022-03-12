@@ -32,7 +32,7 @@ module Spectator
         else
           {% if method.abstract? %}
             # Response not configured for this method/message.
-            raise ::Spectator::UnexpectedMessage.new("#{_spectator_double_name} received unexpected message :{{method.name}} with #{%args}")
+            raise ::Spectator::UnexpectedMessage.new("#{_spectator_stubbed_name} received unexpected message :{{method.name}} with #{%args}")
           {% else %}
             {{original}}
           {% end %}
@@ -67,7 +67,7 @@ module Spectator
           {% end %}
         else
           # Response not configured for this method/message.
-          raise ::Spectator::UnexpectedMessage.new("#{_spectator_double_name} received unexpected message :{{method.name}} with #{%args}")
+          raise ::Spectator::UnexpectedMessage.new("#{_spectator_stubbed_name} received unexpected message :{{method.name}} with #{%args}")
         end
       end
     end
