@@ -1,40 +1,49 @@
 require "../../spec_helper"
 
 Spectator.describe Spectator::Double do
-  Spectator::Double.define(TestDouble, foo: 42, bar: "baz")
+  Spectator::Double.define(EmptyDouble)
+  Spectator::Double.define(FooBarDouble, "dbl-name", foo: 42, bar: "baz")
 
-  subject(dbl) { TestDouble.new("dbl-name") }
+  # The subject `dbl` must be carefully used in sub-contexts, otherwise it pollutes parent scopes.
+  # This changes the type of `dbl` to `Double`, which produces a union of methods and their return types.
+  context "plain double" do
+    subject(dbl) { FooBarDouble.new }
 
-  it "responds to defined messages" do
-    aggregate_failures do
-      expect(dbl.foo).to eq(42)
-      expect(dbl.bar).to eq("baz")
+    it "responds to defined messages" do
+      aggregate_failures do
+        expect(dbl.foo).to eq(42)
+        expect(dbl.bar).to eq("baz")
+      end
     end
-  end
 
-  it "fails on undefined messages" do
-    expect { dbl.baz }.to raise_error(Spectator::UnexpectedMessage, /baz/)
-  end
+    it "fails on undefined messages" do
+      expect { dbl.baz }.to raise_error(Spectator::UnexpectedMessage, /baz/)
+    end
 
-  it "reports the name in errors" do
-    expect { dbl.baz }.to raise_error(/dbl-name/)
-  end
+    it "reports the name in errors" do
+      expect { dbl.baz }.to raise_error(/"dbl-name"/)
+    end
 
-  it "reports arguments" do
-    expect { dbl.baz(123, "qux", field: :value) }.to raise_error(Spectator::UnexpectedMessage, /\(123, "qux", field: :value\)/)
-  end
+    it "reports arguments" do
+      expect { dbl.baz(123, "qux", field: :value) }.to raise_error(Spectator::UnexpectedMessage, /\(123, "qux", field: :value\)/)
+    end
 
-  it "has a non-union return type" do
-    aggregate_failures do
-      expect(dbl.foo).to compile_as(Int32)
-      expect(dbl.bar).to compile_as(String)
+    it "has a non-union return type" do
+      aggregate_failures do
+        expect(dbl.foo).to compile_as(Int32)
+        expect(dbl.bar).to compile_as(String)
+      end
+    end
+
+    it "uses nil for undefined messages" do
+      expect { dbl.baz }.to compile_as(Nil)
     end
   end
 
   context "without a double name" do
-    Spectator::Double.define(TestDouble, foo: 42)
+    Spectator::Double.define(NamelessDouble, foo: 42)
 
-    subject(dbl) { TestDouble.new }
+    subject(dbl) { NamelessDouble.new }
 
     it "reports as anonymous" do
       expect { dbl.baz }.to raise_error(/anonymous/i)
@@ -43,29 +52,29 @@ Spectator.describe Spectator::Double do
 
   context "with common object methods" do
     subject(dbl) do
-      Spectator::Double.new(
-        "!=": "!=",
-        "!~": "!~",
-        "==": "==",
-        "===": "===",
-        "=~": "=~",
-        "class": "class",
-        "dup": "dup",
-        "hash": "hash",
-        "in?": true,
-        "inspect": "inspect",
-        "itself": "itself",
-        "not_nil!": "not_nil!",
-        "pretty_inspect": "pretty_inspect",
-        "tap": "tap",
-        "to_json": "to_json",
-        "to_pretty_json": "to_pretty_json",
-        "to_s": "to_s",
-        "to_yaml": "to_yaml",
-        "try": "try",
-        "object_id": 42_u64,
-        "same?": false,
-      )
+      EmptyDouble.new([
+        Spectator::ValueStub.new(:"!=", "!="),
+        Spectator::ValueStub.new(:"!~", "!~"),
+        Spectator::ValueStub.new(:"==", "=="),
+        Spectator::ValueStub.new(:"===", "==="),
+        Spectator::ValueStub.new(:"=~", "=~"),
+        Spectator::ValueStub.new(:class, "class"),
+        Spectator::ValueStub.new(:dup, "dup"),
+        Spectator::ValueStub.new(:hash, "hash"),
+        Spectator::ValueStub.new(:"in?", true),
+        Spectator::ValueStub.new(:inspect, "inspect"),
+        Spectator::ValueStub.new(:itself, "itself"),
+        Spectator::ValueStub.new(:"not_nil!", "not_nil!"),
+        Spectator::ValueStub.new(:pretty_inspect, "pretty_inspect"),
+        Spectator::ValueStub.new(:tap, "tap"),
+        Spectator::ValueStub.new(:to_json, "to_json"),
+        Spectator::ValueStub.new(:to_pretty_json, "to_pretty_json"),
+        Spectator::ValueStub.new(:to_s, "to_s"),
+        Spectator::ValueStub.new(:to_yaml, "to_yaml"),
+        Spectator::ValueStub.new(:try, "try"),
+        Spectator::ValueStub.new(:object_id, 42_u64),
+        Spectator::ValueStub.new(:"same?", false),
+      ] of Spectator::Stub)
     end
 
     it "responds with defined messages" do
@@ -103,42 +112,42 @@ Spectator.describe Spectator::Double do
   end
 
   context "without common object methods" do
-    subject(dbl) { Spectator::Double.new }
+    subject(dbl) { EmptyDouble.new }
 
     it "raises with undefined messages" do
       io = IO::Memory.new
       pp = PrettyPrint.new(io)
       aggregate_failures do
-        expect { dbl.!=(42) }.to raise_error(Spectator::UnexpectedMessage, /mask/)
-        expect { dbl.!~(42) }.to raise_error(Spectator::UnexpectedMessage, /mask/)
-        expect { dbl.==(42) }.to raise_error(Spectator::UnexpectedMessage, /mask/)
-        expect { dbl.===(42) }.to raise_error(Spectator::UnexpectedMessage, /mask/)
-        expect { dbl.=~(42) }.to raise_error(Spectator::UnexpectedMessage, /mask/)
-        expect { dbl.class }.to raise_error(Spectator::UnexpectedMessage, /mask/)
-        expect { dbl.dup }.to raise_error(Spectator::UnexpectedMessage, /mask/)
-        expect { dbl.hash(42) }.to raise_error(Spectator::UnexpectedMessage, /mask/)
-        expect { dbl.hash }.to raise_error(Spectator::UnexpectedMessage, /mask/)
-        expect { dbl.in?(42) }.to raise_error(Spectator::UnexpectedMessage, /mask/)
-        expect { dbl.in?(1, 2, 3) }.to raise_error(Spectator::UnexpectedMessage, /mask/)
-        expect { dbl.inspect }.to raise_error(Spectator::UnexpectedMessage, /mask/)
-        expect { dbl.itself }.to raise_error(Spectator::UnexpectedMessage, /mask/)
-        expect { dbl.not_nil! }.to raise_error(Spectator::UnexpectedMessage, /mask/)
-        expect { dbl.pretty_inspect }.to raise_error(Spectator::UnexpectedMessage, /mask/)
-        expect { dbl.pretty_inspect(io) }.to raise_error(Spectator::UnexpectedMessage, /mask/)
-        expect { dbl.pretty_print(pp) }.to raise_error(Spectator::UnexpectedMessage, /mask/)
-        expect { dbl.tap { nil } }.to raise_error(Spectator::UnexpectedMessage, /mask/)
-        expect { dbl.to_json }.to raise_error(Spectator::UnexpectedMessage, /mask/)
-        expect { dbl.to_json(io) }.to raise_error(Spectator::UnexpectedMessage, /mask/)
-        expect { dbl.to_pretty_json }.to raise_error(Spectator::UnexpectedMessage, /mask/)
-        expect { dbl.to_pretty_json(io) }.to raise_error(Spectator::UnexpectedMessage, /mask/)
-        expect { dbl.to_s }.to raise_error(Spectator::UnexpectedMessage, /mask/)
-        expect { dbl.to_s(io) }.to raise_error(Spectator::UnexpectedMessage, /mask/)
-        expect { dbl.to_yaml }.to raise_error(Spectator::UnexpectedMessage, /mask/)
-        expect { dbl.to_yaml(io) }.to raise_error(Spectator::UnexpectedMessage, /mask/)
-        expect { dbl.try { nil } }.to raise_error(Spectator::UnexpectedMessage, /mask/)
-        expect { dbl.object_id }.to raise_error(Spectator::UnexpectedMessage, /mask/)
-        expect { dbl.same?(dbl) }.to raise_error(Spectator::UnexpectedMessage, /mask/)
-        expect { dbl.same?(nil) }.to raise_error(Spectator::UnexpectedMessage, /mask/)
+        expect { dbl.!=(42) }.to raise_error(Spectator::UnexpectedMessage)
+        expect { dbl.!~(42) }.to raise_error(Spectator::UnexpectedMessage)
+        expect { dbl.==(42) }.to raise_error(Spectator::UnexpectedMessage)
+        expect { dbl.===(42) }.to raise_error(Spectator::UnexpectedMessage)
+        expect { dbl.=~(42) }.to raise_error(Spectator::UnexpectedMessage)
+        expect { dbl.class }.to raise_error(Spectator::UnexpectedMessage)
+        expect { dbl.dup }.to raise_error(Spectator::UnexpectedMessage)
+        expect { dbl.hash(42) }.to raise_error(Spectator::UnexpectedMessage)
+        expect { dbl.hash }.to raise_error(Spectator::UnexpectedMessage)
+        expect { dbl.in?(42) }.to raise_error(Spectator::UnexpectedMessage)
+        expect { dbl.in?(1, 2, 3) }.to raise_error(Spectator::UnexpectedMessage)
+        expect { dbl.inspect }.to raise_error(Spectator::UnexpectedMessage)
+        expect { dbl.itself }.to raise_error(Spectator::UnexpectedMessage)
+        expect { dbl.not_nil! }.to raise_error(Spectator::UnexpectedMessage)
+        expect { dbl.pretty_inspect }.to raise_error(Spectator::UnexpectedMessage)
+        expect { dbl.pretty_inspect(io) }.to raise_error(Spectator::UnexpectedMessage)
+        expect { dbl.pretty_print(pp) }.to raise_error(Spectator::UnexpectedMessage)
+        expect { dbl.tap { nil } }.to raise_error(Spectator::UnexpectedMessage)
+        expect { dbl.to_json }.to raise_error(Spectator::UnexpectedMessage)
+        expect { dbl.to_json(io) }.to raise_error(Spectator::UnexpectedMessage)
+        expect { dbl.to_pretty_json }.to raise_error(Spectator::UnexpectedMessage)
+        expect { dbl.to_pretty_json(io) }.to raise_error(Spectator::UnexpectedMessage)
+        expect { dbl.to_s }.to raise_error(Spectator::UnexpectedMessage)
+        expect { dbl.to_s(io) }.to raise_error(Spectator::UnexpectedMessage)
+        expect { dbl.to_yaml }.to raise_error(Spectator::UnexpectedMessage)
+        expect { dbl.to_yaml(io) }.to raise_error(Spectator::UnexpectedMessage)
+        expect { dbl.try { nil } }.to raise_error(Spectator::UnexpectedMessage)
+        expect { dbl.object_id }.to raise_error(Spectator::UnexpectedMessage)
+        expect { dbl.same?(dbl) }.to raise_error(Spectator::UnexpectedMessage)
+        expect { dbl.same?(nil) }.to raise_error(Spectator::UnexpectedMessage)
       end
     end
 
@@ -149,35 +158,46 @@ Spectator.describe Spectator::Double do
 
   context "with arguments constraints" do
     let(arguments) { Spectator::Arguments.capture(/foo/) }
-    let(stub) { Spectator::ValueStub.new(:foo, "bar", arguments).as(Spectator::Stub) }
-    subject(dbl) { Spectator::Double({foo: String}).new([stub]) }
 
-    it "returns the response when constraint satisfied" do
-      expect(dbl.foo("foobar")).to eq("bar")
-    end
+    context "without common object methods" do
+      Spectator::Double.define(TestDouble) do
+        abstract_stub abstract def foo(value) : String
+      end
 
-    it "raises an error when constraint unsatisfied" do
-      expect { dbl.foo("baz") }.to raise_error(Spectator::UnexpectedMessage)
-    end
+      let(stub) { Spectator::ValueStub.new(:foo, "bar", arguments).as(Spectator::Stub) }
+      subject(dbl) { TestDouble.new([stub]) }
 
-    it "raises an error when argument count doesn't match" do
-      expect { dbl.foo }.to raise_error(Spectator::UnexpectedMessage)
-    end
+      it "returns the response when constraint satisfied" do
+        expect(dbl.foo("foobar")).to eq("bar")
+      end
 
-    it "has a non-union return type" do
-      expect(dbl.foo("foobar")).to compile_as(String)
+      it "raises an error when constraint unsatisfied" do
+        expect { dbl.foo("baz") }.to raise_error(Spectator::UnexpectedMessage)
+      end
+
+      it "raises an error when argument count doesn't match" do
+        expect { dbl.foo }.to raise_error(Spectator::UnexpectedMessage)
+      end
+
+      it "has a non-union return type" do
+        expect(dbl.foo("foobar")).to compile_as(String)
+      end
     end
 
     context "with common object methods" do
+      Spectator::Double.define(TestDouble) do
+        stub abstract def same?(other : Reference) : Bool
+      end
+
       let(stub) { Spectator::ValueStub.new(:"same?", true, arguments).as(Spectator::Stub) }
-      subject(dbl) { Spectator::Double({"same?": Bool}).new([stub]) }
+      subject(dbl) { TestDouble.new([stub]) }
 
       it "returns the response when constraint satisfied" do
         expect(dbl.same?("foobar")).to eq(true)
       end
 
       it "raises an error when constraint unsatisfied" do
-        expect { dbl.same?("baz") }.to raise_error(Spectator::UnexpectedMessage, /mask/)
+        expect { dbl.same?("baz") }.to raise_error(Spectator::UnexpectedMessage)
       end
 
       it "raises an error when argument count doesn't match" do
