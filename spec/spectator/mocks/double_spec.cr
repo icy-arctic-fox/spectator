@@ -73,7 +73,7 @@ Spectator.describe Spectator::Double do
         Spectator::ValueStub.new(:to_yaml, "to_yaml"),
         Spectator::ValueStub.new(:try, "try"),
         Spectator::ValueStub.new(:object_id, 42_u64),
-        Spectator::ValueStub.new(:"same?", false),
+        Spectator::ValueStub.new(:"same?", true),
       ] of Spectator::Stub)
     end
 
@@ -101,8 +101,8 @@ Spectator.describe Spectator::Double do
         expect(dbl.to_yaml).to eq("to_yaml")
         expect(dbl.try { nil }).to eq("try")
         expect(dbl.object_id).to eq(42_u64)
-        expect(dbl.same?(dbl)).to eq(false)
-        expect(dbl.same?(nil)).to eq(false)
+        expect(dbl.same?(dbl)).to eq(true)
+        expect(dbl.same?(nil)).to eq(true)
       end
     end
 
