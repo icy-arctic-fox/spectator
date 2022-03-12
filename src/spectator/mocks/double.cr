@@ -68,6 +68,7 @@ module Spectator
       arguments = ::Spectator::Arguments.capture({{call.args.splat(", ")}}{% if call.named_args %}{{call.named_args.splat}}{% end %})
       call = ::Spectator::MethodCall.new({{call.name.symbolize}}, arguments)
       raise ::Spectator::UnexpectedMessage.new("#{_spectator_double_name} received unexpected message :{{call.name}} with #{arguments}")
+      nil # Necessary for compiler to infer return type as nil. Avoids runtime "can't execute ... `x` has no type errors".
     end
   end
 end
