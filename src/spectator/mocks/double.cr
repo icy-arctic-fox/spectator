@@ -1,43 +1,47 @@
 require "./unexpected_message"
 require "./stub"
+require "./stubable"
 require "./value_stub"
+require "./arguments"
+require "./method_call"
 
 module Spectator
+  annotation DoubleName; end
+
   # Stands in for an object for testing that a SUT calls expected methods.
   #
   # Handles all messages (method calls), but only responds to those configured.
   # Methods called that were not configured will raise `UnexpectedMessage`.
-  # `NT` must be a type of `NamedTuple` that maps method names to their return types.
-  class Double(NT)
-    # Stores responses to messages (method calls).
-    @stubs : Array(Stub)
+  abstract class Double
+    include Stubable
 
-    # Creates a double with pre-configures responses.
-    # A *name* can be provided, otherwise it is considered an anonymous double.
-    def initialize(@stubs : Array(Stub), @name : String? = nil)
+    macro define(type_name, name = nil, **value_methods, &block)
+      {% if name %}@[DoubleName({{name}})]{% end %}
+      class {{type_name.id}} < {{@type.name}}
+        {% for key, value in value_methods %}
+          stub def {{key.id}}
+            {{value}}
+          end
+        {% end %}
+        {% if block %}{{block.body}}{% end %}
+      end
+      {% debug %}
     end
 
-    def initialize(@name : String? = nil, **methods : **NT)
-      @stubs = {% if NT.keys.empty? %}
-                 [] of Stub
-               {% else %}
-                 {% begin %}
-                   [
-                     {% for key in NT.keys %}
-                       ValueStub.new({{key.symbolize}}, methods[{{key.symbolize}}]).as(Stub),
-                     {% end %}
-                   ]
-                 {% end %}
-               {% end %}
+    # Stores responses to messages (method calls).
+    @stubs = [] of Stub
+
+    private def _spectator_find_stub(call) : Stub?
+      @stubs.find &.===(call)
     end
 
     # Utility returning the double's name as a string.
     private def _spectator_double_name : String
-      if name = @name
-        "#<Double #{name.inspect}>"
-      else
+      {% if anno = @type.annotation(DoubleName) %}
+        "#<Double {{anno[0]}}"
+      {% else %}
         "#<Double Anonymous>"
-      end
+      {% end %}
     end
 
     # Redefines all methods on a type to conditionally respond to messages.
@@ -58,51 +62,20 @@ module Spectator
             {% if meth.block_arg %}&{{meth.block_arg}}{% elsif meth.accepts_block? %}&{% end %}
           ){% if meth.return_type %} : {{meth.return_type}}{% end %}{% if !meth.free_vars.empty? %} forall {{meth.free_vars.splat}}{% end %}
             # Capture call information.
-            arguments = Arguments.capture(
+            %args = Arguments.capture(
               {{meth.args.map(&.internal_name).splat}}{% if !meth.args.empty? %}, {% end %}
               {% if meth.double_splat %}**{{meth.double_splat}}, {% end %}
             )
-            call = MethodCall.new({{meth.name.symbolize}}, arguments)
+            %call = MethodCall.new({{meth.name.symbolize}}, %args)
 
-            \{% if type = NT[{{meth.name.symbolize}}] %}
-              {% if meth.return_type %}
-                \{% if type <= {{meth.return_type}} %}
-                  # Return type appears to match configured type.
-
-                  # Find a suitable stub.
-                  stub = @stubs.find &.===(call)
-
-                  if stub
-                    # Return configured response.
-                    stub.as(ValueStub(\{{type}})).value
-                  else
-                    # Response not configured for this method/message.
-                    raise UnexpectedMessage.new("#{_spectator_double_name} received unexpected message :{{meth.name}} (masking ancestor) with #{arguments}")
-                  end
-                \{% else %}
-                  # Return type doesn't match configured type.
-                  # Can't return the configured response as the type mismatches (won't compile).
-                  # Raise at runtime to provide additional information.
-                  raise "Type mismatch {{meth.name}} : {{meth.return_type}}"
-                \{% end %}
-              {% else %}
-                # No return type restriction, return configured response.
-
-                # Find a suitable stub.
-                stub = @stubs.find &.===(call)
-
-                if stub
-                  # Return configured response.
-                  stub.as(ValueStub(\{{type}})).value
-                else
-                  # Response not configured for this method/message.
-                  raise UnexpectedMessage.new("#{_spectator_double_name} received unexpected message :{{meth.name}} (masking ancestor) with #{arguments}")
-                end
-              {% end %}
-            \{% else %}
+            # Find a suitable stub.
+            if %stub = @stubs.find &.===(%call)
+              # Return configured response.
+              %stub.value
+            else
               # Response not configured for this method/message.
-              raise UnexpectedMessage.new("#{_spectator_double_name} received unexpected message :{{meth.name}} (masking ancestor) with #{arguments}")
-            \{% end %}
+              raise UnexpectedMessage.new("#{_spectator_double_name} received unexpected message :{{meth.name}} (masking ancestor) with #{%args}")
+            end
           end
         {% end %}
       {% end %}
@@ -116,24 +89,10 @@ module Spectator
     # Handle all methods but only respond to configured messages.
     # Raises an `UnexpectedMessage` error for non-configures messages.
     macro method_missing(call)
-      arguments = Arguments.capture({{call.args.splat(", ")}}{% if call.named_args %}{{call.named_args.splat}}{% end %})
-      call = MethodCall.new({{call.name.symbolize}}, arguments)
-
-      \{% if type = NT[{{call.name.symbolize}}] %}
-        # Find a suitable stub.
-        stub = @stubs.find &.===(call)
-
-        if stub
-          # Return configured response.
-          stub.as(ValueStub(\{{type}})).value
-        else
-          # Response not configured for this method/message.
-          raise UnexpectedMessage.new("#{_spectator_double_name} received unexpected message :{{call.name}} with #{arguments}")
-        end
-      \{% else %}
-        # Response not configured for this method/message.
-        raise UnexpectedMessage.new("#{_spectator_double_name} received unexpected message :{{call.name}} with #{arguments}")
-      \{% end %}
+      arguments = ::Spectator::Arguments.capture({{call.args.splat(", ")}}{% if call.named_args %}{{call.named_args.splat}}{% end %})
+      call = ::Spectator::MethodCall.new({{call.name.symbolize}}, arguments)
+      raise ::Spectator::UnexpectedMessage.new("#{_spectator_double_name} received unexpected message :{{call.name}} with #{arguments}")
+      {% debug %}
     end
   end
 end

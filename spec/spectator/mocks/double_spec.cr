@@ -1,7 +1,9 @@
 require "../../spec_helper"
 
 Spectator.describe Spectator::Double do
-  subject(dbl) { Spectator::Double({foo: Int32, bar: String}).new("dbl-name", foo: 42, bar: "baz") }
+  Spectator::Double.define(TestDouble, foo: 42, bar: "baz")
+
+  subject(dbl) { TestDouble.new("dbl-name") }
 
   it "responds to defined messages" do
     aggregate_failures do
@@ -22,8 +24,17 @@ Spectator.describe Spectator::Double do
     expect { dbl.baz(123, "qux", field: :value) }.to raise_error(Spectator::UnexpectedMessage, /\(123, "qux", field: :value\)/)
   end
 
+  it "has a non-union return type" do
+    aggregate_failures do
+      expect(dbl.foo).to compile_as(Int32)
+      expect(dbl.bar).to compile_as(String)
+    end
+  end
+
   context "without a double name" do
-    subject(dbl) { Spectator::Double.new(foo: 42) }
+    Spectator::Double.define(TestDouble, foo: 42)
+
+    subject(dbl) { TestDouble.new }
 
     it "reports as anonymous" do
       expect { dbl.baz }.to raise_error(/anonymous/i)
@@ -84,6 +95,10 @@ Spectator.describe Spectator::Double do
         expect(dbl.same?(dbl)).to eq(false)
         expect(dbl.same?(nil)).to eq(false)
       end
+    end
+
+    it "has a non-union return type" do
+      expect(dbl.inspect).to compile_as(String)
     end
   end
 
@@ -149,6 +164,10 @@ Spectator.describe Spectator::Double do
       expect { dbl.foo }.to raise_error(Spectator::UnexpectedMessage)
     end
 
+    it "has a non-union return type" do
+      expect(dbl.foo("foobar")).to compile_as(String)
+    end
+
     context "with common object methods" do
       let(stub) { Spectator::ValueStub.new(:"same?", true, arguments).as(Spectator::Stub) }
       subject(dbl) { Spectator::Double({"same?": Bool}).new([stub]) }
@@ -163,6 +182,10 @@ Spectator.describe Spectator::Double do
 
       it "raises an error when argument count doesn't match" do
         expect { dbl.same? }.to raise_error(Spectator::UnexpectedMessage)
+      end
+
+      it "has a non-union return type" do
+        expect(dbl.same?("foobar")).to compile_as(Bool)
       end
     end
   end
