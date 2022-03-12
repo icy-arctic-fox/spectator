@@ -5,13 +5,7 @@ module Spectator
       {% raise "Cannot stub method with reserved keyword as name - #{method.name}" if ::Spectator::DSL::RESERVED_KEYWORDS.includes?(method.name.symbolize) %}
 
       {% unless method.abstract? %}
-        {% if method.visibility != :public %}{{method.visibility.id}}{% end %} def {{method.receiver}}{{method.name}}(
-          {{method.args.splat(",")}}
-          {% if method.double_splat %}**{{method.double_splat}}, {% end %}
-          {% if method.block_arg %}&{{method.block_arg}}{% elsif method.accepts_block? %}&{% end %}
-        ){% if method.return_type %} : {{method.return_type}}{% end %}{% if !method.free_vars.empty? %} forall {{method.free_vars.splat}}{% end %}
-          {{method.body}}
-        end
+        {{method}}
       {% end %}
 
       {% if method.visibility != :public %}{{method.visibility.id}}{% end %} def {{method.receiver}}{{method.name}}(
