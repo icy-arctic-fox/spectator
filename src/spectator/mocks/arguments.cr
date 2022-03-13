@@ -29,6 +29,8 @@ module Spectator
 
     # Constructs a string representation of the arguments.
     def to_s(io : IO) : Nil
+      return io << "(no args)" if args.empty? && kwargs.empty?
+
       io << '('
 
       # Add the positional arguments.

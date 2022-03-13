@@ -30,6 +30,14 @@ Spectator.describe Spectator::Arguments do
     it "formats the arguments" do
       is_expected.to eq("(42, \"foo\", bar: \"baz\", qux: 123)")
     end
+
+    context "when empty" do
+      let(arguments) { Spectator::Arguments.empty }
+
+      it "returns (no args)" do
+        is_expected.to eq("(no args)")
+      end
+    end
   end
 
   describe "#==" do
