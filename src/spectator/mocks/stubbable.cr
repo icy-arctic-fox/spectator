@@ -156,7 +156,11 @@ module Spectator
         stub_all({{type.superclass}}, with: {{style}})
       {% end %}
 
-      {% for method in type.methods.reject { |meth| meth.name.starts_with?("_spectator") || DSL::RESERVED_KEYWORDS.includes?(meth.name.symbolize) } %}
+      {% for method in type.methods.reject do |meth|
+                         meth.annotation(Primitive) ||
+                           meth.name.starts_with?("_spectator") ||
+                           DSL::RESERVED_KEYWORDS.includes?(meth.name.symbolize)
+                       end %}
         {{style.id}} {{method}}
       {% end %}
     end
