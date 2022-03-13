@@ -46,7 +46,7 @@ module Spectator
     # Stubbed methods will call `#_spectator_find_stub` with the method call information.
     private macro stub(method)
       {% raise "stub requires a method definition" if !method.is_a?(Def) %}
-      {% raise "Cannot stub method with reserved keyword as name - #{method.name}" if ::Spectator::DSL::RESERVED_KEYWORDS.includes?(method.name.symbolize) %}
+      {% raise "Cannot stub method with reserved keyword as name - #{method.name}" if method.name.starts_with?("_spectator") || ::Spectator::DSL::RESERVED_KEYWORDS.includes?(method.name.symbolize) %}
 
       {% original = ((@type.has_method?(method.name) || !@type.ancestors.any? { |a| a.has_method?(method.name) }) ? :previous_def : :super).id %}
 
@@ -109,7 +109,7 @@ module Spectator
     # Stubbed methods will call `#_spectator_find_stub` with the method call information.
     private macro abstract_stub(method)
       {% raise "abstract_stub requires a method definition" if !method.is_a?(Def) %}
-      {% raise "Cannot stub method with reserved keyword as name - #{method.name}" if ::Spectator::DSL::RESERVED_KEYWORDS.includes?(method.name.symbolize) %}
+      {% raise "Cannot stub method with reserved keyword as name - #{method.name}" if method.name.starts_with?("_spectator") || ::Spectator::DSL::RESERVED_KEYWORDS.includes?(method.name.symbolize) %}
 
       {% if method.visibility != :public %}{{method.visibility.id}}{% end %} def {{method.receiver}}{{method.name}}(
         {% for arg, i in method.args %}{% if i == method.splat_index %}*{% end %}{{arg}}, {% end %}
@@ -154,8 +154,8 @@ module Spectator
         stub_all({{type.superclass}}, with: {{style}})
       {% end %}
 
-      {% for meth in type.methods.reject { |m| DSL::RESERVED_KEYWORDS.includes?(m.name.symbolize) } %}
-        {{style.id}} {{meth}}
+      {% for method in type.methods.reject { |meth| meth.name.starts_with?("_spectator") || DSL::RESERVED_KEYWORDS.includes?(meth.name.symbolize) } %}
+        {{style.id}} {{method}}
       {% end %}
     end
   end
