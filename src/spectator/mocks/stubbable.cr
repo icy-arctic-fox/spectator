@@ -49,7 +49,10 @@ module Spectator
       {% raise "stub requires a method definition" if !method.is_a?(Def) %}
       {% raise "Cannot stub method with reserved keyword as name - #{method.name}" if method.name.starts_with?("_spectator") || ::Spectator::DSL::RESERVED_KEYWORDS.includes?(method.name.symbolize) %}
 
-      {% original = ((@type.has_method?(method.name) || !@type.ancestors.any? { |a| a.has_method?(method.name) }) ? :previous_def : :super).id %}
+      {% original = ((@type.methods.includes?(method) || !@type.ancestors.any? { |a| a.methods.includes?(method) }) ? :previous_def : :super).id %}
+      {% if method.accepts_block?
+           original = "#{original} { |*_spectator_yargs| yield *_spectator_yargs }".id
+         end %}
 
       {% if method.visibility != :public %}{{method.visibility.id}}{% end %} def {{method.receiver}}{{method.name}}(
         {% for arg, i in method.args %}{% if i == method.splat_index %}*{% end %}{{arg}}, {% end %}
