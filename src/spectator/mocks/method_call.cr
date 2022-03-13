@@ -19,5 +19,10 @@ module Spectator
       arguments = Arguments.new(args, kwargs)
       new(method, arguments)
     end
+
+    # Constructs a string containing the method name and arguments.
+    def to_s(io : IO) : Nil
+      io << '#' << method << arguments
+    end
   end
 end
