@@ -45,6 +45,7 @@ module Spectator
     #
     # Stubbed methods will call `#_spectator_find_stub` with the method call information.
     private macro stub(method)
+      {% raise "Cannot define a stub inside a method" if @def %}
       {% raise "stub requires a method definition" if !method.is_a?(Def) %}
       {% raise "Cannot stub method with reserved keyword as name - #{method.name}" if method.name.starts_with?("_spectator") || ::Spectator::DSL::RESERVED_KEYWORDS.includes?(method.name.symbolize) %}
 
@@ -108,6 +109,7 @@ module Spectator
     #
     # Stubbed methods will call `#_spectator_find_stub` with the method call information.
     private macro abstract_stub(method)
+      {% raise "Cannot define a stub inside a method" if @def %}
       {% raise "abstract_stub requires a method definition" if !method.is_a?(Def) %}
       {% raise "Cannot stub method with reserved keyword as name - #{method.name}" if method.name.starts_with?("_spectator") || ::Spectator::DSL::RESERVED_KEYWORDS.includes?(method.name.symbolize) %}
 
