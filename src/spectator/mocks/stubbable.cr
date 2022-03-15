@@ -160,8 +160,7 @@ module Spectator
       {% end %}
 
       {% for method in type.methods.reject do |meth|
-                         meth.annotation(Primitive) ||
-                           meth.name.starts_with?("_spectator") ||
+                         meth.name.starts_with?("_spectator") ||
                            DSL::RESERVED_KEYWORDS.includes?(meth.name.symbolize)
                        end %}
         {{style.id}} {{method}}
