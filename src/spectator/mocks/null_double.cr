@@ -73,6 +73,7 @@ module Spectator
       stub
     end
 
+    # Returns the double's name formatted for user output.
     private def _spectator_stubbed_name : String
       {% if anno = @type.annotation(StubbedName) %}
         "#<NullDouble " + {{(anno[0] || :Anonymous.id).stringify}} + ">"

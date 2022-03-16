@@ -16,9 +16,6 @@ module Spectator
     # or nil if no stubs satisfy it.
     abstract def _spectator_find_stub(call : MethodCall) : Stub?
 
-    # Utility returning the mock or double's name as a string.
-    abstract def _spectator_stubbed_name : String
-
     # Method called when a stub isn't found.
     #
     # The received message is captured in *call*.
@@ -80,6 +77,7 @@ module Spectator
     # ```
     #
     # Stubbed methods will call `#_spectator_find_stub` with the method call information.
+    # If no stub is found, then `#_spectator_stub_fallback` or `#_spectator_abstract_stub_fallback` is called.
     private macro stub(method)
       {% raise "Cannot define a stub inside a method" if @def %}
       {% raise "stub requires a method definition" if !method.is_a?(Def) %}
@@ -148,6 +146,7 @@ module Spectator
     # ```
     #
     # Stubbed methods will call `#_spectator_find_stub` with the method call information.
+    # If no stub is found, then `#_spectator_stub_fallback` or `#_spectator_abstract_stub_fallback` is called.
     private macro abstract_stub(method)
       {% raise "Cannot define a stub inside a method" if @def %}
       {% raise "abstract_stub requires a method definition" if !method.is_a?(Def) %}
