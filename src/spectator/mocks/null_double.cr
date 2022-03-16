@@ -81,6 +81,30 @@ module Spectator
       {% end %}
     end
 
+    private def _spectator_stub_fallback(call : MethodCall, &)
+      self
+    end
+
+    private def _spectator_stub_fallback(call : MethodCall, type : self, &)
+      self
+    end
+
+    private def _spectator_stub_fallback(call : MethodCall, type, &)
+      yield
+    end
+
+    private def _spectator_abstract_stub_fallback(call : MethodCall)
+      self
+    end
+
+    private def _spectator_abstract_stub_fallback(call : MethodCall, type : self)
+      self
+    end
+
+    private def _spectator_abstract_stub_fallback(call : MethodCall, type)
+      raise TypeCastError.new("#{_spectator_stubbed_name} received message #{call} and is attempting to return `self`, but returned type must be `#{type}`.")
+    end
+
     # "Hide" existing methods and methods from ancestors by overriding them.
     macro finished
       stub_all {{@type.name(generic_args: false)}}

@@ -19,6 +19,42 @@ module Spectator
     # Utility returning the mock or double's name as a string.
     abstract def _spectator_stubbed_name : String
 
+    # Method called when a stub isn't found.
+    #
+    # The received message is captured in *call*.
+    # Yield to call the original method's implementation.
+    # The stubbed method returns the value returned by this method.
+    # This method can also raise an error if it's impossible to return something.
+    abstract def _spectator_stub_fallback(call : MethodCall, &)
+
+    # Method called when a stub isn't found.
+    #
+    # The received message is captured in *call*.
+    # The expected return type is provided by *type*.
+    # Yield to call the original method's implementation.
+    # The stubbed method returns the value returned by this method.
+    # This method can also raise an error if it's impossible to return something.
+    abstract def _spectator_stub_fallback(call : MethodCall, type, &)
+
+    # Method called when a stub isn't found.
+    #
+    # This is similar to `#_spectator_stub_fallback`,
+    # but called when the original (un-stubbed) method isn't available.
+    # The received message is captured in *call*.
+    # The stubbed method returns the value returned by this method.
+    # This method can also raise an error if it's impossible to return something.
+    abstract def _spectator_abstract_stub_fallback(call : MethodCall)
+
+    # Method called when a stub isn't found.
+    #
+    # This is similar to `#_spectator_stub_fallback`,
+    # but called when the original (un-stubbed) method isn't available.
+    # The received message is captured in *call*.
+    # The expected return type is provided by *type*.
+    # The stubbed method returns the value returned by this method.
+    # This method can also raise an error if it's impossible to return something.
+    abstract def _spectator_abstract_stub_fallback(call : MethodCall, type)
+
     # Redefines a method to accept stubs.
     #
     # The *method* should be a `Def`.
@@ -78,11 +114,12 @@ module Spectator
             %stub.value
           {% end %}
         else
-          {% if method.abstract? %}
-            # Response not configured for this method/message.
-            raise ::Spectator::UnexpectedMessage.new("#{_spectator_stubbed_name} received unexpected message :{{method.name}} with #{%args}")
+          {% if !method.abstract? %}
+            _spectator_stub_fallback(%call, typeof({{original}})) { {{original}} }
+          {% elsif method.return_type %}
+            _spectator_abstract_stub_fallback(%call, {{method.return_type}})
           {% else %}
-            {{original}}
+            _spectator_abstract_stub_fallback(%call)
           {% end %}
         end
       end
@@ -138,8 +175,11 @@ module Spectator
             %stub.value
           {% end %}
         else
-          # Response not configured for this method/message.
-          raise ::Spectator::UnexpectedMessage.new("#{_spectator_stubbed_name} received unexpected message :{{method.name}} with #{%args}")
+          {% if method.return_type %}
+            _spectator_abstract_stub_fallback(%call, {{method.return_type}})
+          {% else %}
+            _spectator_abstract_stub_fallback(%call)
+          {% end %}
         end
       end
     end

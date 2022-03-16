@@ -34,6 +34,30 @@ Spectator.describe Spectator::NullDouble do
     end
   end
 
+  context "with abstract stubs and return type annotations" do
+    Spectator::NullDouble.define(TestDouble) do
+      abstract_stub abstract def foo(value) : String
+    end
+
+    let(arguments) { Spectator::Arguments.capture(/foo/) }
+    let(stub) { Spectator::ValueStub.new(:foo, "bar", arguments).as(Spectator::Stub) }
+    subject(dbl) { TestDouble.new([stub]) }
+
+    it "enforces the return type" do
+      expect(dbl.foo("foobar")).to compile_as(String)
+    end
+
+    it "raises on non-matching arguments" do
+      expect { dbl.foo("bar") }.to raise_error(TypeCastError, /String/)
+    end
+
+    it "raises on non-matching stub" do
+      stub = Spectator::ValueStub.new(:foo, 42, arguments).as(Spectator::Stub)
+      dbl._spectator_define_stub(stub)
+      expect { dbl.foo("foobar") }.to raise_error(TypeCastError, /String/)
+    end
+  end
+
   context "with common object methods" do
     subject(dbl) do
       EmptyDouble.new([
@@ -102,6 +126,7 @@ Spectator.describe Spectator::NullDouble do
       io = IO::Memory.new
       pp = PrettyPrint.new(io)
       aggregate_failures do
+        # Methods that would cause type cast errors are omitted from this list.
         expect_null_double(dbl, dbl.!=(42))
         expect_null_double(dbl, dbl.!~(42))
         expect_null_double(dbl, dbl.==(42))
@@ -111,21 +136,10 @@ Spectator.describe Spectator::NullDouble do
         expect_null_double(dbl, dbl.dup)
         expect_null_double(dbl, dbl.hash(42))
         expect_null_double(dbl, dbl.hash)
-        # expect(dbl.in?(42)).to be(dbl)
-        # expect(dbl.in?(1, 2, 3)).to be(dbl)
-        expect_null_double(dbl, dbl.inspect)
         expect_null_double(dbl, dbl.itself)
         expect_null_double(dbl, dbl.not_nil!)
-        expect_null_double(dbl, dbl.pretty_inspect)
         expect_null_double(dbl, dbl.tap { nil })
-        expect_null_double(dbl, dbl.to_json)
-        expect_null_double(dbl, dbl.to_pretty_json)
-        expect_null_double(dbl, dbl.to_s)
-        expect_null_double(dbl, dbl.to_yaml)
         expect_null_double(dbl, dbl.try { nil })
-        # expect(dbl.object_id).to be(dbl)
-        # expect(dbl.same?(dbl)).to be(dbl)
-        # expect(dbl.same?(nil)).to be(dbl)
       end
     end
   end
@@ -135,7 +149,7 @@ Spectator.describe Spectator::NullDouble do
 
     context "without common object methods" do
       Spectator::NullDouble.define(TestDouble) do
-        abstract_stub abstract def foo(value) : String
+        abstract_stub abstract def foo(value)
       end
 
       let(stub) { Spectator::ValueStub.new(:foo, "bar", arguments).as(Spectator::Stub) }
@@ -152,10 +166,6 @@ Spectator.describe Spectator::NullDouble do
       it "returns self when argument count doesn't match" do
         expect_null_double(dbl, dbl.foo)
       end
-
-      it "has a union return type with self" do
-        expect(dbl.foo("foobar")).to compile_as(String | TestDouble)
-      end
     end
 
     context "with common object methods" do
@@ -167,7 +177,7 @@ Spectator.describe Spectator::NullDouble do
       subject(dbl) { TestDouble.new([stub]) }
 
       it "returns the response when constraint satisfied" do
-        expect(dbl.hash("foobar")).to eq(true)
+        expect(dbl.hash("foobar")).to eq(12345)
       end
 
       it "returns self when constraint unsatisfied" do
@@ -176,10 +186,6 @@ Spectator.describe Spectator::NullDouble do
 
       it "returns self when argument count doesn't match" do
         expect_null_double(dbl, dbl.hash)
-      end
-
-      it "has a union return type with self" do
-        expect(dbl.hash("foobar")).to compile_as(Int32 | TestDouble)
       end
     end
   end

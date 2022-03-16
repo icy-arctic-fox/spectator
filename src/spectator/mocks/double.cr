@@ -81,6 +81,22 @@ module Spectator
       {% end %}
     end
 
+    private def _spectator_stub_fallback(call : MethodCall, &)
+      yield
+    end
+
+    private def _spectator_stub_fallback(call : MethodCall, type, &)
+      yield
+    end
+
+    private def _spectator_abstract_stub_fallback(call : MethodCall)
+      raise UnexpectedMessage.new("#{_spectator_stubbed_name} received unexpected message #{call}")
+    end
+
+    private def _spectator_abstract_stub_fallback(call : MethodCall, type)
+      raise UnexpectedMessage.new("#{_spectator_stubbed_name} received unexpected message #{call}")
+    end
+
     # "Hide" existing methods and methods from ancestors by overriding them.
     macro finished
       stub_all {{@type.name(generic_args: false)}}
