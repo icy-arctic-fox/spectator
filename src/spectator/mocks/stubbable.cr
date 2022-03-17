@@ -86,49 +86,93 @@ module Spectator
       {% raise "stub requires a method definition" if !method.is_a?(Def) %}
       {% raise "Cannot stub method with reserved keyword as name - #{method.name}" if method.name.starts_with?("_spectator") || ::Spectator::DSL::RESERVED_KEYWORDS.includes?(method.name.symbolize) %}
 
+      {% # Figure out how to call the original implementation of the method being stubbed.
+# `#has_method?` is effectively `#responds_to?` for macros and will return true if a type or its ancestors or included modules has a method by a given name.
+# To be more strict with searching, `#methods` is inspected to handle overrides and the difference in calling convention.
+# If the method is defined in an ancestor, `super` should be used.
+# Otherwise, when a method is defined in the current type or a module, `previous_def` should be used.
+# Additionally, the block usage is forwarded for methods that accept it.
+# Even though `super` and `previous_def` without parameters forward the arguments, they don't forward a block.
+  %}
       {% original = ((@type.methods.includes?(method) || !@type.ancestors.any? { |a| a.methods.includes?(method) }) ? :previous_def : :super).id %}
       {% if method.accepts_block?
            original = "#{original} { |*_spectator_yargs| yield *_spectator_yargs }".id
          end %}
 
+         {% # Reconstruct the method signature.
+# I wish there was a better way of doing this, but there isn't (at not one that I'm aware of).
+# This chunk of code must reconstruct the method signature exactly as it was originally.
+# If it doesn't match, it doesn't override the method and the stubbing won't work.
+  %}
       {% if method.visibility != :public %}{{method.visibility.id}}{% end %} def {{method.receiver}}{{method.name}}(
         {% for arg, i in method.args %}{% if i == method.splat_index %}*{% end %}{{arg}}, {% end %}
         {% if method.double_splat %}**{{method.double_splat}}, {% end %}
         {% if method.block_arg %}&{{method.block_arg}}{% elsif method.accepts_block? %}&{% end %}
       ){% if method.return_type %} : {{method.return_type}}{% end %}{% if !method.free_vars.empty? %} forall {{method.free_vars.splat}}{% end %}
+
+        # Capture information about the call.
         %args = ::Spectator::Arguments.capture(
           {% for arg, i in method.args %}{% if i == method.splat_index %}*{% end %}{{arg.internal_name}}, {% end %}
           {% if method.double_splat %}**{{method.double_splat}}{% end %}
         )
         %call = ::Spectator::MethodCall.new({{method.name.symbolize}}, %args)
 
+        # Attempt to find a stub that satisfies the method call and arguments.
+        # Finding a suitable stub is delegated to the type including the `Stubbable` module.
         if %stub = _spectator_find_stub(%call)
+          # Cast the stub or return value to the expected type.
+          # This is necessary to match the expected return type of the original method.
           {% if !method.abstract? %}
+            # The method isn't abstract, so we can reference the type it returns without calling it.
             %stub.as(::Spectator::TypedStub(typeof({{original}}))).value
           {% elsif method.return_type %}
+            # Attempt to cast the stub to the method's return type.
+            # If successful, return the value of the stub.
+            # This is a common usage where the return type is simple and matches the stub type exactly.
             if %typed = %stub.as?(::Spectator::TypedStub({{method.return_type}}))
               %typed.value
             else
+              # The stub couldn't be easily cast to match the return type.
+              # Get the value as-is from the stub.
+              # This will be compiled as a union of all known stubbed value types.
               %value = %stub.value
+
+              # Attempt to cast the value to the method's return type.
+              # If successful, which it will be in most cases, return it.
+              # The caller will receive a properly typed value without unions or other side-effects.
               if %cast = %value.as?({{method.return_type}})
                 %cast
               else
+                # Now we're down to edge cases.
                 {% if method.return_type.resolve >= Nil %}
+                  # The return type might have "cast" correctly, but the value is nil and the return type is nillable.
+                  # Just return nil in this case.
                   nil
                 {% else %}
+                  # The stubbed value was something else entirely and cannot be cast to the return type.
+                  # `<Unknown>` should be replaced with the real type of %value (`%value.class`).
+                  # However, there's some weird bug that causes a segfault when trying to inspect the value.
                   raise TypeCastError.new("#{_spectator_stubbed_name} received message #{%call} and is attempting to return a <Unknown>, but returned type must be `{{method.return_type}}`.")
                 {% end %}
               end
             end
           {% else %}
+            # Stubbed method is abstract and there's no return type annotation.
+            # Return the value of the stub as-is.
+            # This may produce a "bloated" union of all known stub types.
             %stub.value
           {% end %}
         else
+          # A stub wasn't found, invoke the type-specific fallback logic.
           {% if !method.abstract? %}
+            # Pass along the type of the original method and a block to invoke it.
             _spectator_stub_fallback(%call, typeof({{original}})) { {{original}} }
           {% elsif method.return_type %}
+            # Stubbed method is abstract, so it can't be called.
+            # Pass along just the return type annotation.
             _spectator_abstract_stub_fallback(%call, {{method.return_type}})
           {% else %}
+            # Stubbed method is abstract and there's no type annotation.
             _spectator_abstract_stub_fallback(%call)
           {% end %}
         end
@@ -164,40 +208,79 @@ module Spectator
       {% raise "abstract_stub requires a method definition" if !method.is_a?(Def) %}
       {% raise "Cannot stub method with reserved keyword as name - #{method.name}" if method.name.starts_with?("_spectator") || ::Spectator::DSL::RESERVED_KEYWORDS.includes?(method.name.symbolize) %}
 
+      {% # The logic in this macro follows mostly the same logic from `#stub`.
+# The main difference is that this macro cannot access the original method being stubbed.
+# It might exist or it might not.
+# The method could also be abstract.
+# For all intents and purposes, this macro defines logic that doesn't depend on an existing method.
+  %}
+
+      {% # Reconstruct the method signature.
+# I wish there was a better way of doing this, but there isn't (at not one that I'm aware of).
+# This chunk of code must reconstruct the method signature exactly as it was originally.
+# If it doesn't match, it doesn't override the method and the stubbing won't work.
+  %}
       {% if method.visibility != :public %}{{method.visibility.id}}{% end %} def {{method.receiver}}{{method.name}}(
         {% for arg, i in method.args %}{% if i == method.splat_index %}*{% end %}{{arg}}, {% end %}
         {% if method.double_splat %}**{{method.double_splat}}, {% end %}
         {% if method.block_arg %}&{{method.block_arg}}{% elsif method.accepts_block? %}&{% end %}
       ){% if method.return_type %} : {{method.return_type}}{% end %}{% if !method.free_vars.empty? %} forall {{method.free_vars.splat}}{% end %}
+
+        # Capture information about the call.
         %args = ::Spectator::Arguments.capture(
           {% for arg, i in method.args %}{% if i == method.splat_index %}*{% end %}{{arg.internal_name}}, {% end %}
           {% if method.double_splat %}**{{method.double_splat}}{% end %}
         )
         %call = ::Spectator::MethodCall.new({{method.name.symbolize}}, %args)
 
+        # Attempt to find a stub that satisfies the method call and arguments.
+        # Finding a suitable stub is delegated to the type including the `Stubbable` module.
         if %stub = _spectator_find_stub(%call)
           {% if method.return_type %}
+            # Attempt to cast the stub to the method's return type.
+            # If successful, return the value of the stub.
+            # This is a common usage where the return type is simple and matches the stub type exactly.
             if %typed = %stub.as?(::Spectator::TypedStub({{method.return_type}}))
               %typed.value
             else
+              # The stub couldn't be easily cast to match the return type.
+              # Get the value as-is from the stub.
+              # This will be compiled as a union of all known stubbed value types.
               %value = %stub.value
+
+              # Attempt to cast the value to the method's return type.
+              # If successful, which it will be in most cases, return it.
+              # The caller will receive a properly typed value without unions or other side-effects.
               if %cast = %value.as?({{method.return_type}})
                 %cast
               else
+                # Now we're down to edge cases.
                 {% if method.return_type.resolve >= Nil %}
+                  # The return type might have "cast" correctly, but the value is nil and the return type is nillable.
+                  # Just return nil in this case.
                   nil
                 {% else %}
+                  # The stubbed value was something else entirely and cannot be cast to the return type.
+                  # `<Unknown>` should be replaced with the real type of %value (`%value.class`).
+                  # However, there's some weird bug that causes a segfault when trying to inspect the value.
                   raise TypeCastError.new("#{_spectator_stubbed_name} received message #{%call} and is attempting to return a <Unknown>, but returned type must be `{{method.return_type}}`.")
                 {% end %}
               end
             end
           {% else %}
+            # Stubbed method is abstract and there's no return type annotation.
+            # Return the value of the stub as-is.
+            # This may produce a "bloated" union of all known stub types.
             %stub.value
           {% end %}
         else
+          # A stub wasn't found, invoke the type-specific fallback logic.
           {% if method.return_type %}
+            # Stubbed method is abstract, so it can't be called.
+            # Pass along just the return type annotation.
             _spectator_abstract_stub_fallback(%call, {{method.return_type}})
           {% else %}
+            # Stubbed method is abstract and there's no type annotation.
             _spectator_abstract_stub_fallback(%call)
           {% end %}
         end
