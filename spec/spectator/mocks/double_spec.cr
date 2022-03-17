@@ -50,6 +50,30 @@ Spectator.describe Spectator::Double do
     end
   end
 
+  context "with abstract stubs and return type annotations" do
+    Spectator::Double.define(TestDouble) do
+      abstract_stub abstract def foo(value) : String
+    end
+
+    let(arguments) { Spectator::Arguments.capture(/foo/) }
+    let(stub) { Spectator::ValueStub.new(:foo, "bar", arguments).as(Spectator::Stub) }
+    subject(dbl) { TestDouble.new([stub]) }
+
+    it "enforces the return type" do
+      expect(dbl.foo("foobar")).to compile_as(String)
+    end
+
+    it "raises on non-matching arguments" do
+      expect { dbl.foo("bar") }.to raise_error(Spectator::UnexpectedMessage, /foo/)
+    end
+
+    it "raises on non-matching stub" do
+      stub = Spectator::ValueStub.new(:foo, 42, arguments).as(Spectator::Stub)
+      dbl._spectator_define_stub(stub)
+      expect { dbl.foo("foobar") }.to raise_error(TypeCastError, /String/)
+    end
+  end
+
   context "with nillable return type annotations" do
     Spectator::Double.define(TestDouble) do
       abstract_stub abstract def foo : String?
