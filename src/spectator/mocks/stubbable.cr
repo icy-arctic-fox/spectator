@@ -52,6 +52,9 @@ module Spectator
     # This method can also raise an error if it's impossible to return something.
     abstract def _spectator_abstract_stub_fallback(call : MethodCall, type)
 
+    # Utility method returning the stubbed type's name formatted for user output.
+    abstract def _spectator_stubbed_name : String
+
     # Redefines a method to accept stubs.
     #
     # The *method* should be a `Def`.
@@ -101,12 +104,21 @@ module Spectator
 
         if %stub = _spectator_find_stub(%call)
           {% if !method.abstract? %}
-            %stub.as(::Spectator::ValueStub(typeof({{original}}))).value
+            %stub.as(::Spectator::TypedStub(typeof({{original}}))).value
           {% elsif method.return_type %}
-            if %cast = %stub.as?(::Spectator::ValueStub({{method.return_type}}))
-              %cast.value
+            if %typed = %stub.as?(::Spectator::TypedStub({{method.return_type}}))
+              %typed.value
             else
-              %stub.value.as({{method.return_type}})
+              %value = %stub.value
+              if %cast = %value.as?({{method.return_type}})
+                %cast
+              else
+                {% if method.return_type.resolve >= Nil %}
+                  nil
+                {% else %}
+                  raise TypeCastError.new("#{_spectator_stubbed_name} received message #{%call} and is attempting to return a `#{%value.class}`, but returned type must be `{{method.return_type}}`.")
+                {% end %}
+              end
             end
           {% else %}
             %stub.value
@@ -165,10 +177,19 @@ module Spectator
 
         if %stub = _spectator_find_stub(%call)
           {% if method.return_type %}
-            if %cast = %stub.as?(::Spectator::ValueStub({{method.return_type}}))
-              %cast.value
+            if %typed = %stub.as?(::Spectator::TypedStub({{method.return_type}}))
+              %typed.value
             else
-              %stub.value.as({{method.return_type}})
+              %value = %stub.value
+              if %cast = %value.as?({{method.return_type}})
+                %cast
+              else
+                {% if method.return_type.resolve >= Nil %}
+                  nil
+                {% else %}
+                  raise TypeCastError.new("#{_spectator_stubbed_name} received message #{%call} and is attempting to return a `#{%value.class}`, but returned type must be `{{method.return_type}}`.")
+                {% end %}
+              end
             end
           {% else %}
             %stub.value

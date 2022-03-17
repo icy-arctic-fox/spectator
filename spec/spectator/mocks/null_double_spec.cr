@@ -58,6 +58,24 @@ Spectator.describe Spectator::NullDouble do
     end
   end
 
+  context "with nillable return type annotations" do
+    Spectator::NullDouble.define(TestDouble) do
+      abstract_stub abstract def foo : String?
+      abstract_stub abstract def bar : Nil
+    end
+
+    let(foo_stub) { Spectator::ValueStub.new(:foo, nil).as(Spectator::Stub) }
+    let(bar_stub) { Spectator::ValueStub.new(:bar, nil).as(Spectator::Stub) }
+    subject(dbl) { TestDouble.new([foo_stub, bar_stub]) }
+
+    it "doesn't raise on nil" do
+      aggregate_failures do
+        expect(dbl.foo).to be_nil
+        expect(dbl.bar).to be_nil
+      end
+    end
+  end
+
   context "with common object methods" do
     subject(dbl) do
       EmptyDouble.new([
