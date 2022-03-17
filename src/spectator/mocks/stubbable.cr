@@ -116,7 +116,7 @@ module Spectator
                 {% if method.return_type.resolve >= Nil %}
                   nil
                 {% else %}
-                  raise TypeCastError.new("#{_spectator_stubbed_name} received message #{%call} and is attempting to return a `#{%value.class}`, but returned type must be `{{method.return_type}}`.")
+                  raise TypeCastError.new("#{_spectator_stubbed_name} received message #{%call} and is attempting to return a <Unknown>, but returned type must be `{{method.return_type}}`.")
                 {% end %}
               end
             end
@@ -187,7 +187,7 @@ module Spectator
                 {% if method.return_type.resolve >= Nil %}
                   nil
                 {% else %}
-                  raise TypeCastError.new("#{_spectator_stubbed_name} received message #{%call} and is attempting to return a `#{%value.class}`, but returned type must be `{{method.return_type}}`.")
+                  raise TypeCastError.new("#{_spectator_stubbed_name} received message #{%call} and is attempting to return a <Unknown>, but returned type must be `{{method.return_type}}`.")
                 {% end %}
               end
             end

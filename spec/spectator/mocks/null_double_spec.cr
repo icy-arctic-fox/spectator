@@ -35,13 +35,13 @@ Spectator.describe Spectator::NullDouble do
   end
 
   context "with abstract stubs and return type annotations" do
-    Spectator::NullDouble.define(TestDouble) do
+    Spectator::NullDouble.define(TestDouble2) do
       abstract_stub abstract def foo(value) : String
     end
 
     let(arguments) { Spectator::Arguments.capture(/foo/) }
     let(stub) { Spectator::ValueStub.new(:foo, "bar", arguments).as(Spectator::Stub) }
-    subject(dbl) { TestDouble.new([stub]) }
+    subject(dbl) { TestDouble2.new([stub]) }
 
     it "enforces the return type" do
       expect(dbl.foo("foobar")).to compile_as(String)
