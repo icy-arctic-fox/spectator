@@ -124,38 +124,9 @@ module Spectator
           # This is necessary to match the expected return type of the original method.
           {% if !method.abstract? %}
             # The method isn't abstract, so we can reference the type it returns without calling it.
-            %stub.as(::Spectator::TypedStub(typeof({{original}}))).value
+            _spectator_cast_stub_value(%stub, %call, typeof({{original}}), {{method.return_type && method.return_type.resolve >= Nil || false}})
           {% elsif method.return_type %}
-            # Attempt to cast the stub to the method's return type.
-            # If successful, return the value of the stub.
-            # This is a common usage where the return type is simple and matches the stub type exactly.
-            if %typed = %stub.as?(::Spectator::TypedStub({{method.return_type}}))
-              %typed.value
-            else
-              # The stub couldn't be easily cast to match the return type.
-              # Get the value as-is from the stub.
-              # This will be compiled as a union of all known stubbed value types.
-              %value = %stub.value
-
-              # Attempt to cast the value to the method's return type.
-              # If successful, which it will be in most cases, return it.
-              # The caller will receive a properly typed value without unions or other side-effects.
-              if %cast = %value.as?({{method.return_type}})
-                %cast
-              else
-                # Now we're down to edge cases.
-                {% if method.return_type.resolve >= Nil %}
-                  # The return type might have "cast" correctly, but the value is nil and the return type is nillable.
-                  # Just return nil in this case.
-                  nil
-                {% else %}
-                  # The stubbed value was something else entirely and cannot be cast to the return type.
-                  # `<Unknown>` should be replaced with the real type of %value (`%value.class`).
-                  # However, there's some weird bug that causes a segfault when trying to inspect the value.
-                  raise TypeCastError.new("#{_spectator_stubbed_name} received message #{%call} and is attempting to return a <Unknown>, but returned type must be `{{method.return_type}}`.")
-                {% end %}
-              end
-            end
+            _spectator_cast_stub_value(%stub, %call, {{method.return_type}}, {{method.return_type.resolve >= Nil}})
           {% else %}
             # Stubbed method is abstract and there's no return type annotation.
             # Return the value of the stub as-is.
@@ -237,36 +208,7 @@ module Spectator
         # Finding a suitable stub is delegated to the type including the `Stubbable` module.
         if %stub = _spectator_find_stub(%call)
           {% if method.return_type %}
-            # Attempt to cast the stub to the method's return type.
-            # If successful, return the value of the stub.
-            # This is a common usage where the return type is simple and matches the stub type exactly.
-            if %typed = %stub.as?(::Spectator::TypedStub({{method.return_type}}))
-              %typed.value
-            else
-              # The stub couldn't be easily cast to match the return type.
-              # Get the value as-is from the stub.
-              # This will be compiled as a union of all known stubbed value types.
-              %value = %stub.value
-
-              # Attempt to cast the value to the method's return type.
-              # If successful, which it will be in most cases, return it.
-              # The caller will receive a properly typed value without unions or other side-effects.
-              if %cast = %value.as?({{method.return_type}})
-                %cast
-              else
-                # Now we're down to edge cases.
-                {% if method.return_type.resolve >= Nil %}
-                  # The return type might have "cast" correctly, but the value is nil and the return type is nillable.
-                  # Just return nil in this case.
-                  nil
-                {% else %}
-                  # The stubbed value was something else entirely and cannot be cast to the return type.
-                  # `<Unknown>` should be replaced with the real type of %value (`%value.class`).
-                  # However, there's some weird bug that causes a segfault when trying to inspect the value.
-                  raise TypeCastError.new("#{_spectator_stubbed_name} received message #{%call} and is attempting to return a <Unknown>, but returned type must be `{{method.return_type}}`.")
-                {% end %}
-              end
-            end
+            _spectator_cast_stub_value(%stub, %call, {{method.return_type}}, {{method.return_type.resolve >= Nil}})
           {% else %}
             # Stubbed method is abstract and there's no return type annotation.
             # Return the value of the stub as-is.
@@ -282,6 +224,45 @@ module Spectator
           {% else %}
             # Stubbed method is abstract and there's no type annotation.
             _spectator_abstract_stub_fallback(%call)
+          {% end %}
+        end
+      end
+    end
+
+    # Utility macro for casting a stub (and it's return value) to the correct type.
+    #
+    # *stub* is the variable holding the stub.
+    # *call* is the variable holding the captured method call.
+    # *type* is the expected type to cast the value to.
+    # *nillable* is true or false depending on whether *type* can be nil.
+    private macro _spectator_cast_stub_value(stub, call, type, nillable)
+      # Attempt to cast the stub to the method's return type.
+      # If successful, return the value of the stub.
+      # This is a common usage where the return type is simple and matches the stub type exactly.
+      if %typed = {{stub}}.as?(::Spectator::TypedStub({{type}}))
+        %typed.value
+      else
+        # The stub couldn't be easily cast to match the return type.
+        # Get the value as-is from the stub.
+        # This will be compiled as a union of all known stubbed value types.
+        %value = {{stub}}.value
+
+        # Attempt to cast the value to the method's return type.
+        # If successful, which it will be in most cases, return it.
+        # The caller will receive a properly typed value without unions or other side-effects.
+        if %cast = %value.as?({{type}})
+          %cast
+        else
+          # Now we're down to edge cases.
+          {% if nillable %}
+            # The return type might have "cast" correctly, but the value is nil and the return type is nillable.
+            # Just return nil in this case.
+            nil
+          {% else %}
+            # The stubbed value was something else entirely and cannot be cast to the return type.
+            # `<Unknown>` should be replaced with the real type of %value (`%value.class`).
+            # However, there's some weird bug that causes a segfault when trying to inspect the value.
+            raise TypeCastError.new("#{_spectator_stubbed_name} received message #{ {{call}} } and is attempting to return a <Unknown>, but returned type must be `{{type}}`.")
           {% end %}
         end
       end
