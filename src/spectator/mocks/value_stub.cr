@@ -1,9 +1,9 @@
 require "./arguments"
-require "./stub"
+require "./typed_stub"
 
 module Spectator
   # Stub that responds with a static value.
-  class ValueStub(T) < Stub
+  class ValueStub(T) < TypedStub(T)
     # Return value.
     getter value : T
 
