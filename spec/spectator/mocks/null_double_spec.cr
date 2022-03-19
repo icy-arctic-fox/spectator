@@ -161,8 +161,6 @@ Spectator.describe Spectator::NullDouble do
     subject(dbl) { EmptyDouble.new }
 
     it "returns self with undefined messages" do
-      io = IO::Memory.new
-      pp = PrettyPrint.new(io)
       aggregate_failures do
         # Methods that would cause type cast errors are omitted from this list.
         expect_null_double(dbl, dbl.!=(42))

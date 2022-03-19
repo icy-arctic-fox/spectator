@@ -94,7 +94,7 @@ module Spectator
 # Additionally, the block usage is forwarded for methods that accept it.
 # Even though `super` and `previous_def` without parameters forward the arguments, they don't forward a block.
   %}
-      {% original = ((@type.methods.includes?(method) || !@type.ancestors.any? { |a| a.methods.includes?(method) }) ? :previous_def : :super).id %}
+      {% original = ((@type.methods.includes?(method) || !@type.ancestors.any? &.methods.includes?(method)) ? :previous_def : :super).id %}
       {% if method.accepts_block?
            original = "#{original} { |*_spectator_yargs| yield *_spectator_yargs }".id
          end %}
