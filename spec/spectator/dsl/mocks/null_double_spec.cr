@@ -28,6 +28,26 @@ Spectator.describe "Null double DSL" do
     it "returns self for unexpected messages" do
       expect_null_double(dbl, dbl.baz)
     end
+
+    context "blocks" do
+      it "supports blocks" do
+        aggregate_failures do
+          expect(dbl.foo { nil }).to eq("foobar")
+          expect(dbl.bar { nil }).to eq(42)
+        end
+      end
+
+      it "supports blocks and has non-union return types" do
+        aggregate_failures do
+          expect(dbl.foo { nil }).to compile_as(String)
+          expect(dbl.bar { nil }).to compile_as(Int32)
+        end
+      end
+
+      it "returns self on undefined messages" do
+        expect_null_double(dbl, dbl.baz { nil })
+      end
+    end
   end
 
   context "block with stubs" do
@@ -137,6 +157,28 @@ Spectator.describe "Null double DSL" do
 
       it "can call methods defined by the block with different signatures" do
         expect(dbl.baz(42)).to eq("block2")
+      end
+    end
+
+    context "methods accepting blocks" do
+      double(:test7) do
+        stub def foo
+          yield
+        end
+
+        stub def bar(& : Int32 -> String)
+          yield 42
+        end
+      end
+
+      subject(dbl) { double(:test7).as_null_object }
+
+      it "defines the method and yields" do
+        expect(dbl.foo { :xyz }).to eq(:xyz)
+      end
+
+      it "matches methods with block argument type restrictions" do
+        expect(dbl.bar &.to_s).to eq("42")
       end
     end
   end

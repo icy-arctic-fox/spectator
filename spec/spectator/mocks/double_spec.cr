@@ -39,8 +39,26 @@ Spectator.describe Spectator::Double do
       expect { dbl.baz }.to compile_as(Nil)
     end
 
-    it "supports blocks" do
-      dbl.bar
+    context "blocks" do
+      it "supports blocks" do
+        aggregate_failures do
+          expect(dbl.foo { nil }).to eq(42)
+          expect(dbl.bar { nil }).to eq("baz")
+        end
+      end
+
+      it "supports blocks and has non-union return types" do
+        aggregate_failures do
+          expect(dbl.foo { nil }).to compile_as(Int32)
+          expect(dbl.bar { nil }).to compile_as(String)
+        end
+      end
+
+      it "fails on undefined messages" do
+        expect do
+          dbl.baz { nil }
+        end.to raise_error(Spectator::UnexpectedMessage, /baz/)
+      end
     end
   end
 
@@ -208,6 +226,7 @@ Spectator.describe Spectator::Double do
     context "without common object methods" do
       Spectator::Double.define(TestDouble) do
         abstract_stub abstract def foo(value) : String
+        abstract_stub abstract def foo(value, & : -> _) : String
       end
 
       let(stub) { Spectator::ValueStub.new(:foo, "bar", arguments).as(Spectator::Stub) }
@@ -227,6 +246,10 @@ Spectator.describe Spectator::Double do
 
       it "has a non-union return type" do
         expect(dbl.foo("foobar")).to compile_as(String)
+      end
+
+      it "ignores the block argument if not in the constraint" do
+        expect(dbl.foo("foobar") { nil }).to eq("bar")
       end
     end
 
@@ -289,6 +312,15 @@ Spectator.describe Spectator::Double do
       aggregate_failures do
         expect(dbl.foo).to eq(42)
         expect(dbl.foo(:lucky)).to eq(7)
+      end
+    end
+
+    it "ignores the block argument if not in the constraint" do
+      dbl._spectator_define_stub(stub5)
+      dbl._spectator_define_stub(stub7)
+      aggregate_failures do
+        expect(dbl.foo { nil }).to eq(5)
+        expect(dbl.foo(:lucky) { nil }).to eq(7)
       end
     end
   end
