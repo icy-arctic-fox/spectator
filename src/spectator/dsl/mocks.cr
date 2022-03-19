@@ -8,13 +8,25 @@ module Spectator::DSL
     # and double type name relative to its context.
     DOUBLES = [] of {Symbol, Symbol, Symbol}
 
-    macro double(name, **value_methods, &block)
-      {% name_symbol = name.id.symbolize
-         context_type_name = @type.name(generic_args: false).symbolize %}
+    private macro def_double(name, **value_methods, &block)
+    {% # Construct a unique type name for the double by using the number of defined doubles.
+ index = ::Spectator::DSL::Mocks::DOUBLES.size
+ double_type_name = "Double#{index}".id.symbolize
 
-      {% if @def %}
-        {% # Find tuples with the same name.
- found_tuples = ::Spectator::DSL::Mocks::DOUBLES.select { |tuple| tuple[0] == name_symbol }
+ # Store information about how the double is defined and its context.
+ # This is important for constructing an instance of the double later.
+ ::Spectator::DSL::Mocks::DOUBLES << {name.id.symbolize, @type.name(generic_args: false).symbolize, double_type_name} %}
+   
+      {% begin %}
+        ::Spectator::Double.define({{double_type_name}}, {{name}}, {{**value_methods}}){% if block %} do
+          {{block.body}}
+        end{% end %}
+      {% end %}
+    end
+
+    private macro new_double(name)
+      {% # Find tuples with the same name.
+ found_tuples = ::Spectator::DSL::Mocks::DOUBLES.select { |tuple| tuple[0] == name.id.symbolize }
 
  # Split the current context's type namespace into parts.
  type_parts = @type.name(generic_args: false).split("::")
@@ -42,21 +54,18 @@ module Spectator::DSL
  # Store the type name used to define the underlying double.
  double_type_name = found_tuple[2].id %}
 
-        {{double_type_name}}.new
+      {{double_type_name}}.new
+    end
+
+    macro double(name, **value_methods, &block)
+      {% if @def %}
+        new_double({{name}}){% if block %} do
+          {{block.body}}
+        end{% end %}
       {% else %}
-        {% # Construct a unique type name for the double by using the number of defined doubles.
- index = ::Spectator::DSL::Mocks::DOUBLES.size
- double_type_name = "Double#{index}".id.symbolize
-
- # Store information about how the double is defined and its context.
- # This is important for constructing an instance of the double later.
- ::Spectator::DSL::Mocks::DOUBLES << {name_symbol, context_type_name, double_type_name} %}
-
-        {% begin %}
-          ::Spectator::Double.define({{double_type_name}}, {{name}}, {{value_methods.double_splat}}){% if block %} do
-            {{block.body}}
-          end{% end %}
-        {% end %}
+        def_double({{name}}, {{**value_methods}}){% if block %} do
+          {{block.body}}
+        end{% end %}
       {% end %}
     end
   end
