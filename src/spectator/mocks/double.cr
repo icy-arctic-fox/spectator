@@ -53,6 +53,10 @@ module Spectator
           inject_stub def {{key.id}}(*%args, **%kwargs)
             {{value}}
           end
+
+          inject_stub def {{key.id}}(*%args, **%kwargs, &)
+            {{key.id}}
+          end
         {% end %}
 
         {% if block %}
