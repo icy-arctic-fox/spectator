@@ -34,33 +34,78 @@ Spectator.describe "Double DSL" do
     end
   end
 
-  # describe "#double with stubs in block" do
-  #   double(:test2) do
-  #     stub def foo
-  #       "foobar"
-  #     end
+  context "block with stubs" do
+    context "one method" do
+      double(:test2) do
+        stub def foo
+          "one method"
+        end
+      end
 
-  #     stub def bar
-  #       42
-  #     end
-  #   end
+      subject(dbl) { double(:test2) }
 
-  #   subject(dbl) { double(:test2) }
+      it "defines a double with methods" do
+        expect(dbl.foo).to eq("one method")
+      end
 
-  #   it "defines a double with methods" do
-  #     aggregate_failures do
-  #       expect(dbl.foo).to eq("foobar")
-  #       expect(dbl.bar).to eq(42)
-  #     end
-  #   end
+      it "compiles types without unions" do
+        expect(dbl.foo).to compile_as(String)
+      end
+    end
 
-  #   it "compiles types without unions" do
-  #     aggregate_failures do
-  #       expect(dbl.foo).to compile_as(String)
-  #       expect(dbl.bar).to compile_as(Int32)
-  #     end
-  #   end
-  # end
+    context "two methods" do
+      double(:test3) do
+        stub def foo
+          "two methods"
+        end
+
+        stub def bar
+          42
+        end
+      end
+
+      subject(dbl) { double(:test3) }
+
+      it "defines a double with methods" do
+        aggregate_failures do
+          expect(dbl.foo).to eq("two methods")
+          expect(dbl.bar).to eq(42)
+        end
+      end
+
+      it "compiles types without unions" do
+        aggregate_failures do
+          expect(dbl.foo).to compile_as(String)
+          expect(dbl.bar).to compile_as(Int32)
+        end
+      end
+    end
+
+    context "empty block" do
+      double(:test4) do
+      end
+
+      subject(dbl) { double(:test4) }
+
+      it "defines a double" do
+        expect(dbl).to be_a(Spectator::Double)
+      end
+    end
+
+    context "stub-less method" do
+      double(:test5) do
+        def foo
+          "no stub"
+        end
+      end
+
+      subject(dbl) { double(:test5) }
+
+      it "defines a double with methods" do
+        expect(dbl.foo).to eq("no stub")
+      end
+    end
+  end
 
   describe "double naming" do
     double(:Name, type: :symbol)

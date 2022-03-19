@@ -49,7 +49,16 @@ module Spectator
             {{value}}
           end
         {% end %}
-        {% if block %}{{block.body}}{% end %}
+
+        {% if block %}{% block.body %}
+          {% for expr in block.body.is_a?(Expressions) ? block.body.expressions : [block.body] %}
+            {% if expr.is_a?(Call) && expr.name == :stub.id %}
+              inject_{{expr}}
+            {% else %}
+              {{expr}}
+            {% end %}
+          {% end %}
+        {% end %}
       end
     end
 
