@@ -52,9 +52,11 @@ module Spectator::DSL
  # This is important for constructing an instance of the double later.
  ::Spectator::DSL::Mocks::DOUBLES << {name_symbol, context_type_name, double_type_name} %}
 
-        ::Spectator::Double.define({{double_type_name}}, {{name}}, {{value_methods.double_splat}}) do
-          {{block.body}}
-        end
+        {% begin %}
+          ::Spectator::Double.define({{double_type_name}}, {{name}}, {{value_methods.double_splat}}){% if block %} do
+            {{block.body}}
+          end{% end %}
+        {% end %}
       {% end %}
     end
   end
