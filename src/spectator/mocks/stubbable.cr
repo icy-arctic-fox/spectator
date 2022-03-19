@@ -270,8 +270,12 @@ module Spectator
 
     # Utility for defining a stubbed method and a fallback.
     private macro inject_stub(method)
-      {{method}}
-      stub {{method}}
+      {% if method.abstract? %}
+        abstract_stub {{method}}
+      {% else %}
+        {{method}}
+        stub {{method}}
+      {% end %}
     end
 
     # Redefines all methods on a type to conditionally respond to messages.
