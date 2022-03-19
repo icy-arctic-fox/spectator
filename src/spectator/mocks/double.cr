@@ -39,6 +39,11 @@ module Spectator
     # ```
     # Double.define(SomeDouble, meth1: 42, meth2: "foobar") do
     #   stub abstract def meth3 : Symbol
+    #
+    #   # Default implementation with a dynamic value.
+    #   stub def meth4
+    #     Time.utc
+    #   end
     # end
     # ```
     macro define(type_name, name = nil, **value_methods, &block)
@@ -50,7 +55,7 @@ module Spectator
           end
         {% end %}
 
-        {% if block %}{% block.body %}
+        {% if block %}
           {% for expr in block.body.is_a?(Expressions) ? block.body.expressions : [block.body] %}
             {% if expr.is_a?(Call) && expr.name == :stub.id %}
               inject_{{expr}}
