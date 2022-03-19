@@ -5,7 +5,7 @@ Spectator.describe "eq matcher" do
     expect(42).to eq(42)
   end
 
-  it "is false for inequal values" do
+  it "is false for unequal values" do
     expect(42).to_not eq(24)
   end
 
@@ -21,10 +21,12 @@ Spectator.describe "eq matcher" do
   end
 
   double(:fake) do
-    stub instance.==(other) { true }
+    stub def ==(other)
+      true
+    end
   end
 
-  it "uses the == operator" do
+  xit "uses the == operator", pending: "Mock redesign" do
     dbl = double(:fake)
     expect(42).to eq(dbl)
     expect(dbl).to have_received(:==).with(42).once

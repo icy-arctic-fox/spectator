@@ -7,11 +7,9 @@ Spectator.describe "GitHub Issue #28" do
     end
   end
 
-  mock Test do
-    stub foo
-  end
+  # mock Test
 
-  it "matches method stubs with no_args" do
+  xit "matches method stubs with no_args", pending: "Mock redesign" do
     test = Test.new
     expect(test).to receive(:foo).with(no_args).and_return(42)
     test.foo
