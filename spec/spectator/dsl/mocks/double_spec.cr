@@ -105,6 +105,44 @@ Spectator.describe "Double DSL" do
         expect(dbl.foo).to eq("no stub")
       end
     end
+
+    context "mixing keyword arguments" do
+      double(:test6, foo: "kwargs", bar: 42) do
+        stub def foo
+          "block"
+        end
+
+        stub def baz
+          "block"
+        end
+
+        stub def baz(value)
+          "block2"
+        end
+      end
+
+      subject(dbl) { double(:test6) }
+
+      it "overrides the keyword arguments with the block methods" do
+        expect(dbl.foo).to eq("block")
+      end
+
+      it "falls back to the keyword argument value for mismatched arguments" do
+        expect(dbl.foo(42)).to eq("kwargs")
+      end
+
+      it "can call methods defined only by keyword arguments" do
+        expect(dbl.bar).to eq(42)
+      end
+
+      it "can call methods defined only by the block" do
+        expect(dbl.baz).to eq("block")
+      end
+
+      it "can call methods defined by the block with different signatures" do
+        expect(dbl.baz(42)).to eq("block2")
+      end
+    end
   end
 
   describe "double naming" do
