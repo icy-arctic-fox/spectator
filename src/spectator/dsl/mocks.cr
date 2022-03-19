@@ -11,14 +11,23 @@ module Spectator::DSL
     private macro def_double(name, **value_methods, &block)
     {% # Construct a unique type name for the double by using the number of defined doubles.
  index = ::Spectator::DSL::Mocks::DOUBLES.size
- double_type_name = "Double#{index}".id.symbolize
+ double_type_name = "Double#{index}".id
+ null_double_type_name = "NullDouble#{index}".id
 
  # Store information about how the double is defined and its context.
  # This is important for constructing an instance of the double later.
- ::Spectator::DSL::Mocks::DOUBLES << {name.id.symbolize, @type.name(generic_args: false).symbolize, double_type_name} %}
-   
+ ::Spectator::DSL::Mocks::DOUBLES << {name.id.symbolize, @type.name(generic_args: false).symbolize, double_type_name.symbolize} %}
+
+      ::Spectator::Double.define({{double_type_name}}, {{name}}, {{**value_methods}}) do
+        def as_null_object
+          {{null_double_type_name}}.new(@stubs)
+        end
+
+        {% if block %}{{block.body}}{% end %}
+      end
+
       {% begin %}
-        ::Spectator::Double.define({{double_type_name}}, {{name}}, {{**value_methods}}){% if block %} do
+        ::Spectator::NullDouble.define({{null_double_type_name}}, {{name}}, {{**value_methods}}){% if block %} do
           {{block.body}}
         end{% end %}
       {% end %}
