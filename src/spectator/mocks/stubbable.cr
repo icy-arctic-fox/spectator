@@ -269,12 +269,33 @@ module Spectator
     end
 
     # Utility for defining a stubbed method and a fallback.
+    #
+    # NOTE: The method definition is exploded and redefined by its parts because using `{{method}}` omits the block argument.
     private macro inject_stub(method)
       {% if method.abstract? %}
-        abstract_stub {{method}}
+        abstract_stub {% if method.visibility != :public %}{{method.visibility.id}}{% end %} abstract def {{method.receiver}}{{method.name}}(
+          {% for arg, i in method.args %}{% if i == method.splat_index %}*{% end %}{{arg}}, {% end %}
+          {% if method.double_splat %}**{{method.double_splat}}, {% end %}
+          {% if method.block_arg %}&{{method.block_arg}}{% elsif method.accepts_block? %}&{% end %}
+        ){% if method.return_type %} : {{method.return_type}}{% end %}{% if !method.free_vars.empty? %} forall {{method.free_vars.splat}}{% end %}
       {% else %}
-        {{method}}
-        stub {{method}}
+        {% if method.visibility != :public %}{{method.visibility.id}}{% end %} def {{method.receiver}}{{method.name}}(
+          {% for arg, i in method.args %}{% if i == method.splat_index %}*{% end %}{{arg}}, {% end %}
+          {% if method.double_splat %}**{{method.double_splat}}, {% end %}
+          {% if method.block_arg %}&{{method.block_arg}}{% elsif method.accepts_block? %}&{% end %}
+        ){% if method.return_type %} : {{method.return_type}}{% end %}{% if !method.free_vars.empty? %} forall {{method.free_vars.splat}}{% end %}
+          {{method.body}}
+        end
+
+        stub {% if method.visibility != :public %}{{method.visibility.id}}{% end %} def {{method.receiver}}{{method.name}}(
+          {% for arg, i in method.args %}{% if i == method.splat_index %}*{% end %}{{arg}}, {% end %}
+          {% if method.double_splat %}**{{method.double_splat}}, {% end %}
+          {% if method.block_arg %}&{{method.block_arg}}{% elsif method.accepts_block? %}&{% end %}
+        ){% if method.return_type %} : {{method.return_type}}{% end %}{% if !method.free_vars.empty? %} forall {{method.free_vars.splat}}{% end %}
+          # Content of this method is discarded,
+          # but this will compile successfully even if it's used.
+          previous_def{% if method.accepts_block? %} { |*%yargs| yield *%yargs }{% end %}
+        end
       {% end %}
     end
 

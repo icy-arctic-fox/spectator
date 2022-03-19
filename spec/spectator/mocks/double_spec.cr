@@ -5,7 +5,7 @@ Spectator.describe Spectator::Double do
   Spectator::Double.define(FooBarDouble, "dbl-name", foo: 42, bar: "baz")
 
   # The subject `dbl` must be carefully used in sub-contexts, otherwise it pollutes parent scopes.
-  # This changes the type of `dbl` to `Double`, which produces a union of methods and their return types.
+  # This changes the type of `dbl` to `Double+`, which produces a union of methods and their return types.
   context "plain double" do
     subject(dbl) { FooBarDouble.new }
 
@@ -37,6 +37,10 @@ Spectator.describe Spectator::Double do
 
     it "uses nil for undefined messages" do
       expect { dbl.baz }.to compile_as(Nil)
+    end
+
+    it "supports blocks" do
+      dbl.bar
     end
   end
 
