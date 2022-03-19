@@ -26,7 +26,7 @@ Spectator.describe "Null double DSL" do
     end
 
     it "returns self for unexpected messages" do
-      expect_null_double(dbl.baz, dbl)
+      expect_null_double(dbl, dbl.baz)
     end
   end
 
