@@ -316,7 +316,7 @@ module Spectator
 
       {% for method in type.methods.reject do |meth|
                          meth.name.starts_with?("_spectator") ||
-                           DSL::RESERVED_KEYWORDS.includes?(meth.name.symbolize)
+                           ::Spectator::DSL::RESERVED_KEYWORDS.includes?(meth.name.symbolize)
                        end %}
         {{style.id}} {{method}}
       {% end %}
