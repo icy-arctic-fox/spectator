@@ -1,4 +1,5 @@
 require "../lazy_wrapper"
+require "./reserved"
 
 module Spectator::DSL
   # DSL methods for defining test values (subjects).
