@@ -25,7 +25,7 @@ Spectator.describe "Double DSL" do
       end
 
       it "reports the double name" do
-        expect { dbl.baz }.to raise_error(Spectator::UnexpectedMessage, /:baz/)
+        expect { dbl.baz }.to raise_error(Spectator::UnexpectedMessage, /:test/)
       end
 
       it "reports the arguments" do
