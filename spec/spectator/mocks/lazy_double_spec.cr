@@ -86,6 +86,7 @@ Spectator.describe Spectator::LazyDouble do
     end
 
     it "responds with defined messages" do
+      hasher = Crystal::Hasher.new
       aggregate_failures do
         expect(dbl.!=(42)).to eq("!=")
         expect(dbl.!~(42)).to eq("!~")
@@ -94,9 +95,9 @@ Spectator.describe Spectator::LazyDouble do
         expect(dbl.=~(42)).to eq("=~")
         expect(dbl.class).to eq("class")
         expect(dbl.dup).to eq("dup")
-        expect(dbl.hash(42)).to eq("hash")
+        expect(dbl.hash(hasher)).to eq("hash")
         expect(dbl.hash).to eq("hash")
-        expect(dbl.in?(42)).to eq(true)
+        expect(dbl.in?([42])).to eq(true)
         expect(dbl.in?(1, 2, 3)).to eq(true)
         expect(dbl.inspect).to eq("inspect")
         expect(dbl.itself).to eq("itself")
@@ -125,6 +126,7 @@ Spectator.describe Spectator::LazyDouble do
     it "raises with undefined messages" do
       io = IO::Memory.new
       pp = PrettyPrint.new(io)
+      hasher = Crystal::Hasher.new
       aggregate_failures do
         expect { dbl.!=(42) }.to raise_error(Spectator::UnexpectedMessage)
         expect { dbl.!~(42) }.to raise_error(Spectator::UnexpectedMessage)
@@ -133,9 +135,9 @@ Spectator.describe Spectator::LazyDouble do
         expect { dbl.=~(42) }.to raise_error(Spectator::UnexpectedMessage)
         expect { dbl.class }.to raise_error(Spectator::UnexpectedMessage)
         expect { dbl.dup }.to raise_error(Spectator::UnexpectedMessage)
-        expect { dbl.hash(42) }.to raise_error(Spectator::UnexpectedMessage)
+        expect { dbl.hash(hasher) }.to raise_error(Spectator::UnexpectedMessage)
         expect { dbl.hash }.to raise_error(Spectator::UnexpectedMessage)
-        expect { dbl.in?(42) }.to raise_error(Spectator::UnexpectedMessage)
+        expect { dbl.in?([42]) }.to raise_error(Spectator::UnexpectedMessage)
         expect { dbl.in?(1, 2, 3) }.to raise_error(Spectator::UnexpectedMessage)
         expect { dbl.inspect }.to raise_error(Spectator::UnexpectedMessage)
         expect { dbl.itself }.to raise_error(Spectator::UnexpectedMessage)

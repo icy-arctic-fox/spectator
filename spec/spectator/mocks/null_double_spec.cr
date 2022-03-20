@@ -124,6 +124,7 @@ Spectator.describe Spectator::NullDouble do
     end
 
     it "responds with defined messages" do
+      hasher = Crystal::Hasher.new
       aggregate_failures do
         expect(dbl.!=(42)).to eq("!=")
         expect(dbl.!~(42)).to eq("!~")
@@ -132,9 +133,9 @@ Spectator.describe Spectator::NullDouble do
         expect(dbl.=~(42)).to eq("=~")
         expect(dbl.class).to eq("class")
         expect(dbl.dup).to eq("dup")
-        expect(dbl.hash(42)).to eq("hash")
+        expect(dbl.hash(hasher)).to eq("hash")
         expect(dbl.hash).to eq("hash")
-        expect(dbl.in?(42)).to eq(true)
+        expect(dbl.in?([42])).to eq(true)
         expect(dbl.in?(1, 2, 3)).to eq(true)
         expect(dbl.inspect).to eq("inspect")
         expect(dbl.itself).to eq("itself")
@@ -161,6 +162,7 @@ Spectator.describe Spectator::NullDouble do
     subject(dbl) { EmptyDouble.new }
 
     it "returns self with undefined messages" do
+      hasher = Crystal::Hasher.new
       aggregate_failures do
         # Methods that would cause type cast errors are omitted from this list.
         expect_null_double(dbl, dbl.!=(42))
@@ -170,7 +172,7 @@ Spectator.describe Spectator::NullDouble do
         expect_null_double(dbl, dbl.=~(42))
         expect_null_double(dbl, dbl.class)
         expect_null_double(dbl, dbl.dup)
-        expect_null_double(dbl, dbl.hash(42))
+        expect_null_double(dbl, dbl.hash(hasher))
         expect_null_double(dbl, dbl.hash)
         expect_null_double(dbl, dbl.itself)
         expect_null_double(dbl, dbl.not_nil!)
