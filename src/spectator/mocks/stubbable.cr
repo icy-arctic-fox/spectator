@@ -1,3 +1,9 @@
+require "../dsl/reserved"
+require "./arguments"
+require "./method_call"
+require "./stub"
+require "./typed_stub"
+
 module Spectator
   # Mix-in for mocks and doubles providing method stubs.
   #
