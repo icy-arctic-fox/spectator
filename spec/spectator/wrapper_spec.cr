@@ -10,9 +10,4 @@ Spectator.describe Spectator::Wrapper do
     wrapper = described_class.new(Int32)
     expect(wrapper.get { Int32 }).to eq(Int32)
   end
-
-  it "raises on invalid cast" do
-    wrapper = described_class.new(42)
-    expect { wrapper.get(String) }.to raise_error(TypeCastError)
-  end
 end
