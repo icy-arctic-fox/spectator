@@ -308,7 +308,7 @@ module Spectator
     # Redefines all methods on a type to conditionally respond to messages.
     # Methods will raise `UnexpectedMessage` if they're called when they shouldn't be.
     # Otherwise, they'll return the configured response.
-    private macro stub_all(type_name, *, with style = :abstract_stub)
+    private macro stub_all(type_name, *, with style = :stub)
       {% type = type_name.resolve %}
       {% if type.superclass %}
         stub_all({{type.superclass}}, with: {{style}})
