@@ -33,7 +33,7 @@ module Spectator::DSL
       {% end %}
     end
 
-    private macro new_double(name)
+    private macro new_double(name = nil, **value_methods)
       {% # Find tuples with the same name.
  found_tuples = ::Spectator::DSL::Mocks::DOUBLES.select { |tuple| tuple[0] == name.id.symbolize }
 
@@ -57,25 +57,25 @@ module Spectator::DSL
  found_tuples = found_tuples.sort_by do |tuple|
    tuple[1].id.split("::").size
  end
- found_tuple = found_tuples.last
- raise "Undefined double type '#{name}'" unless found_tuple
+ found_tuple = found_tuples.last %}
 
- # Store the type name used to define the underlying double.
- double_type_name = found_tuple[2].id %}
-
-      {{double_type_name}}.new
+      {% if found_tuple %}
+        {{found_tuple[2].id}}.new
+      {% else %}
+        ::Spectator::LazyDouble.new({{name}}, {{**value_methods}})
+      {% end %}
     end
 
     macro double(name, **value_methods, &block)
-      {% if @def %}
-        new_double({{name}}){% if block %} do
-          {{block.body}}
-        end{% end %}
-      {% else %}
-        def_double({{name}}, {{**value_methods}}){% if block %} do
+      {% begin %}
+        {% if @def %}new_double{% else %}def_double{% end %}({{name}}, {{**value_methods}}){% if block %} do
           {{block.body}}
         end{% end %}
       {% end %}
+    end
+
+    macro double(**value_methods)
+      new_double({{**value_methods}})
     end
   end
 end
