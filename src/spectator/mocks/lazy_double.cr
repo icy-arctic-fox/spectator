@@ -42,7 +42,7 @@ module Spectator
           # A method that was not defined during initialization was stubbed.
           # Return the value of the stub as-is.
           # Might want to give a warning here, as this may produce a "bloated" union of all known stub types.
-          %stub.value
+          %stub.as(::Spectator::ValueStub).value
         \{% end %}
       else
         # A stub wasn't found, invoke the fallback logic.
