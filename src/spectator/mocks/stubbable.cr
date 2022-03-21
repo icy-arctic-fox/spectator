@@ -100,8 +100,32 @@ module Spectator
 # Additionally, the block usage is forwarded for methods that accept it.
 # Even though `super` and `previous_def` without parameters forward the arguments, they don't forward a block.
   %}
-      {% original = ((@type.methods.includes?(method) || !@type.ancestors.any? &.methods.includes?(method)) ? :previous_def : :super).id %}
-      {% if method.accepts_block?
+      {% original = if @type.methods.includes?(method)
+                      :previous_def
+                    elsif @type.ancestors.any? &.methods.includes?(method)
+                      :super
+                      # sigh... sometimes the method won't match with a simple check.
+                      # It seems to be from a difference with the body attribute.
+                      # Manually check most attributes.
+                    elsif @type.ancestors.any? do |ancestor|
+                            ancestor.methods.any? do |meth|
+                              meth.name == method.name &&
+                              meth.args == method.args &&
+                              meth.accepts_block? == method.accepts_block? &&
+                              meth.block_arg == method.block_arg &&
+                              meth.double_splat == method.double_splat &&
+                              meth.free_vars == method.free_vars &&
+                              meth.receiver == method.receiver &&
+                              meth.return_type == method.return_type &&
+                              method.splat_index == method.splat_index &&
+                              method.visibility == method.visibility
+                            end
+                          end
+                      :super
+                    else
+                      :previous_def # raise "Could not find original implementation of `#{method.name}` for stubbing"
+                    end.id
+         if method.accepts_block?
            original = "#{original} { |*_spectator_yargs| yield *_spectator_yargs }".id
          end %}
 
