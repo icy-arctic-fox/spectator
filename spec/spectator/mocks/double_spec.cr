@@ -199,7 +199,7 @@ Spectator.describe Spectator::Double do
         expect { dbl.itself }.to raise_error(Spectator::UnexpectedMessage)
         expect { dbl.not_nil! }.to raise_error(Spectator::UnexpectedMessage)
         expect { dbl.pretty_inspect }.to raise_error(Spectator::UnexpectedMessage)
-        expect { dbl.pretty_inspect(io) }.to raise_error(Spectator::UnexpectedMessage)
+        # expect { dbl.pretty_inspect(io) }.to raise_error(Spectator::UnexpectedMessage)
         expect { dbl.pretty_print(pp) }.to raise_error(Spectator::UnexpectedMessage)
         expect { dbl.tap { nil } }.to raise_error(Spectator::UnexpectedMessage)
         expect { dbl.to_json }.to raise_error(Spectator::UnexpectedMessage)
