@@ -243,7 +243,7 @@ module Spectator
             # Stubbed method is abstract and there's no return type annotation.
             # Return the value of the stub as-is.
             # This may produce a "bloated" union of all known stub types.
-            %stub.value
+            raise "oof"
           {% end %}
         else
           # A stub wasn't found, invoke the type-specific fallback logic.
