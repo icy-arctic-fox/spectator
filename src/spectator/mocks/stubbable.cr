@@ -290,9 +290,7 @@ module Spectator
             nil
           {% else %}
             # The stubbed value was something else entirely and cannot be cast to the return type.
-            # `<Unknown>` should be replaced with the real type of %value (`%value.class`).
-            # However, there's some weird bug that causes a segfault when trying to inspect the value.
-            raise TypeCastError.new("#{_spectator_stubbed_name} received message #{ {{call}} } and is attempting to return a <Unknown>, but returned type must be `{{type}}`.")
+            raise TypeCastError.new("#{_spectator_stubbed_name} received message #{ {{call}} } and is attempting to return a `#{%value.class}`, but returned type must be `#{ {{type}} }`.")
           {% end %}
         end
       end
