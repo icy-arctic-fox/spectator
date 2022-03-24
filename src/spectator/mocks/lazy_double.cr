@@ -28,6 +28,8 @@ module Spectator
 
     # Handles all messages.
     macro method_missing(call)
+      Log.trace { "Got undefined method `{{call.name}}({{*call.args}}{% if call.named_args %}{% unless call.args.empty? %}, {% end %}{{*call.named_args}}{% end %}){% if call.block %} { ... }{% end %}`" }
+
       # Capture information about the call.
       %args = ::Spectator::Arguments.capture({{call.args.splat(", ")}}{% if call.named_args %}{{*call.named_args}}{% end %})
       %call = ::Spectator::MethodCall.new({{call.name.symbolize}}, %args)

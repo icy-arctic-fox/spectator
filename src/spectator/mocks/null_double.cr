@@ -23,22 +23,27 @@ module Spectator
     end
 
     private def _spectator_stub_fallback(call : MethodCall, &)
+      Log.trace { "Fallback for #{call} - return self" }
       self
     end
 
     private def _spectator_stub_fallback(call : MethodCall, type : self, &)
+      Log.trace { "Fallback for #{call} - return self" }
       self
     end
 
     private def _spectator_stub_fallback(call : MethodCall, type, &)
+      Log.trace { "Fallback for #{call} - call original" }
       yield
     end
 
     private def _spectator_abstract_stub_fallback(call : MethodCall)
+      Log.trace { "Fallback for #{call} - return self" }
       self
     end
 
     private def _spectator_abstract_stub_fallback(call : MethodCall, type : self)
+      Log.trace { "Fallback for #{call} - return self" }
       self
     end
 
@@ -48,7 +53,8 @@ module Spectator
 
     # Handle all methods but only respond to configured messages.
     # Returns self.
-    macro method_missing(_call)
+    macro method_missing(call)
+      Log.trace { "Got undefined method `{{call.name}}({{*call.args}}{% if call.named_args %}{% unless call.args.empty? %}, {% end %}{{*call.named_args}}{% end %}){% if call.block %} { ... }{% end %}` - returning self" }
       self
     end
   end

@@ -81,6 +81,7 @@ module Spectator
     #
     # NOTE: Defining a stub for a method not defined in the double's type has no effect.
     protected def _spectator_define_stub(stub : Stub) : Nil
+      Log.debug { "Defined stub for #{_spectator_stubbed_name} #{stub}" }
       @stubs.unshift(stub)
     end
 
@@ -101,10 +102,12 @@ module Spectator
     end
 
     private def _spectator_stub_fallback(call : MethodCall, &)
+      Log.trace { "Fallback for #{call} - call original" }
       yield
     end
 
     private def _spectator_stub_fallback(call : MethodCall, type, &)
+      Log.trace { "Fallback for #{call} - call original" }
       yield
     end
 
@@ -124,7 +127,7 @@ module Spectator
     # Handle all methods but only respond to configured messages.
     # Raises an `UnexpectedMessage` error for non-configures messages.
     macro method_missing(call)
-      Log.debug { "Got undefined method `{{call.name}}({{*call.args}}{% if call.named_args %}{% unless call.args.empty? %}, {% end %}{{*call.named_args}}{% end %}){% if call.block %} { ... }{% end %}`" }
+      Log.trace { "Got undefined method `{{call.name}}({{*call.args}}{% if call.named_args %}{% unless call.args.empty? %}, {% end %}{{*call.named_args}}{% end %}){% if call.block %} { ... }{% end %}`" }
       args = ::Spectator::Arguments.capture({{call.args.splat(", ")}}{% if call.named_args %}{{*call.named_args}}{% end %})
       call = ::Spectator::MethodCall.new({{call.name.symbolize}}, args)
       raise ::Spectator::UnexpectedMessage.new("#{_spectator_stubbed_name} received unexpected message #{call}")
