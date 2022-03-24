@@ -152,29 +152,30 @@ module Spectator
         if %stub = _spectator_find_stub(%call)
           # Cast the stub or return value to the expected type.
           # This is necessary to match the expected return type of the original method.
-          {% if !method.abstract? %}
-            # The method isn't abstract, so we can reference the type it returns without calling it.
-            _spectator_cast_stub_value(%stub, %call, typeof({{original}}), {{method.return_type && method.return_type.resolve >= Nil || false}})
-          {% elsif method.return_type %}
+          {% if method.return_type %}
+            # Return type restriction takes priority since it can be a superset of the original implementation.
             _spectator_cast_stub_value(%stub, %call, {{method.return_type}}, {{method.return_type.resolve >= Nil}})
+          {% elsif !method.abstract? %}
+            # The method isn't abstract, infer the type it returns without calling it.
+            _spectator_cast_stub_value(%stub, %call, typeof({{original}}), {{method.return_type && method.return_type.resolve >= Nil || false}})
           {% else %}
             # Stubbed method is abstract and there's no return type annotation.
-            # Return the value of the stub as-is.
-            # This may produce a "bloated" union of all known stub types.
-            %stub.value
+            # The value of the stub could be returned as-is.
+            # This may produce a "bloated" union of all known stub types,
+            # and generally causes more annoying problems.
+            raise TypeCastError.new("#{_spectator_stubbed_name} received message #{%call} but cannot resolve the return type.")
           {% end %}
         else
           # A stub wasn't found, invoke the type-specific fallback logic.
-          {% if !method.abstract? %}
-            # Pass along the type of the original method and a block to invoke it.
-            _spectator_stub_fallback(%call, typeof({{original}})) { {{original}} }
-          {% elsif method.return_type %}
-            # Stubbed method is abstract, so it can't be called.
+          {% if method.return_type && method.abstract? %}
             # Pass along just the return type annotation.
             _spectator_abstract_stub_fallback(%call, {{method.return_type}})
-          {% else %}
+          {% elsif method.abstract? %}
             # Stubbed method is abstract and there's no type annotation.
             _spectator_abstract_stub_fallback(%call)
+          {% else %}
+            # Pass along the type of the original method and a block to invoke it.
+            _spectator_stub_fallback(%call, typeof({{original}})) { {{original}} }
           {% end %}
         end
       end
@@ -241,9 +242,10 @@ module Spectator
             _spectator_cast_stub_value(%stub, %call, {{method.return_type}}, {{method.return_type.resolve >= Nil}})
           {% else %}
             # Stubbed method is abstract and there's no return type annotation.
-            # Return the value of the stub as-is.
-            # This may produce a "bloated" union of all known stub types.
-            raise "oof"
+            # The value of the stub could be returned as-is.
+            # This may produce a "bloated" union of all known stub types,
+            # and generally causes more annoying problems.
+            raise TypeCastError.new("#{_spectator_stubbed_name} received message #{%call} but cannot resolve the return type.")
           {% end %}
         else
           # A stub wasn't found, invoke the type-specific fallback logic.
