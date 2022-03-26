@@ -1,12 +1,6 @@
 require "../../../spec_helper"
 
 Spectator.describe "Null double DSL" do
-  private macro expect_null_double(double, actual)
-    %actual_box = Box.box({{actual}})
-    %double_box = Box.box({{double}})
-    expect(%actual_box).to eq(%double_box), {{actual.stringify}} + " is not " + {{double.stringify}}
-  end
-
   context "specifying methods as keyword args" do
     double(:test, foo: "foobar", bar: 42)
     subject(dbl) { double(:test).as_null_object }
@@ -26,7 +20,7 @@ Spectator.describe "Null double DSL" do
     end
 
     it "returns self for unexpected messages" do
-      expect_null_double(dbl, dbl.baz)
+      expect(dbl.baz).to be(dbl)
     end
 
     context "blocks" do
@@ -45,7 +39,7 @@ Spectator.describe "Null double DSL" do
       end
 
       it "returns self on undefined messages" do
-        expect_null_double(dbl, dbl.baz { nil })
+        expect(dbl.baz { nil }).to be(dbl)
       end
     end
   end

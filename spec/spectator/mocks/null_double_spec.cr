@@ -4,12 +4,6 @@ Spectator.describe Spectator::NullDouble do
   Spectator::NullDouble.define(EmptyDouble)
   Spectator::NullDouble.define(FooBarDouble, "dbl-name", foo: 42, bar: "baz")
 
-  private macro expect_null_double(double, actual)
-    %actual_box = Box.box({{actual}})
-    %double_box = Box.box({{double}})
-    expect(%actual_box).to eq(%double_box), {{actual.stringify}} + " is not " + {{double.stringify}}
-  end
-
   # The subject `dbl` must be carefully used in sub-contexts, otherwise it pollutes parent scopes.
   # This changes the type of `dbl` to `Double`, which produces a union of methods and their return types.
   context "plain double" do
@@ -23,7 +17,7 @@ Spectator.describe Spectator::NullDouble do
     end
 
     it "returns self on undefined messages" do
-      expect_null_double(dbl, dbl.baz)
+      expect(dbl.baz).to be(dbl)
     end
 
     it "has a non-union return type" do
@@ -49,7 +43,7 @@ Spectator.describe Spectator::NullDouble do
       end
 
       it "returns self on undefined messages" do
-        expect_null_double(dbl, dbl.baz { nil })
+        expect(dbl.baz { nil }).to be(dbl)
       end
     end
   end
@@ -165,19 +159,19 @@ Spectator.describe Spectator::NullDouble do
       hasher = Crystal::Hasher.new
       aggregate_failures do
         # Methods that would cause type cast errors are omitted from this list.
-        expect_null_double(dbl, dbl.!=(42))
-        expect_null_double(dbl, dbl.!~(42))
-        expect_null_double(dbl, dbl.==(42))
-        expect_null_double(dbl, dbl.===(42))
-        expect_null_double(dbl, dbl.=~(42))
-        expect_null_double(dbl, dbl.class)
-        expect_null_double(dbl, dbl.dup)
-        expect_null_double(dbl, dbl.hash(hasher))
-        expect_null_double(dbl, dbl.hash)
-        expect_null_double(dbl, dbl.itself)
-        expect_null_double(dbl, dbl.not_nil!)
-        expect_null_double(dbl, dbl.tap { nil })
-        expect_null_double(dbl, dbl.try { nil })
+        expect(dbl.!=(42)).to be(dbl)
+        expect(dbl.!~(42)).to be(dbl)
+        expect(dbl.==(42)).to be(dbl)
+        expect(dbl.===(42)).to be(dbl)
+        expect(dbl.=~(42)).to be(dbl)
+        expect(dbl.class).to be(dbl)
+        expect(dbl.dup).to be(dbl)
+        expect(dbl.hash(hasher)).to be(dbl)
+        expect(dbl.hash).to be(dbl)
+        expect(dbl.itself).to be(dbl)
+        expect(dbl.not_nil!).to be(dbl)
+        expect(dbl.tap { nil }).to be(dbl)
+        expect(dbl.try { nil }).to be(dbl)
       end
     end
   end
@@ -199,11 +193,11 @@ Spectator.describe Spectator::NullDouble do
       end
 
       it "returns self when constraint unsatisfied" do
-        expect_null_double(dbl, dbl.foo("baz"))
+        expect(dbl.foo("baz")).to be(dbl)
       end
 
       it "returns self when argument count doesn't match" do
-        expect_null_double(dbl, dbl.foo)
+        expect(dbl.foo).to be(dbl)
       end
 
       it "ignores the block argument if not in the constraint" do
@@ -224,11 +218,11 @@ Spectator.describe Spectator::NullDouble do
       end
 
       it "returns self when constraint unsatisfied" do
-        expect_null_double(dbl, dbl.hash("baz"))
+        expect(dbl.hash("baz")).to be(dbl)
       end
 
       it "returns self when argument count doesn't match" do
-        expect_null_double(dbl, dbl.hash)
+        expect(dbl.hash).to be(dbl)
       end
     end
   end
