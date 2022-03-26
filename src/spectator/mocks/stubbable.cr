@@ -292,7 +292,12 @@ module Spectator
             nil
           {% else %}
             # The stubbed value was something else entirely and cannot be cast to the return type.
-            raise TypeCastError.new("#{_spectator_stubbed_name} received message #{ {{call}} } and is attempting to return a `#{%value.class}`, but returned type must be `#{ {{type}} }`.")
+            %type = begin
+              %value.class.to_s
+            rescue
+              "<Unknown>"
+            end
+            raise TypeCastError.new("#{_spectator_stubbed_name} received message #{ {{call}} } and is attempting to return a `#{%type}`, but returned type must be `#{ {{type}} }`.")
           {% end %}
         end
       end
