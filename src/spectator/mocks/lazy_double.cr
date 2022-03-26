@@ -3,6 +3,7 @@ require "./arguments"
 require "./double"
 require "./method_call"
 require "./stub"
+require "./value_stub"
 
 module Spectator
   # Stands in for an object for testing that a SUT calls expected methods.
@@ -17,8 +18,12 @@ module Spectator
     @name : String?
 
     def initialize(_spectator_double_name = nil, _spectator_double_stubs = [] of Stub, **@messages : **Messages)
-      super(_spectator_double_stubs)
       @name = _spectator_double_name.try &.inspect
+      message_stubs = messages.map do |method, value|
+        ValueStub.new(method, value)
+      end
+
+      super(_spectator_double_stubs + message_stubs)
     end
 
     # Returns the double's name formatted for user output.
