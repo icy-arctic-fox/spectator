@@ -1,6 +1,7 @@
 require "./double"
 require "./method_call"
 require "./stubbed_name"
+require "./unexpected_message"
 
 module Spectator
   # Stands in for an object for testing that a SUT calls expected methods.
@@ -23,39 +24,58 @@ module Spectator
     end
 
     private def _spectator_stub_fallback(call : MethodCall, &)
-      Log.trace { "Fallback for #{call} - return self" }
-      self
-    end
-
-    private def _spectator_stub_fallback(call : MethodCall, type : self, &)
-      Log.trace { "Fallback for #{call} - return self" }
-      self
-    end
-
-    private def _spectator_stub_fallback(call : MethodCall, type, &)
-      Log.trace { "Fallback for #{call} - call original" }
-      yield
+      if @stubs.any? { |stub| stub.method == call.method }
+        Log.info { "Stubs are defined for #{call.method.inspect}, but none matched (no argument constraints met)." }
+        raise UnexpectedMessage.new("#{_spectator_stubbed_name} received unexpected message #{call}")
+      else
+        Log.trace { "Fallback for #{call} - return original" }
+        yield
+      end
     end
 
     private def _spectator_abstract_stub_fallback(call : MethodCall)
-      Log.trace { "Fallback for #{call} - return self" }
-      self
+      if @stubs.any? { |stub| stub.method == call.method }
+        Log.info { "Stubs are defined for #{call.method.inspect}, but none matched (no argument constraints met)." }
+        raise UnexpectedMessage.new("#{_spectator_stubbed_name} received unexpected message #{call}")
+      else
+        Log.trace { "Fallback for #{call} - return self" }
+        self
+      end
     end
 
-    private def _spectator_abstract_stub_fallback(call : MethodCall, type : self)
-      Log.trace { "Fallback for #{call} - return self" }
-      self
+    private def _spectator_abstract_stub_fallback(call : MethodCall, _type : self)
+      _spectator_abstract_stub_fallback(call)
     end
 
     private def _spectator_abstract_stub_fallback(call : MethodCall, type)
-      raise TypeCastError.new("#{_spectator_stubbed_name} received message #{call} and is attempting to return `self`, but returned type must be `#{type}`.")
+      if @stubs.any? { |stub| stub.method == call.method }
+        Log.info { "Stubs are defined for #{call.method.inspect}, but none matched (no argument constraints met)." }
+        raise UnexpectedMessage.new("#{_spectator_stubbed_name} received unexpected message #{call}")
+      else
+        raise TypeCastError.new("#{_spectator_stubbed_name} received message #{call} and is attempting to return `self`, but returned type must be `#{type}`.")
+      end
     end
 
-    # Handle all methods but only respond to configured messages.
-    # Returns self.
+    # Handles all undefined messages.
+    # Returns stubbed values if available, otherwise delegates to `#_spectator_abstract_stub_fallback`.
     macro method_missing(call)
-      Log.trace { "Got undefined method `{{call.name}}({{*call.args}}{% if call.named_args %}{% unless call.args.empty? %}, {% end %}{{*call.named_args}}{% end %}){% if call.block %} { ... }{% end %}` - returning self" }
-      self
+      Log.trace { "Got undefined method `{{call.name}}({{*call.args}}{% if call.named_args %}{% unless call.args.empty? %}, {% end %}{{*call.named_args}}{% end %}){% if call.block %} { ... }{% end %}`" }
+
+      # Capture information about the call.
+      %args = ::Spectator::Arguments.capture({{call.args.splat(", ")}}{% if call.named_args %}{{*call.named_args}}{% end %})
+      %call = ::Spectator::MethodCall.new({{call.name.symbolize}}, %args)
+
+      # Attempt to find a stub that satisfies the method call and arguments.
+      if %stub = _spectator_find_stub(%call)
+        # A method that was not defined during initialization was stubbed.
+        # Return the value of the stub as-is.
+        # Might want to give a warning here, as this may produce a "bloated" union of all known stub types.
+        %stub.as(::Spectator::ValueStub).value
+      else
+        # A stub wasn't found, invoke the fallback logic.
+        # Message received for a methods that isn't stubbed nor defined when initialized.
+        _spectator_abstract_stub_fallback(%call)
+      end
     end
   end
 end
