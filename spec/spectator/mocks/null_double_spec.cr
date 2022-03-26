@@ -62,7 +62,7 @@ Spectator.describe Spectator::NullDouble do
     end
 
     it "raises on non-matching arguments" do
-      expect { dbl.foo("bar") }.to raise_error(TypeCastError, /String/)
+      expect { dbl.foo("bar") }.to raise_error(Spectator::UnexpectedMessage, /foo/)
     end
 
     it "raises on non-matching stub" do

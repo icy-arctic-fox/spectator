@@ -4,7 +4,6 @@ require "./stub"
 require "./stubbable"
 require "./stubbed_name"
 require "./unexpected_message"
-require "./value_stub"
 
 module Spectator
   # Stands in for an object for testing that a SUT calls expected methods.
@@ -75,6 +74,15 @@ module Spectator
     #
     # An initial set of *stubs* can be provided.
     def initialize(@stubs : Array(Stub) = [] of Stub)
+    end
+
+    # Compares against another object.
+    #
+    # Always returns false.
+    # This method exists as a workaround to provide an alternative to `Object#same?`,
+    # which only accepts a `Reference` or `Nil`.
+    def same?(other) : Bool
+      false
     end
 
     # Defines a stub to change the behavior of a method in this double.
