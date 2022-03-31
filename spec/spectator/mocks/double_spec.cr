@@ -179,7 +179,7 @@ Spectator.describe Spectator::Double do
   context "without common object methods" do
     subject(dbl) { EmptyDouble.new }
 
-    it "raises with undefined messages" do
+    it "returns original implementation with undefined messages" do
       io = IO::Memory.new
       pp = PrettyPrint.new(io)
       hasher = Crystal::Hasher.new
@@ -188,37 +188,30 @@ Spectator.describe Spectator::Double do
         expect(dbl.!~(42)).to be_true
         expect(dbl.==(42)).to be_false
         expect(dbl.===(42)).to be_false
-        expect(dbl.=~(42)).to be_false
-        expect(dbl.class).to be_nil
-        expect(dbl.dup).to eq(dbl)
-        expect(dbl.hash(hasher)).to eq(42)
-        expect(dbl.hash).to eq(42)
+        expect(dbl.=~(42)).to be_nil
+        expect(dbl.class).to eq(EmptyDouble)
+        expect(dbl.dup).to be_a(EmptyDouble)
+        expect(dbl.hash(hasher)).to be_a(Crystal::Hasher)
+        expect(dbl.hash).to be_a(UInt64)
         expect(dbl.in?([42])).to be_false
         expect(dbl.in?(1, 2, 3)).to be_false
-        expect(dbl.inspect).to eq("foo")
+        expect(dbl.inspect).to contain("EmptyDouble")
         expect(dbl.itself).to be(dbl)
         expect(dbl.not_nil!).to be(dbl)
-        expect(dbl.pretty_inspect).to eq("foo")
-        # expect(dbl.pretty_inspect(io)).to be_nil
+        expect(dbl.pretty_inspect).to contain("EmptyDouble")
         expect(dbl.pretty_print(pp)).to be_nil
         expect(dbl.tap { nil }).to be(dbl)
-        expect(dbl.to_json).to eq("foo")
-        expect(dbl.to_json(io)).to be_nil
-        expect(dbl.to_pretty_json).to eq("foo")
-        expect(dbl.to_pretty_json(io)).to be_nil
-        expect(dbl.to_s).to eq("foo")
+        expect(dbl.to_s).to contain("EmptyDouble")
         expect(dbl.to_s(io)).to be_nil
-        expect(dbl.to_yaml).to eq("foo")
-        expect(dbl.to_yaml(io)).to be_nil
         expect(dbl.try { nil }).to be_nil
-        expect(dbl.object_id).to eq(42)
+        expect(dbl.object_id).to be_a(UInt64)
         expect(dbl.same?(dbl)).to be_true
         expect(dbl.same?(nil)).to be_false
       end
     end
 
-    it "reports arguments" do
-      expect { dbl.same?(123) }.to raise_error(Spectator::UnexpectedMessage, /\(123\)/)
+    it "reports arguments when they don't match" do
+      expect { dbl.same?(123, :xyz) }.to raise_error(Spectator::UnexpectedMessage, /\(123, :xyz\)/)
     end
   end
 

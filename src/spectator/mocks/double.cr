@@ -110,13 +110,8 @@ module Spectator
     end
 
     private def _spectator_stub_fallback(call : MethodCall, &)
-      if @stubs.any? { |stub| stub.method == call.method }
-        Log.info { "Stubs are defined for #{call.method.inspect}, but none matched (no argument constraints met)." }
-        raise UnexpectedMessage.new("#{_spectator_stubbed_name} received unexpected message #{call}")
-      else
-        Log.trace { "Fallback for #{call} - call original" }
-        yield
-      end
+      Log.trace { "Fallback for #{call} - call original" }
+      yield
     end
 
     private def _spectator_stub_fallback(call : MethodCall, _type, &)
@@ -124,6 +119,12 @@ module Spectator
     end
 
     private def _spectator_abstract_stub_fallback(call : MethodCall)
+      Log.info do
+        break unless @stubs.any? { |stub| stub.method == call.method }
+
+        "Stubs are defined for #{call.method.inspect}, but none matched (no argument constraints met)."
+      end
+
       raise UnexpectedMessage.new("#{_spectator_stubbed_name} received unexpected message #{call}")
     end
 

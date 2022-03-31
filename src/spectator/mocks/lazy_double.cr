@@ -31,6 +31,16 @@ module Spectator
       "#<LazyDouble #{@name || "Anonymous"}>"
     end
 
+    private def _spectator_stub_fallback(call : MethodCall, &)
+      if @stubs.any? { |stub| stub.method == call.method }
+        Log.info { "Stubs are defined for #{call.method.inspect}, but none matched (no argument constraints met)." }
+        raise UnexpectedMessage.new("#{_spectator_stubbed_name} received unexpected message #{call}")
+      else
+        Log.trace { "Fallback for #{call} - call original" }
+        yield
+      end
+    end
+
     # Handles all messages.
     macro method_missing(call)
       Log.trace { "Got undefined method `{{call.name}}({{*call.args}}{% if call.named_args %}{% unless call.args.empty? %}, {% end %}{{*call.named_args}}{% end %}){% if call.block %} { ... }{% end %}`" }

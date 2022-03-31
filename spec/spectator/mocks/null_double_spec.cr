@@ -155,23 +155,30 @@ Spectator.describe Spectator::NullDouble do
   context "without common object methods" do
     subject(dbl) { EmptyDouble.new }
 
-    it "returns self with undefined messages" do
+    it "returns original implementation with undefined messages" do
       hasher = Crystal::Hasher.new
       aggregate_failures do
-        # Methods that would cause type cast errors are omitted from this list.
-        expect(dbl.!=(42)).to be(dbl)
-        expect(dbl.!~(42)).to be(dbl)
-        expect(dbl.==(42)).to be(dbl)
-        expect(dbl.===(42)).to be(dbl)
-        expect(dbl.=~(42)).to be(dbl)
-        expect(dbl.class).to be(dbl)
-        expect(dbl.dup).to be(dbl)
-        expect(dbl.hash(hasher)).to be(dbl)
-        expect(dbl.hash).to be(dbl)
+        expect(dbl.!=(42)).to be_true
+        expect(dbl.!~(42)).to be_true
+        expect(dbl.==(42)).to be_false
+        expect(dbl.===(42)).to be_false
+        expect(dbl.=~(42)).to be_nil
+        expect(dbl.class).to eq(EmptyDouble)
+        expect(dbl.dup).to be_a(EmptyDouble)
+        expect(dbl.hash(hasher)).to be_a(Crystal::Hasher)
+        expect(dbl.hash).to be_a(UInt64)
+        expect(dbl.in?([42])).to be_false
+        expect(dbl.in?(1, 2, 3)).to be_false
+        expect(dbl.inspect).to contain("EmptyDouble")
         expect(dbl.itself).to be(dbl)
         expect(dbl.not_nil!).to be(dbl)
+        expect(dbl.pretty_inspect).to contain("EmptyDouble")
         expect(dbl.tap { nil }).to be(dbl)
-        expect(dbl.try { nil }).to be(dbl)
+        expect(dbl.to_s).to contain("EmptyDouble")
+        expect(dbl.try { nil }).to be_nil
+        expect(dbl.object_id).to be_a(UInt64)
+        expect(dbl.same?(dbl)).to be_true
+        expect(dbl.same?(nil)).to be_false
       end
     end
   end
@@ -192,12 +199,12 @@ Spectator.describe Spectator::NullDouble do
         expect(dbl.foo("foobar")).to eq("bar")
       end
 
-      it "returns self when constraint unsatisfied" do
-        expect(dbl.foo("baz")).to be(dbl)
+      it "raises self when constraint unsatisfied" do
+        expect { dbl.foo("baz") }.to raise_error(Spectator::UnexpectedMessage, /foo/)
       end
 
-      it "returns self when argument count doesn't match" do
-        expect(dbl.foo).to be(dbl)
+      it "raises self when argument count doesn't match" do
+        expect { dbl.foo }.to raise_error(Spectator::UnexpectedMessage, /foo/)
       end
 
       it "ignores the block argument if not in the constraint" do
@@ -217,12 +224,12 @@ Spectator.describe Spectator::NullDouble do
         expect(dbl.hash("foobar")).to eq(12345)
       end
 
-      it "returns self when constraint unsatisfied" do
-        expect(dbl.hash("baz")).to be(dbl)
+      it "raises when constraint unsatisfied" do
+        expect { dbl.hash("baz") }.to raise_error(Spectator::UnexpectedMessage, /hash/)
       end
 
-      it "returns self when argument count doesn't match" do
-        expect(dbl.hash).to be(dbl)
+      it "raises when argument count doesn't match" do
+        expect { dbl.hash }.to raise_error(Spectator::UnexpectedMessage, /hash/)
       end
     end
   end

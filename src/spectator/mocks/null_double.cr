@@ -23,16 +23,6 @@ module Spectator
       {% end %}
     end
 
-    private def _spectator_stub_fallback(call : MethodCall, &)
-      if @stubs.any? { |stub| stub.method == call.method }
-        Log.info { "Stubs are defined for #{call.method.inspect}, but none matched (no argument constraints met)." }
-        raise UnexpectedMessage.new("#{_spectator_stubbed_name} received unexpected message #{call}")
-      else
-        Log.trace { "Fallback for #{call} - return original" }
-        yield
-      end
-    end
-
     private def _spectator_abstract_stub_fallback(call : MethodCall)
       if @stubs.any? { |stub| stub.method == call.method }
         Log.info { "Stubs are defined for #{call.method.inspect}, but none matched (no argument constraints met)." }
@@ -43,10 +33,12 @@ module Spectator
       end
     end
 
+    # Specialization that matches when the return type matches self.
     private def _spectator_abstract_stub_fallback(call : MethodCall, _type : self)
       _spectator_abstract_stub_fallback(call)
     end
 
+    # Default implementation that raises a `TypeCastError` since the return type isn't self.
     private def _spectator_abstract_stub_fallback(call : MethodCall, type)
       if @stubs.any? { |stub| stub.method == call.method }
         Log.info { "Stubs are defined for #{call.method.inspect}, but none matched (no argument constraints met)." }
