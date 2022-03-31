@@ -184,8 +184,8 @@ Spectator.describe Spectator::NullDouble do
 
     context "without common object methods" do
       Spectator::NullDouble.define(TestDouble) do
-        abstract_stub abstract def foo(value)
-        abstract_stub abstract def foo(value, & : -> _)
+        abstract_stub abstract def foo(value) : String
+        abstract_stub abstract def foo(value, & : -> _) : String
       end
 
       let(stub) { Spectator::ValueStub.new(:foo, "bar", arguments).as(Spectator::Stub) }
@@ -210,6 +210,7 @@ Spectator.describe Spectator::NullDouble do
 
     context "with common object methods" do
       Spectator::NullDouble.define(TestDouble) do
+        @[Spectator::ReturnType(Crystal::Hasher)]
         stub abstract def hash(hasher)
       end
 
