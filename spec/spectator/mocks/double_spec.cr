@@ -117,57 +117,53 @@ Spectator.describe Spectator::Double do
   context "with common object methods" do
     subject(dbl) do
       EmptyDouble.new([
-        Spectator::ValueStub.new(:"!=", "!="),
-        Spectator::ValueStub.new(:"!~", "!~"),
-        Spectator::ValueStub.new(:"==", "=="),
-        Spectator::ValueStub.new(:"===", "==="),
-        Spectator::ValueStub.new(:"=~", "=~"),
-        Spectator::ValueStub.new(:class, "class"),
-        Spectator::ValueStub.new(:dup, "dup"),
-        Spectator::ValueStub.new(:hash, "hash"),
+        Spectator::ValueStub.new(:"!=", false),
+        Spectator::ValueStub.new(:"!~", false),
+        Spectator::ValueStub.new(:"==", true),
+        Spectator::ValueStub.new(:"===", true),
+        Spectator::ValueStub.new(:"=~", nil),
+        Spectator::ValueStub.new(:class, EmptyDouble),
+        Spectator::ValueStub.new(:dup, EmptyDouble.new),
         Spectator::ValueStub.new(:"in?", true),
         Spectator::ValueStub.new(:inspect, "inspect"),
-        Spectator::ValueStub.new(:itself, "itself"),
-        Spectator::ValueStub.new(:"not_nil!", "not_nil!"),
+        Spectator::ValueStub.new(:itself, EmptyDouble.new),
+        Spectator::ValueStub.new(:"not_nil!", EmptyDouble.new),
         Spectator::ValueStub.new(:pretty_inspect, "pretty_inspect"),
-        Spectator::ValueStub.new(:tap, "tap"),
+        Spectator::ValueStub.new(:tap, EmptyDouble.new),
         Spectator::ValueStub.new(:to_json, "to_json"),
         Spectator::ValueStub.new(:to_pretty_json, "to_pretty_json"),
         Spectator::ValueStub.new(:to_s, "to_s"),
         Spectator::ValueStub.new(:to_yaml, "to_yaml"),
-        Spectator::ValueStub.new(:try, "try"),
+        Spectator::ValueStub.new(:try, nil),
         Spectator::ValueStub.new(:object_id, 42_u64),
         Spectator::ValueStub.new(:"same?", true),
       ] of Spectator::Stub)
     end
 
     it "responds with defined messages" do
-      hasher = Crystal::Hasher.new
       aggregate_failures do
-        expect(dbl.!=(42)).to eq("!=")
-        expect(dbl.!~(42)).to eq("!~")
-        expect(dbl.==(42)).to eq("==")
-        expect(dbl.===(42)).to eq("===")
-        expect(dbl.=~(42)).to eq("=~")
-        expect(dbl.class).to eq("class")
-        expect(dbl.dup).to eq("dup")
-        expect(dbl.hash(hasher)).to eq("hash")
-        expect(dbl.hash).to eq("hash")
+        expect(dbl.!=(42)).to be_false
+        expect(dbl.!~(42)).to be_false
+        expect(dbl.==(42)).to be_true
+        expect(dbl.===(42)).to be_true
+        expect(dbl.=~(42)).to be_nil
+        expect(dbl.class).to eq(EmptyDouble)
+        expect(dbl.dup).to be_a(EmptyDouble)
         expect(dbl.in?([42])).to eq(true)
         expect(dbl.in?(1, 2, 3)).to eq(true)
         expect(dbl.inspect).to eq("inspect")
-        expect(dbl.itself).to eq("itself")
-        expect(dbl.not_nil!).to eq("not_nil!")
+        expect(dbl.itself).to be_a(EmptyDouble)
+        expect(dbl.not_nil!).to be_a(EmptyDouble)
         expect(dbl.pretty_inspect).to eq("pretty_inspect")
-        expect(dbl.tap { nil }).to eq("tap")
+        expect(dbl.tap { nil }).to be_a(EmptyDouble)
         expect(dbl.to_json).to eq("to_json")
         expect(dbl.to_pretty_json).to eq("to_pretty_json")
         expect(dbl.to_s).to eq("to_s")
         expect(dbl.to_yaml).to eq("to_yaml")
-        expect(dbl.try { nil }).to eq("try")
+        expect(dbl.try { nil }).to be_nil
         expect(dbl.object_id).to eq(42_u64)
-        expect(dbl.same?(dbl)).to eq(true)
-        expect(dbl.same?(nil)).to eq(true)
+        expect(dbl.same?(dbl)).to be_true
+        expect(dbl.same?(nil)).to be_true
       end
     end
 
