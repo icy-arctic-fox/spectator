@@ -130,7 +130,7 @@ module Spectator
          end %}
 
          {% # Reconstruct the method signature.
-# I wish there was a better way of doing this, but there isn't (at not one that I'm aware of).
+# I wish there was a better way of doing this, but there isn't (at least not that I'm aware of).
 # This chunk of code must reconstruct the method signature exactly as it was originally.
 # If it doesn't match, it doesn't override the method and the stubbing won't work.
   %}
@@ -218,7 +218,7 @@ module Spectator
   %}
 
       {% # Reconstruct the method signature.
-# I wish there was a better way of doing this, but there isn't (at not one that I'm aware of).
+# I wish there was a better way of doing this, but there isn't (at least not that I'm aware of).
 # This chunk of code must reconstruct the method signature exactly as it was originally.
 # If it doesn't match, it doesn't override the method and the stubbing won't work.
   %}
