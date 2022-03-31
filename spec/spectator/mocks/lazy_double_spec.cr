@@ -123,8 +123,6 @@ Spectator.describe Spectator::LazyDouble do
 
     it "returns the original value" do
       io = IO::Memory.new
-      pp = PrettyPrint.new(io)
-      hasher = Crystal::Hasher.new
       aggregate_failures do
         expect(dbl.!=(42)).to be_true
         expect(dbl.!~(42)).to be_true
