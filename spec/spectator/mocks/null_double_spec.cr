@@ -210,15 +210,15 @@ Spectator.describe Spectator::NullDouble do
 
     context "with common object methods" do
       Spectator::NullDouble.define(TestDouble) do
-        @[Spectator::ReturnType(Crystal::Hasher)]
-        stub abstract def hash(hasher)
+        stub abstract def hash(hasher) : Crystal::Hasher
       end
 
-      let(stub) { Spectator::ValueStub.new(:hash, 12345, arguments).as(Spectator::Stub) }
+      let(hasher) { Crystal::Hasher.new }
+      let(stub) { Spectator::ValueStub.new(:hash, hasher, arguments).as(Spectator::Stub) }
       subject(dbl) { TestDouble.new([stub]) }
 
       it "returns the response when constraint satisfied" do
-        expect(dbl.hash("foobar")).to eq(12345)
+        expect(dbl.hash("foobar")).to be(hasher)
       end
 
       it "raises when constraint unsatisfied" do

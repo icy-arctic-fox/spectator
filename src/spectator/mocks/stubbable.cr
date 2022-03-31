@@ -163,7 +163,7 @@ module Spectator
             # The value of the stub could be returned as-is.
             # This may produce a "bloated" union of all known stub types,
             # and generally causes more annoying problems.
-            raise TypeCastError.new("#{_spectator_stubbed_name} received message #{%call} but cannot resolve the return type.")
+            raise TypeCastError.new("#{_spectator_stubbed_name} received message #{%call} but cannot resolve the return type. Please add a return type restriction.")
           {% end %}
         else
           # A stub wasn't found, invoke the type-specific fallback logic.
@@ -239,13 +239,14 @@ module Spectator
         # Finding a suitable stub is delegated to the type including the `Stubbable` module.
         if %stub = _spectator_find_stub(%call)
           {% if method.return_type %}
+            # Return type was provided with a restriction.
             _spectator_cast_stub_value(%stub, %call, {{method.return_type}}, {{method.return_type.resolve >= Nil}})
           {% else %}
             # Stubbed method is abstract and there's no return type annotation.
             # The value of the stub could be returned as-is.
             # This may produce a "bloated" union of all known stub types,
             # and generally causes more annoying problems.
-            raise TypeCastError.new("#{_spectator_stubbed_name} received message #{%call} but cannot resolve the return type.")
+            raise TypeCastError.new("#{_spectator_stubbed_name} received message #{%call} but cannot resolve the return type. Please add a return type restriction.")
           {% end %}
         else
           # A stub wasn't found, invoke the type-specific fallback logic.
