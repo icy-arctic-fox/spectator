@@ -277,7 +277,7 @@ module Spectator
         # The stub couldn't be easily cast to match the return type.
         # Get the value as-is from the stub.
         # This will be compiled as a union of all known stubbed value types.
-        %value = {{stub}}.value
+        %value = {{stub}}.as(::Spectator::ValueStub).value
 
         # Attempt to cast the value to the method's return type.
         # If successful, which it will be in most cases, return it.
