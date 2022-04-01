@@ -176,4 +176,14 @@ Spectator.describe "Null double DSL" do
       end
     end
   end
+
+  describe "predefined method stubs" do
+    double(:test8, foo: 42)
+
+    let(dbl) { double(:test8, foo: 7).as_null_object }
+
+    it "overrides the original value" do
+      expect(dbl.foo).to eq(7)
+    end
+  end
 end

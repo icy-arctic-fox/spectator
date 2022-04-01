@@ -95,7 +95,7 @@ module Spectator::DSL
  found_tuple = found_tuples.last %}
 
       {% if found_tuple %}
-        {{found_tuple[2].id}}.new
+        {{found_tuple[2].id}}.new({{**value_methods}})
       {% else %}
         ::Spectator::LazyDouble.new({{name}}, {{**value_methods}})
       {% end %}

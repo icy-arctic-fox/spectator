@@ -208,6 +208,16 @@ Spectator.describe "Double DSL" do
     end
   end
 
+  describe "predefined method stubs" do
+    double(:test8, foo: 42)
+
+    let(dbl) { double(:test8, foo: 7) }
+
+    it "overrides the original value" do
+      expect(dbl.foo).to eq(7)
+    end
+  end
+
   describe "scope" do
     double(:outer, scope: :outer)
     double(:scope, scope: :outer)

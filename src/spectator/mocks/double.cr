@@ -4,6 +4,7 @@ require "./stub"
 require "./stubbable"
 require "./stubbed_name"
 require "./unexpected_message"
+require "./value_stub"
 
 module Spectator
   # Stands in for an object for testing that a SUT calls expected methods.
@@ -74,6 +75,15 @@ module Spectator
     #
     # An initial set of *stubs* can be provided.
     def initialize(@stubs : Array(Stub) = [] of Stub)
+    end
+
+    # Creates the double.
+    #
+    # An initial set of stubs can be provided with *value_methods*.
+    def initialize(**value_methods)
+      @stubs = value_methods.map do |key, value|
+        ValueStub.new(key, value).as(Stub)
+      end
     end
 
     # Compares against another object.
