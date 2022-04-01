@@ -127,5 +127,13 @@ module Spectator::DSL
     macro double(**value_methods)
       ::Spectator::LazyDouble.new({{**value_methods}})
     end
+
+    macro allow(stubbable)
+      ::Spectator::Allow.new({{stubbable}})
+    end
+
+    macro receive(method)
+      ::Spectator::NullStub.new({{method.id.symbolize}})
+    end
   end
 end
