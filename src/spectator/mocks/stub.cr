@@ -13,7 +13,7 @@ module Spectator
     getter constraint : AbstractArguments?
 
     # Creates the base of the stub.
-    def initialize(@method : Symbol, @constraint : Arguments? = nil)
+    def initialize(@method : Symbol, @constraint : AbstractArguments? = nil)
     end
 
     # Checks if a method call should receive the response from this stub.

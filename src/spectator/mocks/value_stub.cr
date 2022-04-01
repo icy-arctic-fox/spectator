@@ -8,7 +8,7 @@ module Spectator
     getter value : T
 
     # Creates the stub.
-    def initialize(method : Symbol, @value : T, constraint : Arguments? = nil)
+    def initialize(method : Symbol, @value : T, constraint : AbstractArguments? = nil)
       super(method, constraint)
     end
   end
