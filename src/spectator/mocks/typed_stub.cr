@@ -1,3 +1,4 @@
+require "./method_call"
 require "./stub"
 
 module Spectator
@@ -6,7 +7,7 @@ module Spectator
   # *T* is the type produced by the stub.
   # How the stub produces this value is up to subclasses.
   abstract class TypedStub(T) < Stub
-    # Return value.
-    abstract def value : T
+    # Invokes the stubbed implementation.
+    abstract def call(call : MethodCall) : T
   end
 end

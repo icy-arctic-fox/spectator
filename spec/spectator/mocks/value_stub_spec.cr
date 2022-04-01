@@ -1,6 +1,7 @@
 require "../../spec_helper"
 
 Spectator.describe Spectator::ValueStub do
+  let(method_call) { Spectator::MethodCall.capture(:foo) }
   subject(stub) { Spectator::ValueStub.new(:foo, 42) }
 
   it "stores the method name" do
@@ -8,7 +9,7 @@ Spectator.describe Spectator::ValueStub do
   end
 
   it "stores the return value" do
-    expect(stub.value).to eq(42)
+    expect(stub.call(method_call)).to eq(42)
   end
 
   describe "#===" do

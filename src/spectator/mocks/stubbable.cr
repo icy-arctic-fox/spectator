@@ -273,17 +273,17 @@ module Spectator
       # If successful, return the value of the stub.
       # This is a common usage where the return type is simple and matches the stub type exactly.
       if %typed = {{stub}}.as?(::Spectator::TypedStub({{type}}))
-        %typed.value
+        %typed.call({{call}})
       else
         # The stub couldn't be easily cast to match the return type.
 
-        # Even though all stubs will have a #value method, the compiler doesn't seem to agree.
+        # Even though all stubs will have a #call method, the compiler doesn't seem to agree.
         # Assert that it will (this should never fail).
-        raise TypeCastError.new("Stub has no value") unless {{stub}}.responds_to?(:value)
+        raise TypeCastError.new("Stub has no value") unless {{stub}}.responds_to?(:call)
 
         # Get the value as-is from the stub.
         # This will be compiled as a union of all known stubbed value types.
-        %value = {{stub}}.value
+        %value = {{stub}}.call({{call}})
 
         # Attempt to cast the value to the method's return type.
         # If successful, which it will be in most cases, return it.
