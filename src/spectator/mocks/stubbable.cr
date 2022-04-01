@@ -276,9 +276,14 @@ module Spectator
         %typed.value
       else
         # The stub couldn't be easily cast to match the return type.
+
+        # Even though all stubs will have a #value method, the compiler doesn't seem to agree.
+        # Assert that it will (this should never fail).
+        raise TypeCastError.new("Stub has no value") unless {{stub}}.responds_to?(:value)
+
         # Get the value as-is from the stub.
         # This will be compiled as a union of all known stubbed value types.
-        %value = {{stub}}.as(::Spectator::ValueStub).value
+        %value = {{stub}}.value
 
         # Attempt to cast the value to the method's return type.
         # If successful, which it will be in most cases, return it.

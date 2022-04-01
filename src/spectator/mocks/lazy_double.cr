@@ -57,9 +57,13 @@ module Spectator
           _spectator_cast_stub_value(%stub, %call, \{{Messages[{{call.name.symbolize}}.id]}}, \{{Messages[{{call.name.symbolize}}.id].resolve >= Nil}})
         \{% else %}
           # A method that was not defined during initialization was stubbed.
+          # Even though all stubs will have a #value method, the compiler doesn't seem to agree.
+          # Assert that it will (this should never fail).
+          raise TypeCastError.new("Stub has no value") unless %stub.responds_to?(:value)
+
           # Return the value of the stub as-is.
           # Might want to give a warning here, as this may produce a "bloated" union of all known stub types.
-          %stub.as(::Spectator::ValueStub).value
+          %stub.value
         \{% end %}
       else
         # A stub wasn't found, invoke the fallback logic.
