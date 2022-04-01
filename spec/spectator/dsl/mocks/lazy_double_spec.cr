@@ -56,5 +56,10 @@ Spectator.describe "Lazy double DSL" do
       dbl = double
       expect { dbl.oops }.to raise_error(Spectator::UnexpectedMessage, /anonymous/i)
     end
+
+    it "accepts no name and predefined responses" do
+      dbl = double(foo: 42)
+      expect(dbl.foo).to eq(42)
+    end
   end
 end

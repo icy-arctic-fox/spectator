@@ -125,7 +125,7 @@ module Spectator::DSL
     # expect(dbl.foo).to eq(42)
     # ```
     macro double(**value_methods)
-      new_double({{**value_methods}})
+      ::Spectator::LazyDouble.new({{**value_methods}})
     end
   end
 end
