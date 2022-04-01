@@ -1,6 +1,6 @@
 require "../../../spec_helper"
 
-Spectator.describe "Stubs DSL" do
+Spectator.describe "Stub DSL" do
   double(:foobar, foo: 42, bar: "baz")
   let(dbl) { double(:foobar) }
 
