@@ -62,4 +62,22 @@ Spectator.describe "Lazy double DSL" do
       expect(dbl.foo).to eq(42)
     end
   end
+
+  describe "context" do
+    let(memoize) { :memoize }
+    let(override) { :override }
+    let(dbl) { double(predefined: :predefined, memoize: memoize) }
+
+    it "doesn't change predefined values" do
+      expect(dbl.predefined).to eq(:predefined)
+    end
+
+    it "can use memoized values for stubs" do
+      expect(dbl.memoize).to eq(:memoize)
+    end
+
+    it "can stub methods with memoized values" do
+      expect { allow(dbl).to receive(:memoize).and_return(override) }.to change { dbl.memoize }.from(:memoize).to(:override)
+    end
+  end
 end

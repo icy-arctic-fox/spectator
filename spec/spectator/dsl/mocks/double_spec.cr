@@ -294,4 +294,44 @@ Spectator.describe "Double DSL" do
       end
     end
   end
+
+  describe "context" do
+    double(:context_double, predefined: :predefined, override: :predefined) do
+      stub abstract def memoize : Symbol
+
+      stub def inline : Symbol
+        :inline # Memoized values can't be used here.
+      end
+
+      stub def reference : String
+        memoize.to_s
+      end
+    end
+
+    let(memoize) { :memoize }
+    let(override) { :override }
+    let(dbl) { double(:context_double, override: override) }
+
+    before_each { allow(dbl).to receive(:memoize).and_return(memoize) }
+
+    it "doesn't change predefined values" do
+      expect(dbl.predefined).to eq(:predefined)
+    end
+
+    it "can use memoized values for overrides" do
+      expect(dbl.override).to eq(:override)
+    end
+
+    it "can use memoized values for stubs" do
+      expect(dbl.memoize).to eq(:memoize)
+    end
+
+    it "can override inline stubs" do
+      expect { allow(dbl).to receive(:inline).and_return(override) }.to change { dbl.inline }.from(:inline).to(:override)
+    end
+
+    it "can reference memoized values with indirection" do
+      expect { allow(dbl).to receive(:memoize).and_return(override) }.to change { dbl.reference }.from("memoize").to("override")
+    end
+  end
 end
