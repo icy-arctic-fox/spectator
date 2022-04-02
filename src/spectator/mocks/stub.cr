@@ -12,8 +12,11 @@ module Spectator
     # Is nil when there's no constraint - only the method name must match.
     getter constraint : AbstractArguments?
 
+    # Location the stub was defined.
+    getter location : Location?
+
     # Creates the base of the stub.
-    def initialize(@method : Symbol, @constraint : AbstractArguments? = nil)
+    def initialize(@method : Symbol, @constraint : AbstractArguments? = nil, @location : Location? = nil)
     end
 
     # Checks if a method call should receive the response from this stub.

@@ -167,8 +167,8 @@ module Spectator::DSL
     # allow(dbl).to receive(:foo).and_return(42)
     # expect(dbl.foo).to eq(42)
     # ```
-    macro receive(method)
-      ::Spectator::NullStub.new({{method.id.symbolize}})
+    macro receive(method, *, _file = __FILE__, _line = __LINE__)
+      ::Spectator::NullStub.new({{method.id.symbolize}}, location: ::Spectator::Location.new({{_file}}, {{_line}}))
     end
   end
 end

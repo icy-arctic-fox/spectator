@@ -1,3 +1,4 @@
+require "../location"
 require "./arguments"
 require "./typed_stub"
 
@@ -10,8 +11,8 @@ module Spectator
     end
 
     # Creates the stub.
-    def initialize(method : Symbol, @value : T, constraint : AbstractArguments? = nil)
-      super(method, constraint)
+    def initialize(method : Symbol, @value : T, constraint : AbstractArguments? = nil, location : Location? = nil)
+      super(method, constraint, location)
     end
   end
 end
