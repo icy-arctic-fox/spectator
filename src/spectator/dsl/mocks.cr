@@ -3,10 +3,10 @@ require "../mocks"
 module Spectator::DSL
   # Methods and macros for mocks and doubles.
   module Mocks
-    # All defined double types.
-    # Each tuple consists of the double name, defined context (example group),
-    # and double type name relative to its context.
-    DOUBLES = [] of {Symbol, Symbol, Symbol}
+    # All defined double and mock types.
+    # Each tuple consists of the double name or mocked type,
+    # defined context (example group), and double type name relative to its context.
+    TYPES = [] of {Symbol, Symbol, Symbol}
 
     # Defines a new double type.
     #
@@ -22,13 +22,13 @@ module Spectator::DSL
     # ```
     private macro def_double(name, **value_methods, &block)
     {% # Construct a unique type name for the double by using the number of defined doubles.
- index = ::Spectator::DSL::Mocks::DOUBLES.size
+ index = ::Spectator::DSL::Mocks::TYPES.size
  double_type_name = "Double#{index}".id
  null_double_type_name = "NullDouble#{index}".id
 
  # Store information about how the double is defined and its context.
  # This is important for constructing an instance of the double later.
- ::Spectator::DSL::Mocks::DOUBLES << {name.id.symbolize, @type.name(generic_args: false).symbolize, double_type_name.symbolize} %}
+ ::Spectator::DSL::Mocks::TYPES << {name.id.symbolize, @type.name(generic_args: false).symbolize, double_type_name.symbolize} %}
 
       # Define the plain double type.
       ::Spectator::Double.define({{double_type_name}}, {{name}}, {{**value_methods}}) do
@@ -70,7 +70,7 @@ module Spectator::DSL
     # ```
     private macro new_double(name = nil, **value_methods)
       {% # Find tuples with the same name.
- found_tuples = ::Spectator::DSL::Mocks::DOUBLES.select { |tuple| tuple[0] == name.id.symbolize }
+ found_tuples = ::Spectator::DSL::Mocks::TYPES.select { |tuple| tuple[0] == name.id.symbolize }
 
  # Split the current context's type namespace into parts.
  type_parts = @type.name(generic_args: false).split("::")
