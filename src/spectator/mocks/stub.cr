@@ -1,10 +1,13 @@
 require "./abstract_arguments"
 require "./arguments"
 require "./method_call"
+require "./stub_modifiers"
 
 module Spectator
   # Untyped response to a method call (message).
   abstract class Stub
+    include StubModifiers
+
     # Name of the method this stub is for.
     getter method : Symbol
 

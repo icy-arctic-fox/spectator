@@ -7,9 +7,5 @@ module Spectator
     # Invokes the stubbed implementation.
     def call(_call : MethodCall) : Nil
     end
-
-    def and_return(value)
-      ValueStub.new(method, value, constraint)
-    end
   end
 end
