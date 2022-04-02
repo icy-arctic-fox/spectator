@@ -2,10 +2,15 @@ require "../../spec_helper"
 
 Spectator.describe Spectator::NullStub do
   let(method_call) { Spectator::MethodCall.capture(:foo) }
-  subject(stub) { described_class.new(:foo) }
+  let(location) { Spectator::Location.new(__FILE__, __LINE__) }
+  subject(stub) { described_class.new(:foo, location: location) }
 
   it "stores the method name" do
     expect(stub.method).to eq(:foo)
+  end
+
+  it "stores the location" do
+    expect(stub.location).to eq(location)
   end
 
   it "returns nil" do
@@ -15,7 +20,8 @@ Spectator.describe Spectator::NullStub do
   context Spectator::StubModifiers do
     describe "#and_return(value)" do
       let(arguments) { Spectator::Arguments.capture(/foo/) }
-      let(original) { Spectator::NullStub.new(:foo, arguments) }
+      let(location) { Spectator::Location.new(__FILE__, __LINE__) }
+      let(original) { Spectator::NullStub.new(:foo, arguments, location) }
       subject(stub) { original.and_return(42) }
 
       it "produces a stub that returns a value" do
@@ -28,6 +34,10 @@ Spectator.describe Spectator::NullStub do
 
       it "retains the arguments constraint" do
         expect(stub.constraint).to eq(arguments)
+      end
+
+      it "retains the location" do
+        expect(stub.location).to eq(location)
       end
     end
   end

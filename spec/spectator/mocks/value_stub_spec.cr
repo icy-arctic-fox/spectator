@@ -2,10 +2,15 @@ require "../../spec_helper"
 
 Spectator.describe Spectator::ValueStub do
   let(method_call) { Spectator::MethodCall.capture(:foo) }
-  subject(stub) { Spectator::ValueStub.new(:foo, 42) }
+  let(location) { Spectator::Location.new(__FILE__, __LINE__) }
+  subject(stub) { described_class.new(:foo, 42, location: location) }
 
   it "stores the method name" do
     expect(stub.method).to eq(:foo)
+  end
+
+  it "stores the location" do
+    expect(stub.location).to eq(location)
   end
 
   it "stores the return value" do
