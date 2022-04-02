@@ -128,10 +128,45 @@ module Spectator::DSL
       ::Spectator::LazyDouble.new({{**value_methods}})
     end
 
-    macro allow(stubbable)
-      ::Spectator::Allow.new({{stubbable}})
+    # Targets a stubbable object (such as a mock or double) for operations.
+    #
+    # The *stubbable* must be a `Stubbable`.
+    # This method is expected to be followed up with `.to receive()`.
+    #
+    # ```
+    # dbl = dbl(:foobar)
+    # allow(dbl).to receive(:foo).and_return(42)
+    # ```
+    def allow(stubbable : Stubbable)
+      ::Spectator::Allow.new(stubbable)
     end
 
+    # Helper method producing a compilation error when attempting to stub a non-stubbable object.
+    #
+    # Triggered in cases like this:
+    # ```
+    # allow(42).to receive(:to_s).and_return("123")
+    # ```
+    def allow(stubbable)
+      {% raise "Target of `allow()` must be stubbable (mock or double)." %}
+    end
+
+    # Begins the creation of a stub.
+    #
+    # The *method* is the name of the method being stubbed.
+    # It should not define any parameters, it should be just the method name as a literal symbol or string.
+    #
+    # Alone, this method returns a `NullStub`, which allows a stubbable object to return nil from a method.
+    # This macro is typically followed up with a method like `and_return` to change the stub's behavior.
+    #
+    # ```
+    # dbl = dbl(:foobar)
+    # allow(dbl).to receive(:foo)
+    # expect(dbl.foo).to be_nil
+    #
+    # allow(dbl).to receive(:foo).and_return(42)
+    # expect(dbl.foo).to eq(42)
+    # ```
     macro receive(method)
       ::Spectator::NullStub.new({{method.id.symbolize}})
     end
