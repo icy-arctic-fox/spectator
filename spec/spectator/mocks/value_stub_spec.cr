@@ -17,6 +17,31 @@ Spectator.describe Spectator::ValueStub do
     expect(stub.call(method_call)).to eq(42)
   end
 
+  context Spectator::StubModifiers do
+    describe "#and_return(value)" do
+      let(arguments) { Spectator::Arguments.capture(/foo/) }
+      let(location) { Spectator::Location.new(__FILE__, __LINE__) }
+      let(original) { Spectator::ValueStub.new(:foo, 42, arguments, location) }
+      subject(stub) { original.and_return(123) }
+
+      it "produces a stub that returns a value" do
+        expect(stub.call(method_call)).to eq(123)
+      end
+
+      it "retains the method name" do
+        expect(stub.method).to eq(:foo)
+      end
+
+      it "retains the arguments constraint" do
+        expect(stub.constraint).to eq(arguments)
+      end
+
+      it "retains the location" do
+        expect(stub.location).to eq(location)
+      end
+    end
+  end
+
   describe "#===" do
     subject { stub === call }
 
