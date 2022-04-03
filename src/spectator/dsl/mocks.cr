@@ -128,6 +128,61 @@ module Spectator::DSL
       ::Spectator::LazyDouble.new({{**value_methods}})
     end
 
+    private macro def_mock(type, **value_methods, &block)
+      {% # Construct a unique type name for the mock by using the number of defined types.
+ index = ::Spectator::DSL::Mocks::TYPES.size
+ mock_type_name = "Mock#{index}".id
+
+ # Store information about how the mock is defined and its context.
+ # This is important for constructing an instance of the mock later.
+ ::Spectator::DSL::Mocks::TYPES << {type.id.symbolize, @type.name(generic_args: false).symbolize, mock_type_name.symbolize} %}
+
+      ::Spectator::Mock.define({{type.id}}, {{**value_methods}}){% if block %} do
+        {% block.body %}
+      end{% end %}
+    end
+
+    private macro new_mock(type, **value_methods)
+      {% # Find tuples with the same name.
+ found_tuples = ::Spectator::DSL::Mocks::TYPES.select { |tuple| tuple[0] == type.id.symbolize }
+
+ # Split the current context's type namespace into parts.
+ type_parts = @type.name(generic_args: false).split("::")
+
+ # Find tuples in the same context or a parent of where the mock was defined.
+ # This is done by comparing each part of their namespaces.
+ found_tuples = found_tuples.select do |tuple|
+   # Split the namespace of the context the double was defined in.
+   context_parts = tuple[1].id.split("::")
+
+   # Compare namespace parts between the context the double was defined in and this context.
+   # This logic below is effectively comparing array elements, but with methods supported by macros.
+   matches = context_parts.map_with_index { |part, i| part == type_parts[i] }
+   matches.all? { |b| b }
+ end
+
+ # Sort the results by the number of namespace parts.
+ # The last result will be the double type defined closest to the current context's type.
+ found_tuples = found_tuples.sort_by do |tuple|
+   tuple[1].id.split("::").size
+ end
+ found_tuple = found_tuples.last %}
+
+      {% if found_tuple %}
+        {{found_tuple[2].id}}.new({{**value_methods}})
+      {% else %}
+        {% raise "Type `#{type.id}` must be previously mocked before attempting to instantiate." %}
+      {% end %}
+    end
+
+    macro mock(type, **value_methods, &block)
+      {% begin %}
+        {% if @def %}new_mock{% else %}def_mock{% end %}({{name}}, {{**value_methods}}){% if block %} do
+          {{block.body}}
+        end{% end %}
+      {% end %}
+    end
+
     # Targets a stubbable object (such as a mock or double) for operations.
     #
     # The *stubbable* must be a `Stubbable`.
