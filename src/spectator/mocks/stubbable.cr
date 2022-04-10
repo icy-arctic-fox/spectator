@@ -120,8 +120,8 @@ module Spectator
                               meth.free_vars == method.free_vars &&
                               meth.receiver == method.receiver &&
                               meth.return_type == method.return_type &&
-                              method.splat_index == method.splat_index &&
-                              method.visibility == method.visibility
+                              meth.splat_index == method.splat_index &&
+                              meth.visibility == method.visibility
                             end
                           end
                       :super
