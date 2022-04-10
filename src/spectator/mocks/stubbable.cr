@@ -22,6 +22,9 @@ module Spectator
     # or nil if no stubs satisfy it.
     abstract def _spectator_find_stub(call : MethodCall) : Stub?
 
+    # Defines a stub to change the behavior of a method.
+    abstract def _spectator_define_stub(stub : Stub) : Nil
+
     # Method called when a stub isn't found.
     #
     # The received message is captured in *call*.
