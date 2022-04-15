@@ -13,8 +13,7 @@ module Spectator
     # This method can also raise an error if it's impossible to return something.
     def _spectator_stub_fallback(call : MethodCall, &)
       if _spectator_stub_for_method?(call.method)
-        # FIXME: Don't log to top-level Spectator logger (use mock or double logger).
-        Spectator::Log.info do
+        Spectator::Log.info do # FIXME: Don't log to top-level Spectator logger (use mock or double logger).
           "Stubs are defined for #{call.method.inspect}, but none matched (no argument constraints met)."
         end
 
@@ -31,8 +30,14 @@ module Spectator
     # Yield to call the original method's implementation.
     # The stubbed method returns the value returned by this method.
     # This method can also raise an error if it's impossible to return something.
-    def _spectator_stub_fallback(call : MethodCall, _type, &)
-      _spectator_stub_fallback(call) { yield }
+    def _spectator_stub_fallback(call : MethodCall, type, &)
+      value = _spectator_stub_fallback(call) { yield }
+
+      begin
+        type.cast(value)
+      rescue TypeCastError
+        raise TypeCastError.new("#{_spectator_stubbed_name} received message #{call} and is attempting to return `#{value.inspect}`, but returned type must be `#{type}`.")
+      end
     end
 
     # Method called when a stub isn't found.
@@ -60,8 +65,14 @@ module Spectator
     # The expected return type is provided by *type*.
     # The stubbed method returns the value returned by this method.
     # This method can also raise an error if it's impossible to return something.
-    def _spectator_abstract_stub_fallback(call : MethodCall, _type)
-      _spectator_abstract_stub_fallback(call)
+    def _spectator_abstract_stub_fallback(call : MethodCall, type)
+      value = _spectator_abstract_stub_fallback(call)
+
+      begin
+        type.cast(value)
+      rescue TypeCastError
+        raise TypeCastError.new("#{_spectator_stubbed_name} received message #{call} and is attempting to return `#{value.inspect}`, but returned type must be `#{type}`.")
+      end
     end
   end
 end
