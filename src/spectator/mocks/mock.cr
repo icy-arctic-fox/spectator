@@ -23,8 +23,12 @@ module Spectator
           @_spectator_stubs.unshift(stub)
         end
 
-        def _spectator_find_stub(call : ::Spectator::MethodCall) : ::Spectator::Stub?
+        private def _spectator_find_stub(call : ::Spectator::MethodCall) : ::Spectator::Stub?
           @_spectator_stubs.find &.===(call)
+        end
+
+        private def _spectator_stub_for_method?(method : Symbol) : Bool
+          @_spectator_stubs.any? { |stub| stub.method == method }
         end
 
         # Returns the mock's name formatted for user output.

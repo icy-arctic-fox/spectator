@@ -110,6 +110,10 @@ module Spectator
       stub
     end
 
+    private def _spectator_stub_for_method?(method : Symbol) : Bool
+      @stubs.any? { |stub| stub.method == method }
+    end
+
     # Returns the double's name formatted for user output.
     private def _spectator_stubbed_name : String
       {% if anno = @type.annotation(StubbedName) %}
@@ -130,7 +134,7 @@ module Spectator
 
     private def _spectator_abstract_stub_fallback(call : MethodCall)
       Log.info do
-        break unless @stubs.any? { |stub| stub.method == call.method }
+        break unless _spectator_stub_for_method?(call.method)
 
         "Stubs are defined for #{call.method.inspect}, but none matched (no argument constraints met)."
       end

@@ -22,6 +22,9 @@ module Spectator
     # or nil if no stubs satisfy it.
     abstract def _spectator_find_stub(call : MethodCall) : Stub?
 
+    # Utility method that looks for stubs for methods with the name specified.
+    abstract def _spectator_stub_for_method?(method : Symbol) : Bool
+
     # Defines a stub to change the behavior of a method.
     abstract def _spectator_define_stub(stub : Stub) : Nil
 
