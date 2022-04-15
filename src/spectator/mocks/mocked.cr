@@ -12,7 +12,16 @@ module Spectator
     # The stubbed method returns the value returned by this method.
     # This method can also raise an error if it's impossible to return something.
     def _spectator_stub_fallback(call : MethodCall, &)
-      raise "oof"
+      if _spectator_stub_for_method?(call.method)
+        # FIXME: Don't log to top-level Spectator logger (use mock or double logger).
+        Spectator::Log.info do
+          "Stubs are defined for #{call.method.inspect}, but none matched (no argument constraints met)."
+        end
+
+        raise UnexpectedMessage.new("#{_spectator_stubbed_name} received unexpected message #{call}")
+      end
+
+      yield # Uninteresting message, allow through.
     end
 
     # Method called when a stub isn't found.
@@ -22,8 +31,8 @@ module Spectator
     # Yield to call the original method's implementation.
     # The stubbed method returns the value returned by this method.
     # This method can also raise an error if it's impossible to return something.
-    def _spectator_stub_fallback(call : MethodCall, type, &)
-      raise "oof"
+    def _spectator_stub_fallback(call : MethodCall, _type, &)
+      _spectator_stub_fallback(call) { yield }
     end
 
     # Method called when a stub isn't found.
@@ -34,7 +43,13 @@ module Spectator
     # The stubbed method returns the value returned by this method.
     # This method can also raise an error if it's impossible to return something.
     def _spectator_abstract_stub_fallback(call : MethodCall)
-      raise "oof"
+      Spectator::Log.info do # FIXME: Don't log to top-level Spectator logger (use mock or double logger).
+        break unless _spectator_stub_for_method?(call.method)
+
+        "Stubs are defined for #{call.method.inspect}, but none matched (no argument constraints met)."
+      end
+
+      raise UnexpectedMessage.new("#{_spectator_stubbed_name} received unexpected message #{call}")
     end
 
     # Method called when a stub isn't found.
@@ -45,8 +60,8 @@ module Spectator
     # The expected return type is provided by *type*.
     # The stubbed method returns the value returned by this method.
     # This method can also raise an error if it's impossible to return something.
-    def _spectator_abstract_stub_fallback(call : MethodCall, type)
-      raise "oof"
+    def _spectator_abstract_stub_fallback(call : MethodCall, _type)
+      _spectator_abstract_stub_fallback(call)
     end
   end
 end
