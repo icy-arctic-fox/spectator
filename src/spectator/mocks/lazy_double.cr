@@ -54,7 +54,7 @@ module Spectator
         # Cast the stub or return value to the expected type.
         # This is necessary to match the expected return type of the original message.
         \{% if Messages.keys.includes?({{call.name.symbolize}}) %}
-          _spectator_cast_stub_value(%stub, %call, \{{Messages[{{call.name.symbolize}}.id]}}, \{{Messages[{{call.name.symbolize}}.id].resolve >= Nil}})
+          _spectator_cast_stub_value(%stub, %call, \{{Messages[{{call.name.symbolize}}.id]}})
         \{% else %}
           # A method that was not defined during initialization was stubbed.
           # Even though all stubs will have a #call method, the compiler doesn't seem to agree.

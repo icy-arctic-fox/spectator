@@ -160,10 +160,10 @@ module Spectator
           # This is necessary to match the expected return type of the original method.
           {% if method.return_type %}
             # Return type restriction takes priority since it can be a superset of the original implementation.
-            _spectator_cast_stub_value(%stub, %call, {{method.return_type}}, {{method.return_type.resolve >= Nil}})
+            _spectator_cast_stub_value(%stub, %call, {{method.return_type}})
           {% elsif !method.abstract? %}
             # The method isn't abstract, infer the type it returns without calling it.
-            _spectator_cast_stub_value(%stub, %call, typeof({{original}}), {{method.return_type && method.return_type.resolve >= Nil || false}})
+            _spectator_cast_stub_value(%stub, %call, typeof({{original}}))
           {% else %}
             # Stubbed method is abstract and there's no return type annotation.
             # The value of the stub could be returned as-is.
@@ -246,7 +246,7 @@ module Spectator
         if %stub = _spectator_find_stub(%call)
           {% if method.return_type %}
             # Return type was provided with a restriction.
-            _spectator_cast_stub_value(%stub, %call, {{method.return_type}}, {{method.return_type.resolve >= Nil}})
+            _spectator_cast_stub_value(%stub, %call, {{method.return_type}})
           {% else %}
             # Stubbed method is abstract and there's no return type annotation.
             # The value of the stub could be returned as-is.
@@ -273,8 +273,7 @@ module Spectator
     # *stub* is the variable holding the stub.
     # *call* is the variable holding the captured method call.
     # *type* is the expected type to cast the value to.
-    # *nillable* is true or false depending on whether *type* can be nil.
-    private macro _spectator_cast_stub_value(stub, call, type, nillable)
+    private macro _spectator_cast_stub_value(stub, call, type)
       # Attempt to cast the stub to the method's return type.
       # If successful, return the value of the stub.
       # This is a common usage where the return type is simple and matches the stub type exactly.
@@ -283,7 +282,7 @@ module Spectator
       else
         # The stub couldn't be easily cast to match the return type.
 
-        # Even though all stubs will have a #call method, the compiler doesn't seem to agree.
+        # Even though all stubs will have a `#call` method, the compiler doesn't seem to agree.
         # Assert that it will (this should never fail).
         raise TypeCastError.new("Stub has no value") unless {{stub}}.responds_to?(:call)
 
@@ -294,23 +293,17 @@ module Spectator
         # Attempt to cast the value to the method's return type.
         # If successful, which it will be in most cases, return it.
         # The caller will receive a properly typed value without unions or other side-effects.
-        if %cast = %value.as?({{type}})
-          %cast
-        else
-          # Now we're down to edge cases.
-          {% if nillable %}
-            # The return type might have "cast" correctly, but the value is nil and the return type is nillable.
-            # Just return nil in this case.
-            nil
-          {% else %}
-            # The stubbed value was something else entirely and cannot be cast to the return type.
-            %type = begin
-              %value.class.to_s
-            rescue
-              "<Unknown>"
-            end
-            raise TypeCastError.new("#{_spectator_stubbed_name} received message #{ {{call}} } and is attempting to return a `#{%type}`, but returned type must be `#{ {{type}} }`.")
-          {% end %}
+        begin
+          %value.as({{type}})
+        rescue TypeCastError
+          # The stubbed value was something else entirely and cannot be cast to the return type.
+          # There's something weird going on (compiler bug?) that sometimes causes this class lookup to fail.
+          %type = begin
+            %value.class.to_s
+          rescue
+            "<Unknown>"
+          end
+          raise TypeCastError.new("#{_spectator_stubbed_name} received message #{ {{call}} } and is attempting to return a `#{%type}`, but returned type must be `#{ {{type}} }`.")
         end
       end
     end
