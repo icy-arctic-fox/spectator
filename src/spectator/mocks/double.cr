@@ -50,24 +50,16 @@ module Spectator
       {% if name %}@[::Spectator::StubbedName({{name}})]{% end %}
       class {{type_name.id}} < {{@type.name}}
         {% for key, value in value_methods %}
-          inject_stub def {{key.id}}(*%args, **%kwargs)
+          default_stub def {{key.id}}(*%args, **%kwargs)
             {{value}}
           end
 
-          inject_stub def {{key.id}}(*%args, **%kwargs, &)
+          default_stub def {{key.id}}(*%args, **%kwargs, &)
             {{key.id}}
           end
         {% end %}
 
-        {% if block %}
-          {% for expr in block.body.is_a?(Expressions) ? block.body.expressions : [block.body] %}
-            {% if expr.is_a?(Call) && expr.name == :stub.id %}
-              inject_{{expr}}
-            {% else %}
-              {{expr}}
-            {% end %}
-          {% end %}
-        {% end %}
+        {% if block %}{{block.body}}{% end %}
       end
     end
 
@@ -148,7 +140,7 @@ module Spectator
 
     # "Hide" existing methods and methods from ancestors by overriding them.
     macro finished
-      stub_all {{@type.name(generic_args: false)}}
+      stub_hierarchy {{@type.name(generic_args: false)}}
     end
 
     # Handle all methods but only respond to configured messages.

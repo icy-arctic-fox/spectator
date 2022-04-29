@@ -85,21 +85,34 @@ module Spectator
     # The block provided to `#_spectator_stub_fallback` will invoke the default response.
     # In other words, `#_spectator_stub_fallback` should yield if it's appropriate to return the default response.
     private macro default_stub(method)
+      {% if method.is_a?(Def)
+           visibility = method.visibility
+         elsif method.is_a?(VisibilityModifier) && method.exp.is_a?(Def)
+           visibility = method.visibility
+           method = method.exp
+         else
+           raise "`default_stub` requires a method definition"
+         end %}
       {% raise "Cannot define a stub inside a method" if @def %}
-      {% raise "`default_stub` requires a method definition" unless method.is_a?(Def) %}
       {% raise "Default stub cannot be an abstract method" if method.abstract? %}
       {% raise "Cannot stub method with reserved keyword as name - #{method.name}" if method.name.starts_with?("_spectator") || ::Spectator::DSL::RESERVED_KEYWORDS.includes?(method.name.symbolize) %}
 
-      {{method}}
+      {{visibility.id if visibility != :public}} def {{method.receiver}}{{method.name}}(
+        {% for arg, i in method.args %}{% if i == method.splat_index %}*{% end %}{{arg}}, {% end %}
+        {% if method.double_splat %}**{{method.double_splat}}, {% end %}
+        {% if method.block_arg %}&{{method.block_arg}}{% elsif method.accepts_block? %}&{% end %}
+      ){% if method.return_type %} : {{method.return_type}}{% end %}{% if !method.free_vars.empty? %} forall {{method.free_vars.splat}}{% end %}
+        {{method.body}}
+      end
 
-      {% original = "previous_def#{" { |*_spectator_yargs| yield *_spectator_yargs }" if method.accepts_block?}".id %}
+      {% original = "previous_def#{" { |*_spectator_yargs| yield *_spectator_yargs }".id if method.accepts_block?}".id %}
 
       {% # Reconstruct the method signature.
 # I wish there was a better way of doing this, but there isn't (at least not that I'm aware of).
 # This chunk of code must reconstruct the method signature exactly as it was originally.
 # If it doesn't match, it doesn't override the method and the stubbing won't work.
   %}
-      {% if method.visibility != :public %}{{method.visibility.id}}{% end %} def {{method.receiver}}{{method.name}}(
+      {{visibility.id if visibility != :public}} def {{method.receiver}}{{method.name}}(
         {% for arg, i in method.args %}{% if i == method.splat_index %}*{% end %}{{arg}}, {% end %}
         {% if method.double_splat %}**{{method.double_splat}}, {% end %}
         {% if method.block_arg %}&{{method.block_arg}}{% elsif method.accepts_block? %}&{% end %}
@@ -153,8 +166,15 @@ module Spectator
     # Stubbed methods will call `#_spectator_find_stub` with the method call information.
     # If no stub is found, then `#_spectator_stub_fallback` or `#_spectator_abstract_stub_fallback` is called.
     private macro abstract_stub(method)
+      {% if method.is_a?(Def)
+           visibility = method.visibility
+         elsif method.is_a?(VisibilityModifier) && method.exp.is_a?(Def)
+           visibility = method.visibility
+           method = method.exp
+         else
+           raise "`abstract_stub` requires a method definition"
+         end %}
       {% raise "Cannot define a stub inside a method" if @def %}
-      {% raise "abstract_stub requires a method definition" if !method.is_a?(Def) %}
       {% raise "Cannot stub method with reserved keyword as name - #{method.name}" if method.name.starts_with?("_spectator") || ::Spectator::DSL::RESERVED_KEYWORDS.includes?(method.name.symbolize) %}
 
       {% # The logic in this macro follows mostly the same logic from `#default_stub`.
@@ -164,47 +184,24 @@ module Spectator
 # For all intents and purposes, this macro defines logic that doesn't depend on an existing method.
   %}
 
-      {% if method.abstract? %}
-        {% original = if @type.methods.includes?(method)
-                        :previous_def
-                      elsif @type.ancestors.any? &.methods.includes?(method)
-                        :super
-                        # sigh... sometimes the method won't match with a simple check.
-                        # It seems to be from a difference with the body attribute.
-                        # Manually check most attributes.
-                      elsif @type.ancestors.any? do |ancestor|
-                              ancestor.methods.any? do |meth|
-                                meth.name == method.name &&
-                                meth.args == method.args &&
-                                meth.accepts_block? == method.accepts_block? &&
-                                meth.block_arg == method.block_arg &&
-                                meth.double_splat == method.double_splat &&
-                                meth.free_vars == method.free_vars &&
-                                meth.receiver == method.receiver &&
-                                meth.return_type == method.return_type &&
-                                meth.splat_index == method.splat_index &&
-                                meth.visibility == method.visibility
-                              end
-                            end
-                        :super
-                      else
-                        :previous_def # raise "Could not find original implementation of `#{method.name}` for stubbing"
-                      end.id
-           if method.accepts_block?
-             original = "#{original} { |*_spectator_yargs| yield *_spectator_yargs }".id
-           end %}
-      {% else %}
-        {{method}}
+      {% unless method.abstract? %}
+        {{visibility.id if visibility != :public}} def {{method.receiver}}{{method.name}}(
+          {% for arg, i in method.args %}{% if i == method.splat_index %}*{% end %}{{arg}}, {% end %}
+          {% if method.double_splat %}**{{method.double_splat}}, {% end %}
+          {% if method.block_arg %}&{{method.block_arg}}{% elsif method.accepts_block? %}&{% end %}
+        ){% if method.return_type %} : {{method.return_type}}{% end %}{% if !method.free_vars.empty? %} forall {{method.free_vars.splat}}{% end %}
+          {{method.body}}
+        end
 
-        {% original = "previous_def#{" { |*_spectator_yargs| yield *_spectator_yargs }" if method.accepts_block?}".id %}
+        {% original = "previous_def#{" { |*_spectator_yargs| yield *_spectator_yargs }".id if method.accepts_block?}".id %}
       {% end %}
-
+ 
       {% # Reconstruct the method signature.
 # I wish there was a better way of doing this, but there isn't (at least not that I'm aware of).
 # This chunk of code must reconstruct the method signature exactly as it was originally.
 # If it doesn't match, it doesn't override the method and the stubbing won't work.
   %}
-      {% if method.visibility != :public %}{{method.visibility.id}}{% end %} def {{method.receiver}}{{method.name}}(
+      {{visibility.id if visibility != :public}} def {{method.receiver}}{{method.name}}(
         {% for arg, i in method.args %}{% if i == method.splat_index %}*{% end %}{{arg}}, {% end %}
         {% if method.double_splat %}**{{method.double_splat}}, {% end %}
         {% if method.block_arg %}&{{method.block_arg}}{% elsif method.accepts_block? %}&{% end %}
@@ -237,17 +234,14 @@ module Spectator
           {% end %}
         else
           # A stub wasn't found, invoke the type-specific fallback logic.
-          {% if method.return_type && method.abstract? %}
+          {% if method.return_type %}
             # Pass along just the return type annotation.
             _spectator_abstract_stub_fallback(%call, {{method.return_type}})
-          {% elsif method.abstract? %}
+          {% elsif !method.abstract? %}
+            _spectator_abstract_stub_fallback(%call, typeof({{original}}))
+          {% else %}
             # Stubbed method is abstract and there's no type annotation.
             _spectator_abstract_stub_fallback(%call)
-          {% else %}
-            # Pass along the type of the original method and a block to invoke it.
-            _spectator_stub_fallback(%call, typeof({{original}})) do
-              {{original}}
-            end
           {% end %}
         end
       end
@@ -257,8 +251,13 @@ module Spectator
       {% raise "Cannot define a stub inside a method" if @def %}
 
       {% if method.is_a?(Def) %}
-        
+        {% if method.abstract? %}abstract_stub{% else %}default_stub{% end %} {{method}}
+      {% elsif method.is_a?(VisibilityModifier) && method.exp.is_a?(Def) %}
+        {% if method.exp.abstract? %}abstract_stub{% else %}default_stub{% end %} {{method}}
+      {% elsif method.is_a?(Call) %}
+        {% raise "Stub on `Call` unsupported." %}
       {% else %}
+        {% raise "Unrecognized syntax for `stub` - #{method}" %}
       {% end %}
     end
 
@@ -302,21 +301,33 @@ module Spectator
       end
     end
 
-    # Redefines all methods on a type to conditionally respond to messages.
-    # Methods will raise `UnexpectedMessage` if they're called when they shouldn't be.
-    # Otherwise, they'll return the configured response.
-    private macro stub_all(type_name, *, with style = :stub)
-      {% type = type_name.resolve %}
-      {% if type.superclass %}
-        stub_all({{type.superclass}}, with: {{style}})
+    # Redefines all methods and ones inherited from its parents and mixins to support stubs.
+    private macro stub_hierarchy(type_name = @type)
+      {% type = type_name.resolve
+         # Reverse order of ancestors (there's currently no reverse method for ArrayLiteral).
+         count = type.ancestors.size
+         ancestors = type.ancestors.map_with_index { |_, i| type.ancestors[count - i - 1] } %}
+      {% for ancestor in ancestors %}
+        stub_type {{ancestor}}
       {% end %}
 
+      stub_type {{type_name}}
+    end
+
+    private macro stub_type(type_name = @type)
+      {% type = type_name.resolve %}
       {% for method in type.methods.reject do |meth|
                          meth.name.starts_with?("_spectator") ||
                            ::Spectator::DSL::RESERVED_KEYWORDS.includes?(meth.name.symbolize)
                        end %}
-        {{style.id}} {{method}}
-      {% end %}
+          {{(method.abstract? ? :abstract_stub : :default_stub).id}} {{method.visibility.id if method.visibility != :public}} def {{method.receiver}}{{method.name}}(
+            {% for arg, i in method.args %}{% if i == method.splat_index %}*{% end %}{{arg}}, {% end %}
+            {% if method.double_splat %}**{{method.double_splat}}, {% end %}
+            {% if method.block_arg %}&{{method.block_arg}}{% elsif method.accepts_block? %}&{% end %}
+          ){% if method.return_type %} : {{method.return_type}}{% end %}{% if !method.free_vars.empty? %} forall {{method.free_vars.splat}}{% end %}
+            {{ type == @type ? :previous_def.id : :super.id }}{{ " { |*_spectator_yargs| yield *_spectator_yargs }".id if method.accepts_block? }}
+          end
+        {% end %}
     end
   end
 end
