@@ -42,9 +42,9 @@ module Spectator
 
         macro finished
           stub_hierarchy {{mocked_type.id}}
-        end
 
-        {% if block %}{{block.body}}{% end %}
+          {% if block %}{{block.body}}{% end %}
+        end
       end
     end
   end
