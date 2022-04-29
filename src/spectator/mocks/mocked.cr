@@ -5,6 +5,21 @@ module Spectator
   module Mocked
     include Stubbable
 
+    # Retrieves an enumerable collection of stubs.
+    abstract def _spectator_stubs
+
+    def _spectator_define_stub(stub : ::Spectator::Stub) : Nil
+      _spectator_stubs.unshift(stub)
+    end
+
+    private def _spectator_find_stub(call : ::Spectator::MethodCall) : ::Spectator::Stub?
+      _spectator_stubs.find &.===(call)
+    end
+
+    private def _spectator_stub_for_method?(method : Symbol) : Bool
+      _spectator_stubs.any? { |stub| stub.method == method }
+    end
+
     # Method called when a stub isn't found.
     #
     # The received message is captured in *call*.

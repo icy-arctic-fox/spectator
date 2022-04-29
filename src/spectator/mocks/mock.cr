@@ -12,24 +12,12 @@ module Spectator
         include ::Spectator::Mocked
 
         {% begin %}
-          @_spectator_stubs = [
+          private getter _spectator_stubs = [
             {% for key, value in value_methods %}
               ::Spectator::ValueStub.new({{key.id.symbolize}}, {{value}}),
             {% end %}
           ] of ::Spectator::Stub
         {% end %}
-
-        def _spectator_define_stub(stub : ::Spectator::Stub) : Nil
-          @_spectator_stubs.unshift(stub)
-        end
-
-        private def _spectator_find_stub(call : ::Spectator::MethodCall) : ::Spectator::Stub?
-          @_spectator_stubs.find &.===(call)
-        end
-
-        private def _spectator_stub_for_method?(method : Symbol) : Bool
-          @_spectator_stubs.any? { |stub| stub.method == method }
-        end
 
         # Returns the mock's name formatted for user output.
         private def _spectator_stubbed_name : String
