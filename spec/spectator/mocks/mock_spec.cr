@@ -37,8 +37,15 @@ Spectator.describe Spectator::Mock do
     end
 
     it "allows methods to be stubbed" do
-      stub = Spectator::ValueStub.new(:method3, "stubbed")
-      expect { thing._spectator_define_stub(stub) }.to change { thing.method3 }.from("original").to("stubbed")
+      stub1 = Spectator::ValueStub.new(:method1, 777)
+      stub2 = Spectator::ValueStub.new(:method2, :override)
+      stub3 = Spectator::ValueStub.new(:method3, "stubbed")
+
+      aggregate_failures do
+        expect { thing._spectator_define_stub(stub1) }.to change { thing.method1 }.to(777)
+        expect { thing._spectator_define_stub(stub2) }.to change { thing.method2 }.to(:override)
+        expect { thing._spectator_define_stub(stub3) }.to change { thing.method3 }.from("original").to("stubbed")
+      end
     end
   end
 end
