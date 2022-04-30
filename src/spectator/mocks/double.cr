@@ -140,7 +140,7 @@ module Spectator
 
     # "Hide" existing methods and methods from ancestors by overriding them.
     macro finished
-      stub_hierarchy {{@type.name(generic_args: false)}}
+      stub_type {{@type.name(generic_args: false)}}
     end
 
     # Handle all methods but only respond to configured messages.

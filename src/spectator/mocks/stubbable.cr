@@ -289,21 +289,26 @@ module Spectator
     end
 
     # Redefines all methods and ones inherited from its parents and mixins to support stubs.
-    private macro stub_hierarchy(type_name = @type)
+    private macro stub_type(type_name = @type)
       {% type = type_name.resolve
          # Reverse order of ancestors (there's currently no reverse method for ArrayLiteral).
          count = type.ancestors.size
          ancestors = type.ancestors.map_with_index { |_, i| type.ancestors[count - i - 1] } %}
       {% for ancestor in ancestors %}
-        stub_type {{ancestor}}
+        {% for method in ancestor.methods.reject do |meth|
+                           meth.name.starts_with?("_spectator") ||
+                             ::Spectator::DSL::RESERVED_KEYWORDS.includes?(meth.name.symbolize)
+                         end %}
+          {{(method.abstract? ? :abstract_stub : :default_stub).id}} {{method.visibility.id if method.visibility != :public}} def {{method.receiver}}{{method.name}}(
+            {% for arg, i in method.args %}{% if i == method.splat_index %}*{% end %}{{arg}}, {% end %}
+            {% if method.double_splat %}**{{method.double_splat}}, {% end %}
+            {% if method.block_arg %}&{{method.block_arg}}{% elsif method.accepts_block? %}&{% end %}
+          ){% if method.return_type %} : {{method.return_type}}{% end %}{% if !method.free_vars.empty? %} forall {{method.free_vars.splat}}{% end %}
+            super{% if method.accepts_block? %} { |*%yargs| yield *%yargs }{% end %}
+          end
+        {% end %}
       {% end %}
 
-      stub_type {{type_name}}
-    end
-
-    # Redefines all methods in the specified type to support stubs.
-    private macro stub_type(type_name = @type)
-      {% type = type_name.resolve %}
       {% for method in type.methods.reject do |meth|
                          meth.name.starts_with?("_spectator") ||
                            ::Spectator::DSL::RESERVED_KEYWORDS.includes?(meth.name.symbolize)
@@ -313,7 +318,7 @@ module Spectator
           {% if method.double_splat %}**{{method.double_splat}}, {% end %}
           {% if method.block_arg %}&{{method.block_arg}}{% elsif method.accepts_block? %}&{% end %}
         ){% if method.return_type %} : {{method.return_type}}{% end %}{% if !method.free_vars.empty? %} forall {{method.free_vars.splat}}{% end %}
-          {{ type == @type ? :previous_def.id : :super.id }}{{ " { |*_spectator_yargs| yield *_spectator_yargs }".id if method.accepts_block? }}
+          previous_def{% if method.accepts_block? %} { |*%yargs| yield *%yargs }{% end %}
         end
       {% end %}
     end

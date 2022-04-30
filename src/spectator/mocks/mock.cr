@@ -29,7 +29,7 @@ module Spectator
         end
 
         macro finished
-          stub_hierarchy {{mocked_type.id}}
+          stub_type {{mocked_type.id}}
 
           {% if block %}{{block.body}}{% end %}
         end
