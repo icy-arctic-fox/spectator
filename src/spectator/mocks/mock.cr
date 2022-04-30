@@ -35,5 +35,46 @@ module Spectator
         end
       end
     end
+
+    macro inject(type_name, name = nil, **value_methods, &block)
+      {% type = type_name.resolve
+         base = if type.class?
+                  :class
+                elsif type.struct?
+                  :struct
+                else
+                  raise "Unsupported mockable type - #{type}"
+                end.id %}
+
+      {% begin %}
+        {% if name %}@[::Spectator::StubbedName({{name}})]{% end %}
+        {{base}} ::{{type.name}}
+          include ::Spectator::Mocked
+
+          @@_spectator_stubs = Hash(self, Array(::Spectator::Stub)).new do |hash, key|
+            hash[key] = [] of ::Spectator::Stub
+          end
+
+          private def _spectator_stubs
+            @@_spectator_stubs[self]
+          end
+
+          # Returns the mock's name formatted for user output.
+          private def _spectator_stubbed_name : String
+            \{% if anno = @type.annotation(::Spectator::StubbedName) %}
+              "#<Mock {{type.name}} \"" + \{{(anno[0] || :Anonymous.id).stringify}} + "\">"
+            \{% else %}
+              "#<Mock {{type.name}}>"
+            \{% end %}
+          end
+
+          macro finished
+            stub_type {{type.name}}
+
+            {% if block %}{{block.body}}{% end %}
+          end
+        end
+      {% end %}
+    end
   end
 end
