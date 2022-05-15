@@ -23,5 +23,16 @@ module Spectator
       key = Box.box(object)
       @object_stubs[key]
     end
+
+    # Retrieves all stubs defined for a mocked object.
+    #
+    # Yields to the block on the first retrieval.
+    # This allows a mock to populate the registry with initial stubs.
+    def fetch(object : Reference, & : -> Array(Stub))
+      key = Box.box(object)
+      @object_stubs.fetch(key) do
+        @object_stubs[key] = yield
+      end
+    end
   end
 end

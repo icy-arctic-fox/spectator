@@ -59,7 +59,15 @@ module Spectator
           {% end %}
 
           private def _spectator_stubs
-            @@_spectator_mock_registry[self]
+            @@_spectator_mock_registry.fetch(self) do
+              {% begin %}
+                [
+                  {% for key, value in value_methods %}
+                    ::Spectator::ValueStub.new({{key.id.symbolize}}, {{value}}),
+                  {% end %}
+                ] of ::Spectator::Stub
+              {% end %}
+            end
           end
 
           # Returns the mock's name formatted for user output.
