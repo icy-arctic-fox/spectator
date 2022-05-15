@@ -54,18 +54,18 @@ Spectator.describe Spectator::Mock do
       end
     end
 
-    let(thing) { MockThing.new }
+    let(mock) { MockThing.new }
 
     it "defines a subclass of the mocked type" do
       expect(MockThing).to be_lt(Thing)
     end
 
     it "overrides responses from methods with keyword arguments" do
-      expect(thing.method1).to eq(123)
+      expect(mock.method1).to eq(123)
     end
 
     it "overrides responses from methods defined in the block" do
-      expect(thing.method2).to eq(:stubbed)
+      expect(mock.method2).to eq(:stubbed)
     end
 
     it "allows methods to be stubbed" do
@@ -74,9 +74,9 @@ Spectator.describe Spectator::Mock do
       stub3 = Spectator::ValueStub.new(:method3, "stubbed")
 
       aggregate_failures do
-        expect { thing._spectator_define_stub(stub1) }.to change { thing.method1 }.to(777)
-        expect { thing._spectator_define_stub(stub2) }.to change { thing.method2 }.to(:override)
-        expect { thing._spectator_define_stub(stub3) }.to change { thing.method3 }.from("original").to("stubbed")
+        expect { mock._spectator_define_stub(stub1) }.to change { mock.method1 }.to(777)
+        expect { mock._spectator_define_stub(stub2) }.to change { mock.method2 }.to(:override)
+        expect { mock._spectator_define_stub(stub3) }.to change { mock.method3 }.from("original").to("stubbed")
       end
     end
   end
