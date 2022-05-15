@@ -33,6 +33,10 @@ struct MockedStruct
 end
 
 Spectator.describe Spectator::Mock do
+  let(stub1) { Spectator::ValueStub.new(:method1, 777) }
+  let(stub2) { Spectator::ValueStub.new(:method2, :override) }
+  let(stub3) { Spectator::ValueStub.new(:method3, "stubbed") }
+
   describe "#define_subclass" do
     class Thing
       def method1
@@ -69,14 +73,23 @@ Spectator.describe Spectator::Mock do
     end
 
     it "allows methods to be stubbed" do
-      stub1 = Spectator::ValueStub.new(:method1, 777)
-      stub2 = Spectator::ValueStub.new(:method2, :override)
-      stub3 = Spectator::ValueStub.new(:method3, "stubbed")
-
       aggregate_failures do
         expect { mock._spectator_define_stub(stub1) }.to change { mock.method1 }.to(777)
         expect { mock._spectator_define_stub(stub2) }.to change { mock.method2 }.to(:override)
         expect { mock._spectator_define_stub(stub3) }.to change { mock.method3 }.from("original").to("stubbed")
+      end
+    end
+
+    it "can clear stubs" do
+      mock._spectator_define_stub(stub1)
+      mock._spectator_define_stub(stub2)
+      mock._spectator_define_stub(stub3)
+
+      mock._spectator_clear_stubs
+      aggregate_failures do
+        expect(mock.method1).to eq(123)
+        expect(mock.method2).to eq(:stubbed)
+        expect(mock.method3).to eq("original")
       end
     end
   end
@@ -94,6 +107,9 @@ Spectator.describe Spectator::Mock do
 
       let(mock) { MockedClass.new }
 
+      # Necessary to clear stubs to prevent leakages between tests.
+      after_each { mock._spectator_clear_stubs }
+
       it "overrides responses from methods with keyword arguments" do
         expect(mock.method1).to eq(123)
       end
@@ -103,14 +119,23 @@ Spectator.describe Spectator::Mock do
       end
 
       it "allows methods to be stubbed" do
-        stub1 = Spectator::ValueStub.new(:method1, 777)
-        stub2 = Spectator::ValueStub.new(:method2, :override)
-        stub3 = Spectator::ValueStub.new(:method3, "stubbed")
-
         aggregate_failures do
           expect { mock._spectator_define_stub(stub1) }.to change { mock.method1 }.to(777)
           expect { mock._spectator_define_stub(stub2) }.to change { mock.method2 }.to(:override)
           expect { mock._spectator_define_stub(stub3) }.to change { mock.method3 }.from("original").to("stubbed")
+        end
+      end
+
+      it "can clear stubs" do
+        mock._spectator_define_stub(stub1)
+        mock._spectator_define_stub(stub2)
+        mock._spectator_define_stub(stub3)
+
+        mock._spectator_clear_stubs
+        aggregate_failures do
+          expect(mock.method1).to eq(123)
+          expect(mock.method2).to eq(:stubbed)
+          expect(mock.method3).to eq("original")
         end
       end
 
@@ -132,6 +157,9 @@ Spectator.describe Spectator::Mock do
 
       let(mock) { MockedStruct.new }
 
+      # Necessary to clear stubs to prevent leakages between tests.
+      after_each { mock._spectator_clear_stubs }
+
       it "overrides responses from methods with keyword arguments" do
         expect(mock.method1).to eq(123)
       end
@@ -141,10 +169,6 @@ Spectator.describe Spectator::Mock do
       end
 
       it "allows methods to be stubbed" do
-        stub1 = Spectator::ValueStub.new(:method1, 777)
-        stub2 = Spectator::ValueStub.new(:method2, :override)
-        stub3 = Spectator::ValueStub.new(:method3, "stubbed")
-
         aggregate_failures do
           expect { mock._spectator_define_stub(stub1) }.to change { mock.method1 }.to(777)
           expect { mock._spectator_define_stub(stub2) }.to change { mock.method2 }.to(:override)

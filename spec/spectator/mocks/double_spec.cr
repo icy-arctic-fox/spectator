@@ -315,4 +315,15 @@ Spectator.describe Spectator::Double do
       end
     end
   end
+
+  describe "#_spectator_clear_stubs" do
+    subject(dbl) { FooBarDouble.new }
+    let(stub) { Spectator::ValueStub.new(:foo, 5) }
+
+    before_each { dbl._spectator_define_stub(stub) }
+
+    it "removes previously defined stubs" do
+      expect { dbl._spectator_clear_stubs }.to change { dbl.foo }.from(5).to(42)
+    end
+  end
 end

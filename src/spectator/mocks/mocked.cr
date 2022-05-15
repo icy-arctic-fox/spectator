@@ -12,6 +12,10 @@ module Spectator
       _spectator_stubs.unshift(stub)
     end
 
+    def _spectator_clear_stubs : Nil
+      _spectator_stubs.clear
+    end
+
     private def _spectator_find_stub(call : ::Spectator::MethodCall) : ::Spectator::Stub?
       _spectator_stubs.find &.===(call)
     end

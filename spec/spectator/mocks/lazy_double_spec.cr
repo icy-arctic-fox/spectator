@@ -248,4 +248,24 @@ Spectator.describe Spectator::LazyDouble do
       end
     end
   end
+
+  describe "#_spectator_clear_stubs" do
+    subject(dbl) { Spectator::LazyDouble.new(foo: 42, bar: "baz") }
+    let(stub) { Spectator::ValueStub.new(:foo, 5) }
+
+    before_each { dbl._spectator_define_stub(stub) }
+
+    it "removes previously defined stubs" do
+      expect { dbl._spectator_clear_stubs }.to change { dbl.foo }.from(5).to(42)
+    end
+
+    it "raises on methods without an implementation" do
+      stub = Spectator::ValueStub.new(:baz, :xyz)
+      dbl._spectator_define_stub(stub)
+      expect(dbl.baz).to eq(:xyz)
+
+      dbl._spectator_clear_stubs
+      expect { dbl.baz }.to raise_error(Spectator::UnexpectedMessage, /baz/)
+    end
+  end
 end

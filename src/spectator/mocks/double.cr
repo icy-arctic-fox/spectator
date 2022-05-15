@@ -95,6 +95,11 @@ module Spectator
       @stubs.unshift(stub)
     end
 
+    protected def _spectator_clear_stubs : Nil
+      Log.debug { "Clearing stubs for #{_spectator_stubbed_name}" }
+      @stubs.clear
+    end
+
     private def _spectator_find_stub(call : MethodCall) : Stub?
       Log.debug { "Finding stub for #{call}" }
       stub = @stubs.find &.===(call)

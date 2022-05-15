@@ -28,6 +28,9 @@ module Spectator
     # Defines a stub to change the behavior of a method.
     abstract def _spectator_define_stub(stub : Stub) : Nil
 
+    # Clears all previously defined stubs.
+    abstract def _spectator_clear_stubs : Nil
+
     # Method called when a stub isn't found.
     #
     # The received message is captured in *call*.
