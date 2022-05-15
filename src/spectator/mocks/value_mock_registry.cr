@@ -39,6 +39,12 @@ module Spectator
       end
     end
 
+    # Clears all stubs defined for a mocked object.
+    def delete(object : T) : Nil
+      key = value_bytes(object)
+      @object_stubs.delete(key)
+    end
+
     # Extracts heap-managed bytes for a value.
     #
     # Strings are used because a string pool is used.

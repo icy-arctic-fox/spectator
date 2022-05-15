@@ -34,5 +34,11 @@ module Spectator
         @object_stubs[key] = yield
       end
     end
+
+    # Clears all stubs defined for a mocked object.
+    def delete(object : Reference) : Nil
+      key = Box.box(object)
+      @object_stubs.delete(key)
+    end
   end
 end

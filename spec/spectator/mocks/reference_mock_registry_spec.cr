@@ -4,6 +4,7 @@ Spectator.describe Spectator::ReferenceMockRegistry do
   subject(registry) { described_class.new }
   let(obj) { "foobar" }
   let(stub) { Spectator::ValueStub.new(:test, 42) }
+  let(stubs) { [stub] of Spectator::Stub }
   let(no_stubs) { [] of Spectator::Stub }
 
   it "initially has no stubs" do
@@ -11,7 +12,7 @@ Spectator.describe Spectator::ReferenceMockRegistry do
   end
 
   it "stores stubs for an object" do
-    expect { registry[obj] << stub }.to change { registry[obj] }.from(no_stubs).to([stub])
+    expect { registry[obj] << stub }.to change { registry[obj] }.from(no_stubs).to(stubs)
   end
 
   it "isolates stubs between different objects" do
@@ -24,11 +25,11 @@ Spectator.describe Spectator::ReferenceMockRegistry do
   describe "#fetch" do
     it "retrieves existing stubs" do
       registry[obj] << stub
-      expect(registry.fetch(obj) { no_stubs }).to eq([stub])
+      expect(registry.fetch(obj) { no_stubs }).to eq(stubs)
     end
 
     it "stores stubs on the first retrieval" do
-      expect(registry.fetch(obj) { [stub] of Spectator::Stub }).to eq([stub])
+      expect(registry.fetch(obj) { stubs }).to eq(stubs)
     end
 
     it "isolates stubs between different objects" do
@@ -36,6 +37,25 @@ Spectator.describe Spectator::ReferenceMockRegistry do
       obj2 = "bar"
       registry[obj2] << Spectator::ValueStub.new(:obj2, 42)
       expect { registry.fetch(obj1) { no_stubs } }.to_not change { registry[obj2] }
+    end
+  end
+
+  describe "#delete" do
+    it "clears stubs for an object" do
+      registry[obj] << stub
+      expect { registry.delete(obj) }.to change { registry[obj] }.from(stubs).to(no_stubs)
+    end
+
+    it "doesn't clear initial stubs provided with #fetch" do
+      registry[obj] << Spectator::ValueStub.new(:stub2, 42)
+      expect { registry.delete(obj) }.to change { registry.fetch(obj) { stubs } }.to(stubs)
+    end
+
+    it "isolates stubs between different objects" do
+      obj1 = "foo"
+      obj2 = "bar"
+      registry[obj2] << Spectator::ValueStub.new(:obj2, 42)
+      expect { registry.delete(obj1) }.to_not change { registry[obj2] }
     end
   end
 end
