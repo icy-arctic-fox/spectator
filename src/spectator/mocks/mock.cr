@@ -1,5 +1,6 @@
 require "./method_call"
 require "./mocked"
+require "./reference_mock_registry"
 require "./stub"
 require "./stubbed_name"
 require "./value_stub"
@@ -51,12 +52,14 @@ module Spectator
         {{base}} ::{{type.name}}
           include ::Spectator::Mocked
 
-          @@_spectator_stubs = Hash(self, Array(::Spectator::Stub)).new do |hash, key|
-            hash[key] = [] of ::Spectator::Stub
-          end
+          {% if type.class? %}
+            @@_spectator_mock_registry = ::Spectator::ReferenceMockRegistry.new
+          {% else %}
+            {% raise "Unsupported type for injecting mock" %}
+          {% end %}
 
           private def _spectator_stubs
-            @@_spectator_stubs[self]
+            @@_spectator_mock_registry[self]
           end
 
           # Returns the mock's name formatted for user output.
