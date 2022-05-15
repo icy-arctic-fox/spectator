@@ -92,6 +92,13 @@ Spectator.describe Spectator::Mock do
         expect(mock.method3).to eq("original")
       end
     end
+
+    it "sets the mock name" do
+      args = Spectator::Arguments.capture("foo")
+      stub = Spectator::ValueStub.new(:method3, 0, args)
+      mock._spectator_define_stub(stub)
+      expect { mock.method3 }.to raise_error(Spectator::UnexpectedMessage, /mock_name/), "Raised error doesn't contain the mocked name."
+    end
   end
 
   describe "#inject" do
@@ -146,6 +153,13 @@ Spectator.describe Spectator::Mock do
       it "doesn't affect instance variables" do
         expect(mock.instance_variables).to eq([:method1])
       end
+
+      it "sets the mock name" do
+        args = Spectator::Arguments.capture("foo")
+        stub = Spectator::ValueStub.new(:method3, 0, args)
+        mock._spectator_define_stub(stub)
+        expect { mock.method3 }.to raise_error(Spectator::UnexpectedMessage, /mock_name/), "Raised error doesn't contain the mocked name."
+      end
     end
 
     context "with a struct" do
@@ -182,6 +196,13 @@ Spectator.describe Spectator::Mock do
 
       it "doesn't affect instance variables" do
         expect(mock.instance_variables).to eq([:method1])
+      end
+
+      it "sets the mock name" do
+        args = Spectator::Arguments.capture("foo")
+        stub = Spectator::ValueStub.new(:method3, 0, args)
+        mock._spectator_define_stub(stub)
+        expect { mock.method3 }.to raise_error(Spectator::UnexpectedMessage, /mock_name/), "Raised error doesn't contain the mocked name."
       end
     end
   end
