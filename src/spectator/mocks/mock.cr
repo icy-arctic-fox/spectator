@@ -14,12 +14,18 @@ module Spectator
         include ::Spectator::Mocked
 
         {% begin %}
-          private getter _spectator_stubs = [
-            {% for key, value in value_methods %}
-              ::Spectator::ValueStub.new({{key.id.symbolize}}, {{value}}),
-            {% end %}
-          ] of ::Spectator::Stub
+          private getter(_spectator_stubs) do
+            [
+              {% for key, value in value_methods %}
+                ::Spectator::ValueStub.new({{key.id.symbolize}}, {{value}}),
+              {% end %}
+            ] of ::Spectator::Stub
+          end
         {% end %}
+
+        def _spectator_clear_stubs : Nil
+          @_spectator_stubs = nil
+        end
 
         # Returns the mock's name formatted for user output.
         private def _spectator_stubbed_name : String
@@ -71,6 +77,10 @@ module Spectator
                 ] of ::Spectator::Stub
               {% end %}
             end
+          end
+
+          def _spectator_clear_stubs : Nil
+            @@_spectator_mock_registry.delete(self)
           end
 
           # Returns the mock's name formatted for user output.
