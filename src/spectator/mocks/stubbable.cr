@@ -318,7 +318,7 @@ module Spectator
           {% if method.double_splat %}**{{method.double_splat}}, {% end %}
           {% if method.block_arg %}&{{method.block_arg}}{% elsif method.accepts_block? %}&{% end %}
         ){% if method.return_type %} : {{method.return_type}}{% end %}{% if !method.free_vars.empty? %} forall {{method.free_vars.splat}}{% end %}
-          previous_def{% if method.accepts_block? %} { |*%yargs| yield *%yargs }{% end %}
+          {% if type == @type %}previous_def{% else %}super{% end %}{% if method.accepts_block? %} { |*%yargs| yield *%yargs }{% end %}
         end
       {% end %}
     end
