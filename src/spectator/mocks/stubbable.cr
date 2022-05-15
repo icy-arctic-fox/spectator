@@ -195,7 +195,7 @@ module Spectator
 
         {% original = "previous_def#{" { |*_spectator_yargs| yield *_spectator_yargs }".id if method.accepts_block?}".id %}
       {% end %}
- 
+
       {% # Reconstruct the method signature.
 # I wish there was a better way of doing this, but there isn't (at least not that I'm aware of).
 # This chunk of code must reconstruct the method signature exactly as it was originally.

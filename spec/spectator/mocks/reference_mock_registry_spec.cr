@@ -35,7 +35,7 @@ Spectator.describe Spectator::ReferenceMockRegistry do
       obj1 = "foo"
       obj2 = "bar"
       registry[obj2] << Spectator::ValueStub.new(:obj2, 42)
-      expect { registry.fetch(obj2) { no_stubs } }.to_not change { registry[obj2] }
+      expect { registry.fetch(obj1) { no_stubs } }.to_not change { registry[obj2] }
     end
   end
 end
