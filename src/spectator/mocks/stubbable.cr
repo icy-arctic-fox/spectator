@@ -130,7 +130,7 @@ module Spectator
         if %stub = _spectator_find_stub(%call)
           # Cast the stub or return value to the expected type.
           # This is necessary to match the expected return type of the original method.
-          _spectator_cast_stub_value(%stub, %call, typeof({{original}}), {{method.return_type && method.return_type.resolve < Nil || false}})
+          _spectator_cast_stub_value(%stub, %call, typeof({{original}}), {{method.return_type && method.return_type.resolve <= Nil || method.return_type.is_a?(Union) && method.return_type.types.map(&.resolve).includes?(Nil)}})
         else
           # Delegate missing stub behavior to concrete type.
           _spectator_stub_fallback(%call, typeof({{original}})) do
@@ -221,7 +221,7 @@ module Spectator
           # This is necessary to match the expected return type of the original method.
           {% if method.return_type %}
             # Return type restriction takes priority since it can be a superset of the original implementation.
-            _spectator_cast_stub_value(%stub, %call, {{method.return_type}}, {{method.return_type.resolve < Nil}})
+            _spectator_cast_stub_value(%stub, %call, {{method.return_type}}, {{method.return_type.resolve <= Nil || method.return_type.is_a?(Union) && method.return_type.types.map(&.resolve).includes?(Nil)}})
           {% elsif !method.abstract? %}
             # The method isn't abstract, infer the type it returns without calling it.
             _spectator_cast_stub_value(%stub, %call, typeof({{original}}))
@@ -355,14 +355,14 @@ module Spectator
           {% if nullable %}
             nil
           {% else %}
-          # The stubbed value was something else entirely and cannot be cast to the return type.
-          # There's something weird going on (compiler bug?) that sometimes causes this class lookup to fail.
-          %type = begin
-            %value.class.to_s
-          rescue
-            "<Unknown>"
-          end
-          raise TypeCastError.new("#{_spectator_stubbed_name} received message #{ {{call}} } and is attempting to return a `#{%type}`, but returned type must be `#{ {{type}} }`.")
+            # The stubbed value was something else entirely and cannot be cast to the return type.
+            # There's something weird going on (compiler bug?) that sometimes causes this class lookup to fail.
+            %type = begin
+              %value.class.to_s
+            rescue
+              "<Unknown>"
+            end
+            raise TypeCastError.new("#{_spectator_stubbed_name} received message #{ {{call}} } and is attempting to return a `#{%type}`, but returned type must be `#{ {{type}} }`.")
           {% end %}
         end
       end
