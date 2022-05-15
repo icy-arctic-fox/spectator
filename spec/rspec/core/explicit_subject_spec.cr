@@ -34,16 +34,14 @@ Spectator.describe "Explicit Subject" do
 
       subject { @@element_list.pop }
 
-      skip "is memoized across calls (i.e. the block is invoked once)",
-        reason: "RSpec calls the \"actual\" block after the \"change block\"." do
+      it "is memoized across calls (i.e. the block is invoked once)" do
         expect do
           3.times { subject }
         end.to change { @@element_list }.from([1, 2, 3]).to([1, 2])
         expect(subject).to eq(3)
       end
 
-      skip "is not memoized across examples",
-        reason: "RSpec calls the \"actual\" block after the \"change block\"." do
+      it "is not memoized across examples" do
         expect { subject }.to change { @@element_list }.from([1, 2]).to([1])
         expect(subject).to eq(2)
       end

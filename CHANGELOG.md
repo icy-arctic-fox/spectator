@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Changed
 - Forward example procsy `to_s` to underlying example. [#70](https://gitlab.com/arctic-fox/spectator/-/issues/70)
+- Adjust evaluation order of `change` matcher expressions.
 
 ## [0.10.5] - 2022-01-27
 ### Fixed
