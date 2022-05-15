@@ -3,6 +3,7 @@ require "./mocked"
 require "./reference_mock_registry"
 require "./stub"
 require "./stubbed_name"
+require "./value_mock_registry"
 require "./value_stub"
 
 module Spectator
@@ -54,6 +55,8 @@ module Spectator
 
           {% if type.class? %}
             @@_spectator_mock_registry = ::Spectator::ReferenceMockRegistry.new
+          {% elsif type.struct? %}
+            @@_spectator_mock_registry = ::Spectator::ValueMockRegistry(self).new
           {% else %}
             {% raise "Unsupported type for injecting mock" %}
           {% end %}
