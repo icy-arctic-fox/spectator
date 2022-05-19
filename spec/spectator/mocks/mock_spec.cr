@@ -1,43 +1,11 @@
 require "../../spec_helper"
 
-class MockedClass
-  getter method1 = 42
-
-  def method2
-    :original
-  end
-
-  def method3
-    "original"
-  end
-
-  def instance_variables
-    [{{@type.instance_vars.map(&.name.symbolize).splat}}]
-  end
-end
-
-struct MockedStruct
-  getter method1 = 42
-
-  def method2
-    :original
-  end
-
-  def method3
-    "original"
-  end
-
-  def instance_variables
-    [{{@type.instance_vars.map(&.name.symbolize).splat}}]
-  end
-end
-
 Spectator.describe Spectator::Mock do
   let(stub1) { Spectator::ValueStub.new(:method1, 777) }
   let(stub2) { Spectator::ValueStub.new(:method2, :override) }
   let(stub3) { Spectator::ValueStub.new(:method3, "stubbed") }
 
-  describe "#define_subclass" do
+  describe "#define_subtype" do
     class Thing
       def method1
         42
@@ -52,7 +20,7 @@ Spectator.describe Spectator::Mock do
       end
     end
 
-    Spectator::Mock.define_subclass(Thing, MockThing, :mock_name, method1: 123) do
+    Spectator::Mock.define_subtype(:class, Thing, MockThing, :mock_name, method1: 123) do
       stub def method2
         :stubbed
       end
@@ -102,11 +70,24 @@ Spectator.describe Spectator::Mock do
   end
 
   describe "#inject" do
-    # For some reason, `inject` can't find the types.
-    # Their definitions are outside of the spec as a workaround.
-
     context "with a class" do
-      Spectator::Mock.inject(MockedClass, :mock_name, method1: 123) do
+      class MockedClass
+        getter method1 = 42
+
+        def method2
+          :original
+        end
+
+        def method3
+          "original"
+        end
+
+        def instance_variables
+          [{{@type.instance_vars.map(&.name.symbolize).splat}}]
+        end
+      end
+
+      Spectator::Mock.inject(:class, MockedClass, :mock_name, method1: 123) do
         stub def method2
           :stubbed
         end
@@ -163,7 +144,23 @@ Spectator.describe Spectator::Mock do
     end
 
     context "with a struct" do
-      Spectator::Mock.inject(MockedStruct, :mock_name, method1: 123) do
+      struct MockedStruct
+        getter method1 = 42
+
+        def method2
+          :original
+        end
+
+        def method3
+          "original"
+        end
+
+        def instance_variables
+          [{{@type.instance_vars.map(&.name.symbolize).splat}}]
+        end
+      end
+
+      Spectator::Mock.inject(:struct, MockedStruct, :mock_name, method1: 123) do
         stub def method2
           :stubbed
         end
