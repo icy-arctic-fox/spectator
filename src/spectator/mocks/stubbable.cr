@@ -316,13 +316,15 @@ module Spectator
                          meth.name.starts_with?("_spectator") ||
                            ::Spectator::DSL::RESERVED_KEYWORDS.includes?(meth.name.symbolize)
                        end %}
-        {{(method.abstract? ? :abstract_stub : :default_stub).id}} {{method.visibility.id if method.visibility != :public}} def {{method.receiver}}{{method.name}}(
+        {{(method.abstract? ? :"abstract_stub abstract" : :default_stub).id}} {{method.visibility.id if method.visibility != :public}} def {{method.receiver}}{{method.name}}(
           {% for arg, i in method.args %}{% if i == method.splat_index %}*{% end %}{{arg}}, {% end %}
           {% if method.double_splat %}**{{method.double_splat}}, {% end %}
           {% if method.block_arg %}&{{method.block_arg}}{% elsif method.accepts_block? %}&{% end %}
         ){% if method.return_type %} : {{method.return_type}}{% end %}{% if !method.free_vars.empty? %} forall {{method.free_vars.splat}}{% end %}
-          {% if type == @type %}previous_def{% else %}super{% end %}{% if method.accepts_block? %} { |*%yargs| yield *%yargs }{% end %}
-        end
+          {% unless method.abstract? %}
+            {% if type == @type %}previous_def{% else %}super{% end %}{% if method.accepts_block? %} { |*%yargs| yield *%yargs }{% end %}
+          end
+        {% end %}
       {% end %}
     end
 

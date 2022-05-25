@@ -6,66 +6,134 @@ Spectator.describe Spectator::Mock do
   let(stub3) { Spectator::ValueStub.new(:method3, "stubbed") }
 
   describe "#define_subtype" do
-    class Thing
-      def method1
-        42
+    context "with a concrete class" do
+      class Thing
+        def method1
+          42
+        end
+
+        def method2
+          :original
+        end
+
+        def method3
+          "original"
+        end
       end
 
-      def method2
-        :original
+      Spectator::Mock.define_subtype(:class, Thing, MockThing, :mock_name, method1: 123) do
+        stub def method2
+          :stubbed
+        end
       end
 
-      def method3
-        "original"
+      let(mock) { MockThing.new }
+
+      it "defines a subclass of the mocked type" do
+        expect(MockThing).to be_lt(Thing)
       end
-    end
 
-    Spectator::Mock.define_subtype(:class, Thing, MockThing, :mock_name, method1: 123) do
-      stub def method2
-        :stubbed
-      end
-    end
-
-    let(mock) { MockThing.new }
-
-    it "defines a subclass of the mocked type" do
-      expect(MockThing).to be_lt(Thing)
-    end
-
-    it "overrides responses from methods with keyword arguments" do
-      expect(mock.method1).to eq(123)
-    end
-
-    it "overrides responses from methods defined in the block" do
-      expect(mock.method2).to eq(:stubbed)
-    end
-
-    it "allows methods to be stubbed" do
-      aggregate_failures do
-        expect { mock._spectator_define_stub(stub1) }.to change { mock.method1 }.to(777)
-        expect { mock._spectator_define_stub(stub2) }.to change { mock.method2 }.to(:override)
-        expect { mock._spectator_define_stub(stub3) }.to change { mock.method3 }.from("original").to("stubbed")
-      end
-    end
-
-    it "can clear stubs" do
-      mock._spectator_define_stub(stub1)
-      mock._spectator_define_stub(stub2)
-      mock._spectator_define_stub(stub3)
-
-      mock._spectator_clear_stubs
-      aggregate_failures do
+      it "overrides responses from methods with keyword arguments" do
         expect(mock.method1).to eq(123)
+      end
+
+      it "overrides responses from methods defined in the block" do
         expect(mock.method2).to eq(:stubbed)
-        expect(mock.method3).to eq("original")
+      end
+
+      it "allows methods to be stubbed" do
+        aggregate_failures do
+          expect { mock._spectator_define_stub(stub1) }.to change { mock.method1 }.to(777)
+          expect { mock._spectator_define_stub(stub2) }.to change { mock.method2 }.to(:override)
+          expect { mock._spectator_define_stub(stub3) }.to change { mock.method3 }.from("original").to("stubbed")
+        end
+      end
+
+      it "can clear stubs" do
+        mock._spectator_define_stub(stub1)
+        mock._spectator_define_stub(stub2)
+        mock._spectator_define_stub(stub3)
+
+        mock._spectator_clear_stubs
+        aggregate_failures do
+          expect(mock.method1).to eq(123)
+          expect(mock.method2).to eq(:stubbed)
+          expect(mock.method3).to eq("original")
+        end
+      end
+
+      it "sets the mock name" do
+        args = Spectator::Arguments.capture("foo")
+        stub = Spectator::ValueStub.new(:method3, 0, args)
+        mock._spectator_define_stub(stub)
+        expect { mock.method3 }.to raise_error(Spectator::UnexpectedMessage, /mock_name/), "Raised error doesn't contain the mocked name."
       end
     end
 
-    it "sets the mock name" do
-      args = Spectator::Arguments.capture("foo")
-      stub = Spectator::ValueStub.new(:method3, 0, args)
-      mock._spectator_define_stub(stub)
-      expect { mock.method3 }.to raise_error(Spectator::UnexpectedMessage, /mock_name/), "Raised error doesn't contain the mocked name."
+    context "with an abstract class" do
+      abstract class Thing
+        abstract def method1
+
+        abstract def method2 : Symbol
+
+        def method3
+          "original"
+        end
+
+        abstract def method4
+      end
+
+      Spectator::Mock.define_subtype(:class, Thing, MockThing, :mock_name, method2: :stubbed) do
+        stub def method1 : Int32 # NOTE: Return type is required since one wasn't provided in the parent.
+          123
+        end
+      end
+
+      let(mock) { MockThing.new }
+
+      it "defines a subclass of the mocked type" do
+        expect(MockThing).to be_lt(Thing)
+      end
+
+      it "overrides responses from methods defined in the block" do
+        expect(mock.method1).to eq(123)
+      end
+
+      it "overrides responses from methods with keyword arguments" do
+        expect(mock.method2).to eq(:stubbed)
+      end
+
+      it "allows methods to be stubbed" do
+        aggregate_failures do
+          expect { mock._spectator_define_stub(stub1) }.to change { mock.method1 }.to(777)
+          expect { mock._spectator_define_stub(stub2) }.to change { mock.method2 }.to(:override)
+          expect { mock._spectator_define_stub(stub3) }.to change { mock.method3 }.from("original").to("stubbed")
+        end
+      end
+
+      it "can clear stubs" do
+        mock._spectator_define_stub(stub1)
+        mock._spectator_define_stub(stub2)
+        mock._spectator_define_stub(stub3)
+
+        mock._spectator_clear_stubs
+        aggregate_failures do
+          expect(mock.method1).to eq(123)
+          expect(mock.method2).to eq(:stubbed)
+          expect(mock.method3).to eq("original")
+        end
+      end
+
+      it "raises when calling an abstract method that isn't stubbed" do
+        expect { mock.method4 }.to raise_error(Spectator::UnexpectedMessage, /method4/)
+      end
+
+      it "sets the mock name" do
+        args = Spectator::Arguments.capture("foo")
+        stub = Spectator::ValueStub.new(:method3, 0, args)
+        mock._spectator_define_stub(stub)
+        expect { mock.method3 }.to raise_error(Spectator::UnexpectedMessage, /mock_name/), "Raised error doesn't contain the mocked name."
+      end
     end
   end
 
