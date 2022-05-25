@@ -169,7 +169,7 @@ Spectator.describe Spectator::Mock do
         expect(MockThing).to be_lt(Thing)
       end
 
-      it "defines a struct" do
+      xit "defines a struct", pending: "Crystal compiler bug" do
         expect(MockThing).to be_lt(::Value)
       end
 
