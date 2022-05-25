@@ -13,14 +13,43 @@ before_script:
 
 spec:
   script:
-    - shards
-    - crystal spec --error-on-warnings --junit_output=.
+    - crystal spec --error-on-warnings --junit_output=. spec/runtime_example_spec.cr spec/matchers/ spec/spectator/*.cr
   artifacts:
     when: always
     paths:
       - output.xml
     reports:
       junit: output.xml
+
+spec docs:
+  extends: spec
+  script:
+    - crystal spec --error-on-warnings --junit_output=. spec/docs/
+
+spec features:
+  extends: spec
+  script:
+    - crystal spec --error-on-warnings --junit_output=. spec/features/
+
+spec regression:
+  extends: spec
+  script:
+    - crystal spec --error-on-warnings --junit_output=. spec/issues/
+
+spec rspec:
+  extends: spec
+  script:
+    - crystal spec --error-on-warnings --junit_output=. spec/rspec/
+
+spec dsl:
+  extends: spec
+  script:
+    - crystal spec --error-on-warnings --junit_output=. spec/spectator/dsl/
+
+spec mocks:
+  extends: spec
+  script:
+    - crystal spec --error-on-warnings --junit_output=. spec/mocks/
 
 format:
   script:
