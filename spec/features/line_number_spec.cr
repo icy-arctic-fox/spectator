@@ -1,6 +1,6 @@
 require "../spec_helper"
 
-Spectator.describe Spectator do
+Spectator.describe Spectator, :smoke do
   let(current_example) { ::Spectator::Example.current }
   subject(location) { current_example.location }
 

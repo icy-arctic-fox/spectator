@@ -1,6 +1,6 @@
 require "../spec_helper"
 
-Spectator.describe Spectator do
+Spectator.describe Spectator, :smoke do
   it "supports custom expectation messages" do
     expect do
       expect(false).to be_true, "paradox!"

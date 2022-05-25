@@ -4,7 +4,7 @@ class Base; end
 
 module SomeModule; end
 
-Spectator.describe "Subject" do
+Spectator.describe "Subject", :smoke do
   subject { Base.new }
 
   context "nested" do

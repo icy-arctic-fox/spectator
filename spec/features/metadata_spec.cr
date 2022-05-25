@@ -1,6 +1,6 @@
 require "../spec_helper"
 
-Spectator.describe "Spec metadata" do
+Spectator.describe "Spec metadata", :smoke do
   let(interpolation) { "string interpolation" }
 
   it "supports #{interpolation}" do |example|
