@@ -143,6 +143,76 @@ Spectator.describe Spectator::Mock do
         expect { mock.method3 }.to raise_error(Spectator::UnexpectedMessage, /mock_name/), "Raised error doesn't contain the mocked name."
       end
     end
+
+    context "with an abstract struct" do
+      abstract struct Thing
+        abstract def method1
+
+        abstract def method2 : Symbol
+
+        def method3
+          "original"
+        end
+
+        abstract def method4
+      end
+
+      Spectator::Mock.define_subtype(:struct, Thing, MockThing, :mock_name, method2: :stubbed) do
+        stub def method1 : Int32 # NOTE: Return type is required since one wasn't provided in the parent.
+          123
+        end
+      end
+
+      let(mock) { MockThing.new }
+
+      it "defines a sub-type of the mocked type" do
+        expect(MockThing).to be_lt(Thing)
+      end
+
+      it "defines a struct" do
+        expect(MockThing).to be_lt(::Value)
+      end
+
+      it "overrides responses from methods defined in the block" do
+        expect(mock.method1).to eq(123)
+      end
+
+      it "overrides responses from methods with keyword arguments" do
+        expect(mock.method2).to eq(:stubbed)
+      end
+
+      it "allows methods to be stubbed" do
+        aggregate_failures do
+          expect { mock._spectator_define_stub(stub1) }.to change { mock.method1 }.to(777)
+          expect { mock._spectator_define_stub(stub2) }.to change { mock.method2 }.to(:override)
+          expect { mock._spectator_define_stub(stub3) }.to change { mock.method3 }.from("original").to("stubbed")
+        end
+      end
+
+      it "can clear stubs" do
+        mock._spectator_define_stub(stub1)
+        mock._spectator_define_stub(stub2)
+        mock._spectator_define_stub(stub3)
+
+        mock._spectator_clear_stubs
+        aggregate_failures do
+          expect(mock.method1).to eq(123)
+          expect(mock.method2).to eq(:stubbed)
+          expect(mock.method3).to eq("original")
+        end
+      end
+
+      it "raises when calling an abstract method that isn't stubbed" do
+        expect { mock.method4 }.to raise_error(Spectator::UnexpectedMessage, /method4/)
+      end
+
+      it "sets the mock name" do
+        args = Spectator::Arguments.capture("foo")
+        stub = Spectator::ValueStub.new(:method3, 0, args)
+        mock._spectator_define_stub(stub)
+        expect { mock.method3 }.to raise_error(Spectator::UnexpectedMessage, /mock_name/), "Raised error doesn't contain the mocked name."
+      end
+    end
   end
 
   describe "#inject" do
