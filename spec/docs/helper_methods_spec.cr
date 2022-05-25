@@ -1,3 +1,5 @@
+require "../spec_helper"
+
 Spectator.describe String do
   # This is a helper method.
   def random_string(length)
@@ -15,6 +17,7 @@ Spectator.describe String do
     end
   end
 end
+
 Spectator.describe String do
   # length is now pulled from value defined by `let`.
   def random_string
