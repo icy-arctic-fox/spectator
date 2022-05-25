@@ -33,6 +33,10 @@ Spectator.describe Spectator::Mock do
         expect(MockThing).to be_lt(Thing)
       end
 
+      it "defines a class" do
+        expect(MockThing).to be_lt(::Reference)
+      end
+
       it "overrides responses from methods with keyword arguments" do
         expect(mock.method1).to eq(123)
       end
@@ -93,6 +97,10 @@ Spectator.describe Spectator::Mock do
 
       it "defines a subclass of the mocked type" do
         expect(MockThing).to be_lt(Thing)
+      end
+
+      it "defines a class" do
+        expect(MockThing).to be_lt(::Reference)
       end
 
       it "overrides responses from methods defined in the block" do
