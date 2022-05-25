@@ -182,6 +182,7 @@ Spectator.describe Spectator::Mock do
       end
 
       it "allows methods to be stubbed" do
+        mock = self.mock # FIXME: Workaround for passing by value messing with stubs.
         aggregate_failures do
           expect { mock._spectator_define_stub(stub1) }.to change { mock.method1 }.to(777)
           expect { mock._spectator_define_stub(stub2) }.to change { mock.method2 }.to(:override)
@@ -207,6 +208,7 @@ Spectator.describe Spectator::Mock do
       end
 
       it "sets the mock name" do
+        mock = self.mock # FIXME: Workaround for passing by value messing with stubs.
         args = Spectator::Arguments.capture("foo")
         stub = Spectator::ValueStub.new(:method3, 0, args)
         mock._spectator_define_stub(stub)
