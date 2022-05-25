@@ -1,6 +1,6 @@
 require "../../../spec_helper"
 
-Spectator.describe "Double DSL" do
+Spectator.describe "Double DSL", :smoke do
   context "specifying methods as keyword args" do
     double(:test, foo: "foobar", bar: 42)
     subject(dbl) { double(:test) }

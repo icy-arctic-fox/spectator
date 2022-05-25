@@ -1,6 +1,6 @@
 require "../spec_helper"
 
-Spectator.describe Spectator do
+Spectator.describe Spectator, :smoke do
   context "consice syntax" do
     describe "provided group with a single assignment" do
       provided x = 42 do

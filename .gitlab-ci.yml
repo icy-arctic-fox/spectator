@@ -66,7 +66,7 @@ nightly:
   allow_failure: true
   script:
     - shards --ignore-crystal-version
-    - crystal spec --error-on-warnings --junit_output=.
+    - crystal spec --error-on-warnings --junit_output=. --tag smoke spec/spectator/dsl/
     - crystal tool format --check
   artifacts:
     when: always

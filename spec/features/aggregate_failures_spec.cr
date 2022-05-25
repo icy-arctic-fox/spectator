@@ -1,6 +1,6 @@
 require "../spec_helper"
 
-Spectator.describe Spectator do
+Spectator.describe Spectator, :smoke do
   describe "aggregate_failures" do
     it "captures multiple failed expectations" do
       expect do

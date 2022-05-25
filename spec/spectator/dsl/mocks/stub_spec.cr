@@ -1,6 +1,6 @@
 require "../../../spec_helper"
 
-Spectator.describe "Stub DSL" do
+Spectator.describe "Stub DSL", :smoke do
   double(:foobar, foo: 42, bar: "baz") do
     stub abstract def other : String
     stub abstract def null : Nil
