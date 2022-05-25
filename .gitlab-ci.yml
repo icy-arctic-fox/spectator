@@ -49,7 +49,7 @@ spec dsl:
 spec mocks:
   extends: spec
   script:
-    - crystal spec --error-on-warnings --junit_output=. spec/mocks/
+    - crystal spec --error-on-warnings --junit_output=. spec/spectator/mocks/
 
 format:
   script:
