@@ -30,11 +30,7 @@ Spectator.describe Spectator::Mock do
       let(mock) { MockThing.new }
 
       it "defines a subclass of the mocked type" do
-        expect(MockThing).to be_lt(Thing)
-      end
-
-      it "defines a class" do
-        expect(MockThing).to be_lt(::Reference)
+        expect(mock).to be_a(Thing)
       end
 
       it "overrides responses from methods with keyword arguments" do
@@ -96,11 +92,7 @@ Spectator.describe Spectator::Mock do
       let(mock) { MockThing.new }
 
       it "defines a subclass of the mocked type" do
-        expect(MockThing).to be_lt(Thing)
-      end
-
-      it "defines a class" do
-        expect(MockThing).to be_lt(::Reference)
+        expect(mock).to be_a(Thing)
       end
 
       it "overrides responses from methods defined in the block" do
