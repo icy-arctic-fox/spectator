@@ -158,11 +158,7 @@ Spectator.describe Spectator::Mock do
       let(mock) { MockThing.new }
 
       it "defines a sub-type of the mocked type" do
-        expect(MockThing).to be_lt(Thing)
-      end
-
-      xit "defines a struct", pending: "Crystal compiler bug" do
-        expect(MockThing).to be_lt(::Value)
+        expect(mock).to be_a(Thing)
       end
 
       it "overrides responses from methods defined in the block" do
