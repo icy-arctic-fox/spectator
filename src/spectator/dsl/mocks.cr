@@ -128,16 +128,25 @@ module Spectator::DSL
       ::Spectator::LazyDouble.new({{**value_methods}})
     end
 
-    private macro def_mock(type, **value_methods, &block)
+    private macro def_mock(type, name = nil, **value_methods, &block)
       {% # Construct a unique type name for the mock by using the number of defined types.
  index = ::Spectator::DSL::Mocks::TYPES.size
  mock_type_name = "Mock#{index}".id
 
  # Store information about how the mock is defined and its context.
  # This is important for constructing an instance of the mock later.
- ::Spectator::DSL::Mocks::TYPES << {type.id.symbolize, @type.name(generic_args: false).symbolize, mock_type_name.symbolize} %}
+ ::Spectator::DSL::Mocks::TYPES << {type.id.symbolize, @type.name(generic_args: false).symbolize, mock_type_name.symbolize}
 
-      ::Spectator::Mock.define({{type.id}}, {{**value_methods}}){% if block %} do
+ resolved = type.resolve
+ base = if resolved.class?
+          :class
+        elsif resolved.struct?
+          :struct
+        else
+          :module
+        end %}
+
+      ::Spectator::Mock.define_subtype({{base}}, {{type.id}}, {{mock_type_name}}, {{name}}, {{**value_methods}}){% if block %} do
         {% block.body %}
       end{% end %}
     end
@@ -177,7 +186,7 @@ module Spectator::DSL
 
     macro mock(type, **value_methods, &block)
       {% begin %}
-        {% if @def %}new_mock{% else %}def_mock{% end %}({{name}}, {{**value_methods}}){% if block %} do
+        {% if @def %}new_mock{% else %}def_mock{% end %}({{type}}, {{**value_methods}}){% if block %} do
           {{block.body}}
         end{% end %}
       {% end %}
