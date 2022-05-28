@@ -8,15 +8,20 @@ Spectator.describe Spectator::Mock do
   describe "#define_subtype" do
     context "with a concrete class" do
       class Thing
+        getter _spectator_calls = [] of Symbol
+
         def method1
+          @_spectator_calls << :method1
           42
         end
 
         def method2
+          @_spectator_calls << :method2
           :original
         end
 
         def method3
+          @_spectator_calls << :method3
           "original"
         end
       end
@@ -68,15 +73,33 @@ Spectator.describe Spectator::Mock do
         mock._spectator_define_stub(stub)
         expect { mock.method3 }.to raise_error(Spectator::UnexpectedMessage, /mock_name/), "Raised error doesn't contain the mocked name."
       end
+
+      def restricted(thing : Thing)
+        thing.method1
+      end
+
+      it "can be used in type restricted methods" do
+        expect(restricted(mock)).to eq(123)
+      end
+
+      it "does not call the original method when stubbed" do
+        mock.method1
+        mock.method2
+        mock.method3
+        expect(mock._spectator_calls).to contain_exactly(:method3)
+      end
     end
 
     context "with an abstract class" do
       abstract class Thing
+        getter _spectator_calls = [] of Symbol
+
         abstract def method1
 
         abstract def method2 : Symbol
 
         def method3
+          @_spectator_calls << :method3
           "original"
         end
 
@@ -134,15 +157,33 @@ Spectator.describe Spectator::Mock do
         mock._spectator_define_stub(stub)
         expect { mock.method3 }.to raise_error(Spectator::UnexpectedMessage, /mock_name/), "Raised error doesn't contain the mocked name."
       end
+
+      def restricted(thing : Thing)
+        thing.method1
+      end
+
+      it "can be used in type restricted methods" do
+        expect(restricted(mock)).to eq(123)
+      end
+
+      it "does not call the original method when stubbed" do
+        mock.method1
+        mock.method2
+        mock.method3
+        expect(mock._spectator_calls).to contain_exactly(:method3)
+      end
     end
 
     context "with an abstract struct" do
       abstract struct Thing
+        getter _spectator_calls = [] of Symbol
+
         abstract def method1
 
         abstract def method2 : Symbol
 
         def method3
+          @_spectator_calls << :method3
           "original"
         end
 
@@ -202,24 +243,47 @@ Spectator.describe Spectator::Mock do
         mock._spectator_define_stub(stub)
         expect { mock.method3 }.to raise_error(Spectator::UnexpectedMessage, /mock_name/), "Raised error doesn't contain the mocked name."
       end
+
+      def restricted(thing : Thing)
+        thing.method1
+      end
+
+      it "can be used in type restricted methods" do
+        expect(restricted(mock)).to eq(123)
+      end
+
+      it "does not call the original method when stubbed" do
+        mock = self.mock # FIXME: Workaround for passing by value messing with stubs.
+        mock.method1
+        mock.method2
+        mock.method3
+        expect(mock._spectator_calls).to contain_exactly(:method3)
+      end
     end
   end
 
   describe "#inject" do
     context "with a class" do
       class MockedClass
-        getter method1 = 42
+        getter _spectator_calls = [] of Symbol
+
+        getter method1 do
+          @_spectator_calls << :method1
+          42
+        end
 
         def method2
+          @_spectator_calls << :method2
           :original
         end
 
         def method3
+          @_spectator_calls << :method3
           "original"
         end
 
         def instance_variables
-          [{{@type.instance_vars.map(&.name.symbolize).splat}}]
+          {% begin %}[{{@type.instance_vars.map(&.name.symbolize).splat}}]{% end %}
         end
       end
 
@@ -264,11 +328,12 @@ Spectator.describe Spectator::Mock do
       end
 
       it "doesn't change the size of an instance" do
-        expect(instance_sizeof(MockedClass)).to eq(8) # sizeof(Int32) + sizeof(TypeID)
+        size = sizeof(Int64) + sizeof(Int32?) + sizeof(Array(Symbol)) # TypeID + Int32? + _spectator_calls
+        expect(instance_sizeof(MockedClass)).to eq(size)
       end
 
       it "doesn't affect instance variables" do
-        expect(mock.instance_variables).to eq([:method1])
+        expect(mock.instance_variables).to contain_exactly(:method1, :_spectator_calls)
       end
 
       it "sets the mock name" do
@@ -277,22 +342,47 @@ Spectator.describe Spectator::Mock do
         mock._spectator_define_stub(stub)
         expect { mock.method3 }.to raise_error(Spectator::UnexpectedMessage, /mock_name/), "Raised error doesn't contain the mocked name."
       end
+
+      def restricted(thing : MockedClass)
+        thing.method1
+      end
+
+      it "can be used in type restricted methods" do
+        expect(restricted(mock)).to eq(123)
+      end
+
+      it "does not call the original method when stubbed" do
+        mock.method1
+        mock.method2
+        mock.method3
+        expect(mock._spectator_calls).to contain_exactly(:method3)
+      end
     end
 
     context "with a struct" do
       struct MockedStruct
-        getter method1 = 42
+        # Using a class variable instead of an instance variable to prevent mutability problems with stub lookup.
+        class_getter _spectator_calls = [] of Symbol
+
+        @method1 = 42
+
+        def method1
+          @@_spectator_calls << :method1
+          @method1
+        end
 
         def method2
+          @@_spectator_calls << :method2
           :original
         end
 
         def method3
+          @@_spectator_calls << :method3
           "original"
         end
 
         def instance_variables
-          [{{@type.instance_vars.map(&.name.symbolize).splat}}]
+          {% begin %}[{{@type.instance_vars.map(&.name.symbolize).splat}}]{% end %}
         end
       end
 
@@ -306,6 +396,7 @@ Spectator.describe Spectator::Mock do
 
       # Necessary to clear stubs to prevent leakages between tests.
       after_each { mock._spectator_clear_stubs }
+      after_each { MockedStruct._spectator_calls.clear }
 
       it "overrides responses from methods with keyword arguments" do
         expect(mock.method1).to eq(123)
@@ -324,11 +415,11 @@ Spectator.describe Spectator::Mock do
       end
 
       it "doesn't change the size of an instance" do
-        expect(sizeof(MockedStruct)).to eq(4) # sizeof(Int32)
+        expect(sizeof(MockedStruct)).to eq(sizeof(Int32))
       end
 
       it "doesn't affect instance variables" do
-        expect(mock.instance_variables).to eq([:method1])
+        expect(mock.instance_variables).to contain_exactly(:method1)
       end
 
       it "sets the mock name" do
@@ -336,6 +427,21 @@ Spectator.describe Spectator::Mock do
         stub = Spectator::ValueStub.new(:method3, 0, args)
         mock._spectator_define_stub(stub)
         expect { mock.method3 }.to raise_error(Spectator::UnexpectedMessage, /mock_name/), "Raised error doesn't contain the mocked name."
+      end
+
+      def restricted(thing : MockedStruct)
+        thing.method1
+      end
+
+      it "can be used in type restricted methods" do
+        expect(restricted(mock)).to eq(123)
+      end
+
+      it "does not call the original method when stubbed" do
+        mock.method1
+        mock.method2
+        mock.method3
+        expect(MockedStruct._spectator_calls).to contain_exactly(:method3)
       end
     end
   end
