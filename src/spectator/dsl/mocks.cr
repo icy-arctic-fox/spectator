@@ -147,7 +147,7 @@ module Spectator::DSL
         end %}
 
       ::Spectator::Mock.define_subtype({{base}}, {{type.id}}, {{mock_type_name}}, {{name}}, {{**value_methods}}){% if block %} do
-        {% block.body %}
+        {{block.body}}
       end{% end %}
     end
 
