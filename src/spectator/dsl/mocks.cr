@@ -178,7 +178,12 @@ module Spectator::DSL
  found_tuple = found_tuples.last %}
 
       {% if found_tuple %}
-        {{found_tuple[2].id}}.new({{**value_methods}})
+        {{found_tuple[2].id}}.new.tap do |mock|
+          {% for key, value in value_methods %}
+            %stub{key} = ::Spectator::ValueStub.new({{key.id.symbolize}}, {{value}})
+            mock._spectator_define_stub(%stub{key})
+          {% end %}
+        end
       {% else %}
         {% raise "Type `#{type.id}` must be previously mocked before attempting to instantiate." %}
       {% end %}

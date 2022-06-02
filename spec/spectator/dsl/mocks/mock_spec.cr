@@ -174,6 +174,28 @@ Spectator.describe "Mock DSL", :smoke do
       fake.method8(1, 2, 3, kwarg: 4, x: 5, y: 6, z: 7) { :block }
       expect(fake._spectator_calls).to contain_exactly(:method3, :method6, :method7, :method8)
     end
+
+    # Cannot test unexpected messages - will not compile due to missing methods.
+
+    describe "deferred default stubs" do
+      mock(ConcreteClass)
+
+      let(fake2) do
+        mock(ConcreteClass,
+          method1: "stubbed",
+          method3: 123,
+          method4: :xyz)
+      end
+
+      it "uses the keyword arguments as stubs" do
+        aggregate_failures do
+          expect(fake2.method1).to eq("stubbed")
+          expect(fake2.method2).to eq(:original)
+          expect(fake2.method3(42)).to eq(123)
+          expect(fake2.method4 { :foo }).to eq(:xyz)
+        end
+      end
+    end
   end
 
   context "with an abstract class" do
