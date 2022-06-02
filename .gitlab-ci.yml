@@ -41,16 +41,6 @@ spec rspec:
   script:
     - crystal spec --error-on-warnings --junit_output=. spec/rspec/
 
-spec dsl:
-  extends: spec
-  script:
-    - crystal spec --error-on-warnings --junit_output=. spec/spectator/dsl/
-
-spec mocks:
-  extends: spec
-  script:
-    - crystal spec --error-on-warnings --junit_output=. spec/mocks/
-
 format:
   script:
     - shards
@@ -66,7 +56,7 @@ nightly:
   allow_failure: true
   script:
     - shards --ignore-crystal-version
-    - crystal spec --error-on-warnings --junit_output=. --tag smoke spec/spectator/dsl/
+    - crystal spec --error-on-warnings --junit_output=. --tag smoke
     - crystal tool format --check
   artifacts:
     when: always
