@@ -257,4 +257,58 @@ Spectator.describe "Mock DSL", :smoke do
       end
     end
   end
+
+  describe "scope" do
+    class Scope
+      def scope
+        :original
+      end
+    end
+
+    mock(Scope, scope: :outer)
+
+    it "finds a mock in the same scope" do
+      fake = mock(Scope)
+      expect(fake.scope).to eq(:outer)
+    end
+
+    context "inner1" do
+      mock(Scope, scope: :inner)
+
+      it "uses the innermost defined mock" do
+        fake = mock(Scope)
+        expect(fake.scope).to eq(:inner)
+      end
+
+      context "nested1" do
+        mock(Scope, scope: :nested)
+
+        it "uses the nested defined mock" do
+          fake = mock(Scope)
+          expect(fake.scope).to eq(:nested)
+        end
+      end
+
+      context "nested2" do
+        it "finds a mock from a parent scope" do
+          fake = mock(Scope)
+          expect(fake.scope).to eq(:inner)
+        end
+      end
+    end
+
+    context "inner2" do
+      it "finds a mock from a parent scope" do
+        fake = mock(Scope)
+        expect(fake.scope).to eq(:outer)
+      end
+
+      context "nested3" do
+        it "finds a mock from a grandparent scope" do
+          fake = mock(Scope)
+          expect(fake.scope).to eq(:outer)
+        end
+      end
+    end
+  end
 end
