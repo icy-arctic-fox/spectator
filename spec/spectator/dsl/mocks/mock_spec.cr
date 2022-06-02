@@ -311,4 +311,54 @@ Spectator.describe "Mock DSL", :smoke do
       end
     end
   end
+
+  describe "context" do
+    abstract class Dummy
+      abstract def predefined : Symbol
+
+      abstract def override : Symbol
+
+      abstract def memoize : Symbol
+
+      def inline : Symbol
+        :original
+      end
+
+      def reference : String
+        memoize.to_s
+      end
+    end
+
+    mock(Dummy, predefined: :predefined, override: :predefined) do
+      stub def inline : Symbol
+        :inline # Memoized values can't be used here.
+      end
+    end
+
+    let(memoize) { :memoize }
+    let(override) { :override }
+    let(fake) { mock(Dummy, override: override) }
+
+    before_each { allow(fake).to receive(:memoize).and_return(memoize) }
+
+    it "doesn't change predefined values" do
+      expect(fake.predefined).to eq(:predefined)
+    end
+
+    it "can use memoized values for overrides" do
+      expect(fake.override).to eq(:override)
+    end
+
+    it "can use memoized values for stubs" do
+      expect(fake.memoize).to eq(:memoize)
+    end
+
+    it "can override inline stubs" do
+      expect { allow(fake).to receive(:inline).and_return(override) }.to change { fake.inline }.from(:inline).to(:override)
+    end
+
+    it "can reference memoized values with indirection" do
+      expect { allow(fake).to receive(:memoize).and_return(override) }.to change { fake.reference }.from("memoize").to("override")
+    end
+  end
 end
