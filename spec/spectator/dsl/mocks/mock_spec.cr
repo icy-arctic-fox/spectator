@@ -200,60 +200,199 @@ Spectator.describe "Mock DSL", :smoke do
 
   context "with an abstract class" do
     abstract class AbstractClass
-      getter _spectator_calls = [] of Symbol
-
       abstract def method1
 
       abstract def method2 : Symbol
 
-      def method3(arg)
-        @_spectator_calls << :method3
-        arg
+      abstract def method3 : Int32
+
+      abstract def method4
+
+      abstract def method5(&)
+
+      abstract def method6(&) : Symbol
+
+      abstract def method7(arg, *args, kwarg, **kwargs)
+
+      abstract def method8(arg, *args, kwarg, **kwargs, &)
+    end
+
+    # method1 stubbed via mock block
+    # method2 stubbed via keyword args
+    # method3 not stubbed (raises)
+    # method4 not stubbed, but type defined via mock block
+    # method5 stubbed via mock block (yields)
+    # method6 stubbed via keyword args (yields)
+    # method7 not stubbed (calls original) testing args
+    # method8 not stubbed (calls original and yields) testing args
+    mock(AbstractClass, method2: :stubbed, method6: :kwargs) do
+      # NOTE: Abstract methods without a type restriction on the return value
+      #   must be implemented with a type restriction.
+      stub def method1 : String
+        "stubbed"
+      end
+
+      # NOTE: Defining the stub here with a return type restriction, but no default implementation.
+      abstract_stub abstract def method4 : Symbol
+
+      # NOTE: Abstract methods that yield must have yield functionality defined in the method.
+      #   This requires that yielding methods have a default implementation.
+      #   Just providing `&` in the arguments gets dropped by the compiler unless `yield` is in the method definition.
+      stub def method5
+        yield
+      end
+
+      # NOTE: Another quirk where a default implementation must be provided because `&` is dropped.
+      stub def method6 : Symbol
+        yield
       end
     end
 
-    context "specifying methods as keyword args" do
-      mock(AbstractClass, method1: "stubbed", method2: :stubbed) do
+    subject(fake) { mock(AbstractClass) }
+
+    it "defines a subclass" do
+      expect(fake).to be_a(AbstractClass)
+    end
+
+    it "defines stubs in the block" do
+      expect(fake.method1).to eq("stubbed")
+    end
+
+    it "can stub methods defined in the block" do
+      stub = Spectator::ValueStub.new(:method1, "override")
+      expect { fake._spectator_define_stub(stub) }.to change { fake.method1 }.from("stubbed").to("override")
+    end
+
+    it "defines stubs from keyword arguments" do
+      expect(fake.method2).to eq(:stubbed)
+    end
+
+    it "can stub methods from keyword arguments" do
+      stub = Spectator::ValueStub.new(:method2, :override)
+      expect { fake._spectator_define_stub(stub) }.to change { fake.method2 }.from(:stubbed).to(:override)
+    end
+
+    it "raises on undefined stubs" do
+      expect { fake.method3 }.to raise_error(Spectator::UnexpectedMessage, /method3/)
+    end
+
+    it "can defer stubs on previously undefined stubs" do
+      stub = Spectator::ValueStub.new(:method3, 42)
+      fake._spectator_define_stub(stub)
+      expect(fake.method3).to eq(42)
+    end
+
+    it "raises on abstract stubs" do
+      expect { fake.method4 }.to raise_error(Spectator::UnexpectedMessage, /method4/)
+    end
+
+    it "can defer stubs on abstract stubs" do
+      stub = Spectator::ValueStub.new(:method4, :abstract)
+      fake._spectator_define_stub(stub)
+      expect(fake.method4).to eq(:abstract)
+    end
+
+    it "defines stubs with yield in the block" do
+      stub = Spectator::ValueStub.new(:method5, :block)
+      fake._spectator_define_stub(stub)
+      expect(fake.method5 { :wrong }).to eq(:block)
+    end
+
+    it "defines stubs with yield from keyword arguments" do
+      expect(fake.method6 { :wrong }).to eq(:kwargs)
+    end
+
+    it "can stub methods with yield from keyword arguments" do
+      stub = Spectator::ValueStub.new(:method6, :override)
+      expect { fake._spectator_define_stub(stub) }.to change { fake.method6 { :wrong } }.from(:kwargs).to(:override)
+    end
+
+    xit "handles arguments correctly", pending: "Need ProcStub" do
+      args1 = fake.method7(1, 2, 3, kwarg: 4, x: 5, y: 6, z: 7)
+      args2 = fake.method8(1, 2, 3, kwarg: 4, x: 5, y: 6, z: 7) { :block }
+      aggregate_failures do
+        expect(args1).to eq({1, {2, 3}, 4, {x: 5, y: 6, z: 7}})
+        expect(args2).to eq({1, {2, 3}, 4, {x: 5, y: 6, z: 7}})
+      end
+    end
+
+    xit "handles arguments correctly with stubs", pending: "Need ProcStub" do
+      stub1 = Spectator::ProcStub.new(:method7) { |args| args }
+      stub2 = Spectator::ProcStub.new(:method8) { |args| args }
+      fake._spectator_define_stub(stub1)
+      fake._spectator_define_stub(stub2)
+      args1 = fake.method7(1, 2, 3, kwarg: 4, x: 5, y: 6, z: 7)
+      args2 = fake.method8(1, 2, 3, kwarg: 4, x: 5, y: 6, z: 7) { :block }
+      aggregate_failures do
+        expect(args1).to eq({1, {2, 3}, 4, {x: 5, y: 6, z: 7}})
+        expect(args2).to eq({1, {2, 3}, 4, {x: 5, y: 6, z: 7}})
+      end
+    end
+
+    it "compiles types without unions" do
+      stub = Spectator::ValueStub.new(:method3, 42)
+      fake._spectator_define_stub(stub)
+
+      aggregate_failures do
+        expect(fake.method1).to compile_as(String)
+        expect(fake.method2).to compile_as(Symbol)
+        expect(fake.method3).to compile_as(Int32)
+        expect(fake.method5 { :foo }).to compile_as(Symbol)
+        expect(fake.method6 { :foo }).to compile_as(Symbol)
+      end
+    end
+
+    def restricted(thing : AbstractClass)
+      thing.method1
+    end
+
+    it "can be used in type restricted methods" do
+      expect(restricted(fake)).to eq("stubbed")
+    end
+
+    # Cannot test unexpected messages - will not compile due to missing methods.
+
+    describe "deferred default stubs" do
+      mock(AbstractClass) do
         # NOTE: Abstract methods without a type restriction on the return value
         #   must be implemented with a type restriction.
-        stub def method1 : String
-          "stubbed"
+        abstract_stub abstract def method1 : String
+
+        # NOTE: Defining the stub here with a return type restriction, but no default implementation.
+        abstract_stub abstract def method4 : Symbol
+
+        # NOTE: Abstract methods that yield must have yield functionality defined in the method.
+        #   This requires that yielding methods have a default implementation.
+        #   Just providing `&` in the arguments gets dropped by the compiler unless `yield` is in the method definition.
+        stub def method5
+          yield
+        end
+
+        # NOTE: Another quirk where a default implementation must be provided because `&` is dropped.
+        stub def method6 : Symbol
+          yield
         end
       end
 
-      subject(fake) { mock(AbstractClass) }
+      let(fake2) do
+        mock(AbstractClass,
+          method1: "stubbed",
+          method2: :stubbed,
+          method3: 123,
+          method4: :xyz,
+          method5: :abc,
+          method6: :bar)
+      end
 
-      it "defines a mock with methods" do
+      it "uses the keyword arguments as stubs" do
         aggregate_failures do
-          expect(fake.method1).to eq("stubbed")
-          expect(fake.method2).to eq(:stubbed)
+          expect(fake2.method1).to eq("stubbed")
+          expect(fake2.method2).to eq(:stubbed)
+          expect(fake2.method3).to eq(123)
+          expect(fake2.method4).to eq(:xyz)
+          expect(fake2.method5 { :foo }).to eq(:abc)
+          expect(fake2.method6 { :foo }).to eq(:bar)
         end
-      end
-
-      it "defines a subclass" do
-        expect(fake).to be_an(AbstractClass)
-      end
-
-      it "compiles types without unions" do
-        aggregate_failures do
-          expect(fake.method1).to compile_as(String)
-          expect(fake.method2).to compile_as(Symbol)
-        end
-      end
-
-      def restricted(thing : AbstractClass)
-        thing.method1
-      end
-
-      it "can be used in type restricted methods" do
-        expect(restricted(fake)).to eq("stubbed")
-      end
-
-      it "does not call the original method when stubbed" do
-        fake.method1
-        fake.method2
-        fake.method3("foo")
-        expect(fake._spectator_calls).to contain_exactly(:method3)
       end
     end
   end
