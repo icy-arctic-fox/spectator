@@ -190,6 +190,7 @@ module Spectator::DSL
     end
 
     macro mock(type, **value_methods, &block)
+      {% raise "First argument of `mock` must be a type name, not #{type}" unless type.is_a?(Path) || type.is_a?(Generic) || type.is_a?(Union) || type.is_a?(Metaclass) || type.is_a?(TypeNode) %}
       {% begin %}
         {% if @def %}new_mock{% else %}def_mock{% end %}({{type}}, {{**value_methods}}){% if block %} do
           {{block.body}}
