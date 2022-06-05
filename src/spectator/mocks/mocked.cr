@@ -1,7 +1,16 @@
 require "./method_call"
+require "./stub"
 require "./stubbable"
+require "./unexpected_message"
 
 module Spectator
+  # Mix-in used for mocked types.
+  #
+  # Bridges functionality between mocks and stubs
+  # Implements the abstracts methods from `Stubbable`.
+  # Types including this module will need to implement `#_spectator_stubs`.
+  # It should return a mutable list of stubs.
+  # This is used to store the stubs for the mocked type.
   module Mocked
     include Stubbable
 

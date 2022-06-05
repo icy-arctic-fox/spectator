@@ -7,7 +7,31 @@ require "./value_mock_registry"
 require "./value_stub"
 
 module Spectator
+  # Module providing macros for defining new mocks from existing types and injecting mock features into concrete types.
   module Mock
+    # Defines a type that inherits from another, existing type.
+    # The newly defined subtype will have mocking functionality.
+    #
+    # Methods from the inherited type will be overridden to support stubs.
+    # *base* is the keyword for the type being defined - class or struct.
+    # *mocked_type* is the original type to inherit from.
+    # *type_name* is the name of the new type to define.
+    # An optional *name* of the mock can be provided.
+    # Any key-value pairs provided with *value_methods* are used as initial stubs for the mocked type.
+    #
+    # A block can be provided to define additional methods and stubs.
+    # The block is evaluated in the context of the derived type.
+    #
+    # ```
+    # Mock.define_subtype(:class, SomeType, meth1: 42, meth2: "foobar") do
+    #   stub abstract def meth3 : Symbol
+    #
+    #   # Default implementation with a dynamic value.
+    #   stub def meth4
+    #     Time.utc
+    #   end
+    # end
+    # ```
     macro define_subtype(base, mocked_type, type_name, name = nil, **value_methods, &block)
       {% begin %}
         {% if name %}@[::Spectator::StubbedName({{name}})]{% end %}
@@ -46,6 +70,32 @@ module Spectator
       {% end %}
     end
 
+    # Injects mock functionality into an existing type.
+    #
+    # Generally this method of mocking should be avoiding.
+    # It modifies types being tested, the mock functionality won't exist outside of tests.
+    # This option should only be used when sub-types are not possible (e.g. concrete struct).
+    #
+    # Methods in the type will be overridden to support stubs.
+    # The original method functionality will still be accessible, but pass through mock code first.
+    # *base* is the keyword for the type being defined - class or struct.
+    # *type_name* is the name of the type to inject mock functionality into.
+    # An optional *name* of the mock can be provided.
+    # Any key-value pairs provided with *value_methods* are used as initial stubs for the mocked type.
+    #
+    # A block can be provided to define additional methods and stubs.
+    # The block is evaluated in the context of the derived type.
+    #
+    # ```
+    # Mock.inject(:struct, SomeType, meth1: 42, meth2: "foobar") do
+    #   stub abstract def meth3 : Symbol
+    #
+    #   # Default implementation with a dynamic value.
+    #   stub def meth4
+    #     Time.utc
+    #   end
+    # end
+    # ```
     macro inject(base, type_name, name = nil, **value_methods, &block)
       {% begin %}
         {% if name %}@[::Spectator::StubbedName({{name}})]{% end %}
