@@ -8,20 +8,20 @@ Spectator.describe Spectator::Mock do
   describe "#define_subtype" do
     context "with a concrete class" do
       class Thing
-        getter _spectator_calls = [] of Symbol
+        getter _spectator_invocations = [] of Symbol
 
         def method1
-          @_spectator_calls << :method1
+          @_spectator_invocations << :method1
           42
         end
 
         def method2
-          @_spectator_calls << :method2
+          @_spectator_invocations << :method2
           :original
         end
 
         def method3
-          @_spectator_calls << :method3
+          @_spectator_invocations << :method3
           "original"
         end
       end
@@ -86,20 +86,20 @@ Spectator.describe Spectator::Mock do
         mock.method1
         mock.method2
         mock.method3
-        expect(mock._spectator_calls).to contain_exactly(:method3)
+        expect(mock._spectator_invocations).to contain_exactly(:method3)
       end
     end
 
     context "with an abstract class" do
       abstract class Thing
-        getter _spectator_calls = [] of Symbol
+        getter _spectator_invocations = [] of Symbol
 
         abstract def method1
 
         abstract def method2 : Symbol
 
         def method3
-          @_spectator_calls << :method3
+          @_spectator_invocations << :method3
           "original"
         end
 
@@ -170,20 +170,20 @@ Spectator.describe Spectator::Mock do
         mock.method1
         mock.method2
         mock.method3
-        expect(mock._spectator_calls).to contain_exactly(:method3)
+        expect(mock._spectator_invocations).to contain_exactly(:method3)
       end
     end
 
     context "with an abstract struct" do
       abstract struct Thing
-        getter _spectator_calls = [] of Symbol
+        getter _spectator_invocations = [] of Symbol
 
         abstract def method1
 
         abstract def method2 : Symbol
 
         def method3
-          @_spectator_calls << :method3
+          @_spectator_invocations << :method3
           "original"
         end
 
@@ -257,7 +257,7 @@ Spectator.describe Spectator::Mock do
         mock.method1
         mock.method2
         mock.method3
-        expect(mock._spectator_calls).to contain_exactly(:method3)
+        expect(mock._spectator_invocations).to contain_exactly(:method3)
       end
     end
   end
@@ -265,20 +265,20 @@ Spectator.describe Spectator::Mock do
   describe "#inject" do
     context "with a class" do
       class MockedClass
-        getter _spectator_calls = [] of Symbol
+        getter _spectator_invocations = [] of Symbol
 
         getter method1 do
-          @_spectator_calls << :method1
+          @_spectator_invocations << :method1
           42
         end
 
         def method2
-          @_spectator_calls << :method2
+          @_spectator_invocations << :method2
           :original
         end
 
         def method3
-          @_spectator_calls << :method3
+          @_spectator_invocations << :method3
           "original"
         end
 
@@ -328,12 +328,12 @@ Spectator.describe Spectator::Mock do
       end
 
       it "doesn't change the size of an instance" do
-        size = sizeof(Int64) + sizeof(Int32?) + sizeof(Array(Symbol)) # TypeID + Int32? + _spectator_calls
+        size = sizeof(Int64) + sizeof(Int32?) + sizeof(Array(Symbol)) # TypeID + Int32? + _spectator_invocations
         expect(instance_sizeof(MockedClass)).to eq(size)
       end
 
       it "doesn't affect instance variables" do
-        expect(mock.instance_variables).to contain_exactly(:method1, :_spectator_calls)
+        expect(mock.instance_variables).to contain_exactly(:method1, :_spectator_invocations)
       end
 
       it "sets the mock name" do
@@ -355,29 +355,29 @@ Spectator.describe Spectator::Mock do
         mock.method1
         mock.method2
         mock.method3
-        expect(mock._spectator_calls).to contain_exactly(:method3)
+        expect(mock._spectator_invocations).to contain_exactly(:method3)
       end
     end
 
     context "with a struct" do
       struct MockedStruct
         # Using a class variable instead of an instance variable to prevent mutability problems with stub lookup.
-        class_getter _spectator_calls = [] of Symbol
+        class_getter _spectator_invocations = [] of Symbol
 
         @method1 = 42
 
         def method1
-          @@_spectator_calls << :method1
+          @@_spectator_invocations << :method1
           @method1
         end
 
         def method2
-          @@_spectator_calls << :method2
+          @@_spectator_invocations << :method2
           :original
         end
 
         def method3
-          @@_spectator_calls << :method3
+          @@_spectator_invocations << :method3
           "original"
         end
 
@@ -396,7 +396,7 @@ Spectator.describe Spectator::Mock do
 
       # Necessary to clear stubs to prevent leakages between tests.
       after_each { mock._spectator_clear_stubs }
-      after_each { MockedStruct._spectator_calls.clear }
+      after_each { MockedStruct._spectator_invocations.clear }
 
       it "overrides responses from methods with keyword arguments" do
         expect(mock.method1).to eq(123)
@@ -441,7 +441,7 @@ Spectator.describe Spectator::Mock do
         mock.method1
         mock.method2
         mock.method3
-        expect(MockedStruct._spectator_calls).to contain_exactly(:method3)
+        expect(MockedStruct._spectator_invocations).to contain_exactly(:method3)
       end
     end
   end

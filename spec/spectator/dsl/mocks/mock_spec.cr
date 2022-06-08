@@ -3,45 +3,45 @@ require "../../../spec_helper"
 Spectator.describe "Mock DSL", :smoke do
   context "with a concrete class" do
     class ConcreteClass
-      getter _spectator_calls = [] of Symbol
+      getter _spectator_invocations = [] of Symbol
 
       def method1
-        @_spectator_calls << :method1
+        @_spectator_invocations << :method1
         "original"
       end
 
       def method2 : Symbol
-        @_spectator_calls << :method2
+        @_spectator_invocations << :method2
         :original
       end
 
       def method3(arg)
-        @_spectator_calls << :method3
+        @_spectator_invocations << :method3
         arg
       end
 
       def method4 : Symbol
-        @_spectator_calls << :method4
+        @_spectator_invocations << :method4
         yield
       end
 
       def method5
-        @_spectator_calls << :method5
+        @_spectator_invocations << :method5
         yield.to_i
       end
 
       def method6
-        @_spectator_calls << :method6
+        @_spectator_invocations << :method6
         yield
       end
 
       def method7(arg, *args, kwarg, **kwargs)
-        @_spectator_calls << :method7
+        @_spectator_invocations << :method7
         {arg, args, kwarg, kwargs}
       end
 
       def method8(arg, *args, kwarg, **kwargs)
-        @_spectator_calls << :method8
+        @_spectator_invocations << :method8
         yield
         {arg, args, kwarg, kwargs}
       end
@@ -172,7 +172,7 @@ Spectator.describe "Mock DSL", :smoke do
       fake.method6 { 42 }
       fake.method7(1, 2, 3, kwarg: 4, x: 5, y: 6, z: 7)
       fake.method8(1, 2, 3, kwarg: 4, x: 5, y: 6, z: 7) { :block }
-      expect(fake._spectator_calls).to contain_exactly(:method3, :method6, :method7, :method8)
+      expect(fake._spectator_invocations).to contain_exactly(:method3, :method6, :method7, :method8)
     end
 
     # Cannot test unexpected messages - will not compile due to missing methods.
