@@ -8,14 +8,22 @@ module Spectator
   #
   # Bridges functionality between mocks and stubs
   # Implements the abstracts methods from `Stubbable`.
+  #
   # Types including this module will need to implement `#_spectator_stubs`.
   # It should return a mutable list of stubs.
   # This is used to store the stubs for the mocked type.
+  #
+  # Additionally, the `#_spectator_calls` (getter with no arguments) must be implemented.
+  # It should return a mutable list of method calls.
+  # This is used to store the calls to stubs for the mocked type.
   module Mocked
     include Stubbable
 
-    # Retrieves an enumerable collection of stubs.
+    # Retrieves an mutable collection of stubs.
     abstract def _spectator_stubs
+
+    # Retrieves an mutable collection of calls to stubs.
+    abstract def _spectator_calls
 
     def _spectator_define_stub(stub : ::Spectator::Stub) : Nil
       _spectator_stubs.unshift(stub)
@@ -31,6 +39,14 @@ module Spectator
 
     private def _spectator_stub_for_method?(method : Symbol) : Bool
       _spectator_stubs.any? { |stub| stub.method == method }
+    end
+
+    def _spectator_record_call(call : MethodCall) : Nil
+      _spectator_calls << call
+    end
+
+    def _spectator_calls(method : Symbol) : Enumerable(MethodCall)
+      _spectator_calls.select { |call| call.method == method }
     end
 
     # Method called when a stub isn't found.

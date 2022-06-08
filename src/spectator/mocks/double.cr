@@ -63,6 +63,8 @@ module Spectator
       end
     end
 
+    @calls = [] of MethodCall
+
     # Creates the double.
     #
     # An initial set of *stubs* can be provided.
@@ -109,6 +111,14 @@ module Spectator
 
     private def _spectator_stub_for_method?(method : Symbol) : Bool
       @stubs.any? { |stub| stub.method == method }
+    end
+
+    def _spectator_record_call(call : MethodCall) : Nil
+      @calls << call
+    end
+
+    def _spectator_calls(method : Symbol) : Enumerable(MethodCall)
+      @calls.select { |call| call.method == method }
     end
 
     # Returns the double's name formatted for user output.

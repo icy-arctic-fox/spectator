@@ -31,6 +31,12 @@ module Spectator
     # Clears all previously defined stubs.
     abstract def _spectator_clear_stubs : Nil
 
+    # Saves a call that was made to a stubbed method.
+    abstract def _spectator_record_call(call : MethodCall) : Nil
+
+    # Retrieves all previously saved calls for the specified method.
+    abstract def _spectator_calls(method : Symbol) : Enumerable(MethodCall)
+
     # Method called when a stub isn't found.
     #
     # The received message is captured in *call*.

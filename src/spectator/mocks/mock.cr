@@ -52,6 +52,8 @@ module Spectator
             @_spectator_stubs = nil
           end
 
+          private getter _spectator_calls = [] of ::Spectator::MethodCall
+
           # Returns the mock's name formatted for user output.
           private def _spectator_stubbed_name : String
             \{% if anno = @type.annotation(::Spectator::StubbedName) %}
@@ -124,6 +126,10 @@ module Spectator
 
           def _spectator_clear_stubs : Nil
             @@_spectator_mock_registry.delete(self)
+          end
+
+          def _spectator_calls
+            [] of ::Spectator::MethodCall
           end
 
           # Returns the mock's name formatted for user output.
