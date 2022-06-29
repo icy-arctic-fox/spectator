@@ -52,7 +52,7 @@ module Spectator
             @_spectator_stubs = nil
           end
 
-          private getter _spectator_calls = [] of ::Spectator::MethodCall
+          getter _spectator_calls = [] of ::Spectator::MethodCall
 
           # Returns the mock's name formatted for user output.
           private def _spectator_stubbed_name : String

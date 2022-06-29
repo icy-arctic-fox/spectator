@@ -48,6 +48,7 @@ module Spectator
       # Capture information about the call.
       %args = ::Spectator::Arguments.capture({{call.args.splat(", ")}}{% if call.named_args %}{{*call.named_args}}{% end %})
       %call = ::Spectator::MethodCall.new({{call.name.symbolize}}, %args)
+      _spectator_record_call(%call)
 
       # Attempt to find a stub that satisfies the method call and arguments.
       if %stub = _spectator_find_stub(%call)

@@ -117,6 +117,10 @@ module Spectator
       @calls << call
     end
 
+    def _spectator_calls
+      @calls
+    end
+
     def _spectator_calls(method : Symbol) : Enumerable(MethodCall)
       @calls.select { |call| call.method == method }
     end
@@ -164,6 +168,8 @@ module Spectator
       Log.trace { "Got undefined method `{{call.name}}({{*call.args}}{% if call.named_args %}{% unless call.args.empty? %}, {% end %}{{*call.named_args}}{% end %}){% if call.block %} { ... }{% end %}`" }
       args = ::Spectator::Arguments.capture({{call.args.splat(", ")}}{% if call.named_args %}{{*call.named_args}}{% end %})
       call = ::Spectator::MethodCall.new({{call.name.symbolize}}, args)
+      _spectator_record_call(call)
+
       raise ::Spectator::UnexpectedMessage.new("#{_spectator_stubbed_name} received unexpected message #{call}")
       nil # Necessary for compiler to infer return type as nil. Avoids runtime "can't execute ... `x` has no type errors".
     end

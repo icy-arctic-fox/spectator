@@ -133,6 +133,7 @@ module Spectator
           {% if method.double_splat %}**{{method.double_splat}}{% end %}
         )
         %call = ::Spectator::MethodCall.new({{method.name.symbolize}}, %args)
+        _spectator_record_call(%call)
 
         # Attempt to find a stub that satisfies the method call and arguments.
         # Finding a suitable stub is delegated to the type including the `Stubbable` module.
@@ -222,6 +223,7 @@ module Spectator
           {% if method.double_splat %}**{{method.double_splat}}{% end %}
         )
         %call = ::Spectator::MethodCall.new({{method.name.symbolize}}, %args)
+        _spectator_record_call(%call)
 
         # Attempt to find a stub that satisfies the method call and arguments.
         # Finding a suitable stub is delegated to the type including the `Stubbable` module.

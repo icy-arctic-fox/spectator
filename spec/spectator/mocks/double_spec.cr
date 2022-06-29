@@ -326,4 +326,37 @@ Spectator.describe Spectator::Double do
       expect { dbl._spectator_clear_stubs }.to change { dbl.foo }.from(5).to(42)
     end
   end
+
+  describe "#_spectator_calls" do
+    subject(dbl) { FooBarDouble.new }
+    let(stub) { Spectator::ValueStub.new(:foo, 5) }
+
+    before_each { dbl._spectator_define_stub(stub) }
+
+    # Retrieves symbolic names of methods called on a double.
+    def called_method_names(dbl)
+      dbl._spectator_calls.map(&.method)
+    end
+
+    it "stores calls to stubbed methods" do
+      expect { dbl.foo }.to change { called_method_names(dbl) }.from(%i[]).to(%i[foo])
+    end
+
+    it "stores multiple calls to the same stub" do
+      dbl.foo
+      expect { dbl.foo }.to change { called_method_names(dbl) }.from(%i[foo]).to(%i[foo foo])
+    end
+
+    it "stores calls to non-stubbed methods" do
+      expect { dbl.baz }.to raise_error(Spectator::UnexpectedMessage, /baz/)
+      expect(called_method_names(dbl)).to eq(%i[baz])
+    end
+
+    it "stores arguments for a call" do
+      dbl.foo(42)
+      args = Spectator::Arguments.capture(42)
+      call = dbl._spectator_calls(:foo).first
+      expect(call.arguments).to eq(args)
+    end
+  end
 end

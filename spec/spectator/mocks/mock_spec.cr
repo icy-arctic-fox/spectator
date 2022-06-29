@@ -5,6 +5,11 @@ Spectator.describe Spectator::Mock do
   let(stub2) { Spectator::ValueStub.new(:method2, :override) }
   let(stub3) { Spectator::ValueStub.new(:method3, "stubbed") }
 
+  # Retrieves symbolic names of methods called on a mock.
+  def called_method_names(mock)
+    mock._spectator_calls.map(&.method)
+  end
+
   describe "#define_subtype" do
     context "with a concrete class" do
       class Thing
@@ -72,6 +77,17 @@ Spectator.describe Spectator::Mock do
         stub = Spectator::ValueStub.new(:method3, 0, args)
         mock._spectator_define_stub(stub)
         expect { mock.method3 }.to raise_error(Spectator::UnexpectedMessage, /mock_name/), "Raised error doesn't contain the mocked name."
+      end
+
+      it "records invoked stubs" do
+        expect { mock.method2 }.to change { called_method_names(mock) }.from(%i[]).to(%i[method2])
+        expect { mock.method1 }.to change { called_method_names(mock) }.from(%i[method2]).to(%i[method2 method1])
+        expect { mock.method3 }.to change { called_method_names(mock) }.from(%i[method2 method1]).to(%i[method2 method1 method3])
+      end
+
+      it "records multiple invocations of the same stub" do
+        mock.method2
+        expect { mock.method2 }.to change { called_method_names(mock) }.from(%i[method2]).to(%i[method2 method2])
       end
 
       def restricted(thing : Thing)
@@ -156,6 +172,17 @@ Spectator.describe Spectator::Mock do
         stub = Spectator::ValueStub.new(:method3, 0, args)
         mock._spectator_define_stub(stub)
         expect { mock.method3 }.to raise_error(Spectator::UnexpectedMessage, /mock_name/), "Raised error doesn't contain the mocked name."
+      end
+
+      it "records invoked stubs" do
+        expect { mock.method2 }.to change { called_method_names(mock) }.from(%i[]).to(%i[method2])
+        expect { mock.method1 }.to change { called_method_names(mock) }.from(%i[method2]).to(%i[method2 method1])
+        expect { mock.method3 }.to change { called_method_names(mock) }.from(%i[method2 method1]).to(%i[method2 method1 method3])
+      end
+
+      it "records multiple invocations of the same stub" do
+        mock.method2
+        expect { mock.method2 }.to change { called_method_names(mock) }.from(%i[method2]).to(%i[method2 method2])
       end
 
       def restricted(thing : Thing)
@@ -343,6 +370,17 @@ Spectator.describe Spectator::Mock do
         expect { mock.method3 }.to raise_error(Spectator::UnexpectedMessage, /mock_name/), "Raised error doesn't contain the mocked name."
       end
 
+      it "records invoked stubs" do
+        expect { mock.method2 }.to change { called_method_names(mock) }.from(%i[]).to(%i[method2])
+        expect { mock.method1 }.to change { called_method_names(mock) }.from(%i[method2]).to(%i[method2 method1])
+        expect { mock.method3 }.to change { called_method_names(mock) }.from(%i[method2 method1]).to(%i[method2 method1 method3])
+      end
+
+      it "records multiple invocations of the same stub" do
+        mock.method2
+        expect { mock.method2 }.to change { called_method_names(mock) }.from(%i[method2]).to(%i[method2 method2])
+      end
+
       def restricted(thing : MockedClass)
         thing.method1
       end
@@ -427,6 +465,17 @@ Spectator.describe Spectator::Mock do
         stub = Spectator::ValueStub.new(:method3, 0, args)
         mock._spectator_define_stub(stub)
         expect { mock.method3 }.to raise_error(Spectator::UnexpectedMessage, /mock_name/), "Raised error doesn't contain the mocked name."
+      end
+
+      it "records invoked stubs" do
+        expect { mock.method2 }.to change { called_method_names(mock) }.from(%i[]).to(%i[method2])
+        expect { mock.method1 }.to change { called_method_names(mock) }.from(%i[method2]).to(%i[method2 method1])
+        expect { mock.method3 }.to change { called_method_names(mock) }.from(%i[method2 method1]).to(%i[method2 method1 method3])
+      end
+
+      it "records multiple invocations of the same stub" do
+        mock.method2
+        expect { mock.method2 }.to change { called_method_names(mock) }.from(%i[method2]).to(%i[method2 method2])
       end
 
       def restricted(thing : MockedStruct)
