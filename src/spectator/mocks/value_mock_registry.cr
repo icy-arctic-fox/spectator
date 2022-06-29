@@ -1,4 +1,5 @@
 require "string_pool"
+require "./mock_registry_entry"
 require "./stub"
 
 module Spectator
@@ -13,19 +14,19 @@ module Spectator
   # Doing so prevents adding data to the mocked type.
   class ValueMockRegistry(T)
     @pool = StringPool.new # Used to de-dup values.
-    @object_stubs : Hash(String, Array(Stub))
+    @entries : Hash(String, MockRegistryEntry)
 
     # Creates an empty registry.
     def initialize
-      @object_stubs = Hash(String, Array(Stub)).new do |hash, key|
-        hash[key] = [] of Stub
+      @entries = Hash(String, MockRegistryEntry).new do |hash, key|
+        hash[key] = MockRegistryEntry.new
       end
     end
 
     # Retrieves all stubs defined for a mocked object.
-    def [](object : T) : Array(Stub)
+    def [](object : T)
       key = value_bytes(object)
-      @object_stubs[key]
+      @entries[key]
     end
 
     # Retrieves all stubs defined for a mocked object.
@@ -34,15 +35,17 @@ module Spectator
     # This allows a mock to populate the registry with initial stubs.
     def fetch(object : T, & : -> Array(Stub))
       key = value_bytes(object)
-      @object_stubs.fetch(key) do
-        @object_stubs[key] = yield
+      @entries.fetch(key) do
+        entry = MockRegistryEntry.new
+        entry.stubs = yield
+        @entries[key] = entry
       end
     end
 
     # Clears all stubs defined for a mocked object.
     def delete(object : T) : Nil
       key = value_bytes(object)
-      @object_stubs.delete(key)
+      @entries.delete(key)
     end
 
     # Extracts heap-managed bytes for a value.

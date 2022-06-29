@@ -1,3 +1,4 @@
+require "./mock_registry_entry"
 require "./stub"
 
 module Spectator
@@ -9,19 +10,19 @@ module Spectator
   # This registry works around that by mapping mocks (via their memory address) to a collection of stubs.
   # Doing so prevents adding data to the mocked type.
   class ReferenceMockRegistry
-    @object_stubs : Hash(Void*, Array(Stub))
+    @entries : Hash(Void*, MockRegistryEntry)
 
     # Creates an empty registry.
     def initialize
-      @object_stubs = Hash(Void*, Array(Stub)).new do |hash, key|
-        hash[key] = [] of Stub
+      @entries = Hash(Void*, MockRegistryEntry).new do |hash, key|
+        hash[key] = MockRegistryEntry.new
       end
     end
 
     # Retrieves all stubs defined for a mocked object.
-    def [](object : Reference) : Array(Stub)
+    def [](object : Reference)
       key = Box.box(object)
-      @object_stubs[key]
+      @entries[key]
     end
 
     # Retrieves all stubs defined for a mocked object.
@@ -30,15 +31,17 @@ module Spectator
     # This allows a mock to populate the registry with initial stubs.
     def fetch(object : Reference, & : -> Array(Stub))
       key = Box.box(object)
-      @object_stubs.fetch(key) do
-        @object_stubs[key] = yield
+      @entries.fetch(key) do
+        entry = MockRegistryEntry.new
+        entry.stubs = yield
+        @entries[key] = entry
       end
     end
 
     # Clears all stubs defined for a mocked object.
     def delete(object : Reference) : Nil
       key = Box.box(object)
-      @object_stubs.delete(key)
+      @entries.delete(key)
     end
   end
 end
