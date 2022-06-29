@@ -22,9 +22,6 @@ module Spectator
     # Retrieves an mutable collection of stubs.
     abstract def _spectator_stubs
 
-    # Retrieves an mutable collection of calls to stubs.
-    abstract def _spectator_calls
-
     def _spectator_define_stub(stub : ::Spectator::Stub) : Nil
       _spectator_stubs.unshift(stub)
     end

@@ -121,10 +121,6 @@ module Spectator
       @calls
     end
 
-    def _spectator_calls(method : Symbol) : Enumerable(MethodCall)
-      @calls.select { |call| call.method == method }
-    end
-
     # Returns the double's name formatted for user output.
     private def _spectator_stubbed_name : String
       {% if anno = @type.annotation(StubbedName) %}

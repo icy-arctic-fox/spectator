@@ -324,7 +324,7 @@ Spectator.describe Spectator::NullDouble do
     it "stores arguments for a call" do
       dbl.foo(42)
       args = Spectator::Arguments.capture(42)
-      call = dbl._spectator_calls(:foo).first
+      call = dbl._spectator_calls.first
       expect(call.arguments).to eq(args)
     end
   end
