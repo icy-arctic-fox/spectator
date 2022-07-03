@@ -270,6 +270,35 @@ Spectator.describe Spectator::Double do
     end
   end
 
+  context "class method stubs" do
+    Spectator::Double.define(ClassDouble) do
+      stub def self.foo
+        :stub
+      end
+
+      stub def self.bar(arg)
+        arg
+      end
+
+      stub def self.baz
+        yield
+      end
+    end
+
+    subject(dbl) { ClassDouble }
+    let(foo_stub) { Spectator::ValueStub.new(:foo, :override) }
+
+    after_each { dbl._spectator_clear_stubs }
+
+    it "overrides an existing method" do
+      expect { dbl._spectator_define_stub(foo_stub) }.to change { dbl.foo }.from(:stub).to(:override)
+    end
+
+    it "doesn't affect other methods" do
+      expect { dbl._spectator_define_stub(foo_stub) }.to_not change { dbl.bar(42) }
+    end
+  end
+
   describe "#_spectator_define_stub" do
     subject(dbl) { FooBarDouble.new }
     let(stub3) { Spectator::ValueStub.new(:foo, 3) }
