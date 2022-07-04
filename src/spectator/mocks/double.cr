@@ -130,6 +130,14 @@ module Spectator
       {% end %}
     end
 
+    private def self._spectator_stubbed_name : String
+      {% if anno = @type.annotation(StubbedName) %}
+        "#<Class Double " + \{{(anno[0] || :Anonymous.id).stringify}} + "\">"
+      {% else %}
+        "#<Class Double Anonymous>"
+      {% end %}
+    end
+
     private def _spectator_stub_fallback(call : MethodCall, &)
       Log.trace { "Fallback for #{call} - call original" }
       yield

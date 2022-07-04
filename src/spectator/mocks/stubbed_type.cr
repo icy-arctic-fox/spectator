@@ -54,13 +54,5 @@ module Spectator
     def _spectator_abstract_stub_fallback(call : MethodCall, type)
       _spectator_abstract_stub_fallback(call)
     end
-
-    def _spectator_stubbed_name : String
-      {% if anno = @type.annotation(StubbedName) %}
-        "#<Stubbed " + {{(anno[0] || :Anonymous.id).stringify}} + ">"
-      {% else %}
-        "#<Stubbed " + {{@type.name.stringify}} + ">"
-      {% end %}
-    end
   end
 end

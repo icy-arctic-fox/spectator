@@ -63,6 +63,14 @@ module Spectator
             \{% end %}
           end
 
+          private def self._spectator_stubbed_name : String
+            \{% if anno = @type.annotation(::Spectator::StubbedName) %}
+              "#<Class Mock {{mocked_type.id}} \"" + \{{(anno[0] || :Anonymous.id).stringify}} + "\">"
+            \{% else %}
+              "#<Class Mock {{mocked_type.id}}>"
+            \{% end %}
+          end
+
           macro finished
             stub_type {{mocked_type.id}}
 
@@ -146,6 +154,15 @@ module Spectator
               "#<Mock {{type_name.id}} \"" + \{{(anno[0] || :Anonymous.id).stringify}} + "\">"
             \{% else %}
               "#<Mock {{type_name.id}}>"
+            \{% end %}
+          end
+
+          # Returns the mock's name formatted for user output.
+          private def self._spectator_stubbed_name : String
+            \{% if anno = @type.annotation(::Spectator::StubbedName) %}
+              "#<Class Mock {{type_name.id}} \"" + \{{(anno[0] || :Anonymous.id).stringify}} + "\">"
+            \{% else %}
+              "#<Class Mock {{type_name.id}}>"
             \{% end %}
           end
 
