@@ -231,6 +231,105 @@ Spectator.describe Spectator::NullDouble do
     end
   end
 
+  context "class method stubs" do
+    Spectator::NullDouble.define(ClassDouble) do
+      stub def self.foo
+        :stub
+      end
+
+      stub def self.bar(arg)
+        arg
+      end
+
+      stub def self.baz(arg)
+        yield
+      end
+    end
+
+    subject(dbl) { ClassDouble }
+    let(foo_stub) { Spectator::ValueStub.new(:foo, :override) }
+
+    after_each { dbl._spectator_clear_stubs }
+
+    it "overrides an existing method" do
+      expect { dbl._spectator_define_stub(foo_stub) }.to change { dbl.foo }.from(:stub).to(:override)
+    end
+
+    it "doesn't affect other methods" do
+      expect { dbl._spectator_define_stub(foo_stub) }.to_not change { dbl.bar(42) }
+    end
+
+    it "replaces an existing stub" do
+      dbl._spectator_define_stub(foo_stub)
+      stub = Spectator::ValueStub.new(:foo, :replacement)
+      expect { dbl._spectator_define_stub(stub) }.to change { dbl.foo }.to(:replacement)
+    end
+
+    it "picks the correct stub based on arguments" do
+      stub1 = Spectator::ValueStub.new(:bar, :fallback)
+      stub2 = Spectator::ValueStub.new(:bar, :override, Spectator::Arguments.capture(:match))
+      dbl._spectator_define_stub(stub1)
+      dbl._spectator_define_stub(stub2)
+      aggregate_failures do
+        expect(dbl.bar(:wrong)).to eq(:fallback)
+        expect(dbl.bar(:match)).to eq(:override)
+      end
+    end
+
+    it "only uses a stub if an argument constraint is met" do
+      stub = Spectator::ValueStub.new(:bar, :override, Spectator::Arguments.capture(:match))
+      dbl._spectator_define_stub(stub)
+      aggregate_failures do
+        expect(dbl.bar(:original)).to eq(:original)
+        expect(dbl.bar(:match)).to eq(:override)
+      end
+    end
+
+    it "ignores the block argument if not in the constraint" do
+      stub1 = Spectator::ValueStub.new(:baz, 1)
+      stub2 = Spectator::ValueStub.new(:baz, 2, Spectator::Arguments.capture(3))
+      dbl._spectator_define_stub(stub1)
+      dbl._spectator_define_stub(stub2)
+      aggregate_failures do
+        expect(dbl.baz(5) { 42 }).to eq(1)
+        expect(dbl.baz(3) { 42 }).to eq(2)
+      end
+    end
+
+    describe "._spectator_clear_stubs" do
+      before_each { dbl._spectator_define_stub(foo_stub) }
+
+      it "removes previously defined stubs" do
+        expect { dbl._spectator_clear_stubs }.to change { dbl.foo }.from(:override).to(:stub)
+      end
+    end
+
+    describe "._spectator_calls" do
+      before_each { dbl._spectator_clear_calls }
+
+      # Retrieves symbolic names of methods called on a double.
+      def called_method_names(dbl)
+        dbl._spectator_calls.map(&.method)
+      end
+
+      it "stores calls to stubbed methods" do
+        expect { dbl.foo }.to change { called_method_names(dbl) }.from(%i[]).to(%i[foo])
+      end
+
+      it "stores multiple calls to the same stub" do
+        dbl.foo
+        expect { dbl.foo }.to change { called_method_names(dbl) }.from(%i[foo]).to(%i[foo foo])
+      end
+
+      it "stores arguments for a call" do
+        dbl.bar(42)
+        args = Spectator::Arguments.capture(42)
+        call = dbl._spectator_calls.first
+        expect(call.arguments).to eq(args)
+      end
+    end
+  end
+
   describe "#_spectator_define_stub" do
     subject(dbl) { FooBarDouble.new }
     let(stub3) { Spectator::ValueStub.new(:foo, 3) }
