@@ -38,6 +38,9 @@ module Spectator
     # Retrieves all previously saved calls.
     abstract def _spectator_calls
 
+    # Clears all previously saved calls.
+    abstract def _spectator_clear_calls : Nil
+
     # Method called when a stub isn't found.
     #
     # The received message is captured in *call*.
@@ -387,6 +390,8 @@ module Spectator
       extend StubbedType
 
       private class_getter _spectator_stubs : Array(::Spectator::Stub) = [] of ::Spectator::Stub
+
+      class_getter _spectator_calls : Array(::Spectator::MethodCall) = [] of ::Spectator::MethodCall
     end
   end
 end

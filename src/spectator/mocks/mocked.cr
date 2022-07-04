@@ -46,6 +46,10 @@ module Spectator
       _spectator_calls.select { |call| call.method == method }
     end
 
+    def _spectator_clear_calls : Nil
+      _spectator_calls.clear
+    end
+
     # Method called when a stub isn't found.
     #
     # The received message is captured in *call*.

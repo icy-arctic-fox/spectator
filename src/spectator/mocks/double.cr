@@ -121,6 +121,10 @@ module Spectator
       @calls
     end
 
+    def _spectator_clear_calls : Nil
+      @calls.clear
+    end
+
     # Returns the double's name formatted for user output.
     private def _spectator_stubbed_name : String
       {% if anno = @type.annotation(StubbedName) %}

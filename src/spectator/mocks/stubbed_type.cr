@@ -28,8 +28,8 @@ module Spectator
       _spectator_calls << call
     end
 
-    def _spectator_calls
-      [] of MethodCall
+    def _spectator_clear_calls : Nil
+      _spectator_calls.clear
     end
 
     def _spectator_stub_fallback(call : MethodCall, &)
