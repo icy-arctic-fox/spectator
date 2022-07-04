@@ -3,6 +3,7 @@ require "./method_call"
 require "./stub"
 require "./stubbable"
 require "./stubbed_name"
+require "./stubbed_type"
 require "./unexpected_message"
 require "./value_stub"
 
@@ -18,6 +19,7 @@ module Spectator
   # New methods are not defines when a stub is added that doesn't have a matching method name.
   abstract class Double
     include Stubbable
+    extend StubbedType
 
     Log = Spectator::Log.for(self)
 
@@ -64,6 +66,10 @@ module Spectator
     end
 
     @calls = [] of MethodCall
+
+    private class_getter _spectator_stubs : Array(Stub) = [] of Stub
+
+    class_getter _spectator_calls : Array(MethodCall) = [] of MethodCall
 
     # Creates the double.
     #

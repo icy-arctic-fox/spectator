@@ -4,7 +4,7 @@ require "./stub"
 module Spectator
   # Defines stubbing functionality at the type level (classes and structs).
   #
-  # This module is intended to be extended from when a type includes `Stubbable`.
+  # This module is intended to be extended when a type includes `Stubbable`.
   module StubbedType
     private abstract def _spectator_stubs : Array(Stub)
 

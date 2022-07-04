@@ -2,7 +2,6 @@ require "../dsl/reserved"
 require "./arguments"
 require "./method_call"
 require "./stub"
-require "./stubbed_type"
 require "./typed_stub"
 
 module Spectator
@@ -383,15 +382,6 @@ module Spectator
           {% end %}
         end
       end
-    end
-
-    # Automatically extend `StubbedType` when a type is made stubbable.
-    macro included
-      extend StubbedType
-
-      private class_getter _spectator_stubs : Array(::Spectator::Stub) = [] of ::Spectator::Stub
-
-      class_getter _spectator_calls : Array(::Spectator::MethodCall) = [] of ::Spectator::MethodCall
     end
   end
 end
