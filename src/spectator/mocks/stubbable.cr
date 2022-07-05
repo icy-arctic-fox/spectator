@@ -321,6 +321,19 @@ module Spectator
             super{% if method.accepts_block? %} { |*%yargs| yield *%yargs }{% end %}
           end
         {% end %}
+
+        {% for method in ancestor.class.methods.reject do |meth|
+                           meth.name.starts_with?("_spectator") ||
+                             ::Spectator::DSL::RESERVED_KEYWORDS.includes?(meth.name.symbolize)
+                         end %}
+          default_stub {{method.visibility.id if method.visibility != :public}} def self.{{method.name}}(
+            {% for arg, i in method.args %}{% if i == method.splat_index %}*{% end %}{{arg}}, {% end %}
+            {% if method.double_splat %}**{{method.double_splat}}, {% end %}
+            {% if method.block_arg %}&{{method.block_arg}}{% elsif method.accepts_block? %}&{% end %}
+          ){% if method.return_type %} : {{method.return_type}}{% end %}{% if !method.free_vars.empty? %} forall {{method.free_vars.splat}}{% end %}
+            super{% if method.accepts_block? %} { |*%yargs| yield *%yargs }{% end %}
+          end
+        {% end %}
       {% end %}
 
       {% for method in type.methods.reject do |meth|
@@ -336,6 +349,19 @@ module Spectator
             {% if type == @type %}previous_def{% else %}super{% end %}{% if method.accepts_block? %} { |*%yargs| yield *%yargs }{% end %}
           end
         {% end %}
+      {% end %}
+
+      {% for method in type.class.methods.reject do |meth|
+                         meth.name.starts_with?("_spectator") ||
+                           ::Spectator::DSL::RESERVED_KEYWORDS.includes?(meth.name.symbolize)
+                       end %}
+        default_stub {{method.visibility.id if method.visibility != :public}} def self.{{method.name}}(
+          {% for arg, i in method.args %}{% if i == method.splat_index %}*{% end %}{{arg}}, {% end %}
+          {% if method.double_splat %}**{{method.double_splat}}, {% end %}
+          {% if method.block_arg %}&{{method.block_arg}}{% elsif method.accepts_block? %}&{% end %}
+        ){% if method.return_type %} : {{method.return_type}}{% end %}{% if !method.free_vars.empty? %} forall {{method.free_vars.splat}}{% end %}
+          {% if type == @type %}previous_def{% else %}super{% end %}{% if method.accepts_block? %} { |*%yargs| yield *%yargs }{% end %}
+        end
       {% end %}
     end
 
