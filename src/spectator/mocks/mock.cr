@@ -3,6 +3,7 @@ require "./mocked"
 require "./reference_mock_registry"
 require "./stub"
 require "./stubbed_name"
+require "./stubbed_type"
 require "./value_mock_registry"
 require "./value_stub"
 
@@ -37,6 +38,7 @@ module Spectator
         {% if name %}@[::Spectator::StubbedName({{name}})]{% end %}
         {{base.id}} {{type_name.id}} < {{mocked_type.id}}
           include ::Spectator::Mocked
+          extend ::Spectator::StubbedType
 
           {% begin %}
             private getter(_spectator_stubs) do
@@ -51,6 +53,10 @@ module Spectator
           def _spectator_clear_stubs : Nil
             @_spectator_stubs = nil
           end
+
+          private class_getter _spectator_stubs : Array(::Spectator::Stub) = [] of ::Spectator::Stub
+
+          class_getter _spectator_calls : Array(::Spectator::MethodCall) = [] of ::Spectator::MethodCall
 
           getter _spectator_calls = [] of ::Spectator::MethodCall
 
@@ -111,6 +117,7 @@ module Spectator
         {% if name %}@[::Spectator::StubbedName({{name}})]{% end %}
         {{base.id}} {{type_name.id}}
           include ::Spectator::Mocked
+          extend ::Spectator::StubbedType
 
           {% if base == :class %}
             @@_spectator_mock_registry = ::Spectator::ReferenceMockRegistry.new
@@ -119,6 +126,10 @@ module Spectator
           {% else %}
             {% raise "Unsupported base type #{base} for injecting mock" %}
           {% end %}
+
+          private class_getter _spectator_stubs : Array(::Spectator::Stub) = [] of ::Spectator::Stub
+
+          class_getter _spectator_calls : Array(::Spectator::MethodCall) = [] of ::Spectator::MethodCall
 
           private def _spectator_stubs
             entry = @@_spectator_mock_registry.fetch(self) do

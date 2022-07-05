@@ -287,6 +287,111 @@ Spectator.describe Spectator::Mock do
         expect(mock._spectator_invocations).to contain_exactly(:method3)
       end
     end
+
+    context "class method stubs" do
+      class Thing
+        def self.foo
+          :original
+        end
+
+        def self.bar(arg)
+          arg
+        end
+
+        def self.baz(arg)
+          yield
+        end
+      end
+
+      Spectator::Mock.define_subtype(:class, Thing, MockThing) do
+        stub def self.foo
+          :stub
+        end
+      end
+
+      let(mock) { MockThing }
+      let(foo_stub) { Spectator::ValueStub.new(:foo, :override) }
+
+      after_each { mock._spectator_clear_stubs }
+
+      it "overrides an existing method" do
+        expect { mock._spectator_define_stub(foo_stub) }.to change { mock.foo }.from(:stub).to(:override)
+      end
+
+      it "doesn't affect other methods" do
+        expect { mock._spectator_define_stub(foo_stub) }.to_not change { mock.bar(42) }
+      end
+
+      it "replaces an existing stub" do
+        mock._spectator_define_stub(foo_stub)
+        stub = Spectator::ValueStub.new(:foo, :replacement)
+        expect { mock._spectator_define_stub(stub) }.to change { mock.foo }.to(:replacement)
+      end
+
+      it "picks the correct stub based on arguments" do
+        stub1 = Spectator::ValueStub.new(:bar, :fallback)
+        stub2 = Spectator::ValueStub.new(:bar, :override, Spectator::Arguments.capture(:match))
+        mock._spectator_define_stub(stub1)
+        mock._spectator_define_stub(stub2)
+        aggregate_failures do
+          expect(mock.bar(:wrong)).to eq(:fallback)
+          expect(mock.bar(:match)).to eq(:override)
+        end
+      end
+
+      it "only uses a stub if an argument constraint is met" do
+        stub = Spectator::ValueStub.new(:bar, :override, Spectator::Arguments.capture(:match))
+        mock._spectator_define_stub(stub)
+        aggregate_failures do
+          expect(mock.bar(:original)).to eq(:original)
+          expect(mock.bar(:match)).to eq(:override)
+        end
+      end
+
+      it "ignores the block argument if not in the constraint" do
+        stub1 = Spectator::ValueStub.new(:baz, 1)
+        stub2 = Spectator::ValueStub.new(:baz, 2, Spectator::Arguments.capture(3))
+        mock._spectator_define_stub(stub1)
+        mock._spectator_define_stub(stub2)
+        aggregate_failures do
+          expect(mock.baz(5) { 42 }).to eq(1)
+          expect(mock.baz(3) { 42 }).to eq(2)
+        end
+      end
+
+      describe "._spectator_clear_stubs" do
+        before_each { mock._spectator_define_stub(foo_stub) }
+
+        it "removes previously defined stubs" do
+          expect { mock._spectator_clear_stubs }.to change { mock.foo }.from(:override).to(:stub)
+        end
+      end
+
+      describe "._spectator_calls" do
+        before_each { mock._spectator_clear_calls }
+
+        # Retrieves symbolic names of methods called on a mock.
+        def called_method_names(mock)
+          mock._spectator_calls.map(&.method)
+        end
+
+        it "stores calls to stubbed methods" do
+          expect { mock.foo }.to change { called_method_names(mock) }.from(%i[]).to(%i[foo])
+        end
+
+        it "stores multiple calls to the same stub" do
+          mock.foo
+          expect { mock.foo }.to change { called_method_names(mock) }.from(%i[foo]).to(%i[foo foo])
+        end
+
+        it "stores arguments for a call" do
+          mock.bar(42)
+          args = Spectator::Arguments.capture(42)
+          call = mock._spectator_calls.first
+          expect(call.arguments).to eq(args)
+        end
+      end
+    end
   end
 
   describe "#inject" do
@@ -491,6 +596,111 @@ Spectator.describe Spectator::Mock do
         mock.method2
         mock.method3
         expect(MockedStruct._spectator_invocations).to contain_exactly(:method3)
+      end
+    end
+
+    context "class method stubs" do
+      class Thing
+        def self.foo
+          :original
+        end
+
+        def self.bar(arg)
+          arg
+        end
+
+        def self.baz(arg)
+          yield
+        end
+      end
+
+      Spectator::Mock.inject(:class, Thing) do
+        stub def self.foo
+          :stub
+        end
+      end
+
+      let(mock) { Thing }
+      let(foo_stub) { Spectator::ValueStub.new(:foo, :override) }
+
+      after_each { mock._spectator_clear_stubs }
+
+      it "overrides an existing method" do
+        expect { mock._spectator_define_stub(foo_stub) }.to change { mock.foo }.from(:stub).to(:override)
+      end
+
+      it "doesn't affect other methods" do
+        expect { mock._spectator_define_stub(foo_stub) }.to_not change { mock.bar(42) }
+      end
+
+      it "replaces an existing stub" do
+        mock._spectator_define_stub(foo_stub)
+        stub = Spectator::ValueStub.new(:foo, :replacement)
+        expect { mock._spectator_define_stub(stub) }.to change { mock.foo }.to(:replacement)
+      end
+
+      it "picks the correct stub based on arguments" do
+        stub1 = Spectator::ValueStub.new(:bar, :fallback)
+        stub2 = Spectator::ValueStub.new(:bar, :override, Spectator::Arguments.capture(:match))
+        mock._spectator_define_stub(stub1)
+        mock._spectator_define_stub(stub2)
+        aggregate_failures do
+          expect(mock.bar(:wrong)).to eq(:fallback)
+          expect(mock.bar(:match)).to eq(:override)
+        end
+      end
+
+      it "only uses a stub if an argument constraint is met" do
+        stub = Spectator::ValueStub.new(:bar, :override, Spectator::Arguments.capture(:match))
+        mock._spectator_define_stub(stub)
+        aggregate_failures do
+          expect(mock.bar(:original)).to eq(:original)
+          expect(mock.bar(:match)).to eq(:override)
+        end
+      end
+
+      it "ignores the block argument if not in the constraint" do
+        stub1 = Spectator::ValueStub.new(:baz, 1)
+        stub2 = Spectator::ValueStub.new(:baz, 2, Spectator::Arguments.capture(3))
+        mock._spectator_define_stub(stub1)
+        mock._spectator_define_stub(stub2)
+        aggregate_failures do
+          expect(mock.baz(5) { 42 }).to eq(1)
+          expect(mock.baz(3) { 42 }).to eq(2)
+        end
+      end
+
+      describe "._spectator_clear_stubs" do
+        before_each { mock._spectator_define_stub(foo_stub) }
+
+        it "removes previously defined stubs" do
+          expect { mock._spectator_clear_stubs }.to change { mock.foo }.from(:override).to(:stub)
+        end
+      end
+
+      describe "._spectator_calls" do
+        before_each { mock._spectator_clear_calls }
+
+        # Retrieves symbolic names of methods called on a mock.
+        def called_method_names(mock)
+          mock._spectator_calls.map(&.method)
+        end
+
+        it "stores calls to stubbed methods" do
+          expect { mock.foo }.to change { called_method_names(mock) }.from(%i[]).to(%i[foo])
+        end
+
+        it "stores multiple calls to the same stub" do
+          mock.foo
+          expect { mock.foo }.to change { called_method_names(mock) }.from(%i[foo]).to(%i[foo foo])
+        end
+
+        it "stores arguments for a call" do
+          mock.bar(42)
+          args = Spectator::Arguments.capture(42)
+          call = mock._spectator_calls.first
+          expect(call.arguments).to eq(args)
+        end
       end
     end
   end
