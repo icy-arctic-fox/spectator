@@ -359,6 +359,14 @@ Spectator.describe Spectator::Mock do
         end
       end
 
+      def restricted(thing : Thing.class)
+        thing.foo
+      end
+
+      it "can be used in type restricted methods" do
+        expect(restricted(mock)).to eq(:stub)
+      end
+
       describe "._spectator_clear_stubs" do
         before_each { mock._spectator_define_stub(foo_stub) }
 
@@ -668,6 +676,14 @@ Spectator.describe Spectator::Mock do
           expect(mock.baz(5) { 42 }).to eq(1)
           expect(mock.baz(3) { 42 }).to eq(2)
         end
+      end
+
+      def restricted(thing : Thing.class)
+        thing.foo
+      end
+
+      it "can be used in type restricted methods" do
+        expect(restricted(mock)).to eq(:stub)
       end
 
       describe "._spectator_clear_stubs" do
