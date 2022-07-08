@@ -334,4 +334,52 @@ Spectator.describe "Double DSL", :smoke do
       expect { allow(dbl).to receive(:memoize).and_return(override) }.to change { dbl.reference }.from("memoize").to("override")
     end
   end
+
+  describe "class doubles" do
+    double(:class_double) do
+      abstract_stub def self.abstract_method
+        :abstract
+      end
+
+      stub def self.default_method
+        :default
+      end
+
+      stub def self.args(arg)
+        arg
+      end
+
+      stub def self.method1
+        :method1
+      end
+
+      stub def self.reference
+        method1.to_s
+      end
+    end
+
+    let(dbl) { class_double(:class_double) }
+
+    it "raises on abstract stubs" do
+      expect { dbl.abstract_method }.to raise_error(Spectator::UnexpectedMessage, /abstract_method/)
+    end
+
+    it "can define default stubs" do
+      expect(dbl.default_method).to eq(:default)
+    end
+
+    it "can define new stubs" do
+      expect { allow(dbl).to receive(:args).and_return(42) }.to change { dbl.args(5) }.from(5).to(42)
+    end
+
+    it "can override class method stubs" do
+      allow(dbl).to receive(:method1).and_return(:override)
+      expect(dbl.method1).to eq(:override)
+    end
+
+    it "can reference stubs" do
+      allow(dbl).to receive(:method1).and_return(:reference)
+      expect(dbl.reference).to eq("reference")
+    end
+  end
 end

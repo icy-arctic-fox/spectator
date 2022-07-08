@@ -830,4 +830,62 @@ Spectator.describe "Mock DSL", :smoke do
       expect { allow(fake).to receive(:memoize).and_return(override) }.to change { fake.reference }.from("memoize").to("override")
     end
   end
+
+  describe "class mock" do
+    abstract class Dummy
+      def self.abstract_method
+        :not_really_abstract
+      end
+
+      def self.default_method
+        :original
+      end
+
+      def self.args(arg)
+        arg
+      end
+
+      def self.method1
+        :original
+      end
+
+      def self.reference
+        method1.to_s
+      end
+    end
+
+    mock(Dummy) do
+      abstract_stub def self.abstract_method
+        :abstract
+      end
+
+      stub def self.default_method
+        :default
+      end
+    end
+
+    let(fake) { class_mock(Dummy) }
+
+    it "raises on abstract stubs" do
+      expect { fake.abstract_method }.to raise_error(Spectator::UnexpectedMessage, /abstract_method/)
+    end
+
+    it "can define default stubs" do
+      expect(fake.default_method).to eq(:default)
+    end
+
+    it "can define new stubs" do
+      expect { allow(fake).to receive(:args).and_return(42) }.to change { fake.args(5) }.from(5).to(42)
+    end
+
+    it "can override class method stubs" do
+      allow(fake).to receive(:method1).and_return(:override)
+      expect(fake.method1).to eq(:override)
+    end
+
+    it "can reference stubs" do
+      allow(fake).to receive(:method1).and_return(:reference)
+      expect(fake.reference).to eq("reference")
+    end
+  end
 end

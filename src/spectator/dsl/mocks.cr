@@ -21,7 +21,7 @@ module Spectator::DSL
     # end
     # ```
     private macro def_double(name, **value_methods, &block)
-    {% # Construct a unique type name for the double by using the number of defined doubles.
+      {% # Construct a unique type name for the double by using the number of defined doubles.
  index = ::Spectator::DSL::Mocks::TYPES.size
  double_type_name = "Double#{index}".id
  null_double_type_name = "NullDouble#{index}".id
@@ -98,6 +98,39 @@ module Spectator::DSL
         {{found_tuple[2].id}}.new({{**value_methods}})
       {% else %}
         ::Spectator::LazyDouble.new({{name}}, {{**value_methods}})
+      {% end %}
+    end
+
+    private macro class_double(name = nil)
+      {% # Find tuples with the same name.
+ found_tuples = ::Spectator::DSL::Mocks::TYPES.select { |tuple| tuple[0] == name.id.symbolize }
+
+ # Split the current context's type namespace into parts.
+ type_parts = @type.name(generic_args: false).split("::")
+
+ # Find tuples in the same context or a parent of where the double was defined.
+ # This is done by comparing each part of their namespaces.
+ found_tuples = found_tuples.select do |tuple|
+   # Split the namespace of the context the double was defined in.
+   context_parts = tuple[1].id.split("::")
+
+   # Compare namespace parts between the context the double was defined in and this context.
+   # This logic below is effectively comparing array elements, but with methods supported by macros.
+   matches = context_parts.map_with_index { |part, i| part == type_parts[i] }
+   matches.all? { |b| b }
+ end
+
+ # Sort the results by the number of namespace parts.
+ # The last result will be the double type defined closest to the current context's type.
+ found_tuples = found_tuples.sort_by do |tuple|
+   tuple[1].id.split("::").size
+ end
+ found_tuple = found_tuples.last %}
+
+      {% if found_tuple %}
+        {{found_tuple[2].id}}
+      {% else %}
+        ::Spectator::LazyDouble
       {% end %}
     end
 
@@ -195,6 +228,44 @@ module Spectator::DSL
         {% if @def %}new_mock{% else %}def_mock{% end %}({{type}}, {{**value_methods}}){% if block %} do
           {{block.body}}
         end{% end %}
+      {% end %}
+    end
+
+    private macro class_mock(type, **value_methods)
+      {% # Find tuples with the same name.
+ found_tuples = ::Spectator::DSL::Mocks::TYPES.select { |tuple| tuple[0] == type.id.symbolize }
+
+ # Split the current context's type namespace into parts.
+ type_parts = @type.name(generic_args: false).split("::")
+
+ # Find tuples in the same context or a parent of where the mock was defined.
+ # This is done by comparing each part of their namespaces.
+ found_tuples = found_tuples.select do |tuple|
+   # Split the namespace of the context the double was defined in.
+   context_parts = tuple[1].id.split("::")
+
+   # Compare namespace parts between the context the double was defined in and this context.
+   # This logic below is effectively comparing array elements, but with methods supported by macros.
+   matches = context_parts.map_with_index { |part, i| part == type_parts[i] }
+   matches.all? { |b| b }
+ end
+
+ # Sort the results by the number of namespace parts.
+ # The last result will be the double type defined closest to the current context's type.
+ found_tuples = found_tuples.sort_by do |tuple|
+   tuple[1].id.split("::").size
+ end
+ found_tuple = found_tuples.last %}
+
+      {% if found_tuple %}
+        {{found_tuple[2].id}}.tap do |mock|
+          {% for key, value in value_methods %}
+            %stub{key} = ::Spectator::ValueStub.new({{key.id.symbolize}}, {{value}})
+            mock._spectator_define_stub(%stub{key})
+          {% end %}
+        end
+      {% else %}
+        {% raise "Type `#{type.id}` must be previously mocked before attempting to instantiate." %}
       {% end %}
     end
 
