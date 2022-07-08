@@ -153,7 +153,7 @@ module Spectator
       yield
     end
 
-    private def _spectator_stub_fallback(call : MethodCall, _type, &)
+    private def _spectator_stub_fallback(call : MethodCall, type, &)
       _spectator_stub_fallback(call) { yield }
     end
 
@@ -167,7 +167,7 @@ module Spectator
       raise UnexpectedMessage.new("#{_spectator_stubbed_name} received unexpected message #{call}")
     end
 
-    private def _spectator_abstract_stub_fallback(call : MethodCall, _type)
+    private def _spectator_abstract_stub_fallback(call : MethodCall, type)
       _spectator_abstract_stub_fallback(call)
     end
 

@@ -5,7 +5,7 @@ module Spectator
   # Stub that does nothing and returns nil.
   class NullStub < TypedStub(Nil)
     # Invokes the stubbed implementation.
-    def call(_call : MethodCall) : Nil
+    def call(call : MethodCall) : Nil
     end
   end
 end

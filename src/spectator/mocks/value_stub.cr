@@ -7,7 +7,7 @@ module Spectator
   # Stub that responds with a static value.
   class ValueStub(T) < TypedStub(T)
     # Invokes the stubbed implementation.
-    def call(_call : MethodCall) : T
+    def call(call : MethodCall) : T
       @value
     end
 
