@@ -200,14 +200,14 @@ module Spectator::DSL
 
     # Targets a stubbable object (such as a mock or double) for operations.
     #
-    # The *stubbable* must be a `Stubbable`.
+    # The *stubbable* must be a `Stubbable` or `StubbedType`.
     # This method is expected to be followed up with `.to receive()`.
     #
     # ```
     # dbl = dbl(:foobar)
     # allow(dbl).to receive(:foo).and_return(42)
     # ```
-    def allow(stubbable : Stubbable)
+    def allow(stubbable : Stubbable | StubbedType)
       ::Spectator::Allow.new(stubbable)
     end
 

@@ -1,5 +1,6 @@
 require "./stub"
 require "./stubbable"
+require "./stubbed_type"
 
 module Spectator
   # Targets a stubbable object.
@@ -12,9 +13,9 @@ module Spectator
   struct Allow(T)
     # Creates the stub target.
     #
-    # The *target* must be a kind of `Stubbable`.
+    # The *target* must be a kind of `Stubbable` or `StubbedType`.
     def initialize(@target : T)
-      {% raise "Target of `allow` must be stubbable (a mock or double)." unless T < Stubbable %}
+      {% raise "Target of `allow` must be stubbable (a mock or double)." unless T < Stubbable || T < StubbedType %}
     end
 
     # Applies a stub to the targeted stubbable object.
