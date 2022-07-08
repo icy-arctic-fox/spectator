@@ -17,7 +17,7 @@ module Spectator::Matchers
     # Actually performs the test against the expression.
     def match(actual : Expression(T)) : MatchData forall T
       snapshot = snapshot_values(actual.value)
-      if match?(snapshot)
+      if values_match?(snapshot)
         SuccessfulMatchData.new(description)
       else
         FailedMatchData.new(description, "#{actual.label} does not have #{expected.label}", values(snapshot).to_a)
@@ -28,11 +28,16 @@ module Spectator::Matchers
     # A successful match with `#match` should normally fail for this method, and vice-versa.
     def negated_match(actual : Expression(T)) : MatchData forall T
       snapshot = snapshot_values(actual.value)
-      if match?(snapshot)
+      if values_match?(snapshot)
         FailedMatchData.new(description, "#{actual.label} has #{expected.label}", values(snapshot).to_a)
       else
         SuccessfulMatchData.new(description)
       end
+    end
+
+    def match?(actual : Expression(T)) : Bool forall T
+      snapshot = snapshot_values(actual.value)
+      values_match?(snapshot)
     end
 
     # Message displayed when the matcher isn't satisfied.
@@ -69,7 +74,7 @@ module Spectator::Matchers
     end
 
     # Checks if all predicate methods from the snapshot of them are satisfied.
-    private def match?(snapshot) : Bool
+    private def values_match?(snapshot) : Bool
       # Test each predicate and immediately return false if one is false.
       {% for attribute in ExpectedType.keys %}
       return false unless snapshot[{{attribute.symbolize}}]

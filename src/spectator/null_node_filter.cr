@@ -9,7 +9,7 @@ module Spectator
     end
 
     # Checks whether the node satisfies the filter.
-    def includes?(_node) : Bool
+    def includes?(node) : Bool
       @match
     end
   end

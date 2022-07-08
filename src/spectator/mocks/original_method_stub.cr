@@ -3,7 +3,7 @@ require "./generic_method_stub"
 
 module Spectator::Mocks
   class OriginalMethodStub < GenericMethodStub(Nil)
-    def call(_args : GenericArguments(T, NT), & : -> RT) forall T, NT, RT
+    def call(args : GenericArguments(T, NT), & : -> RT) forall T, NT, RT
       yield
     end
   end
