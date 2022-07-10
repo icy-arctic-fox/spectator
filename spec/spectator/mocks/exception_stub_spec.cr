@@ -1,9 +1,10 @@
 require "../../spec_helper"
 
-Spectator.describe Spectator::NullStub do
+Spectator.describe Spectator::ExceptionStub do
   let(method_call) { Spectator::MethodCall.capture(:foo) }
   let(location) { Spectator::Location.new(__FILE__, __LINE__) }
-  subject(stub) { described_class.new(:foo, location: location) }
+  let(exception) { RuntimeError.new("Test exception") }
+  subject(stub) { described_class.new(:foo, exception, location: location) }
 
   it "stores the method name" do
     expect(stub.method).to eq(:foo)
@@ -13,19 +14,19 @@ Spectator.describe Spectator::NullStub do
     expect(stub.location).to eq(location)
   end
 
-  it "returns nil" do
-    expect(stub.call(method_call)).to be_nil
+  it "raises the specified exception" do
+    expect { stub.call(method_call) }.to raise_error(RuntimeError, "Test exception")
   end
 
   context Spectator::StubModifiers do
     describe "#and_return(value)" do
       let(arguments) { Spectator::Arguments.capture(/foo/) }
       let(location) { Spectator::Location.new(__FILE__, __LINE__) }
-      let(original) { Spectator::NullStub.new(:foo, arguments, location) }
-      subject(stub) { original.and_return(42) }
+      let(original) { Spectator::ExceptionStub.new(:foo, exception, arguments, location) }
+      subject(stub) { original.and_return(123) }
 
       it "produces a stub that returns a value" do
-        expect(stub.call(method_call)).to eq(42)
+        expect(stub.call(method_call)).to eq(123)
       end
 
       it "retains the method name" do
@@ -44,7 +45,7 @@ Spectator.describe Spectator::NullStub do
     describe "#and_return(*values)" do
       let(arguments) { Spectator::Arguments.capture(/foo/) }
       let(location) { Spectator::Location.new(__FILE__, __LINE__) }
-      let(original) { Spectator::NullStub.new(:foo, arguments, location) }
+      let(original) { Spectator::ExceptionStub.new(:foo, exception, arguments, location) }
       subject(stub) { original.and_return(3, 2, 1, 0) }
 
       it "produces a stub that returns values" do
@@ -68,7 +69,7 @@ Spectator.describe Spectator::NullStub do
     describe "#and_raise" do
       let(arguments) { Spectator::Arguments.capture(/foo/) }
       let(location) { Spectator::Location.new(__FILE__, __LINE__) }
-      let(original) { Spectator::NullStub.new(:foo, arguments, location) }
+      let(original) { Spectator::ExceptionStub.new(:foo, exception, arguments, location) }
       let(new_exception) { ArgumentError.new("Test argument error") }
       subject(stub) { original.and_raise(new_exception) }
 
@@ -135,7 +136,7 @@ Spectator.describe Spectator::NullStub do
 
     context "with a constraint" do
       let(constraint) { Spectator::Arguments.capture(/foo/) }
-      let(stub) { described_class.new(:foo, constraint) }
+      let(stub) { Spectator::ValueStub.new(:foo, 42, constraint) }
 
       context "with a matching method name" do
         let(call) { Spectator::MethodCall.capture(:foo, "foobar") }

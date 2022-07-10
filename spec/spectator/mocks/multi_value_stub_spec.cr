@@ -72,6 +72,54 @@ Spectator.describe Spectator::MultiValueStub do
         expect(stub.location).to eq(location)
       end
     end
+
+    describe "#and_raise" do
+      let(arguments) { Spectator::Arguments.capture(/foo/) }
+      let(location) { Spectator::Location.new(__FILE__, __LINE__) }
+      let(original) { Spectator::MultiValueStub.new(:foo, [3, 5, 7], arguments, location) }
+      let(new_exception) { ArgumentError.new("Test argument error") }
+      subject(stub) { original.and_raise(new_exception) }
+
+      it "produces a stub that raises" do
+        expect { stub.call(method_call) }.to raise_error(ArgumentError, "Test argument error")
+      end
+
+      context "with a class and message" do
+        subject(stub) { original.and_raise(ArgumentError, "Test argument error") }
+
+        it "produces a stub that raises" do
+          expect { stub.call(method_call) }.to raise_error(ArgumentError, "Test argument error")
+        end
+      end
+
+      context "with a message" do
+        subject(stub) { original.and_raise("Test exception") }
+
+        it "produces a stub that raises" do
+          expect { stub.call(method_call) }.to raise_error(Exception, "Test exception")
+        end
+      end
+
+      context "with a class" do
+        subject(stub) { original.and_raise(ArgumentError) }
+
+        it "produces a stub that raises" do
+          expect { stub.call(method_call) }.to raise_error(ArgumentError)
+        end
+      end
+
+      it "retains the method name" do
+        expect(stub.method).to eq(:foo)
+      end
+
+      it "retains the arguments constraint" do
+        expect(stub.constraint).to eq(arguments)
+      end
+
+      it "retains the location" do
+        expect(stub.location).to eq(location)
+      end
+    end
   end
 
   describe "#===" do
