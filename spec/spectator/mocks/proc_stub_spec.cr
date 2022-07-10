@@ -3,7 +3,7 @@ require "../../spec_helper"
 Spectator.describe Spectator::ProcStub do
   let(method_call) { Spectator::MethodCall.capture(:foo) }
   let(location) { Spectator::Location.new(__FILE__, __LINE__) }
-  let(proc) { Proc(Spectator::AbstractArguments, Int32).new { |args| @call_count += 1 } }
+  let(proc) { Proc(Spectator::AbstractArguments, Int32).new { @call_count += 1 } }
   subject(stub) { described_class.new(:foo, proc, location: location) }
 
   @call_count = 0
