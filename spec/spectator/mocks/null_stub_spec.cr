@@ -40,6 +40,30 @@ Spectator.describe Spectator::NullStub do
         expect(stub.location).to eq(location)
       end
     end
+
+    describe "#and_return(*values)" do
+      let(arguments) { Spectator::Arguments.capture(/foo/) }
+      let(location) { Spectator::Location.new(__FILE__, __LINE__) }
+      let(original) { Spectator::NullStub.new(:foo, arguments, location) }
+      subject(stub) { original.and_return(3, 2, 1, 0) }
+
+      it "produces a stub that returns values" do
+        values = Array.new(5) { stub.call(method_call) }
+        expect(values).to eq([3, 2, 1, 0, 0])
+      end
+
+      it "retains the method name" do
+        expect(stub.method).to eq(:foo)
+      end
+
+      it "retains the arguments constraint" do
+        expect(stub.constraint).to eq(arguments)
+      end
+
+      it "retains the location" do
+        expect(stub.location).to eq(location)
+      end
+    end
   end
 
   describe "#===" do
