@@ -27,6 +27,16 @@ module Spectator
       {{@type.name(generic_args: false)}}.capture
     end
 
+    # Returns the positional argument at the specified index.
+    def [](index : Int)
+      @args[index]
+    end
+
+    # Returns the specified named argument.
+    def [](arg : Symbol)
+      @kwargs[arg]
+    end
+
     # Constructs a string representation of the arguments.
     def to_s(io : IO) : Nil
       return io << "(no args)" if args.empty? && kwargs.empty?

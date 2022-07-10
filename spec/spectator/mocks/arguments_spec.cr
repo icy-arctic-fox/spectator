@@ -24,6 +24,26 @@ Spectator.describe Spectator::Arguments do
     end
   end
 
+  describe "#[]" do
+    context "with an index" do
+      it "returns a positional argument" do
+        aggregate_failures do
+          expect(arguments[0]).to eq(42)
+          expect(arguments[1]).to eq("foo")
+        end
+      end
+    end
+
+    context "with a symbol" do
+      it "returns a named argument" do
+        aggregate_failures do
+          expect(arguments[:bar]).to eq("baz")
+          expect(arguments[:qux]).to eq(123)
+        end
+      end
+    end
+  end
+
   describe "#to_s" do
     subject { arguments.to_s }
 
