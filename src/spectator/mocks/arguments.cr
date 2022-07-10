@@ -22,10 +22,8 @@ module Spectator
       new(args, kwargs)
     end
 
-    # Constructs an instance of empty arguments.
-    macro empty
-      {{@type.name(generic_args: false)}}.capture
-    end
+    # Instance of empty arguments.
+    class_getter empty : Arguments(Tuple(), NamedTuple()) = capture
 
     # Returns the positional argument at the specified index.
     def [](index : Int)
