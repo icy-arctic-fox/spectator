@@ -27,4 +27,25 @@ Spectator.describe "Stub DSL", :smoke do
     allow(dbl).to receive(:foo).and_return(:xyz)
     expect { dbl.foo }.to raise_error(TypeCastError, /Int32/)
   end
+
+  describe "#receive" do
+    it "returns the value from the block" do
+      allow(dbl).to receive(:foo) { 5 }
+      expect(dbl.foo).to eq(5)
+    end
+
+    it "accepts and calls block" do
+      count = 0
+      allow(dbl).to receive(:foo) { count += 1 }
+      expect { dbl.foo }.to change { count }.from(0).to(1)
+    end
+
+    it "passes the arguments to the block" do
+      captured = nil.as(Spectator::AbstractArguments?)
+      allow(dbl).to receive(:foo) { |a| captured = a; 0 }
+      dbl.foo(3, 5, 7, bar: "baz")
+      args = Spectator::Arguments.capture(3, 5, 7, bar: "baz")
+      expect(captured).to eq(args)
+    end
+  end
 end

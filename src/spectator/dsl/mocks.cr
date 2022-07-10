@@ -308,8 +308,25 @@ module Spectator::DSL
     # allow(dbl).to receive(:foo).and_return(42)
     # expect(dbl.foo).to eq(42)
     # ```
-    macro receive(method, *, _file = __FILE__, _line = __LINE__)
-      ::Spectator::NullStub.new({{method.id.symbolize}}, location: ::Spectator::Location.new({{_file}}, {{_line}}))
+    #
+    # A block can be provided to be run every time the stub is invoked.
+    # The value returned by the block is returned by the stubbed method.
+    #
+    # ```
+    # dbl = dbl(:foobar)
+    # allow(dbl).to receive(:foo) { 42 }
+    # expect(dbl.foo).to eq(42)
+    # ```
+    macro receive(method, *, _file = __FILE__, _line = __LINE__, &block)
+      {% if block %}
+        %proc = ->(%args : ::Spectator::AbstractArguments) {
+          {% if !block.args.empty? %}{{*block.args}} = %args {% end %}
+          {{block.body}}
+        }
+        ::Spectator::ProcStub.new({{method.id.symbolize}}, %proc, location: ::Spectator::Location.new({{_file}}, {{_line}}))
+      {% else %}
+        ::Spectator::NullStub.new({{method.id.symbolize}}, location: ::Spectator::Location.new({{_file}}, {{_line}}))
+      {% end %}
     end
   end
 end
