@@ -48,4 +48,49 @@ Spectator.describe "Stub DSL", :smoke do
       expect(captured).to eq(args)
     end
   end
+
+  describe "#with" do
+    context Spectator::MultiValueStub do
+      it "applies the stub with matching arguments" do
+        allow(dbl).to receive(:foo).and_return(1, 2, 3).with(Int32, bar: /baz/)
+        aggregate_failures do
+          expect(dbl.foo(3, bar: "foobarbaz")).to eq(1)
+          expect(dbl.foo).to eq(42)
+          expect(dbl.foo(5, bar: "barbaz")).to eq(2)
+          expect(dbl.foo(7, bar: "foobaz")).to eq(3)
+          expect(dbl.foo(11, bar: "baz")).to eq(3)
+        end
+      end
+    end
+
+    context Spectator::NullStub do
+      it "applies the stub with matching arguments" do
+        allow(dbl).to receive(:foo).with(Int32, bar: /baz/).and_return(1)
+        aggregate_failures do
+          expect(dbl.foo(3, bar: "foobarbaz")).to eq(1)
+          expect(dbl.foo).to eq(42)
+        end
+      end
+
+      it "changes to a proc stub" do
+        called = 0
+        allow(dbl).to receive(:foo).with(Int32, bar: /baz/) { called += 1 }
+        aggregate_failures do
+          expect { dbl.foo(3, bar: "foobarbaz") }.to change { called }.from(0).to(1)
+          expect(dbl.foo(5, bar: "baz")).to eq(2)
+          expect(dbl.foo).to eq(42)
+        end
+      end
+    end
+
+    context Spectator::ValueStub do
+      it "applies the stub with matching arguments" do
+        allow(dbl).to receive(:foo).and_return(1).with(Int32, bar: /baz/)
+        aggregate_failures do
+          expect(dbl.foo(3, bar: "foobarbaz")).to eq(1)
+          expect(dbl.foo).to eq(42)
+        end
+      end
+    end
+  end
 end

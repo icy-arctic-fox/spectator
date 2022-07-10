@@ -11,6 +11,12 @@ module Spectator
       raise @exception
     end
 
+    # Returns a new stub with constrained arguments.
+    def with(*args, **kwargs)
+      constraint = Arguments.new(args, kwargs)
+      self.class.new(method, @exception, constraint, location)
+    end
+
     # Creates the stub.
     def initialize(method : Symbol, @exception : Exception, constraint : AbstractArguments? = nil, location : Location? = nil)
       super(method, constraint, location)
