@@ -101,6 +101,27 @@ module Spectator::DSL
       {% end %}
     end
 
+    # Instantiates a class double.
+    #
+    # The *name* is an optional identifier for the double.
+    # If *name* was previously used to define a double (with `#def_double`),
+    # then this macro returns a previously defined double class.
+    # Otherwise, `LazyDouble` is created and returned.
+    #
+    # ```
+    # def_double(:dbl) do
+    #   stub def self.foo
+    #     42
+    #   end
+    # end
+    #
+    # specify do
+    #   dbl = class_double(:dbl)
+    #   expect(dbl.foo).to eq(42)
+    #   allow(dbl).to receive(:foo).and_return(123)
+    #   expect(dbl.foo).to eq(123)
+    # end
+    # ```
     private macro class_double(name = nil)
       {% # Find tuples with the same name.
  found_tuples = ::Spectator::DSL::Mocks::TYPES.select { |tuple| tuple[0] == name.id.symbolize }
@@ -161,6 +182,31 @@ module Spectator::DSL
       ::Spectator::LazyDouble.new({{**value_methods}})
     end
 
+    # Defines a new mock type.
+    #
+    # This must be called from outside of a method (where classes can be defined).
+    # *type* is the type being mocked.
+    # The *name* is an optional identifier used in debug output.
+    # Simple stubbed methods returning a value can be defined by *value_methods*.
+    # More complex methods and stubs can be defined in a block passed to this macro.
+    #
+    # ```
+    # abstract class MyClass
+    #   def foo
+    #     42
+    #   end
+    #
+    #   def bar
+    #     Time.utc
+    #   end
+    # end
+    #
+    # def_mock(MyClass, foo: 5) do
+    #   stub def bar
+    #     Time.utc(2022, 7, 10)
+    #   end
+    # end
+    # ```
     private macro def_mock(type, name = nil, **value_methods, &block)
       {% # Construct a unique type name for the mock by using the number of defined types.
  index = ::Spectator::DSL::Mocks::TYPES.size
@@ -184,6 +230,35 @@ module Spectator::DSL
       end{% end %}
     end
 
+    # Instantiates a mock.
+    #
+    # *type* is the type being mocked.
+    #
+    # Initial stubbed values for methods can be provided with *value_methods*.
+    #
+    # ```
+    # abstract class MyClass
+    #   def foo
+    #     42
+    #   end
+    #
+    #   def bar
+    #     Time.utc
+    #   end
+    # end
+    #
+    # def_mock(MyClass, foo: 5) do
+    #   stub def bar
+    #     Time.utc(2022, 7, 10)
+    #   end
+    # end
+    #
+    # specify do
+    #   dbl = new_mock(MyClass, foo: 7)
+    #   expect(dbl.foo).to eq(7)
+    #   expect(dbl.bar).to eq(Time.utc(2022, 7, 10))
+    # end
+    # ```
     private macro new_mock(type, **value_methods)
       {% # Find tuples with the same name.
  found_tuples = ::Spectator::DSL::Mocks::TYPES.select { |tuple| tuple[0] == type.id.symbolize }
@@ -222,6 +297,13 @@ module Spectator::DSL
       {% end %}
     end
 
+    # Defines or instantiates a mock.
+    #
+    # When used inside of a method, instantiates a new mock.
+    # See `#new_mock`.
+    #
+    # When used outside of a method, defines a new mock.
+    # See `#def_mock`.
     macro mock(type, **value_methods, &block)
       {% raise "First argument of `mock` must be a type name, not #{type}" unless type.is_a?(Path) || type.is_a?(Generic) || type.is_a?(Union) || type.is_a?(Metaclass) || type.is_a?(TypeNode) %}
       {% begin %}
@@ -231,6 +313,28 @@ module Spectator::DSL
       {% end %}
     end
 
+    # Instantiates a class mock.
+    #
+    # *type* is the type being mocked.
+    #
+    # Initial stubbed values for methods can be provided with *value_methods*.
+    #
+    # ```
+    # class MyClass
+    #   def self.foo
+    #     42
+    #   end
+    # end
+    #
+    # def_mock(MyClass)
+    #
+    # specify do
+    #   mock = class_mock(MyClass, foo: 5)
+    #   expect(dbl.foo).to eq(5)
+    #   allow(dbl).to receive(:foo).and_return(123)
+    #   expect(dbl.foo).to eq(123)
+    # end
+    # ```
     private macro class_mock(type, **value_methods)
       {% # Find tuples with the same name.
  found_tuples = ::Spectator::DSL::Mocks::TYPES.select { |tuple| tuple[0] == type.id.symbolize }
