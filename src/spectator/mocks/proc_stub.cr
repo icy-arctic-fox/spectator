@@ -29,7 +29,7 @@ module Spectator
   module StubModifiers
     # Returns a new stub with an argument constraint.
     def with(*args, **kwargs, &block : AbstractArguments -> T) forall T
-      constraint = Arguments.new(args, kwargs)
+      constraint = Arguments.new(args, kwargs).as(AbstractArguments)
       ProcStub(T).new(method, block, constraint, location)
     end
   end

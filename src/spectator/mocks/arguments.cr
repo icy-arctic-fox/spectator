@@ -18,12 +18,12 @@ module Spectator
     end
 
     # Constructs an instance from literal arguments.
-    def self.capture(*args, **kwargs) : self
-      new(args, kwargs)
+    def self.capture(*args, **kwargs) : AbstractArguments
+      new(args, kwargs).as(AbstractArguments)
     end
 
     # Instance of empty arguments.
-    class_getter empty : Arguments(Tuple(), NamedTuple()) = capture
+    class_getter empty : AbstractArguments = capture
 
     # Returns the positional argument at the specified index.
     def [](index : Int)

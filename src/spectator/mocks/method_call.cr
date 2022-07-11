@@ -11,12 +11,12 @@ module Spectator
     getter arguments : AbstractArguments
 
     # Creates a method call.
-    def initialize(@method : Symbol, @arguments : Arguments = Arguments.empty)
+    def initialize(@method : Symbol, @arguments : AbstractArguments = Arguments.empty)
     end
 
     # Creates a method call by splatting its arguments.
     def self.capture(method : Symbol, *args, **kwargs)
-      arguments = Arguments.new(args, kwargs)
+      arguments = Arguments.new(args, kwargs).as(AbstractArguments)
       new(method, arguments)
     end
 
