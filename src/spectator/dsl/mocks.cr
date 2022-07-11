@@ -432,5 +432,10 @@ module Spectator::DSL
         ::Spectator::NullStub.new({{method.id.symbolize}}, location: ::Spectator::Location.new({{_file}}, {{_line}}))
       {% end %}
     end
+
+    # Returns empty arguments.
+    def no_args
+      ::Spectator::Arguments.empty
+    end
   end
 end
