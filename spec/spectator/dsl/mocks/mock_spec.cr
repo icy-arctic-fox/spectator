@@ -1,6 +1,26 @@
 require "../../../spec_helper"
 
 Spectator.describe "Mock DSL", :smoke do
+  alias CapturedArguments = Tuple(Int32, Tuple(Int32, Int32), Int32, NamedTuple(x: Int32, y: Int32, z: Int32))
+
+  let(args_proc) do
+    ->(args : Spectator::AbstractArguments) do
+      {
+        args[0].as(Int32),
+        {
+          args[1].as(Int32),
+          args[2].as(Int32),
+        },
+        args[3].as(Int32),
+        {
+          x: args[:x].as(Int32),
+          y: args[:y].as(Int32),
+          z: args[:z].as(Int32),
+        },
+      }
+    end
+  end
+
   context "with a concrete class" do
     class ConcreteClass
       getter _spectator_invocations = [] of Symbol
@@ -131,9 +151,9 @@ Spectator.describe "Mock DSL", :smoke do
       end
     end
 
-    xit "handles arguments correctly with stubs", pending: "Need ProcStub" do
-      stub1 = Spectator::ProcStub.new(:method7) { |args| args }
-      stub2 = Spectator::ProcStub.new(:method8) { |args| args }
+    it "handles arguments correctly with stubs" do
+      stub1 = Spectator::ProcStub.new(:method7, args_proc)
+      stub2 = Spectator::ProcStub.new(:method8, args_proc)
       fake._spectator_define_stub(stub1)
       fake._spectator_define_stub(stub2)
       args1 = fake.method7(1, 2, 3, kwarg: 4, x: 5, y: 6, z: 7)
@@ -246,6 +266,12 @@ Spectator.describe "Mock DSL", :smoke do
       stub def method6 : Symbol
         yield
       end
+
+      # NOTE: Defining the stub here with a return type restriction, but no default implementation.
+      abstract_stub abstract def method7(arg, *args, kwarg, **kwargs) : CapturedArguments
+
+      # NOTE: Another quirk where a default implementation must be provided because `&` is dropped.
+      abstract_stub abstract def method8(arg, *args, kwarg, **kwargs, &) : CapturedArguments
     end
 
     subject(fake) { mock(AbstractClass) }
@@ -307,22 +333,13 @@ Spectator.describe "Mock DSL", :smoke do
       expect { fake._spectator_define_stub(stub) }.to change { fake.method6 { :wrong } }.from(:kwargs).to(:override)
     end
 
-    xit "handles arguments correctly", pending: "Need ProcStub" do
-      args1 = fake.method7(1, 2, 3, kwarg: 4, x: 5, y: 6, z: 7)
-      args2 = fake.method8(1, 2, 3, kwarg: 4, x: 5, y: 6, z: 7) { :block }
-      aggregate_failures do
-        expect(args1).to eq({1, {2, 3}, 4, {x: 5, y: 6, z: 7}})
-        expect(args2).to eq({1, {2, 3}, 4, {x: 5, y: 6, z: 7}})
-      end
-    end
-
-    xit "handles arguments correctly with stubs", pending: "Need ProcStub" do
-      stub1 = Spectator::ProcStub.new(:method7) { |args| args }
-      stub2 = Spectator::ProcStub.new(:method8) { |args| args }
+    it "handles arguments correctly with stubs" do
+      stub1 = Spectator::ProcStub.new(:method7, args_proc)
+      stub2 = Spectator::ProcStub.new(:method8, args_proc)
       fake._spectator_define_stub(stub1)
       fake._spectator_define_stub(stub2)
       args1 = fake.method7(1, 2, 3, kwarg: 4, x: 5, y: 6, z: 7)
-      args2 = fake.method8(1, 2, 3, kwarg: 4, x: 5, y: 6, z: 7) { :block }
+      args2 = fake.method8(1, 2, 3, kwarg: 4, x: 5, y: 6, z: 7) # { :block }
       aggregate_failures do
         expect(args1).to eq({1, {2, 3}, 4, {x: 5, y: 6, z: 7}})
         expect(args2).to eq({1, {2, 3}, 4, {x: 5, y: 6, z: 7}})
@@ -445,6 +462,12 @@ Spectator.describe "Mock DSL", :smoke do
       stub def method6 : Symbol
         yield
       end
+
+      # NOTE: Defining the stub here with a return type restriction, but no default implementation.
+      abstract_stub abstract def method7(arg, *args, kwarg, **kwargs) : CapturedArguments
+
+      # NOTE: Another quirk where a default implementation must be provided because `&` is dropped.
+      abstract_stub abstract def method8(arg, *args, kwarg, **kwargs, &) : CapturedArguments
     end
 
     subject(fake) { mock(AbstractStruct) }
@@ -506,22 +529,13 @@ Spectator.describe "Mock DSL", :smoke do
       expect { fake._spectator_define_stub(stub) }.to change { fake.method6 { :wrong } }.from(:kwargs).to(:override)
     end
 
-    xit "handles arguments correctly", pending: "Need ProcStub" do
-      args1 = fake.method7(1, 2, 3, kwarg: 4, x: 5, y: 6, z: 7)
-      args2 = fake.method8(1, 2, 3, kwarg: 4, x: 5, y: 6, z: 7) { :block }
-      aggregate_failures do
-        expect(args1).to eq({1, {2, 3}, 4, {x: 5, y: 6, z: 7}})
-        expect(args2).to eq({1, {2, 3}, 4, {x: 5, y: 6, z: 7}})
-      end
-    end
-
-    xit "handles arguments correctly with stubs", pending: "Need ProcStub" do
-      stub1 = Spectator::ProcStub.new(:method7) { |args| args }
-      stub2 = Spectator::ProcStub.new(:method8) { |args| args }
+    it "handles arguments correctly with stubs" do
+      stub1 = Spectator::ProcStub.new(:method7, args_proc)
+      stub2 = Spectator::ProcStub.new(:method8, args_proc)
       fake._spectator_define_stub(stub1)
       fake._spectator_define_stub(stub2)
       args1 = fake.method7(1, 2, 3, kwarg: 4, x: 5, y: 6, z: 7)
-      args2 = fake.method8(1, 2, 3, kwarg: 4, x: 5, y: 6, z: 7) { :block }
+      args2 = fake.method8(1, 2, 3, kwarg: 4, x: 5, y: 6, z: 7) # { :block }
       aggregate_failures do
         expect(args1).to eq({1, {2, 3}, 4, {x: 5, y: 6, z: 7}})
         expect(args2).to eq({1, {2, 3}, 4, {x: 5, y: 6, z: 7}})
