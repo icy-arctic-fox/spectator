@@ -11,5 +11,11 @@ module Spectator
       constraint = Arguments.new(args, kwargs).as(AbstractArguments)
       self.with_constraint(constraint)
     end
+
+    # :ditto:
+    @[AlwaysInline]
+    def with(constraint : AbstractArguments)
+      with_constraint(constraint)
+    end
   end
 end
