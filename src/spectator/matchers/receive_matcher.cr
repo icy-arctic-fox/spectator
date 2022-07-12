@@ -71,13 +71,16 @@ module Spectator::Matchers
     private def values(actual : Expression(T)) forall T
       {
         expected: @stub.to_s,
-        actual:   actual.value._spectator_calls.inspect,
+        actual:   actual.value._spectator_calls.join("\n"),
       }
     end
 
     # Additional information about the match failure when negated.
     private def negated_values(actual : Expression(T)) forall T
-      values(actual)
+      {
+        expected: "Not #{@stub}",
+        actual:   actual.value._spectator_calls.join("\n"),
+      }
     end
   end
 end

@@ -29,5 +29,10 @@ module Spectator
 
       constraint === call.arguments
     end
+
+    # String representation of the stub, formatted as a method call.
+    def to_s(io : IO) : Nil
+      io << "#" << method << (constraint || "(any args)")
+    end
   end
 end

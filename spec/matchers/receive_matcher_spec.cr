@@ -30,6 +30,12 @@ Spectator.describe Spectator::Matchers::ReceiveMatcher do
       is_expected.to contain("test_method")
     end
 
+    context "without an argument constraint" do
+      it "mentions it accepts any arguments" do
+        is_expected.to contain("any args")
+      end
+    end
+
     context "with no arguments" do
       let(matcher) { no_args_matcher }
 
@@ -42,7 +48,7 @@ Spectator.describe Spectator::Matchers::ReceiveMatcher do
       let(matcher) { args_matcher }
 
       it "lists the arguments" do
-        is_expected.to contain("1, \"test\", Symbol, foo: #{/bar/}")
+        is_expected.to contain("1, \"test\", Symbol, foo: #{/bar/.inspect}")
       end
     end
   end
@@ -146,17 +152,17 @@ Spectator.describe Spectator::Matchers::ReceiveMatcher do
       end
 
       it "has the expected call listed" do
-        is_expected.to contain({:expected, stub.to_s})
+        is_expected.to contain({:expected, "#test_method(1, \"test\", Symbol, foo: #{/bar/.inspect})"})
       end
 
       it "has the list of called methods" do
         is_expected.to contain({
           :actual,
-          [
-            "test_method(no args)",
-            "test_method(1, \"test\", :xyz, foo: \"foobarbaz\"",
-            "irrelevant(\"foo\")",
-          ],
+          <<-SIGNATURES
+          #test_method(no args)
+          #test_method(1, "wrong", :xyz, foo: "foobarbaz")
+          #irrelevant("foo")
+          SIGNATURES
         })
       end
     end
@@ -249,17 +255,17 @@ Spectator.describe Spectator::Matchers::ReceiveMatcher do
       end
 
       it "has the expected call listed" do
-        is_expected.to contain({:expected, stub.to_s})
+        is_expected.to contain({:expected, "Not #{stub}"})
       end
 
       it "has the list of called methods" do
         is_expected.to contain({
           :actual,
-          [
-            "test_method(no args)",
-            "test_method(1, \"test\", :xyz, foo: \"foobarbaz\"",
-            "irrelevant(\"foo\")",
-          ],
+          <<-SIGNATURES
+          #test_method(no args)
+          #test_method(1, "test", :xyz, foo: "foobarbaz")
+          #irrelevant("foo")
+          SIGNATURES
         })
       end
     end
