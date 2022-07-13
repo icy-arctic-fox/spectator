@@ -94,11 +94,15 @@ module Spectator::DSL
  end
  found_tuple = found_tuples.last %}
 
-      {% if found_tuple %}
-        {{found_tuple[2].id}}.new({{**value_methods}})
-      {% else %}
-        ::Spectator::LazyDouble.new({{name}}, {{**value_methods}})
-      {% end %}
+      begin
+        %double = {% if found_tuple %}
+                    {{found_tuple[2].id}}.new({{**value_methods}})
+                  {% else %}
+                    ::Spectator::LazyDouble.new({{name}}, {{**value_methods}})
+                  {% end %}
+        ::Spectator::Harness.current?.try(&.cleanup { %double._spectator_reset })
+        %double
+      end
     end
 
     # Instantiates a class double.
@@ -148,11 +152,15 @@ module Spectator::DSL
  end
  found_tuple = found_tuples.last %}
 
-      {% if found_tuple %}
-        {{found_tuple[2].id}}
-      {% else %}
-        ::Spectator::LazyDouble
-      {% end %}
+      begin
+        %double = {% if found_tuple %}
+                    {{found_tuple[2].id}}
+                  {% else %}
+                    ::Spectator::LazyDouble
+                  {% end %}
+        ::Spectator::Harness.current?.try(&.cleanup { %double._spectator_reset })
+        %double
+      end
     end
 
     # Defines or instantiates a double.
@@ -286,11 +294,14 @@ module Spectator::DSL
  found_tuple = found_tuples.last %}
 
       {% if found_tuple %}
-        {{found_tuple[2].id}}.new.tap do |%mock|
+        begin
+          %mock = {{found_tuple[2].id}}.new
           {% for key, value in value_methods %}
             %stub{key} = ::Spectator::ValueStub.new({{key.id.symbolize}}, {{value}})
             %mock._spectator_define_stub(%stub{key})
           {% end %}
+          ::Spectator::Harness.current?.try(&.cleanup { %mock._spectator_reset })
+          %mock
         end
       {% else %}
         {% raise "Type `#{type.id}` must be previously mocked before attempting to instantiate." %}
@@ -362,11 +373,14 @@ module Spectator::DSL
  found_tuple = found_tuples.last %}
 
       {% if found_tuple %}
-        {{found_tuple[2].id}}.tap do |%mock|
+        begin
+          %mock = {{found_tuple[2].id}}
           {% for key, value in value_methods %}
             %stub{key} = ::Spectator::ValueStub.new({{key.id.symbolize}}, {{value}})
             %mock._spectator_define_stub(%stub{key})
           {% end %}
+          ::Spectator::Harness.current?.try(&.cleanup { %mock._spectator_reset })
+          %mock
         end
       {% else %}
         {% raise "Type `#{type.id}` must be previously mocked before attempting to instantiate." %}

@@ -64,6 +64,7 @@ module Spectator
     end
 
     @deferred = Deque(->).new
+    @cleanup = Deque(->).new
     @expectations = [] of Expectation
     @aggregate : Array(Expectation)? = nil
 
@@ -72,6 +73,7 @@ module Spectator
     def run : Result
       elapsed, error = capture { yield }
       elapsed2, error2 = capture { run_deferred }
+      run_cleanup
       translate(elapsed + elapsed2, error || error2)
     end
 
@@ -95,6 +97,13 @@ module Spectator
     # All deferred blocks run just before the `#run` method completes.
     def defer(&block) : Nil
       @deferred << block
+    end
+
+    # Stores a block of code to be executed at cleanup.
+    # Cleanup is run after everything else, even deferred blocks.
+    # Each cleanup step is wrapped in error handling so that one failure doesn't block the next ones.
+    def cleanup(&block) : Nil
+      @cleanup << block
     end
 
     def aggregate_failures(label = nil)
@@ -167,6 +176,17 @@ module Spectator
     private def run_deferred
       Log.debug { "Running deferred operations" }
       @deferred.each(&.call)
+    end
+
+    # Invokes all cleanup callbacks.
+    # Each callback is wrapped with error handling.
+    private def run_cleanup
+      Log.debug { "Running cleanup" }
+      @cleanup.each do |callback|
+        callback.call
+      rescue e
+        Log.error(exception: e) { "Encountered error during cleanup" }
+      end
     end
   end
 end

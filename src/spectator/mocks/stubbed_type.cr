@@ -32,6 +32,12 @@ module Spectator
       _spectator_calls.clear
     end
 
+    # Clears all previously defined calls and stubs.
+    def _spectator_reset : Nil
+      _spectator_clear_calls
+      _spectator_clear_stubs
+    end
+
     def _spectator_stub_fallback(call : MethodCall, &)
       Log.trace { "Fallback for #{call} - call original" }
       yield

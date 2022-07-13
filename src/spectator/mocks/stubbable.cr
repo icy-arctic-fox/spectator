@@ -79,6 +79,12 @@ module Spectator
     # Utility method returning the stubbed type's name formatted for user output.
     abstract def _spectator_stubbed_name : String
 
+    # Clears all previously defined calls and stubs.
+    def _spectator_reset : Nil
+      _spectator_clear_calls
+      _spectator_clear_stubs
+    end
+
     # Redefines a method to accept stubs and provides a default response.
     #
     # The *method* must be a `Def`.
