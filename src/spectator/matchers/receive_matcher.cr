@@ -1,126 +1,77 @@
-require "../mocks"
-require "./standard_matcher"
+require "../mocks/stub"
+require "../mocks/stubbable"
+require "../mocks/stubbed_type"
+require "./matcher"
 
 module Spectator::Matchers
-  struct ReceiveMatcher < StandardMatcher
-    alias Range = ::Range(Int32, Int32) | ::Range(Nil, Int32) | ::Range(Int32, Nil)
-
-    def initialize(@expected : Expression(Symbol), @args : Mocks::Arguments? = nil, @range : Range? = nil)
+  # Matcher that inspects stubbable objects for method calls.
+  struct ReceiveMatcher < Matcher
+    # Creates the matcher for expecting a method call matching a stub.
+    def initialize(@stub : Stub)
     end
 
+    # Creates the matcher for expecting a method call with any arguments.
+    # *expected* is an expression evaluating to the method name as a symbol.
+    def initialize(expected : Expression(Symbol))
+      stub = NullStub.new(expected.value).as(Stub)
+      initialize(stub)
+    end
+
+    # Returns a new matcher with an argument constraint.
+    def with(*args, **kwargs) : self
+      stub = @stub.with(*args, **kwargs)
+      self.class.new(stub)
+    end
+
+    # Short text about the matcher's purpose.
     def description : String
-      range = @range
-      "received message #{@expected.label} #{range ? "#{humanize_range(range)} time(s)" : "At least once"} with #{@args || "any arguments"}"
+      "received #{@stub}"
     end
 
-    def match?(actual : Expression(T)) : Bool forall T
-      calls = Harness.current.mocks.calls_for(actual.value, @expected.value)
-      calls.select! { |call| @args === call.args } if @args
-      if (range = @range)
-        range.includes?(calls.size)
+    # Actually performs the test against the expression (value or block).
+    def match(actual : Expression(Stubbable) | Expression(StubbedType)) : MatchData
+      stubbed = actual.value
+      if stubbed._spectator_calls.any? { |call| @stub === call }
+        SuccessfulMatchData.new("#{actual.label} received #{@stub}")
       else
-        !calls.empty?
+        FailedMatchData.new("#{actual.label} received #{@stub}", "#{actual.label} did not receive #{@stub}", values(actual).to_a)
       end
     end
 
-    def failure_message(actual : Expression(T)) : String forall T
-      range = @range
-      "#{actual.label} did not receive #{@expected.label} #{range ? "#{humanize_range(range)} time(s)" : "at least once"} with #{@args || "any arguments"}"
+    # Actually performs the test against the expression (value or block).
+    def match(actual : Expression(T)) : MatchData forall T
+      {% raise "Value being checked with `have_received` must be stubbable (mock or double)." %}
     end
 
-    def failure_message_when_negated(actual) : String
-      range = @range
-      "#{actual.label} received #{@expected.label} #{range ? "#{humanize_range(range)} time(s)" : "at least once"} with #{@args || "any arguments"}"
+    # Performs the test against the expression (value or block), but inverted.
+    def negated_match(actual : Expression(Stubbable) | Expression(StubbedType)) : MatchData
+      stubbed = actual.value
+      if stubbed._spectator_calls.any? { |call| @stub === call }
+        FailedMatchData.new("#{actual.label} did not receive #{@stub}", "#{actual.label} received #{@stub}", negated_values(actual).to_a)
+      else
+        SuccessfulMatchData.new("#{actual.label} did not receive #{@stub}")
+      end
     end
 
-    def values(actual : Expression(T)) forall T
-      calls = Harness.current.mocks.calls_for(actual.value, @expected.value)
-      calls.select! { |call| @args === call.args } if @args
-      range = @range
+    # Performs the test against the expression (value or block), but inverted.
+    def negated_match(actual : Expression(T)) : MatchData forall T
+      {% raise "Value being checked with `have_received` must be stubbable (mock or double)." %}
+    end
+
+    # Additional information about the match failure.
+    private def values(actual : Expression(T)) forall T
       {
-        expected: "#{range ? "#{humanize_range(range)} time(s)" : "At least once"} with #{@args || "any arguments"}",
-        received: "#{calls.size} time(s)",
+        expected: @stub.to_s,
+        actual:   actual.value._spectator_calls.join("\n"),
       }
     end
 
-    def negated_values(actual : Expression(T)) forall T
-      calls = Harness.current.mocks.calls_for(actual.value, @expected.value)
-      calls.select! { |call| @args === call.args } if @args
-      range = @range
+    # Additional information about the match failure when negated.
+    private def negated_values(actual : Expression(T)) forall T
       {
-        expected: "#{range ? "Not #{humanize_range(range)} time(s)" : "Never"} with #{@args || "any arguments"}",
-        received: "#{calls.size} time(s)",
+        expected: "Not #{@stub}",
+        actual:   actual.value._spectator_calls.join("\n"),
       }
-    end
-
-    def with(*args, **opts)
-      args = Mocks::GenericArguments.new(args, opts)
-      ReceiveMatcher.new(@expected, args, @range)
-    end
-
-    def once
-      ReceiveMatcher.new(@expected, @args, (1..1))
-    end
-
-    def twice
-      ReceiveMatcher.new(@expected, @args, (2..2))
-    end
-
-    def exactly(count)
-      Count.new(@expected, @args, (count..count))
-    end
-
-    def at_least(count)
-      Count.new(@expected, @args, (count..))
-    end
-
-    def at_most(count)
-      Count.new(@expected, @args, (..count))
-    end
-
-    def at_least_once
-      at_least(1).times
-    end
-
-    def at_least_twice
-      at_least(2).times
-    end
-
-    def at_most_once
-      at_most(1).times
-    end
-
-    def at_most_twice
-      at_most(2).times
-    end
-
-    def humanize_range(range : Range)
-      if (min = range.begin)
-        if (max = range.end)
-          if min == max
-            min
-          else
-            "#{min} to #{max}"
-          end
-        else
-          "At least #{min}"
-        end
-      else
-        if (max = range.end)
-          "At most #{max}"
-        else
-          raise "Unexpected endless range"
-        end
-      end
-    end
-
-    private struct Count
-      def initialize(@expected : Expression(Symbol), @args : Mocks::Arguments?, @range : Range)
-      end
-
-      def times
-        ReceiveMatcher.new(@expected, @args, @range)
-      end
     end
   end
 end

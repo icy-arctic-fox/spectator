@@ -25,13 +25,11 @@ class Sdk < SdkInterface
 end
 
 Spectator.describe Example do
-  mock Sdk do
-    stub register_hook(name, &block)
-  end
+  mock Sdk
 
   describe "#configure" do
     it "registers a block on configure" do
-      sdk = Sdk.new
+      sdk = mock(Sdk)
       example_class = Example.new(sdk)
       allow(sdk).to receive(register_hook())
 

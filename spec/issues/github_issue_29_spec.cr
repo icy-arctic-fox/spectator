@@ -7,14 +7,9 @@ Spectator.describe "GitHub Issue #29" do
     end
   end
 
-  mock SomeClass do
-    stub exit(code)
-  end
-
   describe SomeClass do
     it "captures exit" do
-      expect(subject).to receive(:exit).with(0)
-      subject.goodbye
+      expect { subject.goodbye }.to raise_error(Spectator::SystemExit)
     end
   end
 
@@ -25,16 +20,10 @@ Spectator.describe "GitHub Issue #29" do
       end
     end
 
-    mock Foo do
-      stub self.exit(code)
-    end
-
     subject { Foo }
 
     it "must capture exit" do
-      expect(subject).to receive(:exit).with(0)
-
-      subject.test
+      expect { subject.test }.to raise_error(Spectator::SystemExit)
     end
   end
 end

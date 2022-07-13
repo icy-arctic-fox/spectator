@@ -21,10 +21,7 @@ Spectator.describe "GitHub Issue #32" do
   let(test_instance) { test_class.new }
 
   describe "something else" do
-    mock TestFoo::TestClass do
-      stub self.new
-      stub test
-    end
+    inject_mock TestFoo::TestClass
 
     it "must test when new is called" do
       expect(test_class).to receive(:new).with(no_args).and_return(test_instance)

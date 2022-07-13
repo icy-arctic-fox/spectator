@@ -821,6 +821,12 @@ module Spectator::DSL
       expect {{block}}.to raise_error({{type}}, {{message}})
     end
 
+    # Indicates that a mock or double (stubbable type) should receive a message (have a method called).
+    # The *method* is the name of the method expected to be called.
+    #
+    # ```
+    # expect(dbl).to have_received(:foo)
+    # ```
     macro have_received(method)
       %value = ::Spectator::Value.new(({{method.id.symbolize}}), {{method.id.stringify}})
       ::Spectator::Matchers::ReceiveMatcher.new(%value)

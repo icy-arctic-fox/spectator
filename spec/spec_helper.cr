@@ -1,3 +1,5 @@
+require "json" # Needed to test masking Object#to_json in doubles.
+require "yaml" # Needed to test masking Object#to_yaml in doubles.
 require "../src/spectator"
 require "../src/spectator/should"
 require "./helpers/**"

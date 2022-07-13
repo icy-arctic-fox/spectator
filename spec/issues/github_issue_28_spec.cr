@@ -7,12 +7,10 @@ Spectator.describe "GitHub Issue #28" do
     end
   end
 
-  mock Test do
-    stub foo
-  end
+  mock Test
 
   it "matches method stubs with no_args" do
-    test = Test.new
+    test = mock(Test)
     expect(test).to receive(:foo).with(no_args).and_return(42)
     test.foo
   end

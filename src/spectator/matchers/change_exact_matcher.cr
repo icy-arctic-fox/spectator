@@ -27,26 +27,32 @@ module Spectator::Matchers
 
     # Actually performs the test against the expression.
     def match(actual : Expression(T)) : MatchData forall T
-      before, after = change(actual)
+      before = expression.value
+      before_inspect = before.inspect
+
       if expected_before == before
-        if before == after
-          FailedMatchData.new(match_data_description(actual), "#{actual.label} did not change #{expression.label}",
-            before: before.inspect,
-            after: after.inspect
-          )
-        elsif expected_after == after
+        actual.value # Trigger block that might cause a change.
+        after = expression.value
+        after_inspect = after.inspect
+
+        if expected_after == after
           SuccessfulMatchData.new(match_data_description(actual))
+        elsif before == after
+          FailedMatchData.new(match_data_description(actual), "#{actual.label} did not change #{expression.label}",
+            before: before_inspect,
+            after: after_inspect
+          )
         else
           FailedMatchData.new(match_data_description(actual), "#{actual.label} did not change #{expression.label} to #{expected_after.inspect}",
-            before: before.inspect,
-            after: after.inspect,
+            before: before_inspect,
+            after: after_inspect,
             expected: expected_after.inspect
           )
         end
       else
         FailedMatchData.new(match_data_description(actual), "#{expression.label} was not initially #{expected_before.inspect}",
           expected: expected_before.inspect,
-          actual: before.inspect,
+          actual: before_inspect,
         )
       end
     end
@@ -54,12 +60,18 @@ module Spectator::Matchers
     # Performs the test against the expression, but inverted.
     # A successful match with `#match` should normally fail for this method, and vice-versa.
     def negated_match(actual : Expression(T)) : MatchData forall T
-      before, after = change(actual)
+      before = expression.value
+      before_inspect = before.inspect
+
       if expected_before == before
+        actual.value # Trigger block that might cause a change.
+        after = expression.value
+        after_inspect = after.inspect
+
         if expected_after == after
           FailedMatchData.new(match_data_description(actual), "#{actual.label} changed #{expression.label} from #{expected_before.inspect} to #{expected_after.inspect}",
-            before: before.inspect,
-            after: after.inspect
+            before: before_inspect,
+            after: after_inspect
           )
         else
           SuccessfulMatchData.new(match_data_description(actual))
@@ -67,18 +79,9 @@ module Spectator::Matchers
       else
         FailedMatchData.new(match_data_description(actual), "#{expression.label} was not initially #{expected_before.inspect}",
           expected: expected_before.inspect,
-          actual: before.inspect,
+          actual: before_inspect,
         )
       end
-    end
-
-    # Performs the change and reports the before and after values.
-    private def change(actual)
-      before = expression.value # Retrieve the expression's initial value.
-      actual.value              # Invoke action that might change the expression's value.
-      after = expression.value  # Retrieve the expression's value again.
-
-      {before, after}
     end
   end
 end
