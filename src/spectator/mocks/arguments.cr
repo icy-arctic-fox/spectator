@@ -25,6 +25,11 @@ module Spectator
     # Instance of empty arguments.
     class_getter none : AbstractArguments = capture
 
+    # Returns unconstrained arguments.
+    def self.any : AbstractArguments?
+      nil.as(AbstractArguments?)
+    end
+
     # Returns the positional argument at the specified index.
     def [](index : Int)
       @args[index]

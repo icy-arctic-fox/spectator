@@ -437,5 +437,10 @@ module Spectator::DSL
     def no_args
       ::Spectator::Arguments.none
     end
+
+    # Indicates any arguments can be used (no constraint).
+    def any_args
+      ::Spectator::Arguments.any
+    end
   end
 end

@@ -12,7 +12,7 @@ module Spectator
     end
 
     # Returns a new stub with constrained arguments.
-    def with_constraint(constraint : AbstractArguments)
+    def with_constraint(constraint : AbstractArguments?)
       self.class.new(method, @value, constraint, location)
     end
 

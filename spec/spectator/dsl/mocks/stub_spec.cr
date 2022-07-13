@@ -103,4 +103,14 @@ Spectator.describe "Stub DSL", :smoke do
       end
     end
   end
+
+  describe "#any_args" do
+    it "defines a stub with no arguments constraint" do
+      allow(dbl).to receive(:foo).with(any_args).and_return(5)
+      aggregate_failures do
+        expect(dbl.foo).to eq(5)
+        expect(dbl.foo(0)).to eq(5)
+      end
+    end
+  end
 end
