@@ -43,9 +43,7 @@ module Spectator::DSL
 
       {% begin %}
         # Define a matching null double type.
-        ::Spectator::NullDouble.define({{null_double_type_name}}, {{name}}, {{**value_methods}}){% if block %} do
-          {{block.body}}
-        end{% end %}
+        ::Spectator::NullDouble.define({{null_double_type_name}}, {{name}}, {{**value_methods}}) {{block}}
       {% end %}
     end
 
@@ -172,9 +170,7 @@ module Spectator::DSL
     # See `#def_double`.
     macro double(name, **value_methods, &block)
       {% begin %}
-        {% if @def %}new_double{% else %}def_double{% end %}({{name}}, {{**value_methods}}){% if block %} do
-          {{block.body}}
-        end{% end %}
+        {% if @def %}new_double{% else %}def_double{% end %}({{name}}, {{**value_methods}}) {{block}}
       {% end %}
     end
 
@@ -233,9 +229,7 @@ module Spectator::DSL
           :module
         end %}
 
-      ::Spectator::Mock.define_subtype({{base}}, {{type.id}}, {{mock_type_name}}, {{name}}, {{**value_methods}}){% if block %} do
-        {{block.body}}
-      end{% end %}
+      ::Spectator::Mock.define_subtype({{base}}, {{type.id}}, {{mock_type_name}}, {{name}}, {{**value_methods}}) {{block}}
     end
 
     # Instantiates a mock.
@@ -316,9 +310,7 @@ module Spectator::DSL
     macro mock(type, **value_methods, &block)
       {% raise "First argument of `mock` must be a type name, not #{type}" unless type.is_a?(Path) || type.is_a?(Generic) || type.is_a?(Union) || type.is_a?(Metaclass) || type.is_a?(TypeNode) %}
       {% begin %}
-        {% if @def %}new_mock{% else %}def_mock{% end %}({{type}}, {{**value_methods}}){% if block %} do
-          {{block.body}}
-        end{% end %}
+        {% if @def %}new_mock{% else %}def_mock{% end %}({{type}}, {{**value_methods}}) {{block}}
       {% end %}
     end
 
