@@ -31,7 +31,7 @@ Spectator.describe Person do
       person = Person.new(dog)
       allow(dog).to receive(pet()).and_return("woof")
 
-      result = person.pet
+      person.pet
 
       expect(dog).to have_received(pet()).with(2)
     end
@@ -43,7 +43,7 @@ Spectator.describe Person do
       person = Person.new(dog)
       allow(dog).to receive(pet()).and_return("woof")
 
-      result = person.pet_more
+      person.pet_more
 
       expect(dog).to have_received(pet()).with(5)
     end
