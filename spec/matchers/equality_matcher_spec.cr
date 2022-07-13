@@ -26,9 +26,9 @@ Spectator.describe "eq matcher" do
     end
   end
 
-  xit "uses the == operator", pending: "Mock redesign" do
+  it "uses the == operator" do
     dbl = double(:fake)
     expect(42).to eq(dbl)
-    expect(dbl).to have_received(:==).with(42).once
+    expect(dbl).to have_received(:==).with(42)
   end
 end
