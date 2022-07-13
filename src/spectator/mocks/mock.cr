@@ -115,7 +115,7 @@ module Spectator
     macro inject(base, type_name, name = nil, **value_methods, &block)
       {% begin %}
         {% if name %}@[::Spectator::StubbedName({{name}})]{% end %}
-        {{base.id}} {{type_name.id}}
+        {{base.id}} ::{{type_name.id}}
           include ::Spectator::Mocked
           extend ::Spectator::StubbedType
 

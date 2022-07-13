@@ -420,7 +420,7 @@ module Spectator::DSL
          # This isn't required, but new_mock() should still find this type.
          ::Spectator::DSL::Mocks::TYPES << {type.id.symbolize, @type.name(generic_args: false).symbolize, resolved.name.symbolize} %}
 
-      ::Spectator::Mock.inject({{base}}, {{type.id}}, {{**value_methods}}) {{block}}
+      ::Spectator::Mock.inject({{base}}, ::{{resolved.name}}, {{**value_methods}}) {{block}}
     end
 
     # Targets a stubbable object (such as a mock or double) for operations.
