@@ -96,6 +96,7 @@ module Spectator
     # The original method functionality will still be accessible, but pass through mock code first.
     # *base* is the keyword for the type being defined - class or struct.
     # *type_name* is the name of the type to inject mock functionality into.
+    # This _must_ be full, resolvable path to the type.
     # An optional *name* of the mock can be provided.
     # Any key-value pairs provided with *value_methods* are used as initial stubs for the mocked type.
     #

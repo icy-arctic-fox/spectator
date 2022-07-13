@@ -404,7 +404,7 @@ Spectator.describe Spectator::Mock do
 
   describe "#inject" do
     context "with a class" do
-      class MockedClass
+      class ::MockedClass
         getter _spectator_invocations = [] of Symbol
 
         getter method1 do
@@ -427,7 +427,7 @@ Spectator.describe Spectator::Mock do
         end
       end
 
-      Spectator::Mock.inject(:class, MockedClass, :mock_name, method1: 123) do
+      Spectator::Mock.inject(:class, ::MockedClass, :mock_name, method1: 123) do
         stub def method2
           :stubbed
         end
@@ -511,7 +511,7 @@ Spectator.describe Spectator::Mock do
     end
 
     context "with a struct" do
-      struct MockedStruct
+      struct ::MockedStruct
         # Using a class variable instead of an instance variable to prevent mutability problems with stub lookup.
         class_getter _spectator_invocations = [] of Symbol
 
@@ -537,7 +537,7 @@ Spectator.describe Spectator::Mock do
         end
       end
 
-      Spectator::Mock.inject(:struct, MockedStruct, :mock_name, method1: 123) do
+      Spectator::Mock.inject(:struct, ::MockedStruct, :mock_name, method1: 123) do
         stub def method2
           :stubbed
         end
@@ -608,7 +608,7 @@ Spectator.describe Spectator::Mock do
     end
 
     context "class method stubs" do
-      class Thing
+      class ::Thing
         def self.foo
           :original
         end
@@ -622,7 +622,7 @@ Spectator.describe Spectator::Mock do
         end
       end
 
-      Spectator::Mock.inject(:class, Thing) do
+      Spectator::Mock.inject(:class, ::Thing) do
         stub def self.foo
           :stub
         end
