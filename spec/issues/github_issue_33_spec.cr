@@ -10,13 +10,13 @@ Spectator.describe "GitHub Issue #33" do
     end
   end
 
-  # mock Test do
-  #   stub method2
-  # end
+  mock Test
 
   describe Test do
+    subject { mock(Test) }
+
     describe "#method1" do
-      xit pending: "Mock redesign" do
+      it do
         expect(subject).to receive(:method2)
 
         subject.method1
