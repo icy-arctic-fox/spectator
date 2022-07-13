@@ -11,6 +11,62 @@ Spectator.describe "Deferred stub expectation DSL" do
 
     let(dbl) { double(:dbl) }
 
+    # Ensure invocations don't leak between examples.
+    pre_condition { expect(dbl).to_not have_received(:foo), "Leaked method calls from previous examples" }
+
+    it "matches when a message is received" do
+      expect(dbl).to receive(:foo)
+      dbl.foo
+    end
+
+    it "returns the correct value" do
+      expect(dbl).to receive(:value).and_return(42)
+      expect(dbl.value).to eq(42)
+    end
+
+    it "matches when a message isn't received" do
+      expect(dbl).to_not receive(:foo)
+    end
+
+    it "matches when a message is received with matching arguments" do
+      expect(dbl).to receive(:foo).with(:bar)
+      dbl.foo(:bar)
+    end
+
+    it "matches when a message without arguments is received" do
+      expect(dbl).to_not receive(:foo).with(:bar)
+      dbl.foo
+    end
+
+    it "matches when a message without arguments isn't received" do
+      expect(dbl).to_not receive(:foo).with(:bar)
+    end
+
+    it "matches when a message with arguments isn't received" do
+      expect(dbl).to_not receive(:foo).with(:baz)
+      dbl.foo(:bar)
+    end
+  end
+
+  context "with a class double" do
+    double(:dbl) do
+      # Ensure the original is never called.
+      abstract_stub def self.foo : Nil
+      end
+
+      abstract_stub def self.foo(arg) : Nil
+      end
+
+      abstract_stub def self.value : Int32
+        42
+      end
+    end
+
+    let(dbl) { class_double(:dbl) }
+
+    # Ensure invocations don't leak between examples.
+    pre_condition { expect(dbl).to_not have_received(:foo), "Leaked method calls from previous examples" }
+
     it "matches when a message is received" do
       expect(dbl).to receive(:foo)
       dbl.foo
@@ -54,6 +110,61 @@ Spectator.describe "Deferred stub expectation DSL" do
     mock(MyClass)
 
     let(fake) { mock(MyClass) }
+
+    # Ensure invocations don't leak between examples.
+    pre_condition { expect(fake).to_not have_received(:foo), "Leaked method calls from previous examples" }
+
+    it "matches when a message is received" do
+      expect(fake).to receive(:foo).and_return(42)
+      fake.foo(:bar)
+    end
+
+    it "returns the correct value" do
+      expect(fake).to receive(:foo).and_return(42)
+      expect(fake.foo).to eq(42)
+    end
+
+    it "matches when a message isn't received" do
+      expect(fake).to_not receive(:foo)
+    end
+
+    it "matches when a message is received with matching arguments" do
+      expect(fake).to receive(:foo).with(:bar).and_return(42)
+      fake.foo(:bar)
+    end
+
+    it "matches when a message without arguments is received" do
+      expect(fake).to_not receive(:foo).with(:bar).and_return(42)
+      fake.foo
+    end
+
+    it "matches when a message without arguments is received" do
+      expect(fake).to_not receive(:foo).with(:bar)
+    end
+
+    it "matches when a message with arguments isn't received" do
+      expect(fake).to_not receive(:foo).with(:baz).and_return(42)
+      fake.foo(:bar)
+    end
+  end
+
+  context "with a class mock" do
+    class MyClass
+      def self.foo : Int32
+        42
+      end
+
+      def self.foo(arg) : Int32
+        42
+      end
+    end
+
+    mock(MyClass)
+
+    let(fake) { class_mock(MyClass) }
+
+    # Ensure invocations don't leak between examples.
+    pre_condition { expect(fake).to_not have_received(:foo), "Leaked method calls from previous examples" }
 
     it "matches when a message is received" do
       expect(fake).to receive(:foo).and_return(42)
