@@ -255,19 +255,40 @@ end
 Spectator supports an extensive mocking feature set via two types - mocks and doubles.
 Mocks are used to override behavior in existing types.
 Doubles are objects that stand-in when there are no type restrictions.
-Stubs can be defined on both that control how methods behave.
+Stubs can be defined on both which control how methods behave.
 
 ```crystal
-double :my_double do
-  stub foo : Int32
-  stub bar(arg) { arg.to_s }
+abstract class Interface
+  abstract def invoke(thing) : String
 end
 
-it "does a thing" do
-  dbl = double(:my_double)
-  allow(dbl).to receive(:foo).and_return(42)
-  expect(dbl.foo).to eq(42)
-  expect(dbl.bar(42)).to eq("42")
+# Type being tested.
+class Driver
+  def do_something(interface : Interface, thing)
+    interface.invoke(thing)
+  end
+end
+
+Spectator.describe Driver do
+  # Define a mock for Interface.
+  mock Interface
+
+  # Define a double that the interface will use.
+  double(:my_double, foo: 42)
+
+  it "does a thing" do
+    # Create an instance of the mock interface.
+    interface = mock(Interface)
+    # Indicate that `#invoke` should return "test" when called.
+    allow(interface).to receive(:invoke).and_return("test")
+
+    # Create an instance of the double.
+    dbl = double(:my_double)
+    # Call the mock method.
+    subject.do_something(interface, dbl)
+    # Verify everything went okay.
+    expect(interface).to have_received(:invoke).with(thing)
+  end
 end
 ```
 
