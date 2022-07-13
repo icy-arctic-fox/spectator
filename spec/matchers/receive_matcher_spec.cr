@@ -164,25 +164,33 @@ Spectator.describe Spectator::Matchers::ReceiveMatcher do
 
       pre_condition { expect(match_data).to be_a(failed_match) }
 
-      before_each do
-        dbl.test_method
-        dbl.test_method(1, "wrong", :xyz, foo: "foobarbaz")
-        dbl.irrelevant("foo")
-      end
-
       it "has the expected call listed" do
         is_expected.to contain({:expected, "#test_method(1, \"test\", Symbol, foo: #{/bar/.inspect})"})
       end
 
-      it "has the list of called methods" do
-        is_expected.to contain({
-          :actual,
-          <<-SIGNATURES
-          #test_method(no args)
-          #test_method(1, "wrong", :xyz, foo: "foobarbaz")
-          #irrelevant("foo")
-          SIGNATURES
-        })
+      context "with method calls" do
+        before_each do
+          dbl.test_method
+          dbl.test_method(1, "wrong", :xyz, foo: "foobarbaz")
+          dbl.irrelevant("foo")
+        end
+
+        it "has the list of called methods" do
+          is_expected.to contain({
+            :actual,
+            <<-SIGNATURES
+            #test_method(no args)
+            #test_method(1, "wrong", :xyz, foo: "foobarbaz")
+            #irrelevant("foo")
+            SIGNATURES
+          })
+        end
+      end
+
+      context "with no method calls" do
+        it "reports \"None\" for the actual value" do
+          is_expected.to contain({:actual, "None"})
+        end
       end
     end
   end

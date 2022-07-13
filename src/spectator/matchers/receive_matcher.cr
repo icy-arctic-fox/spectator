@@ -62,7 +62,7 @@ module Spectator::Matchers
     private def values(actual : Expression(T)) forall T
       {
         expected: @stub.to_s,
-        actual:   actual.value._spectator_calls.join("\n"),
+        actual:   method_call_list(actual.value),
       }
     end
 
@@ -70,8 +70,18 @@ module Spectator::Matchers
     private def negated_values(actual : Expression(T)) forall T
       {
         expected: "Not #{@stub}",
-        actual:   actual.value._spectator_calls.join("\n"),
+        actual:   method_call_list(actual.value),
       }
+    end
+
+    # Formatted list of method calls.
+    private def method_call_list(stubbable)
+      calls = stubbable._spectator_calls
+      if calls.empty?
+        "None"
+      else
+        calls.join("\n")
+      end
     end
   end
 end
