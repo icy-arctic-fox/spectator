@@ -114,6 +114,27 @@ Spectator.describe Spectator::Double do
     end
   end
 
+  context "with a method that uses NoReturn" do
+    Spectator::Double.define(NoReturnDouble) do
+      abstract_stub abstract def oops : NoReturn
+    end
+
+    subject(dbl) { NoReturnDouble.new }
+
+    it "raises a TypeCastError when using a value-based stub" do
+      stub = Spectator::ValueStub.new(:oops, nil).as(Spectator::Stub)
+      dbl._spectator_define_stub(stub)
+      expect { dbl.oops }.to raise_error(TypeCastError, /NoReturn/)
+    end
+
+    it "raises when using an exception stub" do
+      exception = ArgumentError.new("bogus")
+      stub = Spectator::ExceptionStub.new(:oops, exception).as(Spectator::Stub)
+      dbl._spectator_define_stub(stub)
+      expect { dbl.oops }.to raise_error(ArgumentError, "bogus")
+    end
+  end
+
   context "with common object methods" do
     subject(dbl) do
       EmptyDouble.new([

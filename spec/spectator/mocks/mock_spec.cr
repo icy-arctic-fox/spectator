@@ -400,6 +400,31 @@ Spectator.describe Spectator::Mock do
         end
       end
     end
+
+    context "with a method that uses NoReturn" do
+      abstract class Thing
+        abstract def oops : NoReturn
+      end
+
+      Spectator::Mock.define_subtype(:class, Thing, MockThing)
+
+      let(mock) { MockThing.new }
+
+      after_each { mock._spectator_clear_stubs }
+
+      it "raises a TypeCastError when using a value-based stub" do
+        stub = Spectator::ValueStub.new(:oops, nil).as(Spectator::Stub)
+        mock._spectator_define_stub(stub)
+        expect { mock.oops }.to raise_error(TypeCastError, /NoReturn/)
+      end
+
+      it "raises when using an exception stub" do
+        exception = ArgumentError.new("bogus")
+        stub = Spectator::ExceptionStub.new(:oops, exception).as(Spectator::Stub)
+        mock._spectator_define_stub(stub)
+        expect { mock.oops }.to raise_error(ArgumentError, "bogus")
+      end
+    end
   end
 
   describe "#inject" do
@@ -717,6 +742,33 @@ Spectator.describe Spectator::Mock do
           call = mock._spectator_calls.first
           expect(call.arguments).to eq(args)
         end
+      end
+    end
+
+    context "with a method that uses NoReturn" do
+      struct ::NoReturnThing
+        def oops : NoReturn
+          raise "oops"
+        end
+      end
+
+      Spectator::Mock.inject(:struct, ::NoReturnThing)
+
+      let(mock) { NoReturnThing.new }
+
+      after_each { mock._spectator_clear_stubs }
+
+      it "raises a TypeCastError when using a value-based stub" do
+        stub = Spectator::ValueStub.new(:oops, nil).as(Spectator::Stub)
+        mock._spectator_define_stub(stub)
+        expect { mock.oops }.to raise_error(TypeCastError, /NoReturn/)
+      end
+
+      it "raises when using an exception stub" do
+        exception = ArgumentError.new("bogus")
+        stub = Spectator::ExceptionStub.new(:oops, exception).as(Spectator::Stub)
+        mock._spectator_define_stub(stub)
+        expect { mock.oops }.to raise_error(ArgumentError, "bogus")
       end
     end
   end

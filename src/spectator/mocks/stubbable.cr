@@ -149,7 +149,7 @@ module Spectator
         if %stub = _spectator_find_stub(%call)
           # Cast the stub or return value to the expected type.
           # This is necessary to match the expected return type of the original method.
-          _spectator_cast_stub_value(%stub, %call, typeof({{original}}), {{method.return_type && method.return_type.resolve <= Nil || method.return_type.is_a?(Union) && method.return_type.types.map(&.resolve).includes?(Nil)}})
+          _spectator_cast_stub_value(%stub, %call, typeof({{original}}), {{method.return_type && method.return_type.resolve != NoReturn && method.return_type.resolve <= Nil || method.return_type.is_a?(Union) && method.return_type.types.map(&.resolve).includes?(Nil)}})
         else
           # Delegate missing stub behavior to concrete type.
           _spectator_stub_fallback(%call, typeof({{original}})) do
@@ -241,7 +241,7 @@ module Spectator
           # This is necessary to match the expected return type of the original method.
           {% if method.return_type %}
             # Return type restriction takes priority since it can be a superset of the original implementation.
-            _spectator_cast_stub_value(%stub, %call, {{method.return_type}}, {{method.return_type.resolve <= Nil || method.return_type.is_a?(Union) && method.return_type.types.map(&.resolve).includes?(Nil)}})
+            _spectator_cast_stub_value(%stub, %call, {{method.return_type}}, {{method.return_type.resolve != NoReturn && method.return_type.resolve <= Nil || method.return_type.is_a?(Union) && method.return_type.types.map(&.resolve).includes?(Nil)}})
           {% elsif !method.abstract? %}
             # The method isn't abstract, infer the type it returns without calling it.
             _spectator_cast_stub_value(%stub, %call, typeof({{original}}))
