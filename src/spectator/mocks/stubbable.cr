@@ -149,7 +149,14 @@ module Spectator
         if %stub = _spectator_find_stub(%call)
           # Cast the stub or return value to the expected type.
           # This is necessary to match the expected return type of the original method.
-          _spectator_cast_stub_value(%stub, %call, typeof({{original}}), {{method.return_type && method.return_type.resolve != NoReturn && method.return_type.resolve <= Nil || method.return_type.is_a?(Union) && method.return_type.types.map(&.resolve).includes?(Nil)}})
+          _spectator_cast_stub_value(%stub, %call, typeof({{original}}),
+          {{ if method.return_type && method.return_type.resolve == NoReturn
+               :no_return
+             elsif method.return_type && method.return_type.resolve <= Nil || method.return_type.is_a?(Union) && method.return_type.types.map(&.resolve).includes?(Nil)
+               :nil
+             else
+               :raise
+             end }})
         else
           # Delegate missing stub behavior to concrete type.
           _spectator_stub_fallback(%call, typeof({{original}})) do
@@ -241,7 +248,14 @@ module Spectator
           # This is necessary to match the expected return type of the original method.
           {% if method.return_type %}
             # Return type restriction takes priority since it can be a superset of the original implementation.
-            _spectator_cast_stub_value(%stub, %call, {{method.return_type}}, {{method.return_type.resolve != NoReturn && method.return_type.resolve <= Nil || method.return_type.is_a?(Union) && method.return_type.types.map(&.resolve).includes?(Nil)}})
+            _spectator_cast_stub_value(%stub, %call, {{method.return_type}},
+              {{ if method.return_type.resolve == NoReturn
+                   :no_return
+                 elsif method.return_type.resolve <= Nil || method.return_type.is_a?(Union) && method.return_type.types.map(&.resolve).includes?(Nil)
+                   :nil
+                 else
+                   :raise
+                 end }})
           {% elsif !method.abstract? %}
             # The method isn't abstract, infer the type it returns without calling it.
             _spectator_cast_stub_value(%stub, %call, typeof({{original}}))
@@ -376,8 +390,11 @@ module Spectator
     # *stub* is the variable holding the stub.
     # *call* is the variable holding the captured method call.
     # *type* is the expected type to cast the value to.
-    # *nullable* indicates whether *type* can be nil or not.
-    private macro _spectator_cast_stub_value(stub, call, type, nullable = true)
+    # *fail_cast* indicates the behavior used when the value returned by the stub can't be cast to *type*.
+    # - `:nil` - return nil.
+    # - `:raise` - raise a `TypeCastError`.
+    # - `:no_return` - raise as no value should be returned.
+    private macro _spectator_cast_stub_value(stub, call, type, fail_cast = :nil)
       # Attempt to cast the stub to the method's return type.
       # If successful, return the value of the stub.
       # This is a common usage where the return type is simple and matches the stub type exactly.
@@ -390,29 +407,36 @@ module Spectator
         # Assert that it will (this should never fail).
         raise TypeCastError.new("Stub has no value") unless {{stub}}.responds_to?(:call)
 
-        # Get the value as-is from the stub.
-        # This will be compiled as a union of all known stubbed value types.
-        %value = {{stub}}.call({{call}})
+        {% if fail_cast == :no_return %}
+          {{stub}}.call({{call}})
+          raise TypeCastError.new("#{_spectator_stubbed_name} received message #{ {{call}} } and is attempting to return a value, but it shouldn't have returned (`NoReturn`).")
+        {% else %}
+          # Get the value as-is from the stub.
+          # This will be compiled as a union of all known stubbed value types.
+          %value = {{stub}}.call({{call}})
 
-        # Attempt to cast the value to the method's return type.
-        # If successful, which it will be in most cases, return it.
-        # The caller will receive a properly typed value without unions or other side-effects.
-        if %cast = %value.as?({{type}})
-          %cast
-        else
-          {% if nullable %}
-            nil
-          {% else %}
-            # The stubbed value was something else entirely and cannot be cast to the return type.
-            # There's something weird going on (compiler bug?) that sometimes causes this class lookup to fail.
-            %type = begin
-              %value.class.to_s
-            rescue
-              "<Unknown>"
-            end
-            raise TypeCastError.new("#{_spectator_stubbed_name} received message #{ {{call}} } and is attempting to return a `#{%type}`, but returned type must be `#{ {{type}} }`.")
-          {% end %}
-        end
+          # Attempt to cast the value to the method's return type.
+          # If successful, which it will be in most cases, return it.
+          # The caller will receive a properly typed value without unions or other side-effects.
+          if %cast = %value.as?({{type}})
+            %cast
+          else
+            {% if fail_cast == :nil %}
+              nil
+            {% elsif fail_cast == :raise %}
+              # The stubbed value was something else entirely and cannot be cast to the return type.
+              # There's something weird going on (compiler bug?) that sometimes causes this class lookup to fail.
+              %type = begin
+                %value.class.to_s
+              rescue
+                "<Unknown>"
+              end
+              raise TypeCastError.new("#{_spectator_stubbed_name} received message #{ {{call}} } and is attempting to return a `#{%type}`, but returned type must be `#{ {{type}} }`.")
+            {% else %}
+              {% raise "fail_cast must be :nil, :raise, or :no_return, but got: #{fail_cast}" %}
+            {% end %}
+          end
+        {% end %}
       end
     end
   end
