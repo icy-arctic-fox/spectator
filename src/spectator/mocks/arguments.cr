@@ -23,7 +23,7 @@ module Spectator
     end
 
     # Instance of empty arguments.
-    class_getter empty : AbstractArguments = capture
+    class_getter none : AbstractArguments = capture
 
     # Returns the positional argument at the specified index.
     def [](index : Int)

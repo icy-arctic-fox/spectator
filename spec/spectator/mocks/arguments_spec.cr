@@ -52,7 +52,7 @@ Spectator.describe Spectator::Arguments do
     end
 
     context "when empty" do
-      let(arguments) { Spectator::Arguments.empty }
+      let(arguments) { Spectator::Arguments.none }
 
       it "returns (no args)" do
         is_expected.to eq("(no args)")

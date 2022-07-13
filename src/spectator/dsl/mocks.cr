@@ -435,7 +435,7 @@ module Spectator::DSL
 
     # Returns empty arguments.
     def no_args
-      ::Spectator::Arguments.empty
+      ::Spectator::Arguments.none
     end
   end
 end

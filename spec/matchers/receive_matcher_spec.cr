@@ -8,7 +8,7 @@ Spectator.describe Spectator::Matchers::ReceiveMatcher do
   let(args_stub) { Spectator::NullStub.new(:test_method, args) }
   let(args_matcher) { described_class.new(args_stub) }
 
-  let(no_args_stub) { Spectator::NullStub.new(:test_method, Spectator::Arguments.empty) }
+  let(no_args_stub) { Spectator::NullStub.new(:test_method, Spectator::Arguments.none) }
   let(no_args_matcher) { described_class.new(no_args_stub) }
 
   double(:dbl, test_method: nil, irrelevant: nil)

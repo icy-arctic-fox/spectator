@@ -11,7 +11,7 @@ module Spectator
     getter arguments : AbstractArguments
 
     # Creates a method call.
-    def initialize(@method : Symbol, @arguments : AbstractArguments = Arguments.empty)
+    def initialize(@method : Symbol, @arguments : AbstractArguments = Arguments.none)
     end
 
     # Creates a method call by splatting its arguments.
