@@ -6,9 +6,12 @@ require "./matcher"
 module Spectator::Matchers
   # Matcher that inspects stubbable objects for method calls.
   struct ReceiveMatcher < Matcher
+    # Creates the matcher for expecting a method call matching a stub.
     def initialize(@stub : Stub)
     end
 
+    # Creates the matcher for expecting a method call with any arguments.
+    # *expected* is an expression evaluating to the method name as a symbol.
     def initialize(expected : Expression(Symbol))
       stub = NullStub.new(expected.value).as(Stub)
       initialize(stub)
@@ -53,18 +56,6 @@ module Spectator::Matchers
     # Performs the test against the expression (value or block), but inverted.
     def negated_match(actual : Expression(T)) : MatchData forall T
       {% raise "Value being checked with `have_received` must be stubbable (mock or double)." %}
-    end
-
-    private def match_data_description(actual : Expression(T)) : String forall T
-      match_data_description(actual.label)
-    end
-
-    private def match_data_description(actual_label : String | Symbol) : String
-      "#{actual_label} #{description}"
-    end
-
-    private def match_data_description(actual_label : Nil) : String
-      description
     end
 
     # Additional information about the match failure.
