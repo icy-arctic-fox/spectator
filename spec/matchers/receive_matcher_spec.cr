@@ -67,7 +67,13 @@ Spectator.describe Spectator::Matchers::ReceiveMatcher do
   describe "#match" do
     subject(match_data) { matcher.match(actual) }
 
+    post_condition { expect(match_data.description).to contain("dbl received #test_method") }
+
+    let(failure_message) { match_data.as(Spectator::Matchers::FailedMatchData).failure_message }
+
     context "with no argument constraint" do
+      post_condition { expect(&.description).to contain("(any args)") }
+
       it "matches with no arguments" do
         dbl.test_method
         is_expected.to be_a(successful_match)
@@ -80,16 +86,20 @@ Spectator.describe Spectator::Matchers::ReceiveMatcher do
 
       it "doesn't match with no calls" do
         is_expected.to be_a(failed_match)
+        expect(failure_message).to eq("dbl did not receive #test_method(any args)")
       end
 
       it "doesn't match with different calls" do
         dbl.irrelevant("foo")
         is_expected.to be_a(failed_match)
+        expect(failure_message).to eq("dbl did not receive #test_method(any args)")
       end
     end
 
     context "with a \"no arguments\" constraint" do
       let(matcher) { no_args_matcher }
+
+      post_condition { expect(&.description).to contain("(no args)") }
 
       it "matches with no arguments" do
         dbl.test_method
@@ -99,24 +109,30 @@ Spectator.describe Spectator::Matchers::ReceiveMatcher do
       it "doesn't match with arguments" do
         dbl.test_method("foo")
         is_expected.to be_a(failed_match)
+        expect(failure_message).to eq("dbl did not receive #test_method(no args)")
       end
 
       it "doesn't match with no calls" do
         is_expected.to be_a(failed_match)
+        expect(failure_message).to eq("dbl did not receive #test_method(no args)")
       end
 
       it "doesn't match with different calls" do
         dbl.irrelevant("foo")
         is_expected.to be_a(failed_match)
+        expect(failure_message).to eq("dbl did not receive #test_method(no args)")
       end
     end
 
     context "with an arguments constraint" do
       let(matcher) { args_matcher }
 
+      post_condition { expect(&.description).to contain("(1, \"test\", Symbol, foo: #{/bar/.inspect})") }
+
       it "doesn't match with no arguments" do
         dbl.test_method
         is_expected.to be_a(failed_match)
+        expect(failure_message).to eq("dbl did not receive #test_method(1, \"test\", Symbol, foo: #{/bar/.inspect})")
       end
 
       it "matches with matching arguments" do
@@ -127,15 +143,18 @@ Spectator.describe Spectator::Matchers::ReceiveMatcher do
       it "doesn't match with differing arguments" do
         dbl.test_method(1, "wrong", 42, foo: "wrong")
         is_expected.to be_a(failed_match)
+        expect(failure_message).to eq("dbl did not receive #test_method(1, \"test\", Symbol, foo: #{/bar/.inspect})")
       end
 
       it "doesn't match with no calls" do
         is_expected.to be_a(failed_match)
+        expect(failure_message).to eq("dbl did not receive #test_method(1, \"test\", Symbol, foo: #{/bar/.inspect})")
       end
 
       it "doesn't match with different calls" do
         dbl.irrelevant("foo")
         is_expected.to be_a(failed_match)
+        expect(failure_message).to eq("dbl did not receive #test_method(1, \"test\", Symbol, foo: #{/bar/.inspect})")
       end
     end
 
@@ -171,15 +190,23 @@ Spectator.describe Spectator::Matchers::ReceiveMatcher do
   describe "#negated_match" do
     subject(match_data) { matcher.negated_match(actual) }
 
+    post_condition { expect(match_data.description).to contain("dbl did not receive #test_method") }
+
+    let(failure_message) { match_data.as(Spectator::Matchers::FailedMatchData).failure_message }
+
     context "with no argument constraint" do
+      post_condition { expect(&.description).to contain("(any args)") }
+
       it "doesn't match with no arguments" do
         dbl.test_method
         is_expected.to be_a(failed_match)
+        expect(failure_message).to eq("dbl received #test_method(any args)")
       end
 
       it "doesn't match with any arguments" do
         dbl.test_method("foo")
         is_expected.to be_a(failed_match)
+        expect(failure_message).to eq("dbl received #test_method(any args)")
       end
 
       it "matches with no calls" do
@@ -195,9 +222,12 @@ Spectator.describe Spectator::Matchers::ReceiveMatcher do
     context "with a \"no arguments\" constraint" do
       let(matcher) { no_args_matcher }
 
+      post_condition { expect(&.description).to contain("(no args)") }
+
       it "doesn't match with no arguments" do
         dbl.test_method
         is_expected.to be_a(failed_match)
+        expect(failure_message).to eq("dbl received #test_method(no args)")
       end
 
       it "matches with arguments" do
@@ -218,6 +248,8 @@ Spectator.describe Spectator::Matchers::ReceiveMatcher do
     context "with an arguments constraint" do
       let(matcher) { args_matcher }
 
+      post_condition { expect(&.description).to contain("(1, \"test\", Symbol, foo: #{/bar/.inspect})") }
+
       it "matches with no arguments" do
         dbl.test_method
         is_expected.to be_a(successful_match)
@@ -226,6 +258,7 @@ Spectator.describe Spectator::Matchers::ReceiveMatcher do
       it "doesn't match with matching arguments" do
         dbl.test_method(1, "test", :xyz, foo: "foobarbaz")
         is_expected.to be_a(failed_match)
+        expect(failure_message).to eq("dbl received #test_method(1, \"test\", Symbol, foo: #{/bar/.inspect})")
       end
 
       it "matches with differing arguments" do
