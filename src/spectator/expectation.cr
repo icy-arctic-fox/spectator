@@ -99,11 +99,33 @@ module Spectator
       def initialize(@expression : Expression(T), @location : Location)
       end
 
+      # Asserts that a method is called some point before the example completes.
+      @[AlwaysInline]
+      def to(stub : Stub, message = nil) : Nil
+        {% raise "The syntax `expect(...).to receive(...)` requires the expression passed to `expect` be stubbable (a mock or double)" unless T < ::Spectator::Stubbable || T < ::Spectator::StubbedType %}
+
+        to_eventually(stub, message)
+      end
+
       # Asserts that some criteria defined by the matcher is satisfied.
       # Allows a custom message to be used.
       def to(matcher, message = nil) : Nil
         match_data = matcher.match(@expression)
         report(match_data, message)
+      end
+
+      # Asserts that a method is not called before the example completes.
+      @[AlwaysInline]
+      def to_not(stub : Stub, message = nil) : Nil
+        {% raise "The syntax `expect(...).to_not receive(...)` requires the expression passed to `expect` be stubbable (a mock or double)" unless T < ::Spectator::Stubbable || T < ::Spectator::StubbedType %}
+
+        to_never(stub, message)
+      end
+
+      # :ditto:
+      @[AlwaysInline]
+      def not_to(stub : Stub, message = nil) : Nil
+        to_not(stub, message)
       end
 
       # Asserts that some criteria defined by the matcher is not satisfied.
@@ -120,11 +142,37 @@ module Spectator
         to_not(matcher, message)
       end
 
+      # Asserts that a method is called some point before the example completes.
+      def to_eventually(stub : Stub, message = nil) : Nil
+        {% raise "The syntax `expect(...).to_eventually receive(...)` requires the expression passed to `expect` be stubbable (a mock or double)" unless T < ::Spectator::Stubbable || T < ::Spectator::StubbedType %}
+
+        stubbable = @expression.value
+        stubbable._spectator_define_stub(stub)
+        matcher = Matchers::ReceiveMatcher.new(stub)
+        to_eventually(matcher, message)
+      end
+
       # Asserts that some criteria defined by the matcher is eventually satisfied.
       # The expectation is checked after the example finishes and all hooks have run.
       # Allows a custom message to be used.
       def to_eventually(matcher, message = nil) : Nil
         Harness.current.defer { to(matcher, message) }
+      end
+
+      # Asserts that a method is not called before the example completes.
+      def to_never(stub : Stub, message = nil) : Nil
+        {% raise "The syntax `expect(...).to_never receive(...)` requires the expression passed to `expect` be stubbable (a mock or double)" unless T < ::Spectator::Stubbable || T < ::Spectator::StubbedType %}
+
+        stubbable = @expression.value
+        stubbable._spectator_define_stub(stub)
+        matcher = Matchers::ReceiveMatcher.new(stub)
+        to_never(matcher, message)
+      end
+
+      # :ditto:
+      @[AlwaysInline]
+      def never_to(stub : Stub, message = nil) : Nil
+        to_never(stub, message)
       end
 
       # Asserts that some criteria defined by the matcher is never satisfied.
