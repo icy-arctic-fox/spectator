@@ -40,9 +40,18 @@ module Spectator::Formatting::Components
     private def value_line(io, key, value)
       key = key.to_s
       padding = " " * (@longest_key - key.size)
+      lines = value.lines
 
       line(io) do
-        io << padding << key.colorize(:red) << ": ".colorize(:red) << value
+        io << padding << key.colorize(:red) << ": ".colorize(:red) << lines.shift
+      end
+
+      unless lines.empty?
+        indent(@longest_key + 2) do
+          lines.each do |line|
+            line(io) { io << line }
+          end
+        end
       end
     end
 
