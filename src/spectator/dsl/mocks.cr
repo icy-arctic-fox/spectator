@@ -377,6 +377,52 @@ module Spectator::DSL
       {% end %}
     end
 
+    # Injects mock (stub) functionality into an existing type.
+    #
+    # Warning: Using this will modify the type being tested.
+    #   This may result in different behavior between test and non-test code.
+    #
+    # This must be used instead of `def_mock` if a concrete struct is tested.
+    # The `mock` method is not necessary to create a type with an injected mock.
+    # The type can be used as it would normally instead.
+    # However, stub information may leak between examples.
+    #
+    # The *type* is the name of the type to inject mock functionality into.
+    # Initial stubbed values for methods can be provided with *value_methods*.
+    #
+    # ```
+    # struct MyStruct
+    #   def foo
+    #     42
+    #   end
+    # end
+    #
+    # inject_mock(MyStruct, foo: 5)
+    #
+    # specify do
+    #   inst = MyStruct.new
+    #   expect(inst.foo).to eq(5)
+    #   allow(inst).to receive(:foo).and_return(123)
+    #   expect(inst.foo).to eq(123)
+    # end
+    # ```
+    macro inject_mock(type, **value_methods, &block)
+      {% resolved = type.resolve
+         base = if resolved.class?
+                  :class
+                elsif resolved.struct?
+                  :struct
+                else
+                  :module
+                end
+
+         # Store information about how the mock is defined and its context.
+         # This isn't required, but new_mock() should still find this type.
+         ::Spectator::DSL::Mocks::TYPES << {type.id.symbolize, @type.name(generic_args: false).symbolize, resolved.name.symbolize} %}
+
+      ::Spectator::Mock.inject({{base}}, {{type.id}}, {{**value_methods}}) {{block}}
+    end
+
     # Targets a stubbable object (such as a mock or double) for operations.
     #
     # The *stubbable* must be a `Stubbable` or `StubbedType`.

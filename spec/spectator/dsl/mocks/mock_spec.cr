@@ -639,8 +639,6 @@ Spectator.describe "Mock DSL", :smoke do
     # method4 stubbed via keyword args (yields)
     # method5 not stubbed (calls original)
     mock(SemiAbstractStruct, method2: :stubbed, method4: 123) do
-      # NOTE: Abstract methods without a type restriction on the return value
-      #   must be implemented with a type restriction.
       stub def method1
         "stubbed"
       end
@@ -736,6 +734,133 @@ Spectator.describe "Mock DSL", :smoke do
           expect(fake2.method3 { :foo }).to eq(:kwargs)
           expect(fake2.method4 { "42" }).to eq(123)
           expect(fake2.method5).to eq(0)
+        end
+      end
+    end
+  end
+
+  context "with a concrete struct" do
+    struct ConcreteStruct
+      def method1
+        "original"
+      end
+
+      def method2 : Symbol
+        :original
+      end
+
+      def method3
+        yield
+      end
+
+      def method4 : Int32
+        yield.to_i
+      end
+
+      def method5
+        42
+      end
+    end
+
+    # method1 stubbed via mock block
+    # method2 stubbed via keyword args
+    # method3 not stubbed (calls original and yields)
+    # method4 stubbed via keyword args (yields)
+    # method5 not stubbed (calls original)
+    inject_mock(ConcreteStruct, method2: :stubbed, method4: 123) do
+      stub def method1
+        "stubbed"
+      end
+    end
+
+    subject(real) { mock(ConcreteStruct) }
+
+    it "defines a subtype" do
+      expect(real).to be_a(ConcreteStruct)
+    end
+
+    it "defines stubs in the block" do
+      expect(real.method1).to eq("stubbed")
+    end
+
+    it "can stub methods defined in the block" do
+      stub = Spectator::ValueStub.new(:method1, "override")
+      expect { real._spectator_define_stub(stub) }.to change { real.method1 }.from("stubbed").to("override")
+    end
+
+    it "defines stubs from keyword arguments" do
+      expect(real.method2).to eq(:stubbed)
+    end
+
+    it "can stub methods from keyword arguments" do
+      stub = Spectator::ValueStub.new(:method2, :override)
+      expect { real._spectator_define_stub(stub) }.to change { real.method2 }.from(:stubbed).to(:override)
+    end
+
+    it "calls the original method with yielding methods" do
+      expect(real.method3 { :block }).to eq(:block)
+    end
+
+    it "can defer defining stubs with yielding methods" do
+      stub = Spectator::ValueStub.new(:method3, :new)
+      expect { real._spectator_define_stub(stub) }.to change { real.method3 { :old } }.from(:old).to(:new)
+    end
+
+    it "defines stubs with yield from keyword arguments" do
+      expect(real.method4 { "42" }).to eq(123)
+    end
+
+    it "defines stubs with yield in the block" do
+      stub = Spectator::ValueStub.new(:method4, 5)
+      expect { real._spectator_define_stub(stub) }.to change { real.method4 { "42" } }.from(123).to(5)
+    end
+
+    it "calls the original method" do
+      expect(real.method5).to eq(42)
+    end
+
+    it "can defer defining stubs" do
+      stub = Spectator::ValueStub.new(:method5, 123)
+      expect { real._spectator_define_stub(stub) }.to change { real.method5 }.from(42).to(123)
+    end
+
+    it "compiles types without unions" do
+      aggregate_failures do
+        expect(real.method1).to compile_as(String)
+        expect(real.method2).to compile_as(Symbol)
+        expect(real.method3 { :foo }).to compile_as(Symbol)
+        expect(real.method4 { "42" }).to compile_as(Int32)
+        expect(real.method5).to compile_as(Int32)
+      end
+    end
+
+    def restricted(thing : ConcreteStruct)
+      thing.method1
+    end
+
+    it "can be used in type restricted methods" do
+      expect(restricted(real)).to eq("stubbed")
+    end
+
+    # Cannot test unexpected messages - will not compile due to missing methods.
+
+    describe "deferred default stubs" do
+      let(real) do
+        mock(ConcreteStruct,
+          method1: "stubbed",
+          method2: :stubbed,
+          method3: :kwargs,
+          method4: 123,
+          method5: 0)
+      end
+
+      it "uses the keyword arguments as stubs" do
+        aggregate_failures do
+          expect(real.method1).to eq("stubbed")
+          expect(real.method2).to eq(:stubbed)
+          expect(real.method3 { :foo }).to eq(:kwargs)
+          expect(real.method4 { "42" }).to eq(123)
+          expect(real.method5).to eq(0)
         end
       end
     end
