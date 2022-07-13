@@ -34,7 +34,7 @@ module Spectator
       _spectator_stubs.find &.===(call)
     end
 
-    private def _spectator_stub_for_method?(method : Symbol) : Bool
+    def _spectator_stub_for_method?(method : Symbol) : Bool
       _spectator_stubs.any? { |stub| stub.method == method }
     end
 

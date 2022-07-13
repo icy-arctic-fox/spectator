@@ -6,6 +6,7 @@ Spectator.describe "Deferred stub expectation DSL" do
       # Ensure the original is never called.
       stub abstract def foo : Nil
       stub abstract def foo(arg) : Nil
+      stub abstract def value : Int32
     end
 
     let(dbl) { double(:dbl) }
@@ -13,6 +14,11 @@ Spectator.describe "Deferred stub expectation DSL" do
     it "matches when a message is received" do
       expect(dbl).to receive(:foo)
       dbl.foo
+    end
+
+    it "returns the correct value" do
+      expect(dbl).to receive(:value).and_return(42)
+      expect(dbl.value).to eq(42)
     end
 
     it "matches when a message isn't received" do
@@ -54,6 +60,11 @@ Spectator.describe "Deferred stub expectation DSL" do
       fake.foo(:bar)
     end
 
+    it "returns the correct value" do
+      expect(fake).to receive(:foo).and_return(42)
+      expect(fake.foo).to eq(42)
+    end
+
     it "matches when a message isn't received" do
       expect(fake).to_not receive(:foo)
     end
@@ -64,7 +75,7 @@ Spectator.describe "Deferred stub expectation DSL" do
     end
 
     it "matches when a message without arguments is received" do
-      expect(fake).to_not receive(:foo).with(:bar)
+      expect(fake).to_not receive(:foo).with(:bar).and_return(42)
       fake.foo
     end
 

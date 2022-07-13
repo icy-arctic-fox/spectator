@@ -147,6 +147,19 @@ module Spectator
         {% raise "The syntax `expect(...).to_eventually receive(...)` requires the expression passed to `expect` be stubbable (a mock or double)" unless T < ::Spectator::Stubbable || T < ::Spectator::StubbedType %}
 
         stubbable = @expression.value
+        unless stubbable._spectator_stub_for_method?(stub.method)
+          # Add stub without an argument constraint.
+          # Avoids confusing logic like this:
+          # ```
+          # expect(dbl).to receive(:foo).with(:bar)
+          # dbl.foo(:baz)
+          # ```
+          # Notice that `#foo` is called, but with different arguments.
+          # Normally this would raise an error, but that should be prevented.
+          unconstrained_stub = stub.with(Arguments.any)
+          stubbable._spectator_define_stub(unconstrained_stub)
+        end
+
         stubbable._spectator_define_stub(stub)
         matcher = Matchers::ReceiveMatcher.new(stub)
         to_eventually(matcher, message)
@@ -164,6 +177,19 @@ module Spectator
         {% raise "The syntax `expect(...).to_never receive(...)` requires the expression passed to `expect` be stubbable (a mock or double)" unless T < ::Spectator::Stubbable || T < ::Spectator::StubbedType %}
 
         stubbable = @expression.value
+        unless stubbable._spectator_stub_for_method?(stub.method)
+          # Add stub without an argument constraint.
+          # Avoids confusing logic like this:
+          # ```
+          # expect(dbl).to receive(:foo).with(:bar)
+          # dbl.foo(:baz)
+          # ```
+          # Notice that `#foo` is called, but with different arguments.
+          # Normally this would raise an error, but that should be prevented.
+          unconstrained_stub = stub.with(Arguments.any)
+          stubbable._spectator_define_stub(unconstrained_stub)
+        end
+
         stubbable._spectator_define_stub(stub)
         matcher = Matchers::ReceiveMatcher.new(stub)
         to_never(matcher, message)

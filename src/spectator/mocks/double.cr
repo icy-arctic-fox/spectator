@@ -115,7 +115,7 @@ module Spectator
       stub
     end
 
-    private def _spectator_stub_for_method?(method : Symbol) : Bool
+    def _spectator_stub_for_method?(method : Symbol) : Bool
       @stubs.any? { |stub| stub.method == method }
     end
 
