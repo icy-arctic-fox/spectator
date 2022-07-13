@@ -74,7 +74,7 @@ module Spectator
     # Creates the double.
     #
     # An initial set of *stubs* can be provided.
-    def initialize(@stubs : Array(Stub) = [] of Stub)
+    def initialize(@stubs : Array(::Spectator::Stub) = [] of ::Spectator::Stub)
     end
 
     # Creates the double.
