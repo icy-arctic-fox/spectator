@@ -7,14 +7,9 @@ Spectator.describe "GitHub Issue #29" do
     end
   end
 
-  # mock SomeClass do
-  #   inject_stub abstract def exit(code)
-  # end
-
   describe SomeClass do
-    xit "captures exit", pending: "Mock redesign" do
-      expect(subject).to receive(:exit).with(0)
-      subject.goodbye
+    it "captures exit" do
+      expect { subject.goodbye }.to raise_error(Spectator::SystemExit)
     end
   end
 
@@ -25,16 +20,10 @@ Spectator.describe "GitHub Issue #29" do
       end
     end
 
-    # mock Foo do
-    #   inject_stub abstract def self.exit(code)
-    # end
-
     subject { Foo }
 
-    xit "must capture exit", pending: "Mock redesign" do
-      expect(subject).to receive(:exit).with(0)
-
-      subject.test
+    it "must capture exit" do
+      expect { subject.test }.to raise_error(Spectator::SystemExit)
     end
   end
 end
