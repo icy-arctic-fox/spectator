@@ -14,7 +14,7 @@ Spectator.describe Test do
   end
 
   skip "must stub Process.run", skip: "Method mock not applied" do
-    Process.run(command, shell: true, output: :pipe) do |process|
+    Process.run(command, shell: true, output: :pipe) do |_process|
     end
   end
 end
