@@ -216,12 +216,12 @@ Spectator.describe Spectator::NullDouble do
         expect(dbl.foo("foobar")).to eq("bar")
       end
 
-      it "raises self when constraint unsatisfied" do
+      it "raises when constraint unsatisfied" do
         expect { dbl.foo("baz") }.to raise_error(Spectator::UnexpectedMessage, /foo/)
       end
 
-      it "raises self when argument count doesn't match" do
-        expect { dbl.foo }.to raise_error(Spectator::UnexpectedMessage, /foo/)
+      it "returns self when argument count doesn't match" do
+        expect(dbl.foo).to be(dbl)
       end
 
       it "ignores the block argument if not in the constraint" do
@@ -405,15 +405,6 @@ Spectator.describe Spectator::NullDouble do
 
     it "removes previously defined stubs" do
       expect { dbl._spectator_clear_stubs }.to change { dbl.foo }.from(5).to(42)
-    end
-
-    it "defaults to returning itself for methods with no implementation" do
-      stub = Spectator::ValueStub.new(:baz, :xyz)
-      dbl._spectator_define_stub(stub)
-      expect(dbl.baz).to eq(:xyz)
-
-      dbl._spectator_clear_stubs
-      expect(dbl.baz).to be(dbl)
     end
   end
 

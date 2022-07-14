@@ -58,21 +58,7 @@ module Spectator
       %call = ::Spectator::MethodCall.new({{call.name.symbolize}}, %args)
       _spectator_record_call(%call)
 
-      # Attempt to find a stub that satisfies the method call and arguments.
-      if %stub = _spectator_find_stub(%call)
-        # A method that was not defined during initialization was stubbed.
-        # Even though all stubs will have a #call method, the compiler doesn't seem to agree.
-        # Assert that it will (this should never fail).
-        raise TypeCastError.new("Stub has no value") unless %stub.responds_to?(:call)
-
-        # Return the value of the stub as-is.
-        # Might want to give a warning here, as this may produce a "bloated" union of all known stub types.
-        %stub.call(%call)
-      else
-        # A stub wasn't found, invoke the fallback logic.
-        # Message received for a methods that isn't stubbed nor defined when initialized.
-        _spectator_abstract_stub_fallback(%call)
-      end
+      self
     end
   end
 end
