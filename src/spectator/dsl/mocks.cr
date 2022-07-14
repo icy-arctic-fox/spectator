@@ -110,6 +110,8 @@ module Spectator::DSL
     # then this macro returns a previously defined double class.
     # Otherwise, `LazyDouble` is created and returned.
     #
+    # Initial stubbed values for methods can be provided with *value_methods*.
+    #
     # ```
     # def_double(:dbl) do
     #   stub def self.foo
@@ -124,7 +126,7 @@ module Spectator::DSL
     #   expect(dbl.foo).to eq(123)
     # end
     # ```
-    private macro class_double(name = nil)
+    private macro class_double(name = nil, **value_methods)
       {% # Find tuples with the same name.
  found_tuples = ::Spectator::DSL::Mocks::TYPES.select { |tuple| tuple[0] == name.id.symbolize }
 
@@ -156,6 +158,10 @@ module Spectator::DSL
                   {% else %}
                     ::Spectator::LazyDouble
                   {% end %}
+        {% for key, value in value_methods %}
+          %stub{key} = ::Spectator::ValueStub.new({{key.id.symbolize}}, {{value}})
+          %double._spectator_define_stub(%stub{key})
+        {% end %}
         ::Spectator::Harness.current?.try(&.cleanup { %double._spectator_reset })
         %double
       end
