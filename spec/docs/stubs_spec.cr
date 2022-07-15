@@ -1,5 +1,6 @@
 require "../spec_helper"
 
+# https://gitlab.com/arctic-fox/spectator/-/wikis/Stubs
 Spectator.describe "Stubs Docs" do
   double :time_double, time_in: Time.utc(2016, 2, 15, 10, 20, 30)
   double :my_double, something: 42, answer?: false
