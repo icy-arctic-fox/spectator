@@ -1,6 +1,6 @@
 require "../spec_helper"
 
-Spectator.describe Test do
+Spectator.describe "GitHub Issue #44" do
   inject_mock Process do
     # Instance variable that can be nil, provide a default.
     @process_info = Crystal::System::Process.new(0)
