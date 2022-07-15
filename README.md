@@ -360,12 +360,11 @@ Items not marked as completed may have partial implementations.
     - [X] Mocks (Stub real types) - `mock TYPE { }`
     - [X] Doubles (Stand-ins for real types) - `double NAME { }`
     - [X] Method stubs - `allow().to receive()`, `allow().to receive().and_return()`
-    - [X] Spies - `expect().to receive()`
-    - [X] Message expectations - `expect().to receive().at_least()`
+    - [X] Spies - `expect().to have_receive()`
+    - [ ] Message expectations - `expect().to receive().at_least()`
     - [X] Argument expectations - `expect().to receive().with()`
     - [ ] Message ordering - `expect().to receive().ordered`
     - [X] Null doubles
-    - [X] Verifying doubles
 - [X] Runner
     - [X] Fail fast
     - [X] Test filtering - by name, context, and tags
