@@ -311,4 +311,205 @@ Spectator.describe Spectator::Matchers::ReceiveMatcher do
       end
     end
   end
+
+  describe "#once" do
+    let(matcher) { super.once }
+    subject(match_data) { matcher.match(actual) }
+
+    it "matches when the stub is called once" do
+      dbl.test_method
+      is_expected.to be_a(successful_match)
+    end
+
+    it "doesn't match when the stub isn't called" do
+      is_expected.to be_a(failed_match)
+    end
+
+    it "doesn't match when the stub is called twice" do
+      2.times { dbl.test_method }
+      is_expected.to be_a(failed_match)
+    end
+  end
+
+  describe "#twice" do
+    let(matcher) { super.twice }
+    subject(match_data) { matcher.match(actual) }
+
+    it "matches when the stub is called twice" do
+      2.times { dbl.test_method }
+      is_expected.to be_a(successful_match)
+    end
+
+    it "doesn't match when the stub isn't called" do
+      is_expected.to be_a(failed_match)
+    end
+
+    it "doesn't match when the stub is called once" do
+      dbl.test_method
+      is_expected.to be_a(failed_match)
+    end
+
+    it "doesn't match when the stub is called thrice" do
+      3.times { dbl.test_method }
+      is_expected.to be_a(failed_match)
+    end
+  end
+
+  describe "#exactly" do
+    let(matcher) { super.exactly(3) }
+    subject(match_data) { matcher.match(actual) }
+
+    it "matches when the stub is called the exact amount" do
+      3.times { dbl.test_method }
+      is_expected.to be_a(successful_match)
+    end
+
+    it "doesn't match when the stub isn't called" do
+      is_expected.to be_a(failed_match)
+    end
+
+    it "doesn't match when the stub is called less than the amount" do
+      2.times { dbl.test_method }
+      is_expected.to be_a(failed_match)
+    end
+
+    it "doesn't match when the stub is called more than the amount" do
+      4.times { dbl.test_method }
+      is_expected.to be_a(failed_match)
+    end
+  end
+
+  describe "#at_least" do
+    let(matcher) { super.at_least(3) }
+    subject(match_data) { matcher.match(actual) }
+
+    it "matches when the stub is called the exact amount" do
+      3.times { dbl.test_method }
+      is_expected.to be_a(successful_match)
+    end
+
+    it "doesn't match when the stub isn't called" do
+      is_expected.to be_a(failed_match)
+    end
+
+    it "doesn't match when the stub is called less than the amount" do
+      2.times { dbl.test_method }
+      is_expected.to be_a(failed_match)
+    end
+
+    it "matches when the stub is called more than the amount" do
+      4.times { dbl.test_method }
+      is_expected.to be_a(successful_match)
+    end
+  end
+
+  describe "#at_most" do
+    let(matcher) { super.at_most(3) }
+    subject(match_data) { matcher.match(actual) }
+
+    it "matches when the stub is called the exact amount" do
+      3.times { dbl.test_method }
+      is_expected.to be_a(successful_match)
+    end
+
+    it "matches when the stub isn't called" do
+      is_expected.to be_a(successful_match)
+    end
+
+    it "matches when the stub is called less than the amount" do
+      2.times { dbl.test_method }
+      is_expected.to be_a(successful_match)
+    end
+
+    it "doesn't match when the stub is called more than the amount" do
+      4.times { dbl.test_method }
+      is_expected.to be_a(failed_match)
+    end
+  end
+
+  describe "#at_least_once" do
+    let(matcher) { super.at_least_once }
+    subject(match_data) { matcher.match(actual) }
+
+    it "matches when the stub is called once" do
+      dbl.test_method
+      is_expected.to be_a(successful_match)
+    end
+
+    it "doesn't match when the stub isn't called" do
+      is_expected.to be_a(failed_match)
+    end
+
+    it "matches when the stub is called more than once" do
+      2.times { dbl.test_method }
+      is_expected.to be_a(successful_match)
+    end
+  end
+
+  describe "#at_least_twice" do
+    let(matcher) { super.at_least_twice }
+    subject(match_data) { matcher.match(actual) }
+
+    it "doesn't match when the stub is called once" do
+      dbl.test_method
+      is_expected.to be_a(failed_match)
+    end
+
+    it "doesn't match when the stub isn't called" do
+      is_expected.to be_a(failed_match)
+    end
+
+    it "matches when the stub is called twice" do
+      2.times { dbl.test_method }
+      is_expected.to be_a(successful_match)
+    end
+
+    it "matches when the stub is called more than twice" do
+      3.times { dbl.test_method }
+      is_expected.to be_a(successful_match)
+    end
+  end
+
+  describe "#at_most_once" do
+    let(matcher) { super.at_most_once }
+    subject(match_data) { matcher.match(actual) }
+
+    it "matches when the stub is called once" do
+      dbl.test_method
+      is_expected.to be_a(successful_match)
+    end
+
+    it "matches when the stub isn't called" do
+      is_expected.to be_a(successful_match)
+    end
+
+    it "doesn't match when the stub is called more than once" do
+      2.times { dbl.test_method }
+      is_expected.to be_a(failed_match)
+    end
+  end
+
+  describe "#at_most_twice" do
+    let(matcher) { super.at_most_twice }
+    subject(match_data) { matcher.match(actual) }
+
+    it "matches when the stub is called once" do
+      dbl.test_method
+      is_expected.to be_a(successful_match)
+    end
+
+    it "matches when the stub isn't called" do
+      is_expected.to be_a(successful_match)
+    end
+
+    it "matches when the stub is called twice" do
+      2.times { dbl.test_method }
+      is_expected.to be_a(successful_match)
+    end
+
+    it "doesn't match when the stub is called more than twice" do
+      3.times { dbl.test_method }
+      is_expected.to be_a(failed_match)
+    end
+  end
 end

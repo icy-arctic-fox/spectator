@@ -25,6 +25,60 @@ module Spectator::Matchers
       self.class.new(stub, @count)
     end
 
+    # Returns a new matcher that checks that the stub was invoked once.
+    def once : self
+      self.class.new(@stub, Count.new(1, 1))
+    end
+
+    # Returns a new matcher that checks that the stub was invoked twice.
+    def twice : self
+      self.class.new(@stub, Count.new(2, 2))
+    end
+
+    # Returns a new matcher that checks that the stub was invoked an exact number of times.
+    def exactly(count : Int) : self
+      self.class.new(@stub, Count.new(count, count))
+    end
+
+    # Returns a new matcher that checks that the stub was invoked at least a set amount of times.
+    def at_least(count : Int) : self
+      self.class.new(@stub, Count.new(count, nil))
+    end
+
+    # Returns a new matcher that checks that the stub was invoked at most a set amount of times.
+    def at_most(count : Int) : self
+      self.class.new(@stub, Count.new(nil, count))
+    end
+
+    # Returns a new matcher that checks that the stub was invoked at least once.
+    def at_least_once : self
+      self.class.new(@stub, Count.new(1, nil))
+    end
+
+    # Returns a new matcher that checks that the stub was invoked at least twice.
+    def at_least_twice : self
+      self.class.new(@stub, Count.new(2, nil))
+    end
+
+    # Returns a new matcher that checks that the stub was invoked at most once.
+    def at_most_once : self
+      self.class.new(@stub, Count.new(nil, 1))
+    end
+
+    # Returns a new matcher that checks that the stub was invoked at most twice.
+    def at_most_twice : self
+      self.class.new(@stub, Count.new(nil, 2))
+    end
+
+    # Returns self - used for fluent interface.
+    #
+    # ```
+    # expect(dbl).to have_received(:foo).exactly(5).times
+    # ```
+    def times : self
+      self
+    end
+
     # Short text about the matcher's purpose.
     def description : String
       "received #{@stub} #{humanize_count}"
