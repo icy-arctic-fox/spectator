@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [0.11.0] - 2022-07-14
 ### Changed
 - Overhauled mock and double system. [#63](https://gitlab.com/arctic-fox/spectator/-/issues/63)
 - Testing if `exit` is called no longer is done with stubs and catching the `Spectator::SystemExit` exception should be caught. [#29](https://github.com/icy-arctic-fox/spectator/issues/29)
@@ -387,7 +387,8 @@ This has been changed so that it compiles and raises an error at runtime with a 
 First version ready for public use.
 
 
-[Unreleased]: https://gitlab.com/arctic-fox/spectator/-/compare/v0.10.6...master
+[Unreleased]: https://gitlab.com/arctic-fox/spectator/-/compare/v0.11.0...master
+[0.11.0]: https://gitlab.com/arctic-fox/spectator/-/compare/v0.10.6...v0.11.0
 [0.10.6]: https://gitlab.com/arctic-fox/spectator/-/compare/v0.10.5...v0.10.6
 [0.10.5]: https://gitlab.com/arctic-fox/spectator/-/compare/v0.10.4...v0.10.5
 [0.10.4]: https://gitlab.com/arctic-fox/spectator/-/compare/v0.10.3...v0.10.4
