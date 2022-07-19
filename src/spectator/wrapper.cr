@@ -19,7 +19,12 @@ module Spectator
     # Retrieves the previously wrapped value.
     # The *type* of the wrapped value must match otherwise an error will be raised.
     def get(type : T.class) : T forall T
-      Box(T).unbox(@pointer)
+      {% begin %}
+        {% if T.nilable? %}
+          @pointer.null? ? nil :
+        {% end %}
+        Box(T).unbox(@pointer)
+      {% end %}
     end
 
     # Retrieves the previously wrapped value.
@@ -34,7 +39,12 @@ module Spectator
     # type = wrapper.get { Int32 } # Returns Int32
     # ```
     def get(& : -> T) : T forall T
-      Box(T).unbox(@pointer)
+      {% begin %}
+        {% if T.nilable? %}
+          @pointer.null? ? nil :
+        {% end %}
+        Box(T).unbox(@pointer)
+      {% end %}
     end
   end
 end
