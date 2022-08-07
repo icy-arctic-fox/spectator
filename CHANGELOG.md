@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+### Fixed
+- `expect_raises` with block and no arguments produces compilation error. [#77](https://gitlab.com/arctic-fox/spectator/-/issues/77)
+
 ## [0.11.1] - 2022-07-18
 ### Fixed
 - Workaround nilable type issue with memoized value. [#76](https://gitlab.com/arctic-fox/spectator/-/issues/76)
@@ -391,7 +395,7 @@ This has been changed so that it compiles and raises an error at runtime with a 
 First version ready for public use.
 
 
-[Unreleased]: https://gitlab.com/arctic-fox/spectator/-/compare/v0.11.0...master
+[Unreleased]: https://gitlab.com/arctic-fox/spectator/-/compare/v0.11.1...master
 [0.11.1]: https://gitlab.com/arctic-fox/spectator/-/compare/v0.11.0...v0.11.1
 [0.11.0]: https://gitlab.com/arctic-fox/spectator/-/compare/v0.10.6...v0.11.0
 [0.10.6]: https://gitlab.com/arctic-fox/spectator/-/compare/v0.10.5...v0.10.6

@@ -790,7 +790,7 @@ module Spectator::DSL
     # ```
     # expect_raises { raise "foobar" }
     # ```
-    macro expect_raises
+    macro expect_raises(&block)
       expect {{block}}.to raise_error
     end
 
