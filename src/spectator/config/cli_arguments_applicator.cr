@@ -112,7 +112,7 @@ module Spectator
       # Adds the example filter option to the parser.
       private def example_option(parser, builder)
         parser.on("-e", "--example STRING", "Run examples whose full nested names include STRING") do |pattern|
-          Log.debug { "Filtering for examples named '#{pattern}' (-e '#{pattern}')" }
+          Log.debug { "Filtering for examples containing '#{pattern}' (-e '#{pattern}')" }
           filter = NameNodeFilter.new(pattern)
           builder.add_node_filter(filter)
         end

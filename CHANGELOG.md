@@ -8,6 +8,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - `expect_raises` with block and no arguments produces compilation error. [#77](https://gitlab.com/arctic-fox/spectator/-/issues/77)
 
+### Changed
+- `-e` (`--example`) CLI option performs a partial match instead of exact match. [#71](https://gitlab.com/arctic-fox/spectator/-/issues/71) [#45](https://github.com/icy-arctic-fox/spectator/issues/45)
+
 ## [0.11.1] - 2022-07-18
 ### Fixed
 - Workaround nilable type issue with memoized value. [#76](https://gitlab.com/arctic-fox/spectator/-/issues/76)
