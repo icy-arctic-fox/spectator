@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+### Fixed
+- Display error block (failure message and stack trace) when using `fail`. [#78](https://gitlab.com/arctic-fox/spectator/-/issues/78)
+
 ## [0.11.2] - 2022-08-07
 ### Fixed
 - `expect_raises` with block and no arguments produces compilation error. [#77](https://gitlab.com/arctic-fox/spectator/-/issues/77)
