@@ -63,10 +63,17 @@ module Spectator::Formatting
     # Displays one or more blocks for a failed example.
     # Each block is a failed expectation or error raised in the example.
     private def dump_failed_example(example, index)
-      error = example.result.as?(ErrorResult).try(&.error)
+      # Retrieve the ultimate reason for failing.
+      error = example.result.as?(FailResult).try(&.error)
+
+      # Prevent displaying duplicated output from expectation.
+      # Display `ExampleFailed` but not `ExpectationFailed`.
+      error = nil if error.responds_to?(:expectation)
+
+      # Gather all failed expectations.
       failed_expectations = example.result.expectations.select(&.failed?)
       block_count = failed_expectations.size
-      block_count += 1 if error
+      block_count += 1 if error # Add an extra block for final error if it's significant.
 
       # Don't use sub-index if there was only one problem.
       if block_count == 1
