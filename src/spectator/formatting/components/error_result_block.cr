@@ -19,7 +19,7 @@ module Spectator::Formatting::Components
     # Prefix for the second line of the block.
     private def subtitle_label
       case @error
-      when ExampleFailed then "Failed: "
+      when ExampleFailed then "Failure: "
       else                    "Error: "
       end.colorize(:red)
     end
