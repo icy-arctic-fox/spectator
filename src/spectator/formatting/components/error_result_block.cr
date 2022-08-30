@@ -7,13 +7,13 @@ module Spectator::Formatting::Components
   # Displays information about an error result.
   struct ErrorResultBlock < ResultBlock
     # Creates the component.
-    def initialize(example : Example, index : Int32, @result : ErrorResult, subindex = 0)
+    def initialize(example : Example, index : Int32, @error : Exception, subindex = 0)
       super(example, index, subindex)
     end
 
     # Content displayed on the second line of the block after the label.
     private def subtitle
-      @result.error.message.try(&.each_line.first)
+      @error.message.try(&.each_line.first)
     end
 
     # Prefix for the second line of the block.
@@ -24,19 +24,18 @@ module Spectator::Formatting::Components
     # Display error information.
     private def content(io)
       # Fetch the error and message.
-      error = @result.error
-      lines = error.message.try(&.lines)
+      lines = @error.message.try(&.lines)
 
       # Write the error and message if available.
       case
-      when lines.nil?      then write_error_class(io, error)
-      when lines.size == 1 then write_error_message(io, error, lines.first)
-      when lines.size > 1  then write_multiline_error_message(io, error, lines)
-      else                      write_error_class(io, error)
+      when lines.nil?      then write_error_class(io)
+      when lines.size == 1 then write_error_message(io, lines.first)
+      when lines.size > 1  then write_multiline_error_message(io, lines)
+      else                      write_error_class(io)
       end
 
       # Display the backtrace if it's available.
-      if backtrace = error.backtrace?
+      if backtrace = @error.backtrace?
         indent { write_backtrace(io, backtrace) }
       end
 
@@ -44,24 +43,24 @@ module Spectator::Formatting::Components
     end
 
     # Display just the error type.
-    private def write_error_class(io, error)
+    private def write_error_class(io)
       line(io) do
-        io << error.class.colorize(:red)
+        io << @error.class.colorize(:red)
       end
     end
 
     # Display the error type and first line of the message.
-    private def write_error_message(io, error, message)
+    private def write_error_message(io, message)
       line(io) do
-        io << "#{error.class}: ".colorize(:red)
+        io << "#{@error.class}: ".colorize(:red)
         io << message
       end
     end
 
     # Display the error type and its multi-line message.
-    private def write_multiline_error_message(io, error, lines)
+    private def write_multiline_error_message(io, lines)
       # Use the normal formatting for the first line.
-      write_error_message(io, error, lines.first)
+      write_error_message(io, lines.first)
 
       # Display additional lines after the first.
       lines.skip(1).each do |entry|

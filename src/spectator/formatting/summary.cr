@@ -63,15 +63,15 @@ module Spectator::Formatting
     # Displays one or more blocks for a failed example.
     # Each block is a failed expectation or error raised in the example.
     private def dump_failed_example(example, index)
-      result = example.result.as?(ErrorResult)
+      error = example.result.as?(ErrorResult).try(&.error)
       failed_expectations = example.result.expectations.select(&.failed?)
       block_count = failed_expectations.size
-      block_count += 1 if result
+      block_count += 1 if error
 
       # Don't use sub-index if there was only one problem.
       if block_count == 1
-        if result
-          io.puts Components::ErrorResultBlock.new(example, index, result)
+        if error
+          io.puts Components::ErrorResultBlock.new(example, index, error)
         else
           io.puts Components::FailResultBlock.new(example, index, failed_expectations.first)
         end
@@ -79,7 +79,7 @@ module Spectator::Formatting
         failed_expectations.each_with_index(1) do |expectation, subindex|
           io.puts Components::FailResultBlock.new(example, index, expectation, subindex)
         end
-        io.puts Components::ErrorResultBlock.new(example, index, result, block_count) if result
+        io.puts Components::ErrorResultBlock.new(example, index, error, block_count) if error
       end
     end
   end
