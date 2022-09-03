@@ -1,7 +1,7 @@
 name: spectator
-version: 0.11.2
+version: 0.11.3
 description: |
-  A feature-rich spec testing framework for Crystal with similarities to RSpec.
+  Feature-rich testing framework for Crystal inspired by RSpec.
 
 authors:
   - Michael Miller <icy.arctic.fox@gmail.com>
