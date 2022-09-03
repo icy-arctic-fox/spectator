@@ -1,3 +1,5 @@
+require "../expression"
+require "../value"
 require "./standard_matcher"
 
 module Spectator::Matchers
@@ -22,7 +24,7 @@ module Spectator::Matchers
 
     # Creates the value matcher.
     # The expected value is stored for later use.
-    def initialize(@expected : Value(ExpectedType))
+    def initialize(@expected : ::Spectator::Value(ExpectedType))
     end
 
     # Additional information about the match failure.
