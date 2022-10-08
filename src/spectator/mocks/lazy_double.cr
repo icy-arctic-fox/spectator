@@ -26,6 +26,15 @@ module Spectator
       super(_spectator_double_stubs + message_stubs)
     end
 
+    # Defines a stub to change the behavior of a method in this double.
+    #
+    # NOTE: Defining a stub for a method not defined in the double's type raises an error.
+    protected def _spectator_define_stub(stub : Stub) : Nil
+      return super if Messages.types.has_key?(stub.method)
+
+      raise "Can't define stub #{stub} on lazy double because it wasn't initially defined."
+    end
+
     # Returns the double's name formatted for user output.
     private def _spectator_stubbed_name : String
       "#<LazyDouble #{@name || "Anonymous"}>"

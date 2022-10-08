@@ -235,16 +235,9 @@ Spectator.describe Spectator::LazyDouble do
     end
 
     context "with previously undefined methods" do
-      it "can stub methods" do
+      it "raises an error" do
         stub = Spectator::ValueStub.new(:baz, :xyz)
-        dbl._spectator_define_stub(stub)
-        expect(dbl.baz).to eq(:xyz)
-      end
-
-      it "uses a stub only if an argument constraint is met" do
-        stub = Spectator::ValueStub.new(:baz, :xyz, Spectator::Arguments.capture(:right))
-        dbl._spectator_define_stub(stub)
-        expect { dbl.baz }.to raise_error(Spectator::UnexpectedMessage, /baz/)
+        expect { dbl._spectator_define_stub(stub) }.to raise_error(/stub/)
       end
     end
   end
@@ -257,15 +250,6 @@ Spectator.describe Spectator::LazyDouble do
 
     it "removes previously defined stubs" do
       expect { dbl._spectator_clear_stubs }.to change { dbl.foo }.from(5).to(42)
-    end
-
-    it "raises on methods without an implementation" do
-      stub = Spectator::ValueStub.new(:baz, :xyz)
-      dbl._spectator_define_stub(stub)
-      expect(dbl.baz).to eq(:xyz)
-
-      dbl._spectator_clear_stubs
-      expect { dbl.baz }.to raise_error(Spectator::UnexpectedMessage, /baz/)
     end
   end
 
