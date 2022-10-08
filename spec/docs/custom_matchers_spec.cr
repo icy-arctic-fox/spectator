@@ -75,8 +75,8 @@ Spectator.describe "Custom Matchers Docs" do
     end
 
     macro be_odd
-    OddMatcher.new
-  end
+      OddMatcher.new
+    end
 
     specify do
       expect(9).to be_odd
