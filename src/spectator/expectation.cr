@@ -160,9 +160,17 @@ module Spectator
           stubbable._spectator_define_stub(unconstrained_stub)
         end
 
+        # Apply the stub that is expected to be called.
         stubbable._spectator_define_stub(stub)
-        matcher = Matchers::ReceiveMatcher.new(stub)
-        to_eventually(matcher, message)
+
+        # Check if the stub was invoked after the test completes.
+        Harness.current.defer do
+          matcher = Matchers::ReceiveMatcher.new(stub)
+          to(matcher, message)
+        ensure
+          # Prevent leaking stubs between tests.
+          stubbable._spectator_remove_stub(stub)
+        end
       end
 
       # Asserts that some criteria defined by the matcher is eventually satisfied.
@@ -190,9 +198,17 @@ module Spectator
           stubbable._spectator_define_stub(unconstrained_stub)
         end
 
+        # Apply the stub that could be called in case it is.
         stubbable._spectator_define_stub(stub)
-        matcher = Matchers::ReceiveMatcher.new(stub)
-        to_never(matcher, message)
+
+        # Check if the stub was invoked after the test completes.
+        Harness.current.defer do
+          matcher = Matchers::ReceiveMatcher.new(stub)
+          to_not(matcher, message)
+        ensure
+          # Prevent leaking stubs between tests.
+          stubbable._spectator_remove_stub(stub)
+        end
       end
 
       # :ditto:

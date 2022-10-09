@@ -146,9 +146,9 @@ Spectator.describe "Mocks Docs" do
       inst.something
     end
 
-    it "leaks stubs to other examples" do
+    it "reverts to default stub for other examples" do
       inst = mock(MyStruct)
-      expect(inst.something).to eq(7) # Previous stub was leaked.
+      expect(inst.something).to eq(5) # Default stub used instead of original behavior.
     end
   end
 end
