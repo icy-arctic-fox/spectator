@@ -13,7 +13,7 @@ before_script:
 
 spec:
   script:
-    - crystal spec --error-on-warnings --junit_output=. spec/runtime_example_spec.cr spec/matchers/ spec/spectator/*.cr
+    - crystal spec --error-on-warnings --junit_output=. spec/matchers/ spec/spectator/*.cr
   artifacts:
     when: always
     paths:
