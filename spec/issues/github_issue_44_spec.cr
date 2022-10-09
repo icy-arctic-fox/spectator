@@ -9,12 +9,29 @@ Spectator.describe "GitHub Issue #44" do
   let(command) { "ls -l" }
   let(exception) { File::NotFoundError.new("File not found", file: "test.file") }
 
-  before_each do
-    expect(Process).to receive(:run).with(command, shell: true, output: :pipe).and_raise(exception)
+  context "with positional arguments" do
+    before_each do
+      pipe = Process::Redirect::Pipe
+      expect(Process).to receive(:run).with(command, nil, nil, false, true, pipe, pipe, pipe, nil).and_raise(exception)
+    end
+
+    it "must stub Process.run" do
+      expect do
+        Process.run(command, shell: true, output: :pipe) do |_process|
+        end
+      end.to raise_error(File::NotFoundError, "File not found")
+    end
   end
 
-  skip "must stub Process.run", skip: "Method mock not applied" do
-    Process.run(command, shell: true, output: :pipe) do |_process|
+  # Original issue uses keyword arguments in place of positional arguments.
+  context "keyword arguments in place of positional arguments" do
+    before_each do
+      expect(Process).to receive(:run).with(command, shell: true, output: :pipe).and_raise(exception)
+    end
+
+    it "must stub Process.run", skip: "Keyword arguments in place of positional arguments not supported with expect-receive" do
+      Process.run(command, shell: true, output: :pipe) do |_process|
+      end
     end
   end
 end
