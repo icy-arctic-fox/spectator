@@ -1,3 +1,4 @@
+require "../harness"
 require "./stub"
 require "./stubbable"
 require "./stubbed_type"
@@ -21,6 +22,7 @@ module Spectator
     # Applies a stub to the targeted stubbable object.
     def to(stub : Stub) : Nil
       @target._spectator_define_stub(stub)
+      Harness.current?.try &.cleanup { @target._spectator_remove_stub(stub) }
     end
   end
 end
