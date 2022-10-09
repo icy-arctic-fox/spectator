@@ -14,6 +14,12 @@ Spectator.describe "Deferred stub expectation DSL" do
     # Ensure invocations don't leak between examples.
     pre_condition { expect(dbl).to_not have_received(:foo), "Leaked method calls from previous examples" }
 
+    # Ensure stubs don't leak between examples.
+    pre_condition do
+      expect { dbl.foo }.to raise_error(Spectator::UnexpectedMessage)
+      dbl._spectator_clear_calls # Don't include previous call in results.
+    end
+
     it "matches when a message is received" do
       expect(dbl).to receive(:foo)
       dbl.foo
@@ -67,6 +73,12 @@ Spectator.describe "Deferred stub expectation DSL" do
     # Ensure invocations don't leak between examples.
     pre_condition { expect(dbl).to_not have_received(:foo), "Leaked method calls from previous examples" }
 
+    # Ensure stubs don't leak between examples.
+    pre_condition do
+      expect { dbl.foo }.to raise_error(Spectator::UnexpectedMessage)
+      dbl._spectator_clear_calls # Don't include previous call in results.
+    end
+
     it "matches when a message is received" do
       expect(dbl).to receive(:foo)
       dbl.foo
@@ -113,6 +125,12 @@ Spectator.describe "Deferred stub expectation DSL" do
 
     # Ensure invocations don't leak between examples.
     pre_condition { expect(fake).to_not have_received(:foo), "Leaked method calls from previous examples" }
+
+    # Ensure stubs don't leak between examples.
+    pre_condition do
+      expect { fake.foo }.to raise_error(Spectator::UnexpectedMessage)
+      fake._spectator_clear_calls # Don't include previous call in results.
+    end
 
     it "matches when a message is received" do
       expect(fake).to receive(:foo).and_return(42)
@@ -165,6 +183,12 @@ Spectator.describe "Deferred stub expectation DSL" do
 
     # Ensure invocations don't leak between examples.
     pre_condition { expect(fake).to_not have_received(:foo), "Leaked method calls from previous examples" }
+
+    # Ensure stubs don't leak between examples.
+    pre_condition do
+      expect(fake.foo).to eq(42)
+      fake._spectator_clear_calls # Don't include previous call in results.
+    end
 
     it "matches when a message is received" do
       expect(fake).to receive(:foo).and_return(0)
