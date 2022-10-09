@@ -29,6 +29,12 @@ module Spectator
       @entries[key]
     end
 
+    # Retrieves all stubs defined for a mocked object or nil if the object isn't mocked yet.
+    def []?(object : T)
+      key = value_bytes(object)
+      @entries[key]?
+    end
+
     # Retrieves all stubs defined for a mocked object.
     #
     # Yields to the block on the first retrieval.

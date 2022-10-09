@@ -103,6 +103,11 @@ module Spectator
       @stubs.unshift(stub)
     end
 
+    protected def _spectator_remove_stub(stub : Stub) : Nil
+      Log.debug { "Removing stub #{stub} from #{_spectator_stubbed_name}" }
+      @stubs.delete(stub)
+    end
+
     protected def _spectator_clear_stubs : Nil
       Log.debug { "Clearing stubs for #{_spectator_stubbed_name}" }
       @stubs.clear

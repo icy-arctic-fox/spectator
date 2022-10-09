@@ -20,6 +20,10 @@ module Spectator
       _spectator_stubs.unshift(stub)
     end
 
+    def _spectator_remove_stub(stub : Stub) : Nil
+      _spectator_stubs.delete(stub)
+    end
+
     def _spectator_clear_stubs : Nil
       _spectator_stubs.clear
     end

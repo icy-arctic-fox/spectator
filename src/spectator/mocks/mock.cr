@@ -50,6 +50,10 @@ module Spectator
             end
           {% end %}
 
+          def _spectator_remove_stub(stub : ::Spectator::Stub) : Nil
+            @_spectator_stubs.try &.delete(stub)
+          end
+
           def _spectator_clear_stubs : Nil
             @_spectator_stubs = nil
           end
@@ -137,6 +141,10 @@ module Spectator
               _spectator_default_stubs
             end
             entry.stubs
+          end
+
+          def _spectator_remove_stub(stub : ::Spectator::Stub) : Nil
+            @@_spectator_mock_registry[self]?.try &.stubs.delete(stub)
           end
 
           def _spectator_clear_stubs : Nil

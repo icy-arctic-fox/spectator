@@ -28,6 +28,9 @@ module Spectator
     # Defines a stub to change the behavior of a method.
     abstract def _spectator_define_stub(stub : Stub) : Nil
 
+    # Removes a specific, previously defined stub.
+    abstract def _spectator_remove_stub(stub : Stub) : Nil
+
     # Clears all previously defined stubs.
     abstract def _spectator_clear_stubs : Nil
 
