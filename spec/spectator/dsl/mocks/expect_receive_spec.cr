@@ -167,13 +167,13 @@ Spectator.describe "Deferred stub expectation DSL" do
     pre_condition { expect(fake).to_not have_received(:foo), "Leaked method calls from previous examples" }
 
     it "matches when a message is received" do
-      expect(fake).to receive(:foo).and_return(42)
+      expect(fake).to receive(:foo).and_return(0)
       fake.foo(:bar)
     end
 
     it "returns the correct value" do
-      expect(fake).to receive(:foo).and_return(42)
-      expect(fake.foo).to eq(42)
+      expect(fake).to receive(:foo).and_return(0)
+      expect(fake.foo).to eq(0)
     end
 
     it "matches when a message isn't received" do
@@ -181,12 +181,12 @@ Spectator.describe "Deferred stub expectation DSL" do
     end
 
     it "matches when a message is received with matching arguments" do
-      expect(fake).to receive(:foo).with(:bar).and_return(42)
+      expect(fake).to receive(:foo).with(:bar).and_return(0)
       fake.foo(:bar)
     end
 
     it "matches when a message without arguments is received" do
-      expect(fake).to_not receive(:foo).with(:bar).and_return(42)
+      expect(fake).to_not receive(:foo).with(:bar).and_return(0)
       fake.foo
     end
 
@@ -195,7 +195,7 @@ Spectator.describe "Deferred stub expectation DSL" do
     end
 
     it "matches when a message with arguments isn't received" do
-      expect(fake).to_not receive(:foo).with(:baz).and_return(42)
+      expect(fake).to_not receive(:foo).with(:baz).and_return(0)
       fake.foo(:bar)
     end
   end
