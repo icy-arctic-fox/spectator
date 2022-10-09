@@ -118,7 +118,7 @@ module Spectator
       {% raise "Default stub cannot be an abstract method" if method.abstract? %}
       {% raise "Cannot stub method with reserved keyword as name - #{method.name}" if method.name.starts_with?("_spectator") || ::Spectator::DSL::RESERVED_KEYWORDS.includes?(method.name.symbolize) %}
 
-      {{visibility.id if visibility != :public}} def {{method.receiver && "#{method.receiver}.".id}}{{method.name}}(
+      {{visibility.id if visibility != :public}} def {{"#{method.receiver}.".id if method.receiver}}{{method.name}}(
         {% for arg, i in method.args %}{% if i == method.splat_index %}*{% end %}{{arg}}, {% end %}
         {% if method.double_splat %}**{{method.double_splat}}, {% end %}
         {% if method.block_arg %}&{{method.block_arg}}{% elsif method.accepts_block? %}&{% end %}
@@ -133,7 +133,7 @@ module Spectator
 # This chunk of code must reconstruct the method signature exactly as it was originally.
 # If it doesn't match, it doesn't override the method and the stubbing won't work.
   %}
-      {{visibility.id if visibility != :public}} def {{method.receiver && "#{method.receiver}.".id}}{{method.name}}(
+      {{visibility.id if visibility != :public}} def {{"#{method.receiver}.".id if method.receiver}}{{method.name}}(
         {% for arg, i in method.args %}{% if i == method.splat_index %}*{% end %}{{arg}}, {% end %}
         {% if method.double_splat %}**{{method.double_splat}}, {% end %}
         {% if method.block_arg %}&{{method.block_arg}}{% elsif method.accepts_block? %}&{% end %}
@@ -214,7 +214,7 @@ module Spectator
   %}
 
       {% unless method.abstract? %}
-        {{visibility.id if visibility != :public}} def {{method.receiver && "#{method.receiver}.".id}}{{method.name}}(
+        {{visibility.id if visibility != :public}} def {{"#{method.receiver}.".id if method.receiver}}{{method.name}}(
           {% for arg, i in method.args %}{% if i == method.splat_index %}*{% end %}{{arg}}, {% end %}
           {% if method.double_splat %}**{{method.double_splat}}, {% end %}
           {% if method.block_arg %}&{{method.block_arg}}{% elsif method.accepts_block? %}&{% end %}
@@ -230,7 +230,7 @@ module Spectator
 # This chunk of code must reconstruct the method signature exactly as it was originally.
 # If it doesn't match, it doesn't override the method and the stubbing won't work.
   %}
-      {{visibility.id if visibility != :public}} def {{method.receiver && "#{method.receiver}.".id}}{{method.name}}(
+      {{visibility.id if visibility != :public}} def {{"#{method.receiver}.".id if method.receiver}}{{method.name}}(
         {% for arg, i in method.args %}{% if i == method.splat_index %}*{% end %}{{arg}}, {% end %}
         {% if method.double_splat %}**{{method.double_splat}}, {% end %}
         {% if method.block_arg %}&{{method.block_arg}}{% elsif method.accepts_block? %}&{% end %}
@@ -336,7 +336,7 @@ module Spectator
                            meth.name.starts_with?("_spectator") ||
                              ::Spectator::DSL::RESERVED_KEYWORDS.includes?(meth.name.symbolize)
                          end %}
-          {{(method.abstract? ? :abstract_stub : :default_stub).id}} {{method.visibility.id if method.visibility != :public}} def {{method.receiver && "#{method.receiver}.".id}}{{method.name}}(
+          {{(method.abstract? ? :abstract_stub : :default_stub).id}} {{method.visibility.id if method.visibility != :public}} def {{"#{method.receiver}.".id if method.receiver}}{{method.name}}(
             {% for arg, i in method.args %}{% if i == method.splat_index %}*{% end %}{{arg}}, {% end %}
             {% if method.double_splat %}**{{method.double_splat}}, {% end %}
             {% if method.block_arg %}&{{method.block_arg}}{% elsif method.accepts_block? %}&{% end %}
@@ -363,7 +363,7 @@ module Spectator
                          meth.name.starts_with?("_spectator") ||
                            ::Spectator::DSL::RESERVED_KEYWORDS.includes?(meth.name.symbolize)
                        end %}
-        {{(method.abstract? ? :"abstract_stub abstract" : :default_stub).id}} {{method.visibility.id if method.visibility != :public}} def {{method.receiver && "#{method.receiver}.".id}}{{method.name}}(
+        {{(method.abstract? ? :"abstract_stub abstract" : :default_stub).id}} {{method.visibility.id if method.visibility != :public}} def {{"#{method.receiver}.".id if method.receiver}}{{method.name}}(
           {% for arg, i in method.args %}{% if i == method.splat_index %}*{% end %}{{arg}}, {% end %}
           {% if method.double_splat %}**{{method.double_splat}}, {% end %}
           {% if method.block_arg %}&{{method.block_arg}}{% elsif method.accepts_block? %}&{% end %}
