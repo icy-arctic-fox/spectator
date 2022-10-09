@@ -84,7 +84,7 @@ module Spectator
           macro finished
             stub_type {{mocked_type.id}}
 
-            {% if block %}{{block.body}}{% end %}
+            {{block.body if block}}
           end
         end
       {% end %}
@@ -189,7 +189,7 @@ module Spectator
           macro finished
             stub_type {{type_name.id}}
 
-            {% if block %}{{block.body}}{% end %}
+            {{block.body if block}}
           end
         end
       {% end %}

@@ -61,7 +61,7 @@ module Spectator
           end
         {% end %}
 
-        {% if block %}{{block.body}}{% end %}
+        {{block.body if block}}
       end
     end
 

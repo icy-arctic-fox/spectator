@@ -38,7 +38,7 @@ module Spectator::DSL
           {{null_double_type_name}}.new(@stubs)
         end
 
-        {% if block %}{{block.body}}{% end %}
+        {{block.body if block}}
       end
 
       {% begin %}
