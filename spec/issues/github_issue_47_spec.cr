@@ -11,7 +11,7 @@ Spectator.describe "GitHub Issue #47" do
 
   let(fake) { mock(Original) }
 
-  specify do
+  xspecify do
     expect(fake).to receive(:foo).with("arg1", arg2: "arg2")
     fake.foo("arg1", "arg2")
   end
