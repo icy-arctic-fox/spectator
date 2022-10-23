@@ -5,9 +5,9 @@ Spectator.describe Spectator::Arguments do
 
   it "stores the arguments" do
     expect(arguments).to have_attributes(
-      positional: {42, "foo"},
+      args: {42, "foo"},
       splat_name: :splat,
-      extra: {:x, :y, :z},
+      splat: {:x, :y, :z},
       kwargs: {bar: "baz", qux: 123}
     )
   end
@@ -16,7 +16,7 @@ Spectator.describe Spectator::Arguments do
     subject { Spectator::Arguments.capture(42, "foo", bar: "baz", qux: 123) }
 
     it "stores the arguments and keyword arguments" do
-      is_expected.to have_attributes(positional: {42, "foo"}, kwargs: {bar: "baz", qux: 123})
+      is_expected.to have_attributes(args: {42, "foo"}, kwargs: {bar: "baz", qux: 123})
     end
   end
 
@@ -76,7 +76,7 @@ Spectator.describe Spectator::Arguments do
     end
 
     context "with the same kwargs in a different order" do
-      let(other) { Spectator::Arguments.new(arguments.positional, nil, nil, {qux: 123, bar: "baz"}) }
+      let(other) { Spectator::Arguments.new(arguments.args, nil, nil, {qux: 123, bar: "baz"}) }
 
       it "returns true" do
         is_expected.to be_true
@@ -84,7 +84,7 @@ Spectator.describe Spectator::Arguments do
     end
 
     context "with a missing kwarg" do
-      let(other) { Spectator::Arguments.new(arguments.positional, nil, nil, {bar: "baz"}) }
+      let(other) { Spectator::Arguments.new(arguments.args, nil, nil, {bar: "baz"}) }
 
       it "returns false" do
         is_expected.to be_false
@@ -112,7 +112,7 @@ Spectator.describe Spectator::Arguments do
     end
 
     context "with the same kwargs in a different order" do
-      let(pattern) { Spectator::Arguments.new(arguments.positional, nil, nil, {qux: 123, bar: "baz"}) }
+      let(pattern) { Spectator::Arguments.new(arguments.args, nil, nil, {qux: 123, bar: "baz"}) }
 
       it "returns true" do
         is_expected.to be_true
@@ -120,7 +120,7 @@ Spectator.describe Spectator::Arguments do
     end
 
     context "with a missing kwarg" do
-      let(pattern) { Spectator::Arguments.new(arguments.positional, nil, nil, {bar: "baz"}) }
+      let(pattern) { Spectator::Arguments.new(arguments.args, nil, nil, {bar: "baz"}) }
 
       it "returns false" do
         is_expected.to be_false

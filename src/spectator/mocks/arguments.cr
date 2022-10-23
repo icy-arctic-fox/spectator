@@ -4,15 +4,15 @@ module Spectator
   # Arguments used in a method call.
   #
   # Can also be used to match arguments.
-  # *Positional* must be a `Tuple` or `NamedTuple` type representing the standard arguments.
+  # *Args* must be a `Tuple` or `NamedTuple` type representing the standard arguments.
   # *Splat* must be a `Tuple` type representing the extra positional arguments.
   # *DoubleSplat* must be a `NamedTuple` type representing extra keyword arguments.
-  class Arguments(Positional, Splat, DoubleSplat) < AbstractArguments
+  class Arguments(Args, Splat, DoubleSplat) < AbstractArguments
     # Positional arguments.
-    getter positional : Positional
+    getter args : Args
 
     # Additional positional arguments.
-    getter extra : Splat
+    getter splat : Splat
 
     # Keyword arguments.
     getter kwargs : DoubleSplat
@@ -21,12 +21,12 @@ module Spectator
     getter splat_name : Symbol?
 
     # Creates arguments used in a method call.
-    def initialize(@positional : Positional, @splat_name : Symbol?, @extra : Splat, @kwargs : DoubleSplat)
+    def initialize(@args : Args, @splat_name : Symbol?, @splat : Splat, @kwargs : DoubleSplat)
     end
 
     # Creates arguments used in a method call.
-    def self.new(positional : Positional, kwargs : DoubleSplat)
-      new(positional, nil, nil, kwargs)
+    def self.new(args : Args, kwargs : DoubleSplat)
+      new(args, nil, nil, kwargs)
     end
 
     # Instance of empty arguments.
@@ -38,13 +38,13 @@ module Spectator
     end
 
     # Captures arguments passed to a call.
-    def self.build(positional = Tuple.new, kwargs = NamedTuple.new)
-      new(positional, nil, nil, kwargs)
+    def self.build(args = Tuple.new, kwargs = NamedTuple.new)
+      new(args, nil, nil, kwargs)
     end
 
     # :ditto:
-    def self.build(positional : NamedTuple, splat_name : Symbol, extra : Tuple, kwargs = NamedTuple.new)
-      new(positional, splat_name, extra, kwargs)
+    def self.build(args : NamedTuple, splat_name : Symbol, splat : Tuple, kwargs = NamedTuple.new)
+      new(args, splat_name, splat, kwargs)
     end
 
     # Friendlier constructor for capturing arguments.
@@ -54,49 +54,54 @@ module Spectator
 
     # Returns the positional argument at the specified index.
     def [](index : Int)
-      {% if Positional < NamedTuple %}
-        @positional.values[index]
-      {% else %}
-        @positional[index]
-      {% end %}
+      positional[index]
     end
 
     # Returns the specified named argument.
     def [](arg : Symbol)
-      {% if Positional < NamedTuple %}
-        return @positional[arg] if @positional.has_key?(arg)
+      {% if Args < NamedTuple %}
+        return @args[arg] if @args.has_key?(arg)
       {% end %}
       @kwargs[arg]
     end
 
+    # Returns all arguments and splatted arguments as a tuple.
+    def positional : Tuple
+      if (splat = @splat)
+        {% if Args < NamedTuple %}args.values{% else %}args{% end %} + splat
+      else
+        {% if Args < NamedTuple %}args.values{% else %}args{% end %}
+      end
+    end
+
     # Constructs a string representation of the arguments.
     def to_s(io : IO) : Nil
-      return io << "(no args)" if positional.empty? && ((extra = @extra).nil? || extra.empty?) && kwargs.empty?
+      return io << "(no args)" if args.empty? && ((splat = @splat).nil? || splat.empty?) && kwargs.empty?
 
       io << '('
 
       # Add the positional arguments.
-      {% if Positional < NamedTuple %}
+      {% if Args < NamedTuple %}
         # Include argument names.
-        positional.each_with_index do |name, value, i|
+        args.each_with_index do |name, value, i|
           io << ", " if i > 0
           io << name << ": "
           value.inspect(io)
         end
       {% else %}
-        positional.each_with_index do |arg, i|
+        args.each_with_index do |arg, i|
           io << ", " if i > 0
           arg.inspect(io)
         end
       {% end %}
 
       # Add the splat arguments.
-      if (extra = @extra) && !extra.empty?
-        io << ", " unless positional.empty?
-        if splat = @splat_name
-          io << '*' << splat << ": {"
+      if (splat = @splat) && !splat.empty?
+        io << ", " unless args.empty?
+        if name = @splat_name
+          io << '*' << name << ": {"
         end
-        extra.each_with_index do |arg, i|
+        splat.each_with_index do |arg, i|
           io << ", " if i > 0
           arg.inspect(io)
         end
@@ -104,8 +109,8 @@ module Spectator
       end
 
       # Add the keyword arguments.
-      offset = positional.size
-      offset += extra.size if (extra = @extra)
+      offset = args.size
+      offset += splat.size if (splat = @splat)
       kwargs.each_with_index(offset) do |name, value, i|
         io << ", " if i > 0
         io << name << ": "
@@ -117,31 +122,29 @@ module Spectator
 
     # Checks if this set of arguments and another are equal.
     def ==(other : Arguments)
-      ordered = simplify_positional
-      other_ordered = other.simplify_positional
-      ordered == other_ordered && kwargs == other.kwargs
+      positional == other.positional && kwargs == other.kwargs
     end
 
     # Checks if another set of arguments matches this set of arguments.
     def ===(other : Arguments)
-      {% if Positional < NamedTuple %}
-        if (other_positional = other.positional).is_a?(NamedTuple)
-          positional.each do |k, v|
-            return false unless other_positional.has_key?(k)
-            return false unless v === other_positional[k]
+      {% if Args < NamedTuple %}
+        if (other_args = other.args).is_a?(NamedTuple)
+          args.each do |k, v|
+            return false unless other_args.has_key?(k)
+            return false unless v === other_args[k]
           end
         else
-          return false if positional.size != other_positional
-          positional.each_with_index do |k, v, i|
-            return false unless v === other_positional.unsafe_fetch(i)
+          return false if args.size != other_args
+          args.each_with_index do |k, v, i|
+            return false unless v === other_args.unsafe_fetch(i)
           end
         end
       {% else %}
-        return false unless positional === other.simplify_positional
+        return false unless args === other.positional
       {% end %}
 
-      if extra = @extra
-        return false unless extra === other.extra
+      if splat = @splat
+        return false unless splat === other.splat
       end
 
       kwargs.each do |k, v|
@@ -150,14 +153,6 @@ module Spectator
       end
 
       true
-    end
-
-    protected def simplify_positional
-      if (extra = @extra)
-        {% if Positional < NamedTuple %}positional.values{% else %}positional{% end %} + extra
-      else
-        {% if Positional < NamedTuple %}positional.values{% else %}positional{% end %}
-      end
     end
   end
 end
