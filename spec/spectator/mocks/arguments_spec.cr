@@ -1,26 +1,22 @@
 require "../../spec_helper"
 
 Spectator.describe Spectator::Arguments do
-  subject(arguments) do
-    Spectator::Arguments.new(
-      args: {42, "foo"},
-      kwargs: {bar: "baz", qux: 123}
-    )
-  end
+  subject(arguments) { Spectator::Arguments.new({42, "foo"}, :splat, {:x, :y, :z}, {bar: "baz", qux: 123}) }
 
   it "stores the arguments" do
-    expect(arguments.args).to eq({42, "foo"})
-  end
-
-  it "stores the keyword arguments" do
-    expect(arguments.kwargs).to eq({bar: "baz", qux: 123})
+    expect(arguments).to have_attributes(
+      positional: {42, "foo"},
+      splat_name: :splat,
+      extra: {:x, :y, :z},
+      kwargs: {bar: "baz", qux: 123}
+    )
   end
 
   describe ".capture" do
     subject { Spectator::Arguments.capture(42, "foo", bar: "baz", qux: 123) }
 
     it "stores the arguments and keyword arguments" do
-      is_expected.to have_attributes(args: {42, "foo"}, kwargs: {bar: "baz", qux: 123})
+      is_expected.to have_attributes(positional: {42, "foo"}, kwargs: {bar: "baz", qux: 123})
     end
   end
 
@@ -72,12 +68,7 @@ Spectator.describe Spectator::Arguments do
     end
 
     context "with different arguments" do
-      let(other) do
-        Spectator::Arguments.new(
-          args: {123, :foo, "bar"},
-          kwargs: {opt: "foobar"}
-        )
-      end
+      let(other) { Spectator::Arguments.new({123, :foo, "bar"}, nil, nil, {opt: "foobar"}) }
 
       it "returns false" do
         is_expected.to be_false
@@ -85,12 +76,7 @@ Spectator.describe Spectator::Arguments do
     end
 
     context "with the same kwargs in a different order" do
-      let(other) do
-        Spectator::Arguments.new(
-          args: arguments.args,
-          kwargs: {qux: 123, bar: "baz"}
-        )
-      end
+      let(other) { Spectator::Arguments.new(arguments.positional, nil, nil, {qux: 123, bar: "baz"}) }
 
       it "returns true" do
         is_expected.to be_true
@@ -98,12 +84,7 @@ Spectator.describe Spectator::Arguments do
     end
 
     context "with a missing kwarg" do
-      let(other) do
-        Spectator::Arguments.new(
-          args: arguments.args,
-          kwargs: {bar: "baz"}
-        )
-      end
+      let(other) { Spectator::Arguments.new(arguments.positional, nil, nil, {bar: "baz"}) }
 
       it "returns false" do
         is_expected.to be_false
@@ -123,12 +104,7 @@ Spectator.describe Spectator::Arguments do
     end
 
     context "with different arguments" do
-      let(pattern) do
-        Spectator::Arguments.new(
-          args: {123, :foo, "bar"},
-          kwargs: {opt: "foobar"}
-        )
-      end
+      let(pattern) { Spectator::Arguments.new({123, :foo, "bar"}, nil, nil, {opt: "foobar"}) }
 
       it "returns false" do
         is_expected.to be_false
@@ -136,12 +112,7 @@ Spectator.describe Spectator::Arguments do
     end
 
     context "with the same kwargs in a different order" do
-      let(pattern) do
-        Spectator::Arguments.new(
-          args: arguments.args,
-          kwargs: {qux: 123, bar: "baz"}
-        )
-      end
+      let(pattern) { Spectator::Arguments.new(arguments.positional, nil, nil, {qux: 123, bar: "baz"}) }
 
       it "returns true" do
         is_expected.to be_true
@@ -149,12 +120,7 @@ Spectator.describe Spectator::Arguments do
     end
 
     context "with a missing kwarg" do
-      let(pattern) do
-        Spectator::Arguments.new(
-          args: arguments.args,
-          kwargs: {bar: "baz"}
-        )
-      end
+      let(pattern) { Spectator::Arguments.new(arguments.positional, nil, nil, {bar: "baz"}) }
 
       it "returns false" do
         is_expected.to be_false
@@ -162,12 +128,7 @@ Spectator.describe Spectator::Arguments do
     end
 
     context "with matching types and regex" do
-      let(pattern) do
-        Spectator::Arguments.new(
-          args: {Int32, /foo/},
-          kwargs: {bar: String, qux: 123}
-        )
-      end
+      let(pattern) { Spectator::Arguments.new({Int32, /foo/}, nil, nil, {bar: String, qux: 123}) }
 
       it "returns true" do
         is_expected.to be_true
@@ -175,12 +136,7 @@ Spectator.describe Spectator::Arguments do
     end
 
     context "with different types and regex" do
-      let(pattern) do
-        Spectator::Arguments.new(
-          args: {Symbol, /bar/},
-          kwargs: {bar: String, qux: 42}
-        )
-      end
+      let(pattern) { Spectator::Arguments.new({Symbol, /bar/}, nil, nil, {bar: String, qux: 42}) }
 
       it "returns false" do
         is_expected.to be_false
