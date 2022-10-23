@@ -44,7 +44,7 @@ Spectator.describe Spectator::Arguments do
     subject { arguments.to_s }
 
     it "formats the arguments" do
-      is_expected.to eq("(42, \"foo\", bar: \"baz\", qux: 123)")
+      is_expected.to eq("(42, \"foo\", *splat: {:x, :y, :z}, bar: \"baz\", qux: 123)")
     end
 
     context "when empty" do

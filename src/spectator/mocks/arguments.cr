@@ -92,16 +92,15 @@ module Spectator
 
       # Add the splat arguments.
       if (extra = @extra) && !extra.empty?
-        if splat = @splat_name
-          io << splat << ": {"
-        end
         io << ", " unless positional.empty?
+        if splat = @splat_name
+          io << '*' << splat << ": {"
+        end
         extra.each_with_index do |arg, i|
           io << ", " if i > 0
           arg.inspect(io)
         end
         io << '}' if @splat_name
-        io << ", " unless kwargs.empty?
       end
 
       # Add the keyword arguments.
