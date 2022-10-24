@@ -184,10 +184,11 @@ module Spectator
     # Handle all methods but only respond to configured messages.
     # Raises an `UnexpectedMessage` error for non-configures messages.
     macro method_missing(call)
-      Log.trace { "Got undefined method `{{call.name}}({{*call.args}}{% if call.named_args %}{% unless call.args.empty? %}, {% end %}{{*call.named_args}}{% end %}){% if call.block %} { ... }{% end %}`" }
-      args = ::Spectator::Arguments.capture({{call.args.splat(", ")}}{% if call.named_args %}{{*call.named_args}}{% end %})
+      args = ::Spectator::Arguments.build({{call.args.splat(", ")}}{{call.named_args.splat if call.named_args}})
       call = ::Spectator::MethodCall.new({{call.name.symbolize}}, args)
       _spectator_record_call(call)
+
+      Log.trace { "#{_spectator_stubbed_name} got undefined method `#{call}{% if call.block %} { ... }{% end %}`" }
 
       raise ::Spectator::UnexpectedMessage.new("#{_spectator_stubbed_name} received unexpected message #{call}")
       nil # Necessary for compiler to infer return type as nil. Avoids runtime "can't execute ... `x` has no type errors".

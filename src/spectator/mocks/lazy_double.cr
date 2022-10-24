@@ -52,12 +52,12 @@ module Spectator
 
     # Handles all messages.
     macro method_missing(call)
-      Log.trace { "Got undefined method `{{call.name}}({{*call.args}}{% if call.named_args %}{% unless call.args.empty? %}, {% end %}{{*call.named_args}}{% end %}){% if call.block %} { ... }{% end %}`" }
-
       # Capture information about the call.
-      %args = ::Spectator::Arguments.capture({{call.args.splat(", ")}}{% if call.named_args %}{{*call.named_args}}{% end %})
+      %args = ::Spectator::Arguments.build({{call.args.splat(", ")}}{{call.named_args.splat if call.named_args}})
       %call = ::Spectator::MethodCall.new({{call.name.symbolize}}, %args)
       _spectator_record_call(%call)
+
+      Log.trace { "#{_spectator_stubbed_name} got undefined method `#{%call}{% if call.block %} { ... }{% end %}`" }
 
       # Attempt to find a stub that satisfies the method call and arguments.
       if %stub = _spectator_find_stub(%call)
