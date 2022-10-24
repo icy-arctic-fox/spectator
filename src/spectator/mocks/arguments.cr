@@ -74,6 +74,15 @@ module Spectator
       end
     end
 
+    # Returns all named positional and keyword arguments as a named tuple.
+    def named : NamedTuple
+      {% if Args < NamedTuple %}
+        args.merge(kwargs)
+      {% else %}
+        kwargs
+      {% end %}
+    end
+
     # Constructs a string representation of the arguments.
     def to_s(io : IO) : Nil
       return io << "(no args)" if args.empty? && ((splat = @splat).nil? || splat.empty?) && kwargs.empty?
@@ -127,31 +136,48 @@ module Spectator
 
     # Checks if another set of arguments matches this set of arguments.
     def ===(other : Arguments)
-      {% if Args < NamedTuple %}
-        if (other_args = other.args).is_a?(NamedTuple)
-          args.each do |k, v|
-            return false unless other_args.has_key?(k)
-            return false unless v === other_args[k]
-          end
-        else
-          return false if args.size != other_args
-          args.each_with_index do |k, v, i|
-            return false unless v === other_args.unsafe_fetch(i)
-          end
-        end
-      {% else %}
-        return false unless args === other.positional
-      {% end %}
+      self_args = args
+      other_args = other.args
 
-      if splat = @splat
-        return false unless splat === other.splat
+      case {self_args, other_args}
+      when {Tuple, Tuple}      then compare(positional, other.positional, kwargs, other.kwargs)
+      when {Tuple, NamedTuple} then compare(kwargs, other.named, positional, other_args, other.splat)
+      when {NamedTuple, Tuple} then compare(positional, other.positional, kwargs, other.kwargs)
+      else
+        self_args === other_args && (!splat || splat === other.splat) && compare_named_tuples(kwargs, other.kwargs)
+      end
+    end
+
+    private def compare(self_positional : Tuple, other_positional : Tuple, self_kwargs : NamedTuple, other_kwargs : NamedTuple)
+      self_positional === other_positional && compare_named_tuples(self_kwargs, other_kwargs)
+    end
+
+    private def compare(self_kwargs : NamedTuple, other_named : NamedTuple, self_positional : Tuple, other_args : NamedTuple, other_splat : Tuple?)
+      return false unless compare_named_tuples(self_kwargs, other_named)
+
+      i = 0
+      other_args.each do |k, v2|
+        next if self_kwargs.has_key?(k) # Covered by named arguments.
+
+        v1 = self_positional.fetch(i) { return false }
+        i += 1
+        return false unless v1 === v2
       end
 
-      kwargs.each do |k, v|
-        return false unless other.kwargs.has_key?(k)
-        return false unless v === other.kwargs[k]
+      other_splat.try &.each do |v2|
+        v1 = self_positional.fetch(i) { return false }
+        i += 1
+        return false unless v1 === v2
       end
 
+      i == self_positional.size
+    end
+
+    private def compare_named_tuples(a : NamedTuple, b : NamedTuple)
+      a.each do |k, v1|
+        v2 = b.fetch(k) { return false }
+        return false unless v1 === v2
+      end
       true
     end
   end
