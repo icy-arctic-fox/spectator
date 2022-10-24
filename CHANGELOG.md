@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+- Add support for using named (keyword) arguments in place of positional arguments in stubs. [#47](https://github.com/icy-arctic-fox/spectator/issues/47)
+
 ### Fixed
 - Clear stubs defined with `expect().to receive()` syntax after test finishes to prevent leakage between tests.
 - Ensure stubs defined with `allow().to receive()` syntax are cleared after test finishes when used inside a test (another leakage).
