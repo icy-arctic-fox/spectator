@@ -30,7 +30,7 @@ module Spectator
     end
 
     # Instance of empty arguments.
-    class_getter none : AbstractArguments = capture
+    class_getter none : AbstractArguments = build
 
     # Returns unconstrained arguments.
     def self.any : AbstractArguments?
