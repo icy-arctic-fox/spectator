@@ -97,6 +97,14 @@ Spectator.describe Spectator::Arguments do
         is_expected.to eq("(no args)")
       end
     end
+
+    context "with a splat and no arguments" do
+      let(arguments) { Spectator::Arguments.build(NamedTuple.new, :splat, {:x, :y, :z}, {bar: "baz", qux: 123}) }
+
+      it "omits the splat name" do
+        is_expected.to eq("(:x, :y, :z, bar: \"baz\", qux: 123)")
+      end
+    end
   end
 
   describe "#==" do
