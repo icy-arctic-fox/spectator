@@ -184,7 +184,7 @@ module Spectator
     # Handle all methods but only respond to configured messages.
     # Raises an `UnexpectedMessage` error for non-configures messages.
     macro method_missing(call)
-      args = ::Spectator::Arguments.build({{call.args.splat(", ")}}{{call.named_args.splat if call.named_args}})
+      args = ::Spectator::Arguments.capture({{call.args.splat(", ")}}{{call.named_args.splat if call.named_args}})
       call = ::Spectator::MethodCall.new({{call.name.symbolize}}, args)
       _spectator_record_call(call)
 

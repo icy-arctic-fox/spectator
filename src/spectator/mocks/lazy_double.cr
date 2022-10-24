@@ -53,7 +53,7 @@ module Spectator
     # Handles all messages.
     macro method_missing(call)
       # Capture information about the call.
-      %args = ::Spectator::Arguments.build({{call.args.splat(", ")}}{{call.named_args.splat if call.named_args}})
+      %args = ::Spectator::Arguments.capture({{call.args.splat(", ")}}{{call.named_args.splat if call.named_args}})
       %call = ::Spectator::MethodCall.new({{call.name.symbolize}}, %args)
       _spectator_record_call(%call)
 
