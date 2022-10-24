@@ -111,9 +111,9 @@ module Spectator
       # Add the keyword arguments.
       offset = args.size
       offset += splat.size if (splat = @splat)
-      kwargs.each_with_index(offset) do |name, value, i|
+      kwargs.each_with_index(offset) do |key, value, i|
         io << ", " if i > 0
-        io << name << ": "
+        io << key << ": "
         value.inspect(io)
       end
 
