@@ -145,7 +145,9 @@ module Spectator
             {% for arg, i in method.args %}{% if !method.splat_index || i < method.splat_index %}{{arg.internal_name.stringify}}: {{arg.internal_name}}, {% end %}{% end %}
           ),
           {% if method.splat_index && (splat = method.args[method.splat_index].internal_name) %}{{splat.symbolize}}, {{splat}},{% end %}
-          {{method.double_splat}}
+          ::NamedTuple.new(
+            {% for arg, i in method.args %}{% if method.splat_index && i > method.splat_index %}{{arg.internal_name.stringify}}: {{arg.internal_name}}, {% end %}{% end %}
+          ).merge({{method.double_splat}})
         )
         %call = ::Spectator::MethodCall.new({{method.name.symbolize}}, %args)
         _spectator_record_call(%call)
@@ -245,7 +247,9 @@ module Spectator
             {% for arg, i in method.args %}{% if !method.splat_index || i < method.splat_index %}{{arg.internal_name.stringify}}: {{arg.internal_name}}, {% end %}{% end %}
           ),
           {% if method.splat_index && (splat = method.args[method.splat_index].internal_name) %}{{splat.symbolize}}, {{splat}},{% end %}
-          {{method.double_splat}}
+          ::NamedTuple.new(
+            {% for arg, i in method.args %}{% if method.splat_index && i > method.splat_index %}{{arg.internal_name.stringify}}: {{arg.internal_name}}, {% end %}{% end %}
+          ).merge({{method.double_splat}})
         )
         %call = ::Spectator::MethodCall.new({{method.name.symbolize}}, %args)
         _spectator_record_call(%call)

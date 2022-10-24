@@ -11,7 +11,7 @@ Spectator.describe "Mock DSL", :smoke do
           args[1].as(Int32),
           args[2].as(Int32),
         },
-        args[3].as(Int32),
+        args[:kwarg].as(Int32),
         {
           x: args[:x].as(Int32),
           y: args[:y].as(Int32),
