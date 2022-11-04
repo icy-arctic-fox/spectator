@@ -124,10 +124,20 @@ module Spectator::DSL
     # This means that values defined by `let` and `subject` are available.
     define_example_hook :before_each
 
+    # :ditto:
+    macro before(&block)
+      before_each {{block}}
+    end
+
     # Defines a block of code that will be invoked after every example in the group.
     # The block will be run in the context of the current running example.
     # This means that values defined by `let` and `subject` are available.
     define_example_hook :after_each
+
+    # :ditto:
+    macro after(&block)
+      after_each {{block}}
+    end
 
     # Defines a block of code that will be invoked around every example in the group.
     # The block will be run in the context of the current running example.
@@ -138,6 +148,11 @@ module Spectator::DSL
     # The `Example::Procsy#run` method should be called to ensure the example runs.
     # More code can run afterwards (in the block).
     define_example_hook :around_each
+
+    # :ditto:
+    macro around(&block)
+      around_each {{block}}
+    end
 
     # Defines a block of code that will be invoked before every example in the group.
     # The block will be run in the context of the current running example.
