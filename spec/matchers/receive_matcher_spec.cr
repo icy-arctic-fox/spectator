@@ -169,7 +169,7 @@ Spectator.describe Spectator::Matchers::ReceiveMatcher do
       end
 
       context "with method calls" do
-        before_each do
+        before do
           dbl.test_method
           dbl.test_method(1, "wrong", :xyz, foo: "foobarbaz")
           dbl.irrelevant("foo")
@@ -289,7 +289,7 @@ Spectator.describe Spectator::Matchers::ReceiveMatcher do
 
       pre_condition { expect(match_data).to be_a(failed_match) }
 
-      before_each do
+      before do
         dbl.test_method
         dbl.test_method(1, "test", :xyz, foo: "foobarbaz")
         dbl.irrelevant("foo")

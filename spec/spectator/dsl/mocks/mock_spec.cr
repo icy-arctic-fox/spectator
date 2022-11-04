@@ -947,7 +947,7 @@ Spectator.describe "Mock DSL", :smoke do
     let(override) { :override }
     let(fake) { mock(Dummy, override: override) }
 
-    before_each { allow(fake).to receive(:memoize).and_return(memoize) }
+    before { allow(fake).to receive(:memoize).and_return(memoize) }
 
     it "doesn't change predefined values" do
       expect(fake.predefined).to eq(:predefined)

@@ -312,7 +312,7 @@ Spectator.describe "Double DSL", :smoke do
     let(override) { :override }
     let(dbl) { double(:context_double, override: override) }
 
-    before_each { allow(dbl).to receive(:memoize).and_return(memoize) }
+    before { allow(dbl).to receive(:memoize).and_return(memoize) }
 
     it "doesn't change predefined values" do
       expect(dbl.predefined).to eq(:predefined)

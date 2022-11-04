@@ -309,7 +309,7 @@ Spectator.describe Spectator::Double do
     subject(dbl) { ClassDouble }
     let(foo_stub) { Spectator::ValueStub.new(:foo, :override) }
 
-    after_each { dbl._spectator_clear_stubs }
+    after { dbl._spectator_clear_stubs }
 
     it "overrides an existing method" do
       expect { dbl._spectator_define_stub(foo_stub) }.to change { dbl.foo }.from(:stub).to(:override)
@@ -357,7 +357,7 @@ Spectator.describe Spectator::Double do
     end
 
     describe "._spectator_clear_stubs" do
-      before_each { dbl._spectator_define_stub(foo_stub) }
+      before { dbl._spectator_define_stub(foo_stub) }
 
       it "removes previously defined stubs" do
         expect { dbl._spectator_clear_stubs }.to change { dbl.foo }.from(:override).to(:stub)
@@ -365,7 +365,7 @@ Spectator.describe Spectator::Double do
     end
 
     describe "._spectator_calls" do
-      before_each { dbl._spectator_clear_calls }
+      before { dbl._spectator_clear_calls }
 
       # Retrieves symbolic names of methods called on a double.
       def called_method_names(dbl)
@@ -440,7 +440,7 @@ Spectator.describe Spectator::Double do
     subject(dbl) { FooBarDouble.new }
     let(stub) { Spectator::ValueStub.new(:foo, 5) }
 
-    before_each { dbl._spectator_define_stub(stub) }
+    before { dbl._spectator_define_stub(stub) }
 
     it "removes previously defined stubs" do
       expect { dbl._spectator_clear_stubs }.to change { dbl.foo }.from(5).to(42)
@@ -451,7 +451,7 @@ Spectator.describe Spectator::Double do
     subject(dbl) { FooBarDouble.new }
     let(stub) { Spectator::ValueStub.new(:foo, 5) }
 
-    before_each { dbl._spectator_define_stub(stub) }
+    before { dbl._spectator_define_stub(stub) }
 
     # Retrieves symbolic names of methods called on a double.
     def called_method_names(dbl)

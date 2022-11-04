@@ -312,7 +312,7 @@ Spectator.describe Spectator::Mock do
       let(mock) { MockThing }
       let(foo_stub) { Spectator::ValueStub.new(:foo, :override) }
 
-      after_each { mock._spectator_clear_stubs }
+      after { mock._spectator_clear_stubs }
 
       it "overrides an existing method" do
         expect { mock._spectator_define_stub(foo_stub) }.to change { mock.foo }.from(:stub).to(:override)
@@ -368,7 +368,7 @@ Spectator.describe Spectator::Mock do
       end
 
       describe "._spectator_clear_stubs" do
-        before_each { mock._spectator_define_stub(foo_stub) }
+        before { mock._spectator_define_stub(foo_stub) }
 
         it "removes previously defined stubs" do
           expect { mock._spectator_clear_stubs }.to change { mock.foo }.from(:override).to(:stub)
@@ -376,7 +376,7 @@ Spectator.describe Spectator::Mock do
       end
 
       describe "._spectator_calls" do
-        before_each { mock._spectator_clear_calls }
+        before { mock._spectator_clear_calls }
 
         # Retrieves symbolic names of methods called on a mock.
         def called_method_names(mock)
@@ -410,7 +410,7 @@ Spectator.describe Spectator::Mock do
 
       let(mock) { MockThing.new }
 
-      after_each { mock._spectator_clear_stubs }
+      after { mock._spectator_clear_stubs }
 
       it "raises a TypeCastError when using a value-based stub" do
         stub = Spectator::ValueStub.new(:oops, nil).as(Spectator::Stub)
@@ -461,7 +461,7 @@ Spectator.describe Spectator::Mock do
       let(mock) { MockedClass.new }
 
       # Necessary to clear stubs to prevent leakages between tests.
-      after_each { mock._spectator_clear_stubs }
+      after { mock._spectator_clear_stubs }
 
       it "overrides responses from methods with keyword arguments" do
         expect(mock.method1).to eq(123)
@@ -571,8 +571,8 @@ Spectator.describe Spectator::Mock do
       let(mock) { MockedStruct.new }
 
       # Necessary to clear stubs to prevent leakages between tests.
-      after_each { mock._spectator_clear_stubs }
-      after_each { MockedStruct._spectator_invocations.clear }
+      after { mock._spectator_clear_stubs }
+      after { MockedStruct._spectator_invocations.clear }
 
       it "overrides responses from methods with keyword arguments" do
         expect(mock.method1).to eq(123)
@@ -656,7 +656,7 @@ Spectator.describe Spectator::Mock do
       let(mock) { Thing }
       let(foo_stub) { Spectator::ValueStub.new(:foo, :override) }
 
-      after_each { mock._spectator_clear_stubs }
+      after { mock._spectator_clear_stubs }
 
       it "overrides an existing method" do
         expect { mock._spectator_define_stub(foo_stub) }.to change { mock.foo }.from(:stub).to(:override)
@@ -712,7 +712,7 @@ Spectator.describe Spectator::Mock do
       end
 
       describe "._spectator_clear_stubs" do
-        before_each { mock._spectator_define_stub(foo_stub) }
+        before { mock._spectator_define_stub(foo_stub) }
 
         it "removes previously defined stubs" do
           expect { mock._spectator_clear_stubs }.to change { mock.foo }.from(:override).to(:stub)
@@ -720,7 +720,7 @@ Spectator.describe Spectator::Mock do
       end
 
       describe "._spectator_calls" do
-        before_each { mock._spectator_clear_calls }
+        before { mock._spectator_clear_calls }
 
         # Retrieves symbolic names of methods called on a mock.
         def called_method_names(mock)
@@ -756,7 +756,7 @@ Spectator.describe Spectator::Mock do
 
       let(mock) { NoReturnThing.new }
 
-      after_each { mock._spectator_clear_stubs }
+      after { mock._spectator_clear_stubs }
 
       it "raises a TypeCastError when using a value-based stub" do
         stub = Spectator::ValueStub.new(:oops, nil).as(Spectator::Stub)

@@ -52,7 +52,7 @@ Spectator.describe "Explicit Subject" do
     describe Array(Int32) do # TODO: Multiple arguments to describe/context.
       subject { [] of Int32 }
 
-      before_each { subject.push(1, 2, 3) }
+      before { subject.push(1, 2, 3) }
 
       it "has the prescribed elements" do
         expect(subject).to eq([1, 2, 3])
