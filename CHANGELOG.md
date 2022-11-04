@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Added
 - Add support for using named (keyword) arguments in place of positional arguments in stubs. [#47](https://github.com/icy-arctic-fox/spectator/issues/47)
+- Add `before`, `after`, and `around` as aliases for `before_each`, `after_each`, and `around_each` respectively.
 
 ### Fixed
 - Clear stubs defined with `expect().to receive()` syntax after test finishes to prevent leakage between tests.
