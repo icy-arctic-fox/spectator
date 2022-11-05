@@ -20,6 +20,13 @@ module Spectator
     def initialize(method : Symbol, @value : T, constraint : AbstractArguments? = nil, location : Location? = nil)
       super(method, constraint, location)
     end
+
+    # String representation of the stub, formatted as a method call and return value.
+    def to_s(io : IO) : Nil
+      super
+      io << " # => "
+      @value.inspect(io)
+    end
   end
 
   module StubModifiers

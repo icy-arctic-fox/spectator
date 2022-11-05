@@ -9,5 +9,11 @@ module Spectator
   abstract class TypedStub(T) < Stub
     # Invokes the stubbed implementation.
     abstract def call(call : MethodCall) : T
+
+    # String representation of the stub, formatted as a method call.
+    def to_s(io : IO) : Nil
+      super
+      io << " : " << T
+    end
   end
 end
