@@ -31,7 +31,7 @@ module Spectator::Formatting::Components
     end
 
     # Writes the counts to the output.
-    def to_s(io)
+    def to_s(io : IO) : Nil
       io << @examples << " examples, " << @failures << " failures"
 
       if @errors > 0

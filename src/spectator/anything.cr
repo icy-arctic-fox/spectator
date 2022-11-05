@@ -13,12 +13,12 @@ module Spectator
     end
 
     # Displays "anything".
-    def to_s(io)
+    def to_s(io : IO) : Nil
       io << "anything"
     end
 
     # Displays "<anything>".
-    def inspect(io)
+    def inspect(io : IO) : Nil
       io << "<anything>"
     end
   end

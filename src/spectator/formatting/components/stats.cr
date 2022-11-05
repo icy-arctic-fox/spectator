@@ -11,7 +11,7 @@ module Spectator::Formatting::Components
     end
 
     # Displays the stats.
-    def to_s(io)
+    def to_s(io : IO) : Nil
       runtime(io)
       totals(io)
       if seed = @report.random_seed?

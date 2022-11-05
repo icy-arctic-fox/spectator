@@ -10,12 +10,12 @@ abstract class SpectatorContext
   # and that the Crystal compiler instantiates a `#to_s` and/or `#inspect` for each of those types,
   # an explosion in method instances can be created.
   # The compile time is drastically reduced by using a dummy string instead.
-  def to_s(io)
+  def to_s(io : IO) : Nil
     io << "Context"
   end
 
   # :ditto:
-  def inspect(io)
+  def inspect(io : IO) : Nil
     io << "Context<" << self.class << '>'
   end
 end

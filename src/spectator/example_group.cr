@@ -112,7 +112,7 @@ module Spectator
 
     # Constructs the full name or description of the example group.
     # This prepends names of groups this group is part of.
-    def to_s(io)
+    def to_s(io : IO) : Nil
       # Prefix with group's full name if the node belongs to a group.
       return unless parent = @group
 

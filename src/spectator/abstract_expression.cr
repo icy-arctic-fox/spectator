@@ -34,7 +34,7 @@ module Spectator
 
     # Produces a string representation of the expression.
     # This consists of the label (if one is available) and the value.
-    def to_s(io)
+    def to_s(io : IO) : Nil
       if (label = @label)
         io << label << ": "
       end
@@ -43,7 +43,7 @@ module Spectator
 
     # Produces a detailed string representation of the expression.
     # This consists of the label (if one is available) and the value.
-    def inspect(io)
+    def inspect(io : IO) : Nil
       if (label = @label)
         io << label << ": "
       end

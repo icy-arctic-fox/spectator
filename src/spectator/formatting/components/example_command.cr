@@ -9,7 +9,7 @@ module Spectator::Formatting::Components
     end
 
     # Produces output for running the previously specified example.
-    def to_s(io)
+    def to_s(io : IO) : Nil
       io << "crystal spec "
 
       # Use location for argument if it's available, since it's simpler.

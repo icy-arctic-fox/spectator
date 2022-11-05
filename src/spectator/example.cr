@@ -191,7 +191,7 @@ module Spectator
 
     # Constructs the full name or description of the example.
     # This prepends names of groups this example is part of.
-    def to_s(io)
+    def to_s(io : IO) : Nil
       name = @name
 
       # Prefix with group's full name if the node belongs to a group.
@@ -210,7 +210,7 @@ module Spectator
     end
 
     # Exposes information about the example useful for debugging.
-    def inspect(io)
+    def inspect(io : IO) : Nil
       super
       io << ' ' << result
     end
@@ -286,7 +286,7 @@ module Spectator
 
       # Constructs the full name or description of the example.
       # This prepends names of groups this example is part of.
-      def to_s(io) : Nil
+      def to_s(io : IO) : Nil
         @example.to_s(io)
       end
     end

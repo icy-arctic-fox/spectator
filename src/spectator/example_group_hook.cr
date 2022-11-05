@@ -42,7 +42,7 @@ module Spectator
 
     # Produces the string representation of the hook.
     # Includes the location and label if they're not nil.
-    def to_s(io)
+    def to_s(io : IO) : Nil
       io << "example group hook"
 
       if (label = @label)

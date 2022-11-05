@@ -66,12 +66,12 @@ module Spectator
 
     # Constructs the full name or description of the node.
     # This prepends names of groups this node is part of.
-    def to_s(io)
+    def to_s(io : IO) : Nil
       display_name.to_s(io)
     end
 
     # Exposes information about the node useful for debugging.
-    def inspect(io)
+    def inspect(io : IO) : Nil
       # Full node name.
       io << '"' << self << '"'
 

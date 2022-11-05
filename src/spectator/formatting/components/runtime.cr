@@ -15,7 +15,7 @@ module Spectator::Formatting::Components
     # #:##:##
     # # days #:##:##
     # ```
-    def to_s(io)
+    def to_s(io : IO) : Nil
       millis = @span.total_milliseconds
       return format_micro(io, millis * 1000) if millis < 1
 

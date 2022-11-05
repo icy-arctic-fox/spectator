@@ -10,7 +10,7 @@ module Spectator::Formatting::Components
     end
 
     # Produces the list of commands to run failed examples.
-    def to_s(io)
+    def to_s(io : IO) : Nil
       io.puts "Failed examples:"
       io.puts
       @failures.each do |failure|

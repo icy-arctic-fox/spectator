@@ -15,7 +15,7 @@ module Spectator::Matchers
       extend self
 
       # Text displayed when a method is undefined.
-      def inspect(io)
+      def inspect(io : IO) : Nil
         io << "<Method undefined>"
       end
     end

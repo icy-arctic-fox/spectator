@@ -43,7 +43,7 @@ module Spectator
     end
 
     # One-word description of the result.
-    def to_s(io)
+    def to_s(io : IO) : Nil
       io << "pending"
     end
 

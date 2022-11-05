@@ -10,7 +10,7 @@ module Spectator::Formatting::Components
     end
 
     # Produces the output containing the profiling information.
-    def to_s(io)
+    def to_s(io : IO) : Nil
       io << "# Top "
       io << @profile.size
       io << " slowest examples ("

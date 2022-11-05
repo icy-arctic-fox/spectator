@@ -16,7 +16,7 @@ module Spectator::Formatting::Components
     end
 
     # Writes the comment to the output.
-    def to_s(io)
+    def to_s(io : IO) : Nil
       io << "# " << @content
     end
   end

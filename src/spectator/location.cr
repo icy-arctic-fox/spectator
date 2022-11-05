@@ -59,7 +59,7 @@ module Spectator
     # ```text
     # FILE:LINE
     # ```
-    def to_s(io)
+    def to_s(io : IO) : Nil
       io << path << ':' << line
     end
   end

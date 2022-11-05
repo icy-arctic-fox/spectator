@@ -41,7 +41,7 @@ module Spectator::Formatting::Components
     private abstract def content(io)
 
     # Writes the component's output to the specified stream.
-    def to_s(io)
+    def to_s(io : IO) : Nil
       title_line(io)
       # Ident over to align with the spacing used by the index.
       indent(index_digit_count + 2) do
