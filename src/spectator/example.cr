@@ -103,8 +103,8 @@ module Spectator
     # Returns the result of the execution.
     # The result will also be stored in `#result`.
     def run : Result
-      Log.debug { "Running example #{self}" }
-      Log.warn { "Example #{self} already ran" } if @finished
+      Log.debug { "Running example: #{self}" }
+      Log.warn { "Example already ran: #{self}" } if @finished
 
       if pending?
         Log.debug { "Skipping example #{self} - marked pending" }
@@ -142,8 +142,10 @@ module Spectator
         group.call_before_each(self)
         group.call_pre_condition(self)
       end
+      Log.trace { "Running example code for: #{self}" }
       @entrypoint.call(self)
       @finished = true
+      Log.trace { "Finished running example code for: #{self}" }
       if group = @group
         group.call_post_condition(self)
         group.call_after_each(self)
@@ -212,7 +214,7 @@ module Spectator
     # Exposes information about the example useful for debugging.
     def inspect(io : IO) : Nil
       super
-      io << ' ' << result
+      io << " - " << result
     end
 
     # Creates the JSON representation of the example,

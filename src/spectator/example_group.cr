@@ -19,14 +19,14 @@ module Spectator
     protected setter group : ExampleGroup?
 
     define_hook before_all : ExampleGroupHook do
-      Log.trace { "Processing before_all hooks for #{self}" }
+      Log.trace { "Processing before_all hooks for: #{self}" }
 
       @group.try &.call_before_all
       before_all_hooks.each &.call_once
     end
 
     define_hook after_all : ExampleGroupHook, :prepend do
-      Log.trace { "Processing after_all hooks for #{self}" }
+      Log.trace { "Processing after_all hooks for: #{self}" }
 
       after_all_hooks.each &.call_once if finished?
       if group = @group
@@ -35,21 +35,21 @@ module Spectator
     end
 
     define_hook before_each : ExampleHook do |example|
-      Log.trace { "Processing before_each hooks for #{self}" }
+      Log.trace { "Processing before_each hooks for: #{self}" }
 
       @group.try &.call_before_each(example)
       before_each_hooks.each &.call(example)
     end
 
     define_hook after_each : ExampleHook, :prepend do |example|
-      Log.trace { "Processing after_each hooks for #{self}" }
+      Log.trace { "Processing after_each hooks for: #{self}" }
 
       after_each_hooks.each &.call(example)
       @group.try &.call_after_each(example)
     end
 
     define_hook around_each : ExampleProcsyHook do |procsy|
-      Log.trace { "Processing around_each hooks for #{self}" }
+      Log.trace { "Processing around_each hooks for: #{self}" }
 
       around_each_hooks.reverse_each { |hook| procsy = hook.wrap(procsy) }
       if group = @group
@@ -59,14 +59,14 @@ module Spectator
     end
 
     define_hook pre_condition : ExampleHook do |example|
-      Log.trace { "Processing pre_condition hooks for #{self}" }
+      Log.trace { "Processing pre_condition hooks for: #{self}" }
 
       @group.try &.call_pre_condition(example)
       pre_condition_hooks.each &.call(example)
     end
 
     define_hook post_condition : ExampleHook, :prepend do |example|
-      Log.trace { "Processing post_condition hooks for #{self}" }
+      Log.trace { "Processing post_condition hooks for: #{self}" }
 
       post_condition_hooks.each &.call(example)
       @group.try &.call_post_condition(example)
