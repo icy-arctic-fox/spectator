@@ -296,7 +296,7 @@ Spectator.describe Spectator::Matchers::ReceiveMatcher do
       end
 
       it "has the expected call listed" do
-        is_expected.to contain({:expected, "Not #{stub}"})
+        is_expected.to contain({:expected, "Not #{stub.message}"})
       end
 
       it "has the list of called methods" do

@@ -22,17 +22,29 @@ module Spectator
     def initialize(@method : Symbol, @constraint : AbstractArguments? = nil, @location : Location? = nil)
     end
 
+    # String representation of the stub, formatted as a method call.
+    def message(io : IO) : Nil
+      io << "#" << method << (constraint || "(any args)")
+    end
+
+    # String representation of the stub, formatted as a method call.
+    def message
+      String.build do |str|
+        message(str)
+      end
+    end
+
+    # String representation of the stub, formatted as a method definition.
+    def to_s(io : IO) : Nil
+      message(io)
+    end
+
     # Checks if a method call should receive the response from this stub.
     def ===(call : MethodCall)
       return false if method != call.method
       return true unless constraint = @constraint
 
       constraint === call.arguments
-    end
-
-    # String representation of the stub, formatted as a method call.
-    def to_s(io : IO) : Nil
-      io << "#" << method << (constraint || "(any args)")
     end
   end
 end

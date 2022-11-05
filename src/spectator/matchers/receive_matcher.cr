@@ -81,7 +81,7 @@ module Spectator::Matchers
 
     # Short text about the matcher's purpose.
     def description : String
-      "received #{@stub} #{humanize_count}"
+      "received #{@stub.message} #{humanize_count}"
     end
 
     # Actually performs the test against the expression (value or block).
@@ -89,10 +89,10 @@ module Spectator::Matchers
       stubbed = actual.value
       calls = relevant_calls(stubbed)
       if @count.includes?(calls.size)
-        SuccessfulMatchData.new("#{actual.label} received #{@stub} #{humanize_count}")
+        SuccessfulMatchData.new("#{actual.label} received #{@stub.message} #{humanize_count}")
       else
-        FailedMatchData.new("#{actual.label} received #{@stub} #{humanize_count}",
-          "#{actual.label} did not receive #{@stub}", values(actual).to_a)
+        FailedMatchData.new("#{actual.label} received #{@stub.message} #{humanize_count}",
+          "#{actual.label} did not receive #{@stub.message}", values(actual).to_a)
       end
     end
 
@@ -106,9 +106,9 @@ module Spectator::Matchers
       stubbed = actual.value
       calls = relevant_calls(stubbed)
       if @count.includes?(calls.size)
-        FailedMatchData.new("#{actual.label} did not receive #{@stub}", "#{actual.label} received #{@stub}", negated_values(actual).to_a)
+        FailedMatchData.new("#{actual.label} did not receive #{@stub.message}", "#{actual.label} received #{@stub.message}", negated_values(actual).to_a)
       else
-        SuccessfulMatchData.new("#{actual.label} did not receive #{@stub} #{humanize_count}")
+        SuccessfulMatchData.new("#{actual.label} did not receive #{@stub.message} #{humanize_count}")
       end
     end
 
@@ -120,7 +120,7 @@ module Spectator::Matchers
     # Additional information about the match failure.
     private def values(actual : Expression(T)) forall T
       {
-        expected: @stub.to_s,
+        expected: @stub.message,
         actual:   method_call_list(actual.value),
       }
     end
@@ -128,7 +128,7 @@ module Spectator::Matchers
     # Additional information about the match failure when negated.
     private def negated_values(actual : Expression(T)) forall T
       {
-        expected: "Not #{@stub}",
+        expected: "Not #{@stub.message}",
         actual:   method_call_list(actual.value),
       }
     end
