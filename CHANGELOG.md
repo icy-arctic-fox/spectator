@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Clear stubs defined with `expect().to receive()` syntax after test finishes to prevent leakage between tests.
 - Ensure stubs defined with `allow().to receive()` syntax are cleared after test finishes when used inside a test (another leakage).
+- Fix crash caused when logging is enabled after running an example that attempts to exit.
 
 ### Removed
 - Removed support for stubbing undefined (untyped) methods in lazy doubles. Avoids possible segfault.
