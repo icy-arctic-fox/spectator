@@ -95,6 +95,12 @@ module Spectator
       false
     end
 
+    # Simplified string representation of a double.
+    # Avoids displaying nested content and bloating method instantiation.
+    def to_s(io : IO) : Nil
+      io << _spectator_stubbed_name
+    end
+
     # Defines a stub to change the behavior of a method in this double.
     #
     # NOTE: Defining a stub for a method not defined in the double's type has no effect.
