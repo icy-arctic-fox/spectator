@@ -112,11 +112,15 @@ module Spectator
 
     # Constructs the full name or description of the example group.
     # This prepends names of groups this group is part of.
-    def to_s(io : IO) : Nil
-      # Prefix with group's full name if the node belongs to a group.
-      return unless parent = @group
+    def to_s(io : IO, *, nested = false) : Nil
+      unless parent = @group
+        # Display special string when called directly.
+        io << "<root>" unless nested
+        return
+      end
 
-      parent.to_s(io)
+      # Prefix with group's full name if the node belongs to a group.
+      parent.to_s(io, nested: true)
       name = @name
 
       # Add padding between the node names
@@ -126,7 +130,7 @@ module Spectator
                        (parent.name?.is_a?(Symbol) && name.is_a?(String) &&
                        (name.starts_with?('#') || name.starts_with?('.')))
 
-      super
+      super(io)
     end
 
     # Adds the specified *node* to the group.
