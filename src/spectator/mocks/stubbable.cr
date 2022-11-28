@@ -1,5 +1,5 @@
 require "../dsl/reserved"
-require "./arguments"
+require "./formal_arguments"
 require "./method_call"
 require "./stub"
 require "./typed_stub"
@@ -140,7 +140,8 @@ module Spectator
       ){% if method.return_type %} : {{method.return_type}}{% end %}{% if !method.free_vars.empty? %} forall {{method.free_vars.splat}}{% end %}
 
         # Capture information about the call.
-        %args = ::Spectator::Arguments.build(
+        %call = ::Spectator::MethodCall.build(
+          {{method.name.symbolize}},
           ::NamedTuple.new(
             {% for arg, i in method.args %}{% if !method.splat_index || i < method.splat_index %}{{arg.internal_name.stringify}}: {{arg.internal_name}}, {% end %}{% end %}
           ),
@@ -149,7 +150,6 @@ module Spectator
             {% for arg, i in method.args %}{% if method.splat_index && i > method.splat_index %}{{arg.internal_name.stringify}}: {{arg.internal_name}}, {% end %}{% end %}
           ).merge({{method.double_splat}})
         )
-        %call = ::Spectator::MethodCall.new({{method.name.symbolize}}, %args)
         _spectator_record_call(%call)
 
         # Attempt to find a stub that satisfies the method call and arguments.
@@ -242,7 +242,8 @@ module Spectator
       ){% if method.return_type %} : {{method.return_type}}{% end %}{% if !method.free_vars.empty? %} forall {{method.free_vars.splat}}{% end %}
 
         # Capture information about the call.
-        %args = ::Spectator::Arguments.build(
+        %call = ::Spectator::MethodCall.build(
+          {{method.name.symbolize}},
           ::NamedTuple.new(
             {% for arg, i in method.args %}{% if !method.splat_index || i < method.splat_index %}{{arg.internal_name.stringify}}: {{arg.internal_name}}, {% end %}{% end %}
           ),
@@ -251,7 +252,6 @@ module Spectator
             {% for arg, i in method.args %}{% if method.splat_index && i > method.splat_index %}{{arg.internal_name.stringify}}: {{arg.internal_name}}, {% end %}{% end %}
           ).merge({{method.double_splat}})
         )
-        %call = ::Spectator::MethodCall.new({{method.name.symbolize}}, %args)
         _spectator_record_call(%call)
 
         # Attempt to find a stub that satisfies the method call and arguments.

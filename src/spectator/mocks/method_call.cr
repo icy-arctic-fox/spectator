@@ -1,5 +1,6 @@
 require "./abstract_arguments"
 require "./arguments"
+require "./formal_arguments"
 
 module Spectator
   # Stores information about a call to a method.
@@ -16,7 +17,14 @@ module Spectator
 
     # Creates a method call by splatting its arguments.
     def self.capture(method : Symbol, *args, **kwargs)
-      arguments = Arguments.new(args, kwargs).as(AbstractArguments)
+      arguments = Arguments.capture(*args, **kwargs).as(AbstractArguments)
+      new(method, arguments)
+    end
+
+    # Creates a method call from within a method.
+    # Takes the same arguments as `FormalArguments.build` but with the method name first.
+    def self.build(method : Symbol, *args, **kwargs)
+      arguments = FormalArguments.build(*args, **kwargs).as(AbstractArguments)
       new(method, arguments)
     end
 
