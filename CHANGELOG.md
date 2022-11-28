@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [0.11.4]
 ### Added
 - Add support for using named (keyword) arguments in place of positional arguments in stubs. [#47](https://github.com/icy-arctic-fox/spectator/issues/47)
 - Add `before`, `after`, and `around` as aliases for `before_each`, `after_each`, and `around_each` respectively.
@@ -416,7 +416,8 @@ This has been changed so that it compiles and raises an error at runtime with a 
 First version ready for public use.
 
 
-[Unreleased]: https://gitlab.com/arctic-fox/spectator/-/compare/v0.11.3...master
+[Unreleased]: https://gitlab.com/arctic-fox/spectator/-/compare/v0.11.4...master
+[0.11.3]: https://gitlab.com/arctic-fox/spectator/-/compare/v0.11.3...v0.11.4
 [0.11.3]: https://gitlab.com/arctic-fox/spectator/-/compare/v0.11.2...v0.11.3
 [0.11.2]: https://gitlab.com/arctic-fox/spectator/-/compare/v0.11.1...v0.11.2
 [0.11.1]: https://gitlab.com/arctic-fox/spectator/-/compare/v0.11.0...v0.11.1
