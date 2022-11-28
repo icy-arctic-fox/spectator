@@ -398,7 +398,7 @@ module Spectator
       {% end %}
     end
 
-    # Utility macro for casting a stub (and it's return value) to the correct type.
+    # Utility macro for casting a stub (and its return value) to the correct type.
     #
     # *stub* is the variable holding the stub.
     # *call* is the variable holding the captured method call.
@@ -408,49 +408,37 @@ module Spectator
     # - `:raise` - raise a `TypeCastError`.
     # - `:no_return` - raise as no value should be returned.
     private macro _spectator_cast_stub_value(stub, call, type, fail_cast = :nil)
-      # Attempt to cast the stub to the method's return type.
-      # If successful, return the value of the stub.
-      # This is a common usage where the return type is simple and matches the stub type exactly.
-      if %typed = {{stub}}.as?(::Spectator::TypedStub({{type}}))
-        %typed.call({{call}})
-      else
-        # The stub couldn't be easily cast to match the return type.
+      {% if fail_cast == :no_return %}
+        {{stub}}.call({{call}})
+        raise TypeCastError.new("#{_spectator_stubbed_name} received message #{ {{call}} } and is attempting to return a value, but it shouldn't have returned (`NoReturn`).")
+      {% else %}
+        # Get the value as-is from the stub.
+        # This will be compiled as a union of all known stubbed value types.
+        %value = {{stub}}.call({{call}})
 
-        # Even though all stubs will have a `#call` method, the compiler doesn't seem to agree.
-        # Assert that it will (this should never fail).
-        raise TypeCastError.new("Stub has no value") unless {{stub}}.responds_to?(:call)
-
-        {% if fail_cast == :no_return %}
-          {{stub}}.call({{call}})
-          raise TypeCastError.new("#{_spectator_stubbed_name} received message #{ {{call}} } and is attempting to return a value, but it shouldn't have returned (`NoReturn`).")
-        {% else %}
-          # Get the value as-is from the stub.
-          # This will be compiled as a union of all known stubbed value types.
-          %value = {{stub}}.call({{call}})
-
-          # Attempt to cast the value to the method's return type.
-          # If successful, which it will be in most cases, return it.
-          # The caller will receive a properly typed value without unions or other side-effects.
-          if %cast = %value.as?({{type}})
-            %cast
-          else
-            {% if fail_cast == :nil %}
-              nil
-            {% elsif fail_cast == :raise %}
-              # The stubbed value was something else entirely and cannot be cast to the return type.
-              # There's something weird going on (compiler bug?) that sometimes causes this class lookup to fail.
-              %type = begin
-                %value.class.to_s
-              rescue
-                "<Unknown>"
-              end
-              raise TypeCastError.new("#{_spectator_stubbed_name} received message #{ {{call}} } and is attempting to return a `#{%type}`, but returned type must be `#{ {{type}} }`.")
-            {% else %}
-              {% raise "fail_cast must be :nil, :raise, or :no_return, but got: #{fail_cast}" %}
-            {% end %}
-          end
-        {% end %}
-      end
+        # Attempt to cast the value to the method's return type.
+        # If successful, which it will be in most cases, return it.
+        # The caller will receive a properly typed value without unions or other side-effects.
+        %cast = %value.as?({{type}})
+        if %cast.is_a?({{type}})
+          %cast
+        else
+          {% if fail_cast == :nil %}
+            nil
+          {% elsif fail_cast == :raise %}
+            # The stubbed value was something else entirely and cannot be cast to the return type.
+            # There's something weird going on (compiler bug?) that sometimes causes this class lookup to fail.
+            %type = begin
+              %value.class.to_s
+            rescue
+              "<Unknown>"
+            end
+            raise TypeCastError.new("#{_spectator_stubbed_name} received message #{ {{call}} } and is attempting to return a `#{%type}`, but returned type must be `#{ {{type}} }`.")
+          {% else %}
+            {% raise "fail_cast must be :nil, :raise, or :no_return, but got: #{fail_cast}" %}
+          {% end %}
+        end
+      {% end %}
     end
   end
 end
