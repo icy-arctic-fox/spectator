@@ -101,6 +101,19 @@ module Spectator
       io << _spectator_stubbed_name
     end
 
+    # :ditto:
+    def inspect(io : IO) : Nil
+      {% if anno = @type.annotation(::Spectator::StubbedName) %}
+        io << "#<Double " << {{(anno[0] || :Anonymous.id).stringify}}
+      {% else %}
+        io << "#<Double Anonymous"
+      {% end %}
+
+      io << ":0x"
+      object_id.to_s(io, 16)
+      io << '>'
+    end
+
     # Defines a stub to change the behavior of a method in this double.
     #
     # NOTE: Defining a stub for a method not defined in the double's type has no effect.

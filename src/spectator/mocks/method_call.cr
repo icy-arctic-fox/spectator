@@ -30,7 +30,13 @@ module Spectator
 
     # Constructs a string containing the method name and arguments.
     def to_s(io : IO) : Nil
-      io << '#' << method << arguments
+      io << '#' << method
+      arguments.inspect(io)
+    end
+
+    # :ditto:
+    def inspect(io : IO) : Nil
+      to_s(io)
     end
   end
 end
