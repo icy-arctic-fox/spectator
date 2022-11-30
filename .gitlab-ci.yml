@@ -51,11 +51,6 @@ spec mocks:
   script:
     - crystal spec --error-on-warnings --junit_output=. spec/spectator/mocks/
 
-spec individual:
-  extends: spec
-  script:
-    - util/test-all-individually.sh
-
 format:
   script:
     - shards
