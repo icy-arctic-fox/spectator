@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+### Changed
+- Simplify string representation of mock-related types.
+- Remove unnecessary redefinitions of methods when adding stub functionality to a type.
+
 ## [0.11.4]
 ### Added
 - Add support for using named (keyword) arguments in place of positional arguments in stubs. [#47](https://github.com/icy-arctic-fox/spectator/issues/47)
