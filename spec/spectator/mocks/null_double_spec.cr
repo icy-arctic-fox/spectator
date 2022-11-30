@@ -186,12 +186,9 @@ Spectator.describe Spectator::NullDouble do
         expect(dbl.hash).to be_a(UInt64)
         expect(dbl.in?([42])).to be_false
         expect(dbl.in?(1, 2, 3)).to be_false
-        expect(dbl.inspect).to contain("EmptyDouble")
         expect(dbl.itself).to be(dbl)
         expect(dbl.not_nil!).to be(dbl)
-        expect(dbl.pretty_inspect).to contain("EmptyDouble")
         expect(dbl.tap { nil }).to be(dbl)
-        expect(dbl.to_s).to contain("EmptyDouble")
         expect(dbl.try { nil }).to be_nil
         expect(dbl.object_id).to be_a(UInt64)
         expect(dbl.same?(dbl)).to be_true
@@ -437,6 +434,70 @@ Spectator.describe Spectator::NullDouble do
       args = Spectator::Arguments.capture(42)
       call = dbl._spectator_calls.first
       expect(call.arguments).to eq(args)
+    end
+  end
+
+  describe "#to_s" do
+    subject(string) { dbl.to_s }
+
+    context "with a name" do
+      let(dbl) { FooBarDouble.new }
+
+      it "indicates it's a double" do
+        expect(string).to contain("NullDouble")
+      end
+
+      it "contains the double name" do
+        expect(string).to contain("dbl-name")
+      end
+    end
+
+    context "without a name" do
+      let(dbl) { EmptyDouble.new }
+
+      it "contains the double type" do
+        expect(string).to contain("NullDouble")
+      end
+
+      it "contains \"Anonymous\"" do
+        expect(string).to contain("Anonymous")
+      end
+    end
+  end
+
+  describe "#inspect" do
+    subject(string) { dbl.inspect }
+
+    context "with a name" do
+      let(dbl) { FooBarDouble.new }
+
+      it "contains the double type" do
+        expect(string).to contain("NullDouble")
+      end
+
+      it "contains the double name" do
+        expect(string).to contain("dbl-name")
+      end
+
+      it "contains the object ID" do
+        expect(string).to contain(dbl.object_id.to_s(16))
+      end
+    end
+
+    context "without a name" do
+      let(dbl) { EmptyDouble.new }
+
+      it "contains the double type" do
+        expect(string).to contain("NullDouble")
+      end
+
+      it "contains \"Anonymous\"" do
+        expect(string).to contain("Anonymous")
+      end
+
+      it "contains the object ID" do
+        expect(string).to contain(dbl.object_id.to_s(16))
+      end
     end
   end
 end

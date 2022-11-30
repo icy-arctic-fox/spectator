@@ -26,7 +26,7 @@ module Spectator
     private def _spectator_abstract_stub_fallback(call : MethodCall)
       if _spectator_stub_for_method?(call.method)
         Log.info { "Stubs are defined for #{call.method.inspect}, but none matched (no argument constraints met)." }
-        raise UnexpectedMessage.new("#{_spectator_stubbed_name} received unexpected message #{call}")
+        raise UnexpectedMessage.new("#{inspect} received unexpected message #{call}")
       else
         Log.trace { "Fallback for #{call} - return self" }
         self
@@ -42,9 +42,9 @@ module Spectator
     private def _spectator_abstract_stub_fallback(call : MethodCall, type)
       if _spectator_stub_for_method?(call.method)
         Log.info { "Stubs are defined for #{call.method.inspect}, but none matched (no argument constraints met)." }
-        raise UnexpectedMessage.new("#{_spectator_stubbed_name} received unexpected message #{call}")
+        raise UnexpectedMessage.new("#{inspect} received unexpected message #{call}")
       else
-        raise TypeCastError.new("#{_spectator_stubbed_name} received message #{call} and is attempting to return `self`, but returned type must be `#{type}`.")
+        raise TypeCastError.new("#{inspect} received message #{call} and is attempting to return `self`, but returned type must be `#{type}`.")
       end
     end
 
@@ -56,7 +56,7 @@ module Spectator
       %call = ::Spectator::MethodCall.new({{call.name.symbolize}}, %args)
       _spectator_record_call(%call)
 
-      Log.trace { "#{_spectator_stubbed_name} got undefined method `#{%call}{% if call.block %} { ... }{% end %}`" }
+      Log.trace { "#{inspect} got undefined method `#{%call}{% if call.block %} { ... }{% end %}`" }
 
       self
     end

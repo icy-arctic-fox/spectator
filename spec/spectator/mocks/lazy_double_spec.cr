@@ -275,7 +275,7 @@ Spectator.describe Spectator::LazyDouble do
 
     it "stores calls to non-stubbed methods" do
       expect { dbl.baz }.to raise_error(Spectator::UnexpectedMessage, /baz/)
-      expect(called_method_names(dbl)).to eq(%i[baz])
+      expect(called_method_names(dbl)).to contain(:baz)
     end
 
     it "stores arguments for a call" do
@@ -283,6 +283,70 @@ Spectator.describe Spectator::LazyDouble do
       args = Spectator::Arguments.capture(42)
       call = dbl._spectator_calls.first
       expect(call.arguments).to eq(args)
+    end
+  end
+
+  describe "#to_s" do
+    subject(string) { dbl.to_s }
+
+    context "with a name" do
+      let(dbl) { Spectator::LazyDouble.new("dbl-name") }
+
+      it "indicates it's a double" do
+        expect(string).to contain("LazyDouble")
+      end
+
+      it "contains the double name" do
+        expect(string).to contain("dbl-name")
+      end
+    end
+
+    context "without a name" do
+      let(dbl) { Spectator::LazyDouble.new }
+
+      it "contains the double type" do
+        expect(string).to contain("LazyDouble")
+      end
+
+      it "contains \"Anonymous\"" do
+        expect(string).to contain("Anonymous")
+      end
+    end
+  end
+
+  describe "#inspect" do
+    subject(string) { dbl.inspect }
+
+    context "with a name" do
+      let(dbl) { Spectator::LazyDouble.new("dbl-name") }
+
+      it "contains the double type" do
+        expect(string).to contain("LazyDouble")
+      end
+
+      it "contains the double name" do
+        expect(string).to contain("dbl-name")
+      end
+
+      it "contains the object ID" do
+        expect(string).to contain(dbl.object_id.to_s(16))
+      end
+    end
+
+    context "without a name" do
+      let(dbl) { Spectator::LazyDouble.new }
+
+      it "contains the double type" do
+        expect(string).to contain("LazyDouble")
+      end
+
+      it "contains \"Anonymous\"" do
+        expect(string).to contain("Anonymous")
+      end
+
+      it "contains the object ID" do
+        expect(string).to contain(dbl.object_id.to_s(16))
+      end
     end
   end
 end

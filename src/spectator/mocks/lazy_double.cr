@@ -37,13 +37,13 @@ module Spectator
 
     # Returns the double's name formatted for user output.
     private def _spectator_stubbed_name : String
-      "#<LazyDouble #{@name || "Anonymous"}>"
+      @name || "Anonymous"
     end
 
     private def _spectator_stub_fallback(call : MethodCall, &)
       if _spectator_stub_for_method?(call.method)
         Log.info { "Stubs are defined for #{call.method.inspect}, but none matched (no argument constraints met)." }
-        raise UnexpectedMessage.new("#{_spectator_stubbed_name} received unexpected message #{call}")
+        raise UnexpectedMessage.new("#{inspect} received unexpected message #{call}")
       else
         Log.trace { "Fallback for #{call} - call original" }
         yield
@@ -57,7 +57,7 @@ module Spectator
       %call = ::Spectator::MethodCall.new({{call.name.symbolize}}, %args)
       _spectator_record_call(%call)
 
-      Log.trace { "#{_spectator_stubbed_name} got undefined method `#{%call}{% if call.block %} { ... }{% end %}`" }
+      Log.trace { "#{inspect} got undefined method `#{%call}{% if call.block %} { ... }{% end %}`" }
 
       # Attempt to find a stub that satisfies the method call and arguments.
       if %stub = _spectator_find_stub(%call)

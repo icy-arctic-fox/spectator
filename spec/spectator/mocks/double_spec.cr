@@ -212,14 +212,10 @@ Spectator.describe Spectator::Double do
         expect(dbl.hash).to be_a(UInt64)
         expect(dbl.in?([42])).to be_false
         expect(dbl.in?(1, 2, 3)).to be_false
-        expect(dbl.inspect).to contain("EmptyDouble")
         expect(dbl.itself).to be(dbl)
         expect(dbl.not_nil!).to be(dbl)
-        expect(dbl.pretty_inspect).to contain("EmptyDouble")
         expect(dbl.pretty_print(pp)).to be_nil
         expect(dbl.tap { nil }).to be(dbl)
-        expect(dbl.to_s).to contain("EmptyDouble")
-        expect(dbl.to_s(io)).to be_nil
         expect(dbl.try { nil }).to be_nil
         expect(dbl.object_id).to be_a(UInt64)
         expect(dbl.same?(dbl)).to be_true
@@ -469,7 +465,7 @@ Spectator.describe Spectator::Double do
 
     it "stores calls to non-stubbed methods" do
       expect { dbl.baz }.to raise_error(Spectator::UnexpectedMessage, /baz/)
-      expect(called_method_names(dbl)).to eq(%i[baz])
+      expect(called_method_names(dbl)).to contain(:baz)
     end
 
     it "stores arguments for a call" do
@@ -477,6 +473,70 @@ Spectator.describe Spectator::Double do
       args = Spectator::Arguments.capture(42)
       call = dbl._spectator_calls.first
       expect(call.arguments).to eq(args)
+    end
+  end
+
+  describe "#to_s" do
+    subject(string) { dbl.to_s }
+
+    context "with a name" do
+      let(dbl) { FooBarDouble.new }
+
+      it "indicates it's a double" do
+        expect(string).to contain("Double")
+      end
+
+      it "contains the double name" do
+        expect(string).to contain("dbl-name")
+      end
+    end
+
+    context "without a name" do
+      let(dbl) { EmptyDouble.new }
+
+      it "indicates it's a double" do
+        expect(string).to contain("Double")
+      end
+
+      it "contains \"Anonymous\"" do
+        expect(string).to contain("Anonymous")
+      end
+    end
+  end
+
+  describe "#inspect" do
+    subject(string) { dbl.inspect }
+
+    context "with a name" do
+      let(dbl) { FooBarDouble.new }
+
+      it "indicates it's a double" do
+        expect(string).to contain("Double")
+      end
+
+      it "contains the double name" do
+        expect(string).to contain("dbl-name")
+      end
+
+      it "contains the object ID" do
+        expect(string).to contain(dbl.object_id.to_s(16))
+      end
+    end
+
+    context "without a name" do
+      let(dbl) { EmptyDouble.new }
+
+      it "indicates it's a double" do
+        expect(string).to contain("Double")
+      end
+
+      it "contains \"Anonymous\"" do
+        expect(string).to contain("Anonymous")
+      end
+
+      it "contains the object ID" do
+        expect(string).to contain(dbl.object_id.to_s(16))
+      end
     end
   end
 end

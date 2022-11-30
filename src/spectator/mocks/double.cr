@@ -98,16 +98,14 @@ module Spectator
     # Simplified string representation of a double.
     # Avoids displaying nested content and bloating method instantiation.
     def to_s(io : IO) : Nil
-      io << _spectator_stubbed_name
+      io << "#<" + {{@type.name(generic_args: false).stringify}} + " "
+      io << _spectator_stubbed_name << '>'
     end
 
     # :ditto:
     def inspect(io : IO) : Nil
-      {% if anno = @type.annotation(::Spectator::StubbedName) %}
-        io << "#<Double " << {{(anno[0] || :Anonymous.id).stringify}}
-      {% else %}
-        io << "#<Double Anonymous"
-      {% end %}
+      io << "#<" + {{@type.name(generic_args: false).stringify}} + " "
+      io << _spectator_stubbed_name
 
       io << ":0x"
       object_id.to_s(io, 16)
@@ -118,17 +116,17 @@ module Spectator
     #
     # NOTE: Defining a stub for a method not defined in the double's type has no effect.
     protected def _spectator_define_stub(stub : Stub) : Nil
-      Log.debug { "Defined stub for #{_spectator_stubbed_name} #{stub}" }
+      Log.debug { "Defined stub for #{inspect} #{stub}" }
       @stubs.unshift(stub)
     end
 
     protected def _spectator_remove_stub(stub : Stub) : Nil
-      Log.debug { "Removing stub #{stub} from #{_spectator_stubbed_name}" }
+      Log.debug { "Removing stub #{stub} from #{inspect}" }
       @stubs.delete(stub)
     end
 
     protected def _spectator_clear_stubs : Nil
-      Log.debug { "Clearing stubs for #{_spectator_stubbed_name}" }
+      Log.debug { "Clearing stubs for #{inspect}" }
       @stubs.clear
     end
 
@@ -158,17 +156,17 @@ module Spectator
     # Returns the double's name formatted for user output.
     private def _spectator_stubbed_name : String
       {% if anno = @type.annotation(StubbedName) %}
-        "#<Double " + {{(anno[0] || :Anonymous.id).stringify}} + ">"
+        {{(anno[0] || :Anonymous.id).stringify}}
       {% else %}
-        "#<Double Anonymous>"
+        "Anonymous"
       {% end %}
     end
 
     private def self._spectator_stubbed_name : String
       {% if anno = @type.annotation(StubbedName) %}
-        "#<Class Double " + {{(anno[0] || :Anonymous.id).stringify}} + ">"
+        {{(anno[0] || :Anonymous.id).stringify}}
       {% else %}
-        "#<Class Double Anonymous>"
+        "Anonymous"
       {% end %}
     end
 
@@ -188,7 +186,7 @@ module Spectator
         "Stubs are defined for #{call.method.inspect}, but none matched (no argument constraints met)."
       end
 
-      raise UnexpectedMessage.new("#{_spectator_stubbed_name} received unexpected message #{call}")
+      raise UnexpectedMessage.new("#{inspect} received unexpected message #{call}")
     end
 
     private def _spectator_abstract_stub_fallback(call : MethodCall, type)
@@ -207,9 +205,9 @@ module Spectator
       call = ::Spectator::MethodCall.new({{call.name.symbolize}}, args)
       _spectator_record_call(call)
 
-      Log.trace { "#{_spectator_stubbed_name} got undefined method `#{call}{% if call.block %} { ... }{% end %}`" }
+      Log.trace { "#{inspect} got undefined method `#{call}{% if call.block %} { ... }{% end %}`" }
 
-      raise ::Spectator::UnexpectedMessage.new("#{_spectator_stubbed_name} received unexpected message #{call}")
+      raise ::Spectator::UnexpectedMessage.new("#{inspect} received unexpected message #{call}")
       nil # Necessary for compiler to infer return type as nil. Avoids runtime "can't execute ... `x` has no type errors".
     end
   end
