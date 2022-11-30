@@ -338,63 +338,65 @@ module Spectator
     # Redefines all methods and ones inherited from its parents and mixins to support stubs.
     private macro stub_type(type_name = @type)
       {% type = type_name.resolve
-         # Reverse order of ancestors (there's currently no reverse method for ArrayLiteral).
-         count = type.ancestors.size
-         ancestors = type.ancestors.map_with_index { |_, i| type.ancestors[count - i - 1] } %}
-      {% for ancestor in ancestors %}
-        {% for method in ancestor.methods.reject do |meth|
-                           meth.name.starts_with?("_spectator") ||
-                             ::Spectator::DSL::RESERVED_KEYWORDS.includes?(meth.name.symbolize)
-                         end %}
-          {{(method.abstract? ? :abstract_stub : :default_stub).id}} {{method.visibility.id if method.visibility != :public}} def {{"#{method.receiver}.".id if method.receiver}}{{method.name}}(
-            {% for arg, i in method.args %}{% if i == method.splat_index %}*{% end %}{{arg}}, {% end %}
-            {% if method.double_splat %}**{{method.double_splat}}, {% end %}
-            {% if method.block_arg %}&{{method.block_arg}}{% elsif method.accepts_block? %}&{% end %}
-          ){% if method.return_type %} : {{method.return_type}}{% end %}{% if !method.free_vars.empty? %} forall {{method.free_vars.splat}}{% end %}
-            super{% if method.accepts_block? %} { |*%yargs| yield *%yargs }{% end %}
-          end
-        {% end %}
+         definitions = [] of Nil
+         scope = (type == @type ? :previous_def : :super).id
 
-        {% for method in ancestor.class.methods.reject do |meth|
-                           meth.name.starts_with?("_spectator") ||
-                             ::Spectator::DSL::RESERVED_KEYWORDS.includes?(meth.name.symbolize)
-                         end %}
-          default_stub {{method.visibility.id if method.visibility != :public}} def self.{{method.name}}(
-            {% for arg, i in method.args %}{% if i == method.splat_index %}*{% end %}{{arg}}, {% end %}
-            {% if method.double_splat %}**{{method.double_splat}}, {% end %}
-            {% if method.block_arg %}&{{method.block_arg}}{% elsif method.accepts_block? %}&{% end %}
-          ){% if method.return_type %} : {{method.return_type}}{% end %}{% if !method.free_vars.empty? %} forall {{method.free_vars.splat}}{% end %}
-            super{% if method.accepts_block? %} { |*%yargs| yield *%yargs }{% end %}
-          end
-        {% end %}
-      {% end %}
+         # Add entries for methods in the target type and its class type.
+         [[:self.id, type.class], [nil, type]].each do |(receiver, t)|
+           t.methods.each do |method|
+             definitions << {
+               type:     t,
+               method:   method,
+               scope:    scope,
+               receiver: receiver,
+             }
+           end
+         end
 
-      {% for method in type.methods.reject do |meth|
-                         meth.name.starts_with?("_spectator") ||
-                           ::Spectator::DSL::RESERVED_KEYWORDS.includes?(meth.name.symbolize)
-                       end %}
-        {{(method.abstract? ? :"abstract_stub abstract" : :default_stub).id}} {{method.visibility.id if method.visibility != :public}} def {{"#{method.receiver}.".id if method.receiver}}{{method.name}}(
+         # Iterate through all ancestors and add their methods.
+         type.ancestors.each do |ancestor|
+           [[:self.id, ancestor.class], [nil, ancestor]].each do |(receiver, t)|
+             t.methods.each do |method|
+               # Skip methods already found to prevent redefining them multiple times.
+               unless definitions.any? do |d|
+                        m = d[:method]
+                        m.name == method.name &&
+                        m.args == method.args &&
+                        m.splat_index == method.splat_index &&
+                        m.double_splat == method.double_splat &&
+                        m.block_arg == method.block_arg
+                      end
+                 definitions << {
+                   type:     t,
+                   method:   method,
+                   scope:    :super.id,
+                   receiver: receiver,
+                 }
+               end
+             end
+           end
+         end
+
+         definitions = definitions.reject do |definition|
+           name = definition[:method].name
+           name.starts_with?("_spectator") || ::Spectator::DSL::RESERVED_KEYWORDS.includes?(name.symbolize)
+         end %}
+
+      {% for definition in definitions %}
+        {% original_type = definition[:type]
+           method = definition[:method]
+           scope = definition[:scope]
+           receiver = definition[:receiver] %}
+        # Redefinition of {{type}}{{(receiver ? "." : "#").id}}{{method.name}}
+        {{(method.abstract? ? "abstract_stub abstract" : "default_stub").id}} {{method.visibility.id if method.visibility != :public}} def {{"#{receiver}.".id if receiver}}{{method.name}}(
           {% for arg, i in method.args %}{% if i == method.splat_index %}*{% end %}{{arg}}, {% end %}
           {% if method.double_splat %}**{{method.double_splat}}, {% end %}
           {% if method.block_arg %}&{{method.block_arg}}{% elsif method.accepts_block? %}&{% end %}
         ){% if method.return_type %} : {{method.return_type}}{% end %}{% if !method.free_vars.empty? %} forall {{method.free_vars.splat}}{% end %}
-          {% unless method.abstract? %}
-            {% if type == @type %}previous_def{% else %}super{% end %}{% if method.accepts_block? %} { |*%yargs| yield *%yargs }{% end %}
+        {% unless method.abstract? %}
+            {{scope}}{% if method.accepts_block? %} { |*%yargs| yield *%yargs }{% end %}
           end
         {% end %}
-      {% end %}
-
-      {% for method in type.class.methods.reject do |meth|
-                         meth.name.starts_with?("_spectator") ||
-                           ::Spectator::DSL::RESERVED_KEYWORDS.includes?(meth.name.symbolize)
-                       end %}
-        default_stub {{method.visibility.id if method.visibility != :public}} def self.{{method.name}}(
-          {% for arg, i in method.args %}{% if i == method.splat_index %}*{% end %}{{arg}}, {% end %}
-          {% if method.double_splat %}**{{method.double_splat}}, {% end %}
-          {% if method.block_arg %}&{{method.block_arg}}{% elsif method.accepts_block? %}&{% end %}
-        ){% if method.return_type %} : {{method.return_type}}{% end %}{% if !method.free_vars.empty? %} forall {{method.free_vars.splat}}{% end %}
-          {% if type == @type %}previous_def{% else %}super{% end %}{% if method.accepts_block? %} { |*%yargs| yield *%yargs }{% end %}
-        end
       {% end %}
     end
 
