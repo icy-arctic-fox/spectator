@@ -40,7 +40,7 @@ module Spectator
     # Note: The metadata will not be merged with the parent metadata.
     def initialize(@context : Context, @entrypoint : self ->,
                    name : String? = nil, location : Location? = nil,
-                   @group : ExampleGroup? = nil, metadata = Metadata.new)
+                   @group : ExampleGroup? = nil, metadata = nil)
       super(name, location, metadata)
 
       # Ensure group is linked.
@@ -58,7 +58,7 @@ module Spectator
     # Note: The metadata will not be merged with the parent metadata.
     def initialize(@context : Context, @entrypoint : self ->,
                    @name_proc : Example -> String, location : Location? = nil,
-                   @group : ExampleGroup? = nil, metadata = Metadata.new)
+                   @group : ExampleGroup? = nil, metadata = nil)
       super(nil, location, metadata)
 
       # Ensure group is linked.
@@ -75,7 +75,7 @@ module Spectator
     # A set of *metadata* can be used for filtering and modifying example behavior.
     # Note: The metadata will not be merged with the parent metadata.
     def initialize(name : String? = nil, location : Location? = nil,
-                   @group : ExampleGroup? = nil, metadata = Metadata.new, &block : self ->)
+                   @group : ExampleGroup? = nil, metadata = nil, &block : self ->)
       super(name, location, metadata)
 
       @context = NullContext.new
@@ -93,9 +93,10 @@ module Spectator
     # A set of *metadata* can be used for filtering and modifying example behavior.
     # Note: The metadata will not be merged with the parent metadata.
     def self.pending(name : String? = nil, location : Location? = nil,
-                     group : ExampleGroup? = nil, metadata = Metadata.new, reason = nil)
+                     group : ExampleGroup? = nil, metadata = nil, reason = nil)
       # Add pending tag and reason if they don't exist.
-      metadata = metadata.merge({:pending => nil, :reason => reason}) { |_, v, _| v }
+      tags = {:pending => nil, :reason => reason}
+      metadata = metadata ? metadata.merge(tags) { |_, v, _| v } : tags
       new(name, location, group, metadata) { nil }
     end
 

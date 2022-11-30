@@ -28,7 +28,7 @@ module Spectator
     # Creates the builder.
     # Initially, the builder will have no children and no hooks.
     # The *name*, *location*, and *metadata* will be applied to the `ExampleGroup` produced by `#build`.
-    def initialize(@name : Label = nil, @location : Location? = nil, @metadata : Metadata = Metadata.new)
+    def initialize(@name : Label = nil, @location : Location? = nil, @metadata : Metadata? = nil)
     end
 
     # Constructs an example group with previously defined attributes, children, and hooks.

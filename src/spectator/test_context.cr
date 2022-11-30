@@ -34,7 +34,7 @@ class SpectatorTestContext < SpectatorContext
 
   # Initial metadata for tests.
   # This method should be overridden by example groups and examples.
-  private def self.metadata
-    ::Spectator::Metadata.new
+  private def self.metadata : ::Spectator::Metadata?
+    nil
   end
 end

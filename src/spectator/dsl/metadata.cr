@@ -6,6 +6,9 @@ module Spectator::DSL
     private macro _spectator_metadata(name, source, *tags, **metadata)
       private def self.{{name.id}}
         %metadata = {{source.id}}.dup
+        {% unless tags.empty? && metadata.empty? %}
+          %metadata ||= ::Spectator::Metadata.new
+        {% end %}
         {% for k in tags %}
           %metadata[{{k.id.symbolize}}] = nil
         {% end %}

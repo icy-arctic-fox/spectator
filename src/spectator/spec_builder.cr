@@ -60,7 +60,7 @@ module Spectator
     #
     # A set of *metadata* can be used for filtering and modifying example behavior.
     # For instance, adding a "pending" tag will mark tests as pending and skip execution.
-    def start_group(name, location = nil, metadata = Metadata.new) : Nil
+    def start_group(name, location = nil, metadata = nil) : Nil
       Log.trace { "Start group: #{name.inspect} @ #{location}; metadata: #{metadata}" }
       builder = ExampleGroupBuilder.new(name, location, metadata)
 
@@ -86,7 +86,7 @@ module Spectator
     #
     # A set of *metadata* can be used for filtering and modifying example behavior.
     # For instance, adding a "pending" tag will mark tests as pending and skip execution.
-    def start_iterative_group(collection, name, iterator = nil, location = nil, metadata = Metadata.new) : Nil
+    def start_iterative_group(collection, name, iterator = nil, location = nil, metadata = nil) : Nil
       Log.trace { "Start iterative group: #{name} (#{typeof(collection)}) @ #{location}; metadata: #{metadata}" }
       builder = IterativeExampleGroupBuilder.new(collection, name, iterator, location, metadata)
 
@@ -127,7 +127,7 @@ module Spectator
     # It will be yielded two arguments - the example created by this method, and the *context* argument.
     # The return value of the block is ignored.
     # It is expected that the test code runs when the block is called.
-    def add_example(name, location, context_builder, metadata = Metadata.new, &block : Example -> _) : Nil
+    def add_example(name, location, context_builder, metadata = nil, &block : Example -> _) : Nil
       Log.trace { "Add example: #{name} @ #{location}; metadata: #{metadata}" }
       current << ExampleBuilder.new(context_builder, block, name, location, metadata)
     end
@@ -144,7 +144,7 @@ module Spectator
     # A set of *metadata* can be used for filtering and modifying example behavior.
     # For instance, adding a "pending" tag will mark the test as pending and skip execution.
     # A default *reason* can be given in case the user didn't provide one.
-    def add_pending_example(name, location, metadata = Metadata.new, reason = nil) : Nil
+    def add_pending_example(name, location, metadata = nil, reason = nil) : Nil
       Log.trace { "Add pending example: #{name} @ #{location}; metadata: #{metadata}" }
       current << PendingExampleBuilder.new(name, location, metadata, reason)
     end

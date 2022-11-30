@@ -15,7 +15,7 @@ module Spectator
     # The *entrypoint* indicates the proc used to invoke the test code in the example.
     # The *name*, *location*, and *metadata* will be applied to the `Example` produced by `#build`.
     def initialize(@context_builder : -> Context, @entrypoint : Example ->,
-                   @name : String? = nil, @location : Location? = nil, @metadata : Metadata = Metadata.new)
+                   @name : String? = nil, @location : Location? = nil, @metadata : Metadata? = nil)
     end
 
     # Creates the builder.
@@ -24,7 +24,7 @@ module Spectator
     # The *name* is an interpolated string that runs in the context of the example.
     # *location*, and *metadata* will be applied to the `Example` produced by `#build`.
     def initialize(@context_builder : -> Context, @entrypoint : Example ->,
-                   @name : Example -> String, @location : Location? = nil, @metadata : Metadata = Metadata.new)
+                   @name : Example -> String, @location : Location? = nil, @metadata : Metadata? = nil)
     end
 
     # Constructs an example with previously defined attributes and context.

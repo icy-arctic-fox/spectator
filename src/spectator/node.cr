@@ -30,14 +30,16 @@ module Spectator
     end
 
     # User-defined tags and values used for filtering and behavior modification.
-    getter metadata : Metadata
+    def metadata : Metadata
+      @metadata ||= Metadata.new
+    end
 
     # Creates the node.
     # The *name* describes the purpose of the node.
     # It can be a `Symbol` to describe a type.
     # The *location* tracks where the node exists in source code.
     # A set of *metadata* can be used for filtering and modifying example behavior.
-    def initialize(@name : Label = nil, @location : Location? = nil, @metadata : Metadata = Metadata.new)
+    def initialize(@name : Label = nil, @location : Location? = nil, @metadata : Metadata? = nil)
     end
 
     # Indicates whether the node has completed.
@@ -46,17 +48,25 @@ module Spectator
     # Checks if the node has been marked as pending.
     # Pending items should be skipped during execution.
     def pending?
-      metadata.has_key?(:pending) || metadata.has_key?(:skip)
+      return false unless md = @metadata
+
+      md.has_key?(:pending) || md.has_key?(:skip)
     end
 
     # Gets the reason the node has been marked as pending.
     def pending_reason
-      metadata[:pending]? || metadata[:skip]? || metadata[:reason]? || DEFAULT_PENDING_REASON
+      return DEFAULT_PENDING_REASON unless md = @metadata
+
+      md[:pending]? || md[:skip]? || md[:reason]? || DEFAULT_PENDING_REASON
     end
 
     # Retrieves just the tag names applied to the node.
     def tags
-      Tags.new(metadata.keys)
+      if md = @metadata
+        Tags.new(md.keys)
+      else
+        Tags.new
+      end
     end
 
     # Non-nil name used to show the node name.

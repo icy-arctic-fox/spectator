@@ -15,7 +15,7 @@ module Spectator
     # The *collection* is the set of items to create sub-nodes for.
     # The *iterators* is a list of optional names given to items in the collection.
     def initialize(@collection : Enumerable(T), name : String? = nil, @iterators : Array(String) = [] of String,
-                   location : Location? = nil, metadata : Metadata = Metadata.new)
+                   location : Location? = nil, metadata : Metadata? = nil)
       super(name, location, metadata)
     end
 

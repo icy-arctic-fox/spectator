@@ -10,7 +10,9 @@ module Spectator
 
     # Checks whether the node satisfies the filter.
     def includes?(node) : Bool
-      node.metadata.any? { |key, value| key.to_s == @tag && (!@value || value == @value) }
+      return false unless metadata = node.metadata
+
+      metadata.any? { |key, value| key.to_s == @tag && (!@value || value == @value) }
     end
   end
 end
