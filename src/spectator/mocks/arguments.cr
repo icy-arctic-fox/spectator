@@ -90,9 +90,10 @@ module Spectator
 
       i = 0
       other.args.each do |k, v2|
+        break if i >= positional.size
         next if kwargs.has_key?(k) # Covered by named arguments.
 
-        v1 = positional.fetch(i) { return false }
+        v1 = positional[i]
         i += 1
         return false unless v1 === v2
       end
