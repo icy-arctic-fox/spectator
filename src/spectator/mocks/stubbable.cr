@@ -387,7 +387,7 @@ module Spectator
            method = definition[:method]
            scope = definition[:scope]
            receiver = definition[:receiver] %}
-        # Redefinition of {{type}}{{(receiver ? "." : "#").id}}{{method.name}}
+        # Redefinition of {{original_type}}{{(receiver ? "." : "#").id}}{{method.name}}
         {{(method.abstract? ? "abstract_stub abstract" : "default_stub").id}} {{method.visibility.id if method.visibility != :public}} def {{"#{receiver}.".id if receiver}}{{method.name}}(
           {% for arg, i in method.args %}{% if i == method.splat_index %}*{% end %}{{arg}}, {% end %}
           {% if method.double_splat %}**{{method.double_splat}}, {% end %}
