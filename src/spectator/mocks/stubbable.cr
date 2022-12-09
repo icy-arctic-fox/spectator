@@ -432,13 +432,7 @@ module Spectator
             %cast.as({{type}})
           elsif %cast.nil?
             # The stubbed value was something else entirely and cannot be cast to the return type.
-            # There's something weird going on (compiler bug?) that sometimes causes this class lookup to fail.
-            %type = begin
-              %value.class.to_s
-            rescue
-              "<Unknown>"
-            end
-            raise TypeCastError.new("#{_spectator_stubbed_name} received message #{ {{call}} } and is attempting to return a `#{%type}`, but returned type must be `#{ {{type}} }`.")
+            raise TypeCastError.new("#{_spectator_stubbed_name} received message #{ {{call}} } and is attempting to return a `#{%value.class}`, but returned type must be `#{ {{type}} }`.")
           else
             # Types match and value can be returned as cast type.
             %cast
