@@ -422,12 +422,15 @@ module Spectator
         # If successful, which it will be in most cases, return it.
         # The caller will receive a properly typed value without unions or other side-effects.
         %cast = %value.as?({{type}})
-        if %cast.is_a?({{type}})
+
+        {% if fail_cast == :nil %}
           %cast
-        else
-          {% if fail_cast == :nil %}
-            nil
-          {% elsif fail_cast == :raise %}
+        {% elsif fail_cast == :raise %}
+          # Check if nil was returned by the stub and if its okay to return it.
+          if %value.nil? && {{type}}.nilable?
+            # Value was nil and nil is allowed to be returned.
+            %cast.as({{type}})
+          elsif %cast.nil?
             # The stubbed value was something else entirely and cannot be cast to the return type.
             # There's something weird going on (compiler bug?) that sometimes causes this class lookup to fail.
             %type = begin
@@ -436,10 +439,13 @@ module Spectator
               "<Unknown>"
             end
             raise TypeCastError.new("#{_spectator_stubbed_name} received message #{ {{call}} } and is attempting to return a `#{%type}`, but returned type must be `#{ {{type}} }`.")
-          {% else %}
-            {% raise "fail_cast must be :nil, :raise, or :no_return, but got: #{fail_cast}" %}
-          {% end %}
-        end
+          else
+            # Types match and value can be returned as cast type.
+            %cast
+          end
+        {% else %}
+          {% raise "fail_cast must be :nil, :raise, or :no_return, but got: #{fail_cast}" %}
+        {% end %}
       {% end %}
     end
   end
