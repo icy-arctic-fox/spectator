@@ -158,12 +158,24 @@ module Spectator
           # Cast the stub or return value to the expected type.
           # This is necessary to match the expected return type of the original method.
           _spectator_cast_stub_value(%stub, %call, typeof({{original}}),
-          {{ if method.return_type && method.return_type.resolve? == NoReturn
-               :no_return
-             elsif method.return_type &&
-                   ((resolved = method.return_type.resolve?).is_a?(TypeNode) && resolved <= Nil) ||
-                   (method.return_type.is_a?(Union) && method.return_type.types.map(&.resolve?).includes?(Nil))
-               :nil
+          {{ if rt = method.return_type
+               if rt.is_a?(Path) && (resolved = rt.resolve?).is_a?(TypeNode) && resolved <= NoReturn
+                 :no_return
+               else
+                 # Process as an enumerable type to reduce code repetition.
+                 rt = rt.is_a?(Union) ? rt.types : [rt]
+                 # Check if any types are nilable.
+                 nilable = rt.any? do |t|
+                   # These are all macro types that have the `resolve?` method.
+                   (t.is_a?(TypeNode) || t.is_a?(Path) || t.is_a?(Generic) || t.is_a?(MetaClass)) &&
+                     (resolved = t.resolve?).is_a?(TypeNode) && resolved <= Nil
+                 end
+                 if nilable
+                   :nil
+                 else
+                   :raise
+                 end
+               end
              else
                :raise
              end }})
@@ -261,16 +273,25 @@ module Spectator
         if %stub = _spectator_find_stub(%call)
           # Cast the stub or return value to the expected type.
           # This is necessary to match the expected return type of the original method.
-          {% if method.return_type %}
+          {% if rt = method.return_type %}
             # Return type restriction takes priority since it can be a superset of the original implementation.
             _spectator_cast_stub_value(%stub, %call, {{method.return_type}},
-              {{ if method.return_type.resolve? == NoReturn
+              {{ if rt.is_a?(Path) && (resolved = rt.resolve?).is_a?(TypeNode) && resolved <= NoReturn
                    :no_return
-                 elsif (method.return_type.resolve?.is_a?(TypeNode) && method.return_type.resolve <= Nil) ||
-                       (method.return_type.is_a?(Union) && method.return_type.types.map(&.resolve?).includes?(Nil))
-                   :nil
                  else
-                   :raise
+                   # Process as an enumerable type to reduce code repetition.
+                   rt = rt.is_a?(Union) ? rt.types : [rt]
+                   # Check if any types are nilable.
+                   nilable = rt.any? do |t|
+                     # These are all macro types that have the `resolve?` method.
+                     (t.is_a?(TypeNode) || t.is_a?(Path) || t.is_a?(Generic) || t.is_a?(MetaClass)) &&
+                       (resolved = t.resolve?).is_a?(TypeNode) && resolved <= Nil
+                   end
+                   if nilable
+                     :nil
+                   else
+                     :raise
+                   end
                  end }})
           {% elsif !method.abstract? %}
             # The method isn't abstract, infer the type it returns without calling it.

@@ -13,6 +13,22 @@ Spectator.describe "GitHub Issue #48" do
     def make_nilable(thing : T) : T? forall T
       thing.as(T?)
     end
+
+    def itself : self
+      self
+    end
+
+    def itself? : self?
+      self.as(self?)
+    end
+
+    def generic(thing : T) : Array(T) forall T
+      Array.new(100) { thing }
+    end
+
+    def union : Int32 | String
+      42.as(Int32 | String)
+    end
   end
 
   mock Test, make_nilable: nil
@@ -40,7 +56,43 @@ Spectator.describe "GitHub Issue #48" do
   end
 
   it "handles nilable free variables" do
-    fake = mock(Test)
     expect(fake.make_nilable("foo")).to be_nil
+  end
+
+  it "handles 'self' return type" do
+    not_self = mock(Test)
+    allow(fake).to receive(:itself).and_return(not_self)
+    expect(fake.itself).to be(not_self)
+  end
+
+  it "raises on type cast error with 'self' return type" do
+    allow(fake).to receive(:itself).and_return(42)
+    expect { fake.itself }.to raise_error(TypeCastError, /#{class_mock(Test)}/)
+  end
+
+  it "handles nilable 'self' return type" do
+    not_self = mock(Test)
+    allow(fake).to receive(:itself?).and_return(not_self)
+    expect(fake.itself?).to be(not_self)
+  end
+
+  it "handles generic return type" do
+    allow(fake).to receive(:generic).and_return([42])
+    expect(fake.generic(42)).to eq([42])
+  end
+
+  it "raises on type cast error with generic return type" do
+    allow(fake).to receive(:generic).and_return("test")
+    expect { fake.generic(42) }.to raise_error(TypeCastError, /Array\(Int32\)/)
+  end
+
+  it "handles union return types" do
+    allow(fake).to receive(:union).and_return("test")
+    expect(fake.union).to eq("test")
+  end
+
+  it "raises on type cast error with union return type" do
+    allow(fake).to receive(:union).and_return(:test)
+    expect { fake.union }.to raise_error(TypeCastError, /Symbol/)
   end
 end
