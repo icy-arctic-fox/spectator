@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Fixed
+- Fix macro logic to support free variables on stubbed methods.
+
 ### Changed
 - Simplify string representation of mock-related types.
 - Remove unnecessary redefinitions of methods when adding stub functionality to a type.

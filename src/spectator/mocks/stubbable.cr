@@ -158,9 +158,11 @@ module Spectator
           # Cast the stub or return value to the expected type.
           # This is necessary to match the expected return type of the original method.
           _spectator_cast_stub_value(%stub, %call, typeof({{original}}),
-          {{ if method.return_type && method.return_type.resolve == NoReturn
+          {{ if method.return_type && method.return_type.resolve? == NoReturn
                :no_return
-             elsif method.return_type && method.return_type.resolve <= Nil || method.return_type.is_a?(Union) && method.return_type.types.map(&.resolve).includes?(Nil)
+             elsif method.return_type &&
+                   ((resolved = method.return_type.resolve?).is_a?(TypeNode) && resolved <= Nil) ||
+                   (method.return_type.is_a?(Union) && method.return_type.types.map(&.resolve?).includes?(Nil))
                :nil
              else
                :raise
@@ -262,9 +264,10 @@ module Spectator
           {% if method.return_type %}
             # Return type restriction takes priority since it can be a superset of the original implementation.
             _spectator_cast_stub_value(%stub, %call, {{method.return_type}},
-              {{ if method.return_type.resolve == NoReturn
+              {{ if method.return_type.resolve? == NoReturn
                    :no_return
-                 elsif method.return_type.resolve <= Nil || method.return_type.is_a?(Union) && method.return_type.types.map(&.resolve).includes?(Nil)
+                 elsif (method.return_type.resolve?.is_a?(TypeNode) && method.return_type.resolve <= Nil) ||
+                       (method.return_type.is_a?(Union) && method.return_type.types.map(&.resolve?).includes?(Nil))
                    :nil
                  else
                    :raise
