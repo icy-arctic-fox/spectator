@@ -13,7 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Remove unnecessary redefinitions of methods when adding stub functionality to a type.
 - Allow metadata to be stored as nil to reduce overhead when tracking nodes without tags.
 
-## [0.11.4]
+## [0.11.4] - 2022-11-27
 ### Added
 - Add support for using named (keyword) arguments in place of positional arguments in stubs. [#47](https://github.com/icy-arctic-fox/spectator/issues/47)
 - Add `before`, `after`, and `around` as aliases for `before_each`, `after_each`, and `around_each` respectively.
@@ -426,7 +426,7 @@ First version ready for public use.
 
 
 [Unreleased]: https://gitlab.com/arctic-fox/spectator/-/compare/v0.11.4...master
-[0.11.3]: https://gitlab.com/arctic-fox/spectator/-/compare/v0.11.3...v0.11.4
+[0.11.4]: https://gitlab.com/arctic-fox/spectator/-/compare/v0.11.3...v0.11.4
 [0.11.3]: https://gitlab.com/arctic-fox/spectator/-/compare/v0.11.2...v0.11.3
 [0.11.2]: https://gitlab.com/arctic-fox/spectator/-/compare/v0.11.1...v0.11.2
 [0.11.1]: https://gitlab.com/arctic-fox/spectator/-/compare/v0.11.0...v0.11.1
