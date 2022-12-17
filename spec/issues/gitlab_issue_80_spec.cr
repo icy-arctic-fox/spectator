@@ -1,6 +1,6 @@
 require "../spec_helper"
 
-# https://gitlab.com/arctic-fox/spectator/-/issues/80#
+# https://gitlab.com/arctic-fox/spectator/-/issues/80
 
 class Item
 end
@@ -24,6 +24,7 @@ end
 Spectator.describe "test2" do
   mock Item do
   end
+
   it "without mock" do
   end
 end
