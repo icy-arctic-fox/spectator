@@ -29,6 +29,15 @@ Spectator.describe "GitHub Issue #48" do
     def union : Int32 | String
       42.as(Int32 | String)
     end
+
+    def capture(&block : -> T) forall T
+      block
+    end
+
+    def capture(thing : T, &block : T -> T) forall T
+      block.call(thing)
+      block
+    end
   end
 
   mock Test, make_nilable: nil
@@ -94,5 +103,23 @@ Spectator.describe "GitHub Issue #48" do
   it "raises on type cast error with union return type" do
     allow(fake).to receive(:union).and_return(:test)
     expect { fake.union }.to raise_error(TypeCastError, /Symbol/)
+  end
+
+  it "handles captured blocks" do
+    proc = ->{}
+    allow(fake).to receive(:capture).and_return(proc)
+    expect(fake.capture { nil }).to be(proc)
+  end
+
+  it "raises on type cast error with captured blocks" do
+    proc = ->{ 42 }
+    allow(fake).to receive(:capture).and_return(proc)
+    expect { fake.capture { "other" } }.to raise_error(TypeCastError, /Proc\(String\)/)
+  end
+
+  it "handles captured blocks with arguments" do
+    proc = ->(x : Int32) { x * 2 }
+    allow(fake).to receive(:capture).and_return(proc)
+    expect(fake.capture(5) { 5 }).to be(proc)
   end
 end

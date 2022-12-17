@@ -126,7 +126,31 @@ module Spectator
         {{method.body}}
       end
 
-      {% original = "previous_def#{" { |*_spectator_yargs| yield *_spectator_yargs }".id if method.accepts_block?}".id %}
+      {% original = "previous_def"
+         # Workaround for Crystal not propagating block with previous_def/super.
+         if method.accepts_block?
+           original += "("
+           method.args.each_with_index do |arg, i|
+             original += '*' if method.splat_index == i
+             original += arg.name.stringify
+             original += ", "
+           end
+           if method.double_splat
+             original += method.double_splat.stringify
+             original += ", "
+           end
+           # If the block is captured (i.e. `&block` syntax), it must be passed along as an argument.
+           # Otherwise, use `yield` to forward the block.
+           captured_block = if method.block_arg && method.block_arg.name && method.block_arg.name.size > 0
+                              method.block_arg.name
+                            else
+                              nil
+                            end
+           original += "&#{captured_block}" if captured_block
+           original += ")"
+           original += " { |*_spectator_yargs| yield *_spectator_yargs }" unless captured_block
+         end
+         original = original.id %}
 
       {% # Reconstruct the method signature.
 # I wish there was a better way of doing this, but there isn't (at least not that I'm aware of).
@@ -241,7 +265,32 @@ module Spectator
           {{method.body}}
         end
 
-        {% original = "previous_def#{" { |*_spectator_yargs| yield *_spectator_yargs }".id if method.accepts_block?}".id %}
+        {% original = "previous_def"
+           # Workaround for Crystal not propagating block with previous_def/super.
+           if method.accepts_block?
+             original += "("
+             method.args.each_with_index do |arg, i|
+               original += '*' if method.splat_index == i
+               original += arg.name.stringify
+               original += ", "
+             end
+             if method.double_splat
+               original += method.double_splat.stringify
+               original += ", "
+             end
+             # If the block is captured (i.e. `&block` syntax), it must be passed along as an argument.
+             # Otherwise, use `yield` to forward the block.
+             captured_block = if method.block_arg && method.block_arg.name && method.block_arg.name.size > 0
+                                method.block_arg.name
+                              else
+                                nil
+                              end
+             original += "&#{captured_block}" if captured_block
+             original += ")"
+             original += " { |*_spectator_yargs| yield *_spectator_yargs }" unless captured_block
+           end
+           original = original.id %}
+
       {% end %}
 
       {% # Reconstruct the method signature.
@@ -418,7 +467,16 @@ module Spectator
           {% if method.block_arg %}&{{method.block_arg}}{% elsif method.accepts_block? %}&{% end %}
         ){% if method.return_type %} : {{method.return_type}}{% end %}{% if !method.free_vars.empty? %} forall {{method.free_vars.splat}}{% end %}
         {% unless method.abstract? %}
-            {{scope}}{% if method.accepts_block? %} { |*%yargs| yield *%yargs }{% end %}
+            {{scope}}{% if method.accepts_block? %}(
+              {% for arg, i in method.args %}{% if i == method.splat_index %}*{% end %}{{arg.name}}, {% end %}
+              {% if method.double_splat %}**{{method.double_splat}}, {% end %}
+              {% captured_block = if method.block_arg && method.block_arg.name && method.block_arg.name.size > 0
+                                    method.block_arg.name
+                                  else
+                                    nil
+                                  end %}
+              {% if captured_block %}&{{captured_block}}{% end %}
+            ){% if !captured_block %} { |*%yargs| yield *%yargs }{% end %}{% end %}
           end
         {% end %}
       {% end %}
