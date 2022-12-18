@@ -1,31 +1,33 @@
 require "../spec_helper"
 
-private class Foo
-  def call(str : String) : String?
-    ""
+module GitLabIssue51
+  class Foo
+    def call(str : String) : String?
+      ""
+    end
+
+    def alt1_call(str : String) : String?
+      nil
+    end
+
+    def alt2_call(str : String) : String?
+      [str, nil].sample
+    end
   end
 
-  def alt1_call(str : String) : String?
-    nil
-  end
-
-  def alt2_call(str : String) : String?
-    [str, nil].sample
+  class Bar
+    def call(a_foo) : Nil # Must add nil restriction here, otherwise a segfault occurs from returning the result of #alt2_call.
+      a_foo.call("")
+      a_foo.alt1_call("")
+      a_foo.alt2_call("")
+    end
   end
 end
 
-private class Bar
-  def call(a_foo) : Nil # Must add nil restriction here, otherwise a segfault occurs from returning the result of #alt2_call.
-    a_foo.call("")
-    a_foo.alt1_call("")
-    a_foo.alt2_call("")
-  end
-end
+Spectator.describe GitLabIssue51::Bar do
+  mock GitLabIssue51::Foo, call: "", alt1_call: "", alt2_call: ""
 
-Spectator.describe Bar do
-  mock Foo, call: "", alt1_call: "", alt2_call: ""
-
-  let(:foo) { mock(Foo) }
+  let(:foo) { mock(GitLabIssue51::Foo) }
   subject(:call) { described_class.new.call(foo) }
 
   describe "#call" do

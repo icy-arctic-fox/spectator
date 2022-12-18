@@ -29,7 +29,17 @@ Spectator.describe Spectator::Mock do
           @_spectator_invocations << :method3
           "original"
         end
+
+        def method4 : Thing
+          self
+        end
+
+        def method5 : OtherThing
+          OtherThing.new
+        end
       end
+
+      class OtherThing; end
 
       Spectator::Mock.define_subtype(:class, Thing, MockThing, :mock_name, method1: 123) do
         stub def method2
@@ -104,6 +114,20 @@ Spectator.describe Spectator::Mock do
         mock.method3
         expect(mock._spectator_invocations).to contain_exactly(:method3)
       end
+
+      it "can reference its own type" do
+        new_mock = MockThing.new
+        stub = Spectator::ValueStub.new(:method4, new_mock)
+        mock._spectator_define_stub(stub)
+        expect(mock.method4).to be(new_mock)
+      end
+
+      it "can reference other types in the original namespace" do
+        other = OtherThing.new
+        stub = Spectator::ValueStub.new(:method5, other)
+        mock._spectator_define_stub(stub)
+        expect(mock.method5).to be(other)
+      end
     end
 
     context "with an abstract class" do
@@ -120,7 +144,13 @@ Spectator.describe Spectator::Mock do
         end
 
         abstract def method4
+
+        abstract def method4 : Thing
+
+        abstract def method5 : OtherThing
       end
+
+      class OtherThing; end
 
       Spectator::Mock.define_subtype(:class, Thing, MockThing, :mock_name, method2: :stubbed) do
         stub def method1 : Int32 # NOTE: Return type is required since one wasn't provided in the parent.
@@ -199,6 +229,20 @@ Spectator.describe Spectator::Mock do
         mock.method3
         expect(mock._spectator_invocations).to contain_exactly(:method3)
       end
+
+      it "can reference its own type" do
+        new_mock = MockThing.new
+        stub = Spectator::ValueStub.new(:method4, new_mock)
+        mock._spectator_define_stub(stub)
+        expect(mock.method4).to be(new_mock)
+      end
+
+      it "can reference other types in the original namespace" do
+        other = OtherThing.new
+        stub = Spectator::ValueStub.new(:method5, other)
+        mock._spectator_define_stub(stub)
+        expect(mock.method5).to be(other)
+      end
     end
 
     context "with an abstract struct" do
@@ -215,7 +259,13 @@ Spectator.describe Spectator::Mock do
         end
 
         abstract def method4
+
+        abstract def method4 : Thing
+
+        abstract def method5 : OtherThing
       end
+
+      class OtherThing; end
 
       Spectator::Mock.define_subtype(:struct, Thing, MockThing, :mock_name, method2: :stubbed) do
         stub def method1 : Int32 # NOTE: Return type is required since one wasn't provided in the parent.
@@ -286,6 +336,22 @@ Spectator.describe Spectator::Mock do
         mock.method3
         expect(mock._spectator_invocations).to contain_exactly(:method3)
       end
+
+      it "can reference its own type" do
+        mock = self.mock # FIXME: Workaround for passing by value messing with stubs.
+        new_mock = MockThing.new
+        stub = Spectator::ValueStub.new(:method4, new_mock)
+        mock._spectator_define_stub(stub)
+        expect(mock.method4).to be_a(Thing)
+      end
+
+      it "can reference other types in the original namespace" do
+        mock = self.mock # FIXME: Workaround for passing by value messing with stubs.
+        other = OtherThing.new
+        stub = Spectator::ValueStub.new(:method5, other)
+        mock._spectator_define_stub(stub)
+        expect(mock.method5).to be(other)
+      end
     end
 
     context "class method stubs" do
@@ -301,7 +367,17 @@ Spectator.describe Spectator::Mock do
         def self.baz(arg)
           yield
         end
+
+        def self.thing : Thing
+          new
+        end
+
+        def self.other : OtherThing
+          OtherThing.new
+        end
       end
+
+      class OtherThing; end
 
       Spectator::Mock.define_subtype(:class, Thing, MockThing) do
         stub def self.foo
@@ -365,6 +441,20 @@ Spectator.describe Spectator::Mock do
 
       it "can be used in type restricted methods" do
         expect(restricted(mock)).to eq(:stub)
+      end
+
+      it "can reference its own type" do
+        new_mock = MockThing.new
+        stub = Spectator::ValueStub.new(:thing, new_mock)
+        mock._spectator_define_stub(stub)
+        expect(mock.thing).to be(new_mock)
+      end
+
+      it "can reference other types in the original namespace" do
+        other = OtherThing.new
+        stub = Spectator::ValueStub.new(:other, other)
+        mock._spectator_define_stub(stub)
+        expect(mock.other).to be(other)
       end
 
       describe "._spectator_clear_stubs" do

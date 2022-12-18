@@ -218,24 +218,29 @@ module Spectator::DSL
     # end
     # ```
     private macro def_mock(type, name = nil, **value_methods, &block)
-      {% # Construct a unique type name for the mock by using the number of defined types.
- index = ::Spectator::DSL::Mocks::TYPES.size
- mock_type_name = "Mock#{index}".id
+      {% resolved = type.resolve
+         # Construct a unique type name for the mock by using the number of defined types.
+         index = ::Spectator::DSL::Mocks::TYPES.size
+         # The type is nested under the original so that any type names from the original can be resolved.
+         mock_type_name = "Mock#{index}".id
 
- # Store information about how the mock is defined and its context.
- # This is important for constructing an instance of the mock later.
- ::Spectator::DSL::Mocks::TYPES << {type.id.symbolize, @type.name(generic_args: false).symbolize, mock_type_name.symbolize}
+         # Store information about how the mock is defined and its context.
+         # This is important for constructing an instance of the mock later.
+         ::Spectator::DSL::Mocks::TYPES << {type.id.symbolize, @type.name(generic_args: false).symbolize, "::#{resolved.name}::#{mock_type_name}".id.symbolize}
 
- resolved = type.resolve
- base = if resolved.class?
-          :class
-        elsif resolved.struct?
-          :struct
-        else
-          :module
-        end %}
+         base = if resolved.class?
+                  :class
+                elsif resolved.struct?
+                  :struct
+                else
+                  :module
+                end %}
 
-      ::Spectator::Mock.define_subtype({{base}}, {{type.id}}, {{mock_type_name}}, {{name}}, {{**value_methods}}) {{block}}
+      {% begin %}
+        {{base.id}} ::{{resolved.name}}
+          ::Spectator::Mock.define_subtype({{base}}, {{type.id}}, {{mock_type_name}}, {{name}}, {{**value_methods}}) {{block}}
+        end
+      {% end %}
     end
 
     # Instantiates a mock.
