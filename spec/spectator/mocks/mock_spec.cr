@@ -491,6 +491,203 @@ Spectator.describe Spectator::Mock do
       end
     end
 
+    context "with a module" do
+      module Thing
+        # `extend self` cannot be used.
+        # The Crystal compiler doesn't report the methods as class methods when doing so.
+
+        def self.original_method
+          :original
+        end
+
+        def self.default_method
+          :original
+        end
+
+        def self.stubbed_method(_value = 42)
+          :original
+        end
+      end
+
+      Spectator::Mock.define_subtype(:module, Thing, MockThing) do
+        stub def self.stubbed_method(_value = 42)
+          :stubbed
+        end
+      end
+
+      let(mock) { MockThing }
+
+      after { mock._spectator_clear_stubs }
+
+      it "overrides an existing method" do
+        stub = Spectator::ValueStub.new(:original_method, :override)
+        expect { mock._spectator_define_stub(stub) }.to change { mock.original_method }.from(:original).to(:override)
+      end
+
+      it "doesn't affect other methods" do
+        stub = Spectator::ValueStub.new(:stubbed_method, :override)
+        expect { mock._spectator_define_stub(stub) }.to_not change { mock.original_method }
+      end
+
+      it "replaces an existing default stub" do
+        stub = Spectator::ValueStub.new(:default_method, :override)
+        expect { mock._spectator_define_stub(stub) }.to change { mock.default_method }.to(:override)
+      end
+
+      it "replaces an existing stubbed method" do
+        stub = Spectator::ValueStub.new(:stubbed_method, :override)
+        expect { mock._spectator_define_stub(stub) }.to change { mock.stubbed_method }.to(:override)
+      end
+
+      def restricted(thing : Thing.class)
+        thing.stubbed_method
+      end
+
+      it "can be used in type restricted methods" do
+        expect(restricted(mock)).to eq(:stubbed)
+      end
+
+      describe "._spectator_clear_stubs" do
+        before do
+          stub = Spectator::ValueStub.new(:original_method, :override)
+          mock._spectator_define_stub(stub)
+        end
+
+        it "removes previously defined stubs" do
+          expect { mock._spectator_clear_stubs }.to change { mock.original_method }.from(:override).to(:original)
+        end
+      end
+
+      describe "._spectator_calls" do
+        before { mock._spectator_clear_calls }
+
+        # Retrieves symbolic names of methods called on a mock.
+        def called_method_names(mock)
+          mock._spectator_calls.map(&.method)
+        end
+
+        it "stores calls to original methods" do
+          expect { mock.original_method }.to change { called_method_names(mock) }.from(%i[]).to(%i[original_method])
+        end
+
+        it "stores calls to default methods" do
+          expect { mock.default_method }.to change { called_method_names(mock) }.from(%i[]).to(%i[default_method])
+        end
+
+        it "stores calls to stubbed methods" do
+          expect { mock.stubbed_method }.to change { called_method_names(mock) }.from(%i[]).to(%i[stubbed_method])
+        end
+
+        it "stores multiple calls to the same stub" do
+          mock.stubbed_method
+          expect { mock.stubbed_method }.to change { called_method_names(mock) }.from(%i[stubbed_method]).to(%i[stubbed_method stubbed_method])
+        end
+
+        it "stores arguments for a call" do
+          mock.stubbed_method(5)
+          args = Spectator::Arguments.capture(5)
+          call = mock._spectator_calls.first
+          expect(call.arguments).to eq(args)
+        end
+      end
+    end
+
+    context "with a mocked module included in a class" do
+      module Thing
+        def original_method
+          :original
+        end
+
+        def default_method
+          :original
+        end
+
+        def stubbed_method(_value = 42)
+          :original
+        end
+      end
+
+      Spectator::Mock.define_subtype(:module, Thing, MockThing, default_method: :default) do
+        stub def stubbed_method(_value = 42)
+          :stubbed
+        end
+      end
+
+      class IncludedMock
+        include MockThing
+      end
+
+      let(mock) { IncludedMock.new }
+
+      it "overrides an existing method" do
+        stub = Spectator::ValueStub.new(:original_method, :override)
+        expect { mock._spectator_define_stub(stub) }.to change { mock.original_method }.from(:original).to(:override)
+      end
+
+      it "doesn't affect other methods" do
+        stub = Spectator::ValueStub.new(:stubbed_method, :override)
+        expect { mock._spectator_define_stub(stub) }.to_not change { mock.original_method }
+      end
+
+      it "replaces an existing default stub" do
+        stub = Spectator::ValueStub.new(:default_method, :override)
+        expect { mock._spectator_define_stub(stub) }.to change { mock.default_method }.to(:override)
+      end
+
+      it "replaces an existing stubbed method" do
+        stub = Spectator::ValueStub.new(:stubbed_method, :override)
+        expect { mock._spectator_define_stub(stub) }.to change { mock.stubbed_method }.to(:override)
+      end
+
+      def restricted(thing : Thing.class)
+        thing.default_method
+      end
+
+      describe "#_spectator_clear_stubs" do
+        before do
+          stub = Spectator::ValueStub.new(:original_method, :override)
+          mock._spectator_define_stub(stub)
+        end
+
+        it "removes previously defined stubs" do
+          expect { mock._spectator_clear_stubs }.to change { mock.original_method }.from(:override).to(:original)
+        end
+      end
+
+      describe "#_spectator_calls" do
+        before { mock._spectator_clear_calls }
+
+        # Retrieves symbolic names of methods called on a mock.
+        def called_method_names(mock)
+          mock._spectator_calls.map(&.method)
+        end
+
+        it "stores calls to original methods" do
+          expect { mock.original_method }.to change { called_method_names(mock) }.from(%i[]).to(%i[original_method])
+        end
+
+        it "stores calls to default methods" do
+          expect { mock.default_method }.to change { called_method_names(mock) }.from(%i[]).to(%i[default_method])
+        end
+
+        it "stores calls to stubbed methods" do
+          expect { mock.stubbed_method }.to change { called_method_names(mock) }.from(%i[]).to(%i[stubbed_method])
+        end
+
+        it "stores multiple calls to the same stub" do
+          mock.stubbed_method
+          expect { mock.stubbed_method }.to change { called_method_names(mock) }.from(%i[stubbed_method]).to(%i[stubbed_method stubbed_method])
+        end
+
+        it "stores arguments for a call" do
+          mock.stubbed_method(5)
+          args = Spectator::Arguments.capture(5)
+          call = mock._spectator_calls.first
+          expect(call.arguments).to eq(args)
+        end
+      end
+    end
+
     context "with a method that uses NoReturn" do
       abstract class Thing
         abstract def oops : NoReturn

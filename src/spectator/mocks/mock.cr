@@ -36,7 +36,12 @@ module Spectator
     macro define_subtype(base, mocked_type, type_name, name = nil, **value_methods, &block)
       {% begin %}
         {% if name %}@[::Spectator::StubbedName({{name}})]{% end %}
-        {{base.id}} {{type_name.id}} < {{mocked_type.id}}
+        {% if base.id == :module.id %}
+          {{base.id}} {{type_name.id}}
+            include {{mocked_type.id}}
+        {% else %}
+          {{base.id}} {{type_name.id}} < {{mocked_type.id}}
+        {% end %}
           include ::Spectator::Mocked
           extend ::Spectator::StubbedType
 
