@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Fixed
 - Fix macro logic to support free variables, 'self', and variants on stubbed methods. [#48](https://github.com/icy-arctic-fox/spectator/issues/48)
+- Fix method stubs used on methods that capture blocks.
 
 ### Changed
 - Simplify string representation of mock-related types.
