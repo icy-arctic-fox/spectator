@@ -39,6 +39,29 @@ module Spectator
         {% if base.id == :module.id %}
           {{base.id}} {{type_name.id}}
             include {{mocked_type.id}}
+
+            # Mock class that includes the mocked module {{mocked_type.id}}
+            {% if name %}@[::Spectator::StubbedName({{name}})]{% end %}
+            private class ClassIncludingMock{{type_name.id}}
+              include {{type_name.id}}
+            end
+
+            # Returns a mock class that includes the mocked module {{mocked_type.id}}.
+            def self.new(*args, **kwargs) : ClassIncludingMock{{type_name.id}}
+              # FIXME: Creating the instance normally with `.new` causing infinite recursion.
+              inst = ClassIncludingMock{{type_name.id}}.allocate
+              inst.initialize(*args, **kwargs)
+              inst
+            end
+
+            # Returns a mock class that includes the mocked module {{mocked_type.id}}.
+            def self.new(*args, **kwargs) : ClassIncludingMock{{type_name.id}}
+              # FIXME: Creating the instance normally with `.new` causing infinite recursion.
+              inst = ClassIncludingMock{{type_name.id}}.allocate
+              inst.initialize(*args, **kwargs) { |*yargs| yield *yargs }
+              inst
+            end
+
         {% else %}
           {{base.id}} {{type_name.id}} < {{mocked_type.id}}
         {% end %}

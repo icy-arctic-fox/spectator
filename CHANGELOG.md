@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+- Added support for mock modules and types that include mocked modules.
+
 ### Fixed
 - Fix macro logic to support free variables, 'self', and variants on stubbed methods. [#48](https://github.com/icy-arctic-fox/spectator/issues/48)
 - Fix method stubs used on methods that capture blocks.
