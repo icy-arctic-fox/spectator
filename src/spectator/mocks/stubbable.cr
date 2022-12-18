@@ -434,7 +434,13 @@ module Spectator
     private macro stub_type(type_name = @type)
       {% type = type_name.resolve
          definitions = [] of Nil
-         scope = (type == @type ? :previous_def : :super).id
+         scope = if type == @type
+                   :previous_def
+                 elsif type.module?
+                   type.name
+                 else
+                   :super
+                 end.id
 
          # Add entries for methods in the target type and its class type.
          [[:self.id, type.class], [nil, type]].each do |(receiver, t)|
@@ -481,15 +487,25 @@ module Spectator
         {% original_type = definition[:type]
            method = definition[:method]
            scope = definition[:scope]
-           receiver = definition[:receiver] %}
-        # Redefinition of {{original_type}}{{(receiver ? "." : "#").id}}{{method.name}}
+           receiver = definition[:receiver]
+           rewrite_args = method.accepts_block?
+           # Handle calling methods on other objects (primarily for mock modules).
+           if scope != :super.id && scope != :previous_def.id
+             if receiver == :self.id
+               scope = "#{scope}.#{method.name}".id
+               rewrite_args = true
+             else
+               scope = :super.id
+             end
+           end %}
+        # Redefinition of {{original_type}}{{"#".id}}{{method.name}}
         {{(method.abstract? ? "abstract_stub abstract" : "default_stub").id}} {{method.visibility.id if method.visibility != :public}} def {{"#{receiver}.".id if receiver}}{{method.name}}(
           {% for arg, i in method.args %}{% if i == method.splat_index %}*{% end %}{{arg}}, {% end %}
           {% if method.double_splat %}**{{method.double_splat}}, {% end %}
           {% if method.block_arg %}&{{method.block_arg}}{% elsif method.accepts_block? %}&{% end %}
         ){% if method.return_type %} : {{method.return_type}}{% end %}{% if !method.free_vars.empty? %} forall {{method.free_vars.splat}}{% end %}
         {% unless method.abstract? %}
-            {{scope}}{% if method.accepts_block? %}({% for arg, i in method.args %}
+            {{scope}}{% if rewrite_args %}({% for arg, i in method.args %}
               {% if i == method.splat_index && arg.internal_name && arg.internal_name.size > 0 %}*{{arg.internal_name}}, {% if method.double_splat %}**{{method.double_splat}}, {% end %}{% end %}
               {% if method.splat_index && i > method.splat_index %}{{arg.name}}: {{arg.internal_name}}, {% end %}
               {% if !method.splat_index || i < method.splat_index %}{{arg.internal_name}}, {% end %}{% end %}
@@ -500,7 +516,7 @@ module Spectator
                                     nil
                                   end %}
               {% if captured_block %}&{{captured_block}}{% end %}
-            ){% if !captured_block %} { |*%yargs| yield *%yargs }{% end %}{% end %}
+            ){% if !captured_block && method.accepts_block? %} { |*%yargs| yield *%yargs }{% end %}{% end %}
           end
         {% end %}
       {% end %}
