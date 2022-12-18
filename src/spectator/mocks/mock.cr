@@ -50,22 +50,22 @@ module Spectator
             end
           {% end %}
 
-          def _spectator_remove_stub(stub : ::Spectator::Stub) : Nil
+          def _spectator_remove_stub(stub : ::Spectator::Stub) : ::Nil
             @_spectator_stubs.try &.delete(stub)
           end
 
-          def _spectator_clear_stubs : Nil
+          def _spectator_clear_stubs : ::Nil
             @_spectator_stubs = nil
           end
 
-          private class_getter _spectator_stubs : Array(::Spectator::Stub) = [] of ::Spectator::Stub
+          private class_getter _spectator_stubs : ::Array(::Spectator::Stub) = [] of ::Spectator::Stub
 
-          class_getter _spectator_calls : Array(::Spectator::MethodCall) = [] of ::Spectator::MethodCall
+          class_getter _spectator_calls : ::Array(::Spectator::MethodCall) = [] of ::Spectator::MethodCall
 
           getter _spectator_calls = [] of ::Spectator::MethodCall
 
           # Returns the mock's name formatted for user output.
-          private def _spectator_stubbed_name : String
+          private def _spectator_stubbed_name : ::String
             \{% if anno = @type.annotation(::Spectator::StubbedName) %}
               "#<Mock {{mocked_type.id}} \"" + \{{(anno[0] || :Anonymous.id).stringify}} + "\">"
             \{% else %}
@@ -73,7 +73,7 @@ module Spectator
             \{% end %}
           end
 
-          private def self._spectator_stubbed_name : String
+          private def self._spectator_stubbed_name : ::String
             \{% if anno = @type.annotation(::Spectator::StubbedName) %}
               "#<Class Mock {{mocked_type.id}} \"" + \{{(anno[0] || :Anonymous.id).stringify}} + "\">"
             \{% else %}
@@ -132,9 +132,9 @@ module Spectator
             {% raise "Unsupported base type #{base} for injecting mock" %}
           {% end %}
 
-          private class_getter _spectator_stubs : Array(::Spectator::Stub) = [] of ::Spectator::Stub
+          private class_getter _spectator_stubs : ::Array(::Spectator::Stub) = [] of ::Spectator::Stub
 
-          class_getter _spectator_calls : Array(::Spectator::MethodCall) = [] of ::Spectator::MethodCall
+          class_getter _spectator_calls : ::Array(::Spectator::MethodCall) = [] of ::Spectator::MethodCall
 
           private def _spectator_stubs
             entry = @@_spectator_mock_registry.fetch(self) do
@@ -143,11 +143,11 @@ module Spectator
             entry.stubs
           end
 
-          def _spectator_remove_stub(stub : ::Spectator::Stub) : Nil
+          def _spectator_remove_stub(stub : ::Spectator::Stub) : ::Nil
             @@_spectator_mock_registry[self]?.try &.stubs.delete(stub)
           end
 
-          def _spectator_clear_stubs : Nil
+          def _spectator_clear_stubs : ::Nil
             @@_spectator_mock_registry.delete(self)
           end
 
@@ -169,7 +169,7 @@ module Spectator
           end
 
           # Returns the mock's name formatted for user output.
-          private def _spectator_stubbed_name : String
+          private def _spectator_stubbed_name : ::String
             \{% if anno = @type.annotation(::Spectator::StubbedName) %}
               "#<Mock {{type_name.id}} \"" + \{{(anno[0] || :Anonymous.id).stringify}} + "\">"
             \{% else %}
@@ -178,7 +178,7 @@ module Spectator
           end
 
           # Returns the mock's name formatted for user output.
-          private def self._spectator_stubbed_name : String
+          private def self._spectator_stubbed_name : ::String
             \{% if anno = @type.annotation(::Spectator::StubbedName) %}
               "#<Class Mock {{type_name.id}} \"" + \{{(anno[0] || :Anonymous.id).stringify}} + "\">"
             \{% else %}
