@@ -38,6 +38,10 @@ Spectator.describe "GitHub Issue #48" do
       block.call(thing)
       block
     end
+
+    def range(r : Range)
+      r
+    end
   end
 
   mock Test, make_nilable: nil
@@ -121,5 +125,11 @@ Spectator.describe "GitHub Issue #48" do
     proc = ->(x : Int32) { x * 2 }
     allow(fake).to receive(:capture).and_return(proc)
     expect(fake.capture(5) { 5 }).to be(proc)
+  end
+
+  it "handles range comparisons against non-comparable types" do
+    range = 1..10
+    allow(fake).to receive(:range).and_return(range)
+    expect(fake.range(1..3)).to eq(range)
   end
 end

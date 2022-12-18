@@ -11,13 +11,7 @@ module Spectator
       return false if a.size != b.size
 
       a.zip(b) do |a_value, b_value|
-        if a_value.is_a?(Proc)
-          # Using procs as argument matchers isn't supported currently.
-          # Compare directly instead.
-          return false unless a_value == b_value
-        else
-          return false unless a_value === b_value
-        end
+        return false unless compare_values(a_value, b_value)
       end
       true
     end
@@ -34,15 +28,31 @@ module Spectator
     private def compare_named_tuples(a : NamedTuple, b : NamedTuple)
       a.each do |k, v1|
         v2 = b.fetch(k) { return false }
-        if v1.is_a?(Proc)
-          # Using procs as argument matchers isn't supported currently.
-          # Compare directly instead.
-          return false unless v1 == v2
-        else
-          return false unless v1 === v2
-        end
+        return false unless compare_values(v1, v2)
       end
       true
+    end
+
+    # Utility method for comparing two arguments considering special types.
+    # Some types used for case-equality don't work well with unexpected right-hand types.
+    # This can happen when the right side is a massive union of types.
+    private def compare_values(a, b)
+      case a
+      when Proc
+        # Using procs as argument matchers isn't supported currently.
+        # Compare directly instead.
+        a == b
+      when Range
+        # Ranges can only be matched against if their right side is comparable.
+        # Ensure the right side is comparable, otherwise compare directly.
+        if b.is_a?(Comparable(typeof(b)))
+          a === b
+        else
+          a == b
+        end
+      else
+        a === b
+      end
     end
   end
 end

@@ -95,21 +95,13 @@ module Spectator
 
         v1 = positional[i]
         i += 1
-        if v1.is_a?(Proc)
-          return false unless v1 == v2
-        else
-          return false unless v1 === v2
-        end
+        return false unless compare_values(v1, v2)
       end
 
       other.splat.try &.each do |v2|
         v1 = positional.fetch(i) { return false }
         i += 1
-        if v1.is_a?(Proc)
-          return false unless v1 == v2
-        else
-          return false unless v1 === v2
-        end
+        return false unless compare_values(v1, v2)
       end
 
       i == positional.size
