@@ -81,7 +81,7 @@ module Spectator
 
     # Checks if another set of arguments matches this set of arguments.
     def ===(other : Arguments)
-      positional === other.positional && compare_named_tuples(kwargs, other.kwargs)
+      compare_tuples(positional, other.positional) && compare_named_tuples(kwargs, other.kwargs)
     end
 
     # :ditto:
@@ -95,13 +95,21 @@ module Spectator
 
         v1 = positional[i]
         i += 1
-        return false unless v1 === v2
+        if v1.is_a?(Proc)
+          return false unless v1 == v2
+        else
+          return false unless v1 === v2
+        end
       end
 
       other.splat.try &.each do |v2|
         v1 = positional.fetch(i) { return false }
         i += 1
-        return false unless v1 === v2
+        if v1.is_a?(Proc)
+          return false unless v1 == v2
+        else
+          return false unless v1 === v2
+        end
       end
 
       i == positional.size

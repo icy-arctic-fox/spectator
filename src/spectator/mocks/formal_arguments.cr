@@ -122,12 +122,12 @@ module Spectator
 
     # Checks if another set of arguments matches this set of arguments.
     def ===(other : Arguments)
-      positional === other.positional && compare_named_tuples(kwargs, other.kwargs)
+      compare_tuples(positional, other.positional) && compare_named_tuples(kwargs, other.kwargs)
     end
 
     # :ditto:
     def ===(other : FormalArguments)
-      compare_named_tuples(args, other.args) && splat === other.splat && compare_named_tuples(kwargs, other.kwargs)
+      compare_named_tuples(args, other.args) && compare_tuples(splat, other.splat) && compare_named_tuples(kwargs, other.kwargs)
     end
   end
 end

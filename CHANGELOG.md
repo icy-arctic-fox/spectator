@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Simplify string representation of mock-related types.
 - Remove unnecessary redefinitions of methods when adding stub functionality to a type.
 - Allow metadata to be stored as nil to reduce overhead when tracking nodes without tags.
+- Use normal equality (==) instead of case-equality (===) with proc arguments in stubs.
 
 ## [0.11.4] - 2022-11-27
 ### Added
