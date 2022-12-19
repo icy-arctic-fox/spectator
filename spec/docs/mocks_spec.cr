@@ -123,6 +123,90 @@ Spectator.describe "Mocks Docs" do
     end
   end
 
+  context "Mock Modules" do
+    module MyModule
+      def something
+        # ...
+      end
+    end
+
+    describe "#something" do
+      # Define a mock for MyModule.
+      mock MyClass
+
+      it "does something" do
+        # Use mock here.
+      end
+    end
+
+    module MyFileUtils
+      def self.rm_rf(path)
+        # ...
+      end
+    end
+
+    mock MyFileUtils
+
+    it "deletes all of my files" do
+      utils = class_mock(MyFileUtils)
+      allow(utils).to receive(:rm_rf)
+      utils.rm_rf("/")
+      expect(utils).to have_received(:rm_rf).with("/")
+    end
+
+    module MyFileUtils2
+      extend self
+
+      def rm_rf(path)
+        # ...
+      end
+    end
+
+    mock(MyFileUtils2) do
+      # Define a default stub for the method.
+      stub def self.rm_rf(path)
+        # ...
+      end
+    end
+
+    it "deletes all of my files part 2" do
+      utils = class_mock(MyFileUtils2)
+      allow(utils).to receive(:rm_rf)
+      utils.rm_rf("/")
+      expect(utils).to have_received(:rm_rf).with("/")
+    end
+
+    module Runnable
+      def run
+        # ...
+      end
+    end
+
+    mock Runnable
+
+    specify do
+      runnable = mock(Runnable) # or new_mock(Runnable)
+      runnable.run
+    end
+
+    module Runnable2
+      abstract def command : String
+
+      def run_one
+        "Running #{command}"
+      end
+    end
+
+    mock Runnable2, command: "ls -l"
+
+    specify do
+      runnable = mock(Runnable2)
+      expect(runnable.run_one).to eq("Running ls -l")
+      runnable = mock(Runnable2, command: "echo foo")
+      expect(runnable.run_one).to eq("Running echo foo")
+    end
+  end
+
   context "Injecting Mocks" do
     struct MyStruct
       def something
