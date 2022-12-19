@@ -1,5 +1,6 @@
 require "./method_call"
 require "./mocked"
+require "./mock_registry"
 require "./reference_mock_registry"
 require "./stub"
 require "./stubbed_name"
@@ -157,7 +158,7 @@ module Spectator
           {% elsif base == :struct %}
             @@_spectator_mock_registry = ::Spectator::ValueMockRegistry(self).new
           {% else %}
-            {% raise "Unsupported base type #{base} for injecting mock" %}
+            @@_spectator_mock_registry = ::Spectator::MockRegistry.new
           {% end %}
 
           private class_getter _spectator_stubs : ::Array(::Spectator::Stub) = [] of ::Spectator::Stub

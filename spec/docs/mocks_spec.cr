@@ -205,6 +205,25 @@ Spectator.describe "Mocks Docs" do
       runnable = mock(Runnable2, command: "echo foo")
       expect(runnable.run_one).to eq("Running echo foo")
     end
+
+    context "Injecting Mocks" do
+      module MyFileUtils
+        def self.rm_rf(path)
+          true
+        end
+      end
+
+      inject_mock MyFileUtils do
+        stub def self.rm_rf(path)
+          "Simulating deletion of #{path}"
+          false
+        end
+      end
+
+      specify do
+        expect(MyFileUtils.rm_rf("/")).to be_false
+      end
+    end
   end
 
   context "Injecting Mocks" do
