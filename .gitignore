@@ -10,3 +10,5 @@
 
 # Ignore JUnit output
 output.xml
+
+/test.cr
