@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [0.11.5] - 2022-12-18
 ### Added
 - Added support for mock modules and types that include mocked modules.
 
@@ -19,6 +19,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Remove unnecessary redefinitions of methods when adding stub functionality to a type.
 - Allow metadata to be stored as nil to reduce overhead when tracking nodes without tags.
 - Use normal equality (==) instead of case-equality (===) with proc arguments in stubs.
+- Change stub value cast logic to avoid compiler bug. [#80](https://gitlab.com/arctic-fox/spectator/-/issues/80)
 
 ## [0.11.4] - 2022-11-27
 ### Added
@@ -432,7 +433,8 @@ This has been changed so that it compiles and raises an error at runtime with a 
 First version ready for public use.
 
 
-[Unreleased]: https://gitlab.com/arctic-fox/spectator/-/compare/v0.11.4...master
+[Unreleased]: https://gitlab.com/arctic-fox/spectator/-/compare/v0.11.5...master
+[0.11.5]: https://gitlab.com/arctic-fox/spectator/-/compare/v0.11.4...v0.11.5
 [0.11.4]: https://gitlab.com/arctic-fox/spectator/-/compare/v0.11.3...v0.11.4
 [0.11.3]: https://gitlab.com/arctic-fox/spectator/-/compare/v0.11.2...v0.11.3
 [0.11.2]: https://gitlab.com/arctic-fox/spectator/-/compare/v0.11.1...v0.11.2
