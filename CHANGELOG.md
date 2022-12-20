@@ -8,6 +8,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Added ability to cast types using the return value from expect statements with a type matcher.
 
+### Fixed
+- Fix invalid syntax (unterminated call) when recording calls to stubs with an un-named splat.
+
 ## [0.11.5] - 2022-12-18
 ### Added
 - Added support for mock modules and types that include mocked modules.

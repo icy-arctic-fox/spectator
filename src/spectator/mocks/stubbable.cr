@@ -180,7 +180,7 @@ module Spectator
           ::NamedTuple.new(
             {% for arg, i in method.args %}{% if !method.splat_index || i < method.splat_index %}{{arg.internal_name.stringify}}: {{arg.internal_name}}, {% end %}{% end %}
           ),
-          {% if method.splat_index && (splat = method.args[method.splat_index].internal_name) %}{{splat.symbolize}}, {{splat}},{% end %}
+          {% if method.splat_index && !(splat = method.args[method.splat_index].internal_name).empty? %}{{splat.symbolize}}, {{splat}},{% end %}
           ::NamedTuple.new(
             {% for arg, i in method.args %}{% if method.splat_index && i > method.splat_index %}{{arg.internal_name.stringify}}: {{arg.internal_name}}, {% end %}{% end %}
           ).merge({{method.double_splat}})
@@ -332,7 +332,7 @@ module Spectator
           ::NamedTuple.new(
             {% for arg, i in method.args %}{% if !method.splat_index || i < method.splat_index %}{{arg.internal_name.stringify}}: {{arg.internal_name}}, {% end %}{% end %}
           ),
-          {% if method.splat_index && (splat = method.args[method.splat_index].internal_name) %}{{splat.symbolize}}, {{splat}},{% end %}
+          {% if method.splat_index && !(splat = method.args[method.splat_index].internal_name).empty? %}{{splat.symbolize}}, {{splat}},{% end %}
           ::NamedTuple.new(
             {% for arg, i in method.args %}{% if method.splat_index && i > method.splat_index %}{{arg.internal_name.stringify}}: {{arg.internal_name}}, {% end %}{% end %}
           ).merge({{method.double_splat}})
