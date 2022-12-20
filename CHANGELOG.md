@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+### Added
+- Added ability to cast types using the return value from expect statements with a type matcher.
+
 ## [0.11.5] - 2022-12-18
 ### Added
 - Added support for mock modules and types that include mocked modules.

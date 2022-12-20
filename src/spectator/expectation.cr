@@ -114,6 +114,21 @@ module Spectator
         report(match_data, message)
       end
 
+      # Asserts that some criteria defined by the matcher is satisfied.
+      # Allows a custom message to be used.
+      # Returns the expected value cast as the expected type, if the matcher is satisfied.
+      def to(matcher : Matchers::TypeMatcher(U), message = nil) forall U
+        match_data = matcher.match(@expression)
+        value = @expression.value
+        if report(match_data, message)
+          return value if value.is_a?(U)
+
+          raise "Spectator bug: expected value should have cast to #{U}"
+        else
+          raise TypeCastError.new("#{@expression.label} is expected to be a #{U}, but was actually #{value.class}")
+        end
+      end
+
       # Asserts that a method is not called before the example completes.
       @[AlwaysInline]
       def to_not(stub : Stub, message = nil) : Nil
@@ -134,6 +149,36 @@ module Spectator
       def to_not(matcher, message = nil) : Nil
         match_data = matcher.negated_match(@expression)
         report(match_data, message)
+      end
+
+      # Asserts that some criteria defined by the matcher is not satisfied.
+      # Allows a custom message to be used.
+      # Returns the expected value cast without the unexpected type, if the matcher is satisfied.
+      def to_not(matcher : Matchers::TypeMatcher(U), message = nil) forall U
+        match_data = matcher.negated_match(@expression)
+        value = @expression.value
+        if report(match_data, message)
+          return value unless value.is_a?(U)
+
+          raise "Spectator bug: expected value should not be #{U}"
+        else
+          raise TypeCastError.new("#{@expression.label} is not expected to be a #{U}, but was actually #{value.class}")
+        end
+      end
+
+      # Asserts that some criteria defined by the matcher is not satisfied.
+      # Allows a custom message to be used.
+      # Returns the expected value cast as a non-nillable type, if the matcher is satisfied.
+      def to_not(matcher : Matchers::NilMatcher, message = nil)
+        match_data = matcher.negated_match(@expression)
+        if report(match_data, message)
+          value = @expression.value
+          return value unless value.nil?
+
+          raise "Spectator bug: expected value should not be nil"
+        else
+          raise NilAssertionError.new("#{@expression.label} is not expected to be nil.")
+        end
       end
 
       # :ditto:
