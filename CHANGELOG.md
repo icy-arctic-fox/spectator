@@ -6,7 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Added
-- Added ability to cast types using the return value from expect statements with a type matcher.
+- Added ability to cast types using the return value from expect/should statements with a type matcher.
 
 ### Fixed
 - Fix invalid syntax (unterminated call) when recording calls to stubs with an un-named splat.

@@ -30,6 +30,23 @@ class Object
     ::Spectator::Harness.current.report(expectation)
   end
 
+  # Asserts that some criteria defined by the matcher is satisfied.
+  # Allows a custom message to be used.
+  # Returns the expected value cast as the expected type, if the matcher is satisfied.
+  def should(matcher : ::Spectator::Matchers::TypeMatcher(U), message = nil, *, _file = __FILE__, _line = __LINE__) forall U
+    actual = ::Spectator::Value.new(self)
+    location = ::Spectator::Location.new(_file, _line)
+    match_data = matcher.match(actual)
+    expectation = ::Spectator::Expectation.new(match_data, location, message)
+    if ::Spectator::Harness.current.report(expectation)
+      return self if self.is_a?(U)
+
+      raise "Spectator bug: expected value should have cast to #{U}"
+    else
+      raise TypeCastError.new("Expected value should be a #{U}, but was actually #{self.class}")
+    end
+  end
+
   # Works the same as `#should` except the condition is inverted.
   # When `#should` succeeds, this method will fail, and vice-versa.
   def should_not(matcher, message = nil, *, _file = __FILE__, _line = __LINE__)
@@ -38,6 +55,40 @@ class Object
     match_data = matcher.negated_match(actual)
     expectation = ::Spectator::Expectation.new(match_data, location, message)
     ::Spectator::Harness.current.report(expectation)
+  end
+
+  # Asserts that some criteria defined by the matcher is not satisfied.
+  # Allows a custom message to be used.
+  # Returns the expected value cast without the unexpected type, if the matcher is satisfied.
+  def should_not(matcher : ::Spectator::Matchers::TypeMatcher(U), message = nil, *, _file = __FILE__, _line = __LINE__) forall U
+    actual = ::Spectator::Value.new(self)
+    location = ::Spectator::Location.new(_file, _line)
+    match_data = matcher.negated_match(actual)
+    expectation = ::Spectator::Expectation.new(match_data, location, message)
+    if ::Spectator::Harness.current.report(expectation)
+      return self unless self.is_a?(U)
+
+      raise "Spectator bug: expected value should not be #{U}"
+    else
+      raise TypeCastError.new("Expected value is not expected to be a #{U}, but was actually #{self.class}")
+    end
+  end
+
+  # Asserts that some criteria defined by the matcher is not satisfied.
+  # Allows a custom message to be used.
+  # Returns the expected value cast as a non-nillable type, if the matcher is satisfied.
+  def should_not(matcher : ::Spectator::Matchers::NilMatcher, message = nil, *, _file = __FILE__, _line = __LINE__)
+    actual = ::Spectator::Value.new(self)
+    location = ::Spectator::Location.new(_file, _line)
+    match_data = matcher.negated_match(actual)
+    expectation = ::Spectator::Expectation.new(match_data, location, message)
+    if ::Spectator::Harness.current.report(expectation)
+      return self unless self.nil?
+
+      raise "Spectator bug: expected value should not be nil"
+    else
+      raise NilAssertionError.new("Expected value should not be nil.")
+    end
   end
 
   # Works the same as `#should` except that the condition check is postponed.
