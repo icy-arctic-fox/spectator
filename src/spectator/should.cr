@@ -22,51 +22,55 @@ class Object
   # ```
   # require "spectator/should"
   # ```
-  def should(matcher, message = nil)
+  def should(matcher, message = nil, *, _file = __FILE__, _line = __LINE__)
     actual = ::Spectator::Value.new(self)
+    location = ::Spectator::Location.new(_file, _line)
     match_data = matcher.match(actual)
-    expectation = ::Spectator::Expectation.new(match_data, message: message)
+    expectation = ::Spectator::Expectation.new(match_data, location, message)
     ::Spectator::Harness.current.report(expectation)
   end
 
   # Works the same as `#should` except the condition is inverted.
   # When `#should` succeeds, this method will fail, and vice-versa.
-  def should_not(matcher, message = nil)
+  def should_not(matcher, message = nil, *, _file = __FILE__, _line = __LINE__)
     actual = ::Spectator::Value.new(self)
+    location = ::Spectator::Location.new(_file, _line)
     match_data = matcher.negated_match(actual)
-    expectation = ::Spectator::Expectation.new(match_data, message: message)
+    expectation = ::Spectator::Expectation.new(match_data, location, message)
     ::Spectator::Harness.current.report(expectation)
   end
 
   # Works the same as `#should` except that the condition check is postponed.
   # The expectation is checked after the example finishes and all hooks have run.
-  def should_eventually(matcher, message = nil)
-    ::Spectator::Harness.current.defer { should(matcher, message) }
+  def should_eventually(matcher, message = nil, *, _file = __FILE__, _line = __LINE__)
+    ::Spectator::Harness.current.defer { should(matcher, message, _file: _file, _line: _line) }
   end
 
   # Works the same as `#should_not` except that the condition check is postponed.
   # The expectation is checked after the example finishes and all hooks have run.
-  def should_never(matcher, message = nil)
-    ::Spectator::Harness.current.defer { should_not(matcher, message) }
+  def should_never(matcher, message = nil, *, _file = __FILE__, _line = __LINE__)
+    ::Spectator::Harness.current.defer { should_not(matcher, message, _file: _file, _line: _line) }
   end
 end
 
 struct Proc(*T, R)
   # Extension method to create an expectation for a block of code (proc).
   # Depending on the matcher, the proc may be executed multiple times.
-  def should(matcher, message = nil)
+  def should(matcher, message = nil, *, _file = __FILE__, _line = __LINE__)
     actual = ::Spectator::Block.new(self)
+    location = ::Spectator::Location.new(_file, _line)
     match_data = matcher.match(actual)
-    expectation = ::Spectator::Expectation.new(match_data, message: message)
+    expectation = ::Spectator::Expectation.new(match_data, location, message)
     ::Spectator::Harness.current.report(expectation)
   end
 
   # Works the same as `#should` except the condition is inverted.
   # When `#should` succeeds, this method will fail, and vice-versa.
-  def should_not(matcher, message = nil)
+  def should_not(matcher, message = nil, *, _file = __FILE__, _line = __LINE__)
     actual = ::Spectator::Block.new(self)
+    location = ::Spectator::Location.new(_file, _line)
     match_data = matcher.negated_match(actual)
-    expectation = ::Spectator::Expectation.new(match_data, message: message)
+    expectation = ::Spectator::Expectation.new(match_data, location, message)
     ::Spectator::Harness.current.report(expectation)
   end
 end

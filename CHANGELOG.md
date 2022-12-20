@@ -11,6 +11,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Fix invalid syntax (unterminated call) when recording calls to stubs with an un-named splat.
 
+### Changed
+- Expectations using 'should' syntax report file and line where the 'should' keyword is instead of the test start.
+
 ## [0.11.5] - 2022-12-18
 ### Added
 - Added support for mock modules and types that include mocked modules.
