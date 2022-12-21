@@ -125,9 +125,7 @@ module Spectator::DSL
       {% if what.is_a?(StringLiteral) || what.is_a?(NilLiteral) %}
         {{what}}
       {% elsif what.is_a?(StringInterpolation) %}
-        ->(example : ::Spectator::Example) do
-          example.with_context(\{{@type.name}}) { {{what}} }
-        end
+        {{@type.name}}.new.eval { {{what}} }
       {% else %}
         {{what.stringify}}
       {% end %}
