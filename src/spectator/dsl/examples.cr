@@ -125,7 +125,11 @@ module Spectator::DSL
       {% if what.is_a?(StringLiteral) || what.is_a?(NilLiteral) %}
         {{what}}
       {% elsif what.is_a?(StringInterpolation) %}
-        {{@type.name}}.new.eval { {{what}} }
+        {{@type.name}}.new.eval do
+          {{what}}
+        rescue e
+          "<Failed to evaluate example label - #{e.class}: #{e}>"
+        end
       {% else %}
         {{what.stringify}}
       {% end %}

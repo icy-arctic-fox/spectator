@@ -137,7 +137,11 @@ module Spectator::DSL
                  what.is_a?(NilLiteral) %}
         {{what}}
       {% elsif what.is_a?(StringInterpolation) %}
-        {{@type.name}}.new.eval { {{what}} }
+        {{@type.name}}.new.eval do
+          {{what}}
+        rescue e
+          "<Failed to evaluate context label - #{e.class}: #{e}>"
+        end
       {% else %}
         {{what.stringify}}
       {% end %}
