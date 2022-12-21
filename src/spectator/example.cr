@@ -118,7 +118,7 @@ module Spectator
 
       begin
         @result = Harness.run do
-          if proc = @name_proc.as?(Proc(Example, String))
+          if proc = @name_proc
             self.name = proc.call(self)
           end
 
