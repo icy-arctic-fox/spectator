@@ -1,6 +1,6 @@
 require "../spec_helper"
 
-Spectator.describe "Interpolated Label" do
+Spectator.describe "Interpolated Label", :smoke do
   let(foo) { "example" }
   let(bar) { "context" }
 
