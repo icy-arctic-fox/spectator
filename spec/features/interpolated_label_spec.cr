@@ -8,7 +8,7 @@ Spectator.describe "Interpolated Label" do
     expect(example.name).to eq("interpolates example labels")
   end
 
-  context "within a \#{bar}" do
+  context "within a #{bar}" do
     let(foo) { "multiple" }
 
     it "interpolates context labels" do |example|

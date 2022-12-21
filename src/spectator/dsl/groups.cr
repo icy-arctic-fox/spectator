@@ -137,7 +137,7 @@ module Spectator::DSL
                  what.is_a?(NilLiteral) %}
         {{what}}
       {% elsif what.is_a?(StringInterpolation) %}
-        {% raise "String interpolation isn't supported for example group names" %}
+        {{@type.name}}.new.eval { {{what}} }
       {% else %}
         {{what.stringify}}
       {% end %}

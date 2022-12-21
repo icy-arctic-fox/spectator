@@ -4,6 +4,11 @@
 # This type is intentionally outside the `Spectator` module.
 # The reason for this is to prevent name collision when using the DSL to define a spec.
 abstract class SpectatorContext
+  # Evaluates the contents of a block within the scope of the context.
+  def eval
+    with self yield
+  end
+
   # Produces a dummy string to represent the context as a string.
   # This prevents the default behavior, which normally stringifies instance variables.
   # Due to the sheer amount of types Spectator can create
