@@ -133,13 +133,12 @@ module Spectator
            if method.splat_index
              method.args.each_with_index do |arg, i|
                if i == method.splat_index
-                 original += '*'
                  if arg.internal_name && arg.internal_name.size > 0
-                   original += "#{arg.internal_name}, "
+                   original += "*#{arg.internal_name}, "
                  end
                  original += "**#{method.double_splat}, " if method.double_splat
                elsif i > method.splat_index
-                 original += "#{arg.name}: #{arg.internal_name}"
+                 original += "#{arg.name}: #{arg.internal_name}, "
                else
                  original += "#{arg.internal_name}, "
                end
@@ -283,9 +282,8 @@ module Spectator
              if method.splat_index
                method.args.each_with_index do |arg, i|
                  if i == method.splat_index
-                   original += '*'
                    if arg.internal_name && arg.internal_name.size > 0
-                     original += "#{arg.internal_name}, "
+                     original += "*#{arg.internal_name}, "
                    end
                    original += "**#{method.double_splat}, " if method.double_splat
                  elsif i > method.splat_index
