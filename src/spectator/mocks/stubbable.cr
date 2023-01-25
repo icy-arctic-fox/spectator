@@ -550,7 +550,7 @@ module Spectator
           # Check if nil was returned by the stub and if its okay to return it.
           if %value.nil? && %type.nilable?
             # Value was nil and nil is allowed to be returned.
-            %type.cast(%cast)
+            %cast.unsafe_as({{type}})
           elsif %cast.nil?
             # The stubbed value was something else entirely and cannot be cast to the return type.
             raise TypeCastError.new("#{_spectator_stubbed_name} received message #{ {{call}} } and is attempting to return a `#{%value.class}`, but returned type must be `#{%type}`.")
