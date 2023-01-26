@@ -10,7 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added support for string interpolation in context names/labels.
 
 ### Fixed
-- Fix invalid syntax (unterminated call) when recording calls to stubs with an un-named splat.
+- Fix invalid syntax (unterminated call) when recording calls to stubs with an un-named splat. [#51](https://github.com/icy-arctic-fox/spectator/issues/51)
 
 ### Changed
 - Expectations using 'should' syntax report file and line where the 'should' keyword is instead of the test start.
