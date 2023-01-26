@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 - Fix invalid syntax (unterminated call) when recording calls to stubs with an un-named splat. [#51](https://github.com/icy-arctic-fox/spectator/issues/51)
+- Fix malformed method signature when using named splat with keyword arguments in mocked type. [#49](https://github.com/icy-arctic-fox/spectator/issues/49)
 
 ### Changed
 - Expectations using 'should' syntax report file and line where the 'should' keyword is instead of the test start.
