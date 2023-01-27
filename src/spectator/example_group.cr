@@ -87,7 +87,7 @@ module Spectator
     delegate size, unsafe_fetch, to: @nodes
 
     # Yields this group and all parent groups.
-    def ascend
+    def ascend(&)
       group = self
       while group
         yield group

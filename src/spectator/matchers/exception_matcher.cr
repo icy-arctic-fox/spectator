@@ -97,7 +97,7 @@ module Spectator::Matchers
 
     # Runs a block of code and returns the exception it threw.
     # If no exception was thrown, *nil* is returned.
-    private def capture_exception
+    private def capture_exception(&)
       exception = nil
       begin
         yield

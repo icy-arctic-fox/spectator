@@ -40,17 +40,17 @@ Spectator.describe "Mock DSL", :smoke do
         arg
       end
 
-      def method4 : Symbol
+      def method4(&) : Symbol
         @_spectator_invocations << :method4
         yield
       end
 
-      def method5
+      def method5(&)
         @_spectator_invocations << :method5
         yield.to_i
       end
 
-      def method6
+      def method6(&)
         @_spectator_invocations << :method6
         yield
       end
@@ -60,7 +60,7 @@ Spectator.describe "Mock DSL", :smoke do
         {arg, args, kwarg, kwargs}
       end
 
-      def method8(arg, *args, kwarg, **kwargs)
+      def method8(arg, *args, kwarg, **kwargs, &)
         @_spectator_invocations << :method8
         yield
         {arg, args, kwarg, kwargs}
@@ -80,7 +80,7 @@ Spectator.describe "Mock DSL", :smoke do
         "stubbed"
       end
 
-      stub def method4 : Symbol
+      stub def method4(&) : Symbol
         yield
         :block
       end
@@ -258,12 +258,12 @@ Spectator.describe "Mock DSL", :smoke do
       # NOTE: Abstract methods that yield must have yield functionality defined in the method.
       #   This requires that yielding methods have a default implementation.
       #   Just providing `&` in the arguments gets dropped by the compiler unless `yield` is in the method definition.
-      stub def method5
+      stub def method5(&)
         yield
       end
 
       # NOTE: Another quirk where a default implementation must be provided because `&` is dropped.
-      stub def method6 : Symbol
+      stub def method6(&) : Symbol
         yield
       end
 
@@ -381,12 +381,12 @@ Spectator.describe "Mock DSL", :smoke do
         # NOTE: Abstract methods that yield must have yield functionality defined in the method.
         #   This requires that yielding methods have a default implementation.
         #   Just providing `&` in the arguments gets dropped by the compiler unless `yield` is in the method definition.
-        stub def method5
+        stub def method5(&)
           yield
         end
 
         # NOTE: Another quirk where a default implementation must be provided because `&` is dropped.
-        stub def method6 : Symbol
+        stub def method6(&) : Symbol
           yield
         end
       end
@@ -454,12 +454,12 @@ Spectator.describe "Mock DSL", :smoke do
       # NOTE: Abstract methods that yield must have yield functionality defined in the method.
       #   This requires that yielding methods have a default implementation.
       #   Just providing `&` in the arguments gets dropped by the compiler unless `yield` is in the method definition.
-      stub def method5
+      stub def method5(&)
         yield
       end
 
       # NOTE: Another quirk where a default implementation must be provided because `&` is dropped.
-      stub def method6 : Symbol
+      stub def method6(&) : Symbol
         yield
       end
 
@@ -577,12 +577,12 @@ Spectator.describe "Mock DSL", :smoke do
         # NOTE: Abstract methods that yield must have yield functionality defined in the method.
         #   This requires that yielding methods have a default implementation.
         #   Just providing `&` in the arguments gets dropped by the compiler unless `yield` is in the method definition.
-        stub def method5
+        stub def method5(&)
           yield
         end
 
         # NOTE: Another quirk where a default implementation must be provided because `&` is dropped.
-        stub def method6 : Symbol
+        stub def method6(&) : Symbol
           yield
         end
       end
@@ -620,11 +620,11 @@ Spectator.describe "Mock DSL", :smoke do
         :original
       end
 
-      def method3
+      def method3(&)
         yield
       end
 
-      def method4 : Int32
+      def method4(&) : Int32
         yield.to_i
       end
 
@@ -749,11 +749,11 @@ Spectator.describe "Mock DSL", :smoke do
         :original
       end
 
-      def method3
+      def method3(&)
         yield
       end
 
-      def method4 : Int32
+      def method4(&) : Int32
         yield.to_i
       end
 
@@ -1108,17 +1108,17 @@ Spectator.describe "Mock DSL", :smoke do
         arg
       end
 
-      def method4 : Symbol
+      def method4(&) : Symbol
         @_spectator_invocations << :method4
         yield
       end
 
-      def method5
+      def method5(&)
         @_spectator_invocations << :method5
         yield.to_i
       end
 
-      def method6
+      def method6(&)
         @_spectator_invocations << :method6
         yield
       end
@@ -1128,7 +1128,7 @@ Spectator.describe "Mock DSL", :smoke do
         {arg, args, kwarg, kwargs}
       end
 
-      def method8(arg, *args, kwarg, **kwargs)
+      def method8(arg, *args, kwarg, **kwargs, &)
         @_spectator_invocations << :method8
         yield
         {arg, args, kwarg, kwargs}
@@ -1148,7 +1148,7 @@ Spectator.describe "Mock DSL", :smoke do
         "stubbed"
       end
 
-      stub def method4 : Symbol
+      stub def method4(&) : Symbol
         yield
         :block
       end

@@ -164,7 +164,7 @@ module Spectator
     # The context casted to an instance of *klass* is provided as a block argument.
     #
     # TODO: Benchmark compiler performance using this method versus client-side casting in a proc.
-    protected def with_context(klass)
+    protected def with_context(klass, &)
       context = klass.cast(@context)
       with context yield
     end
@@ -184,7 +184,7 @@ module Spectator
     end
 
     # Yields this example and all parent groups.
-    def ascend
+    def ascend(&)
       node = self
       while node
         yield node
@@ -279,7 +279,7 @@ module Spectator
       # The block given to this method will be executed within the test context.
       #
       # TODO: Benchmark compiler performance using this method versus client-side casting in a proc.
-      protected def with_context(klass)
+      protected def with_context(klass, &)
         context = @example.cast_context(klass)
         with context yield
       end

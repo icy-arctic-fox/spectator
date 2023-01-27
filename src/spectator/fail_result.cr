@@ -24,7 +24,7 @@ module Spectator
     end
 
     # Calls the `failure` method on *visitor*.
-    def accept(visitor)
+    def accept(visitor, &)
       visitor.fail(yield self)
     end
 

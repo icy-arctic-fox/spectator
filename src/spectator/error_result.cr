@@ -11,7 +11,7 @@ module Spectator
     end
 
     # Calls the `error` method on *visitor*.
-    def accept(visitor)
+    def accept(visitor, &)
       visitor.error(yield self)
     end
 

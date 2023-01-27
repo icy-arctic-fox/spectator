@@ -9,7 +9,7 @@ module Spectator
     end
 
     # Calls the `pass` method on *visitor*.
-    def accept(visitor)
+    def accept(visitor, &)
       visitor.pass(yield self)
     end
 
