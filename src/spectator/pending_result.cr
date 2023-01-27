@@ -28,7 +28,7 @@ module Spectator
     end
 
     # Calls the `pending` method on the *visitor*.
-    def accept(visitor)
+    def accept(visitor, &)
       visitor.pending(yield self)
     end
 

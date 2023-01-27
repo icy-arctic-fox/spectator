@@ -5,7 +5,7 @@
 # The reason for this is to prevent name collision when using the DSL to define a spec.
 abstract class SpectatorContext
   # Evaluates the contents of a block within the scope of the context.
-  def eval
+  def eval(&)
     with self yield
   end
 

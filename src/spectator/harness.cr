@@ -43,7 +43,7 @@ module Spectator
     # The value of `.current` is set to the harness for the duration of the test.
     # It will be reset after the test regardless of the outcome.
     # The result of running the test code will be returned.
-    def self.run : Result
+    def self.run(&) : Result
       with_harness do |harness|
         harness.run { yield }
       end
@@ -53,7 +53,7 @@ module Spectator
     # The `.current` harness is set to the new harness for the duration of the block.
     # `.current` is reset to the previous value (probably nil) afterwards, even if the block raises.
     # The result of the block is returned.
-    private def self.with_harness
+    private def self.with_harness(&)
       previous = @@current
       begin
         @@current = harness = new
@@ -70,7 +70,7 @@ module Spectator
 
     # Runs test code and produces a result based on the outcome.
     # The test code should be called from within the block given to this method.
-    def run : Result
+    def run(&) : Result
       elapsed, error = capture { yield }
       elapsed2, error2 = capture { run_deferred }
       run_cleanup
@@ -106,7 +106,7 @@ module Spectator
       @cleanup << block
     end
 
-    def aggregate_failures(label = nil)
+    def aggregate_failures(label = nil, &)
       previous = @aggregate
       @aggregate = aggregate = [] of Expectation
       begin
@@ -135,7 +135,7 @@ module Spectator
 
     # Yields to run the test code and returns information about the outcome.
     # Returns a tuple with the elapsed time and an error if one occurred (otherwise nil).
-    private def capture : Tuple(Time::Span, Exception?)
+    private def capture(&) : Tuple(Time::Span, Exception?)
       error = nil
       elapsed = Time.measure do
         error = catch { yield }
@@ -146,7 +146,7 @@ module Spectator
     # Yields to run a block of code and captures exceptions.
     # If the block of code raises an error, the error is caught and returned.
     # If the block doesn't raise an error, then nil is returned.
-    private def catch : Exception?
+    private def catch(&) : Exception?
       yield
     rescue e
       e

@@ -364,7 +364,7 @@ Spectator.describe Spectator::Mock do
           arg
         end
 
-        def self.baz(arg)
+        def self.baz(arg, &)
           yield
         end
 
@@ -929,7 +929,7 @@ Spectator.describe Spectator::Mock do
           arg
         end
 
-        def self.baz(arg)
+        def self.baz(arg, &)
           yield
         end
       end

@@ -168,7 +168,7 @@ Spectator.describe "Double DSL", :smoke do
 
     context "methods accepting blocks" do
       double(:test7) do
-        stub def foo
+        stub def foo(&)
           yield
         end
 

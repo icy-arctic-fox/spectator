@@ -133,13 +133,12 @@ module Spectator
            if method.splat_index
              method.args.each_with_index do |arg, i|
                if i == method.splat_index
-                 original += '*'
                  if arg.internal_name && arg.internal_name.size > 0
-                   original += "#{arg.internal_name}, "
+                   original += "*#{arg.internal_name}, "
                  end
                  original += "**#{method.double_splat}, " if method.double_splat
                elsif i > method.splat_index
-                 original += "#{arg.name}: #{arg.internal_name}"
+                 original += "#{arg.name}: #{arg.internal_name}, "
                else
                  original += "#{arg.internal_name}, "
                end
@@ -283,9 +282,8 @@ module Spectator
              if method.splat_index
                method.args.each_with_index do |arg, i|
                  if i == method.splat_index
-                   original += '*'
                    if arg.internal_name && arg.internal_name.size > 0
-                     original += "#{arg.internal_name}, "
+                     original += "*#{arg.internal_name}, "
                    end
                    original += "**#{method.double_splat}, " if method.double_splat
                  elsif i > method.splat_index
@@ -539,6 +537,7 @@ module Spectator
         # Get the value as-is from the stub.
         # This will be compiled as a union of all known stubbed value types.
         %value = {{stub}}.call({{call}})
+        %type = {{type}}
 
         # Attempt to cast the value to the method's return type.
         # If successful, which it will be in most cases, return it.
@@ -549,12 +548,12 @@ module Spectator
           %cast
         {% elsif fail_cast == :raise %}
           # Check if nil was returned by the stub and if its okay to return it.
-          if %value.nil? && {{type}}.nilable?
+          if %value.nil? && %type.nilable?
             # Value was nil and nil is allowed to be returned.
-            %cast.as({{type}})
+            %type.cast(%cast)
           elsif %cast.nil?
             # The stubbed value was something else entirely and cannot be cast to the return type.
-            raise TypeCastError.new("#{_spectator_stubbed_name} received message #{ {{call}} } and is attempting to return a `#{%value.class}`, but returned type must be `#{ {{type}} }`.")
+            raise TypeCastError.new("#{_spectator_stubbed_name} received message #{ {{call}} } and is attempting to return a `#{%value.class}`, but returned type must be `#{%type}`.")
           else
             # Types match and value can be returned as cast type.
             %cast

@@ -5,15 +5,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [0.11.6] - 2023-01-26
 ### Added
 - Added ability to cast types using the return value from expect/should statements with a type matcher.
 - Added support for string interpolation in context names/labels.
 
 ### Fixed
-- Fix invalid syntax (unterminated call) when recording calls to stubs with an un-named splat.
+- Fix invalid syntax (unterminated call) when recording calls to stubs with an un-named splat. [#51](https://github.com/icy-arctic-fox/spectator/issues/51)
+- Fix malformed method signature when using named splat with keyword arguments in mocked type. [#49](https://github.com/icy-arctic-fox/spectator/issues/49)
 
 ### Changed
 - Expectations using 'should' syntax report file and line where the 'should' keyword is instead of the test start.
+- Add non-captured block argument in preparation for Crystal 1.8.0.
 
 ## [0.11.5] - 2022-12-18
 ### Added
@@ -444,7 +448,8 @@ This has been changed so that it compiles and raises an error at runtime with a 
 First version ready for public use.
 
 
-[Unreleased]: https://gitlab.com/arctic-fox/spectator/-/compare/v0.11.5...master
+[Unreleased]: https://gitlab.com/arctic-fox/spectator/-/compare/v0.11.6...master
+[0.11.6]: https://gitlab.com/arctic-fox/spectator/-/compare/v0.11.5...v0.11.6
 [0.11.5]: https://gitlab.com/arctic-fox/spectator/-/compare/v0.11.4...v0.11.5
 [0.11.4]: https://gitlab.com/arctic-fox/spectator/-/compare/v0.11.3...v0.11.4
 [0.11.3]: https://gitlab.com/arctic-fox/spectator/-/compare/v0.11.2...v0.11.3

@@ -259,7 +259,7 @@ Spectator.describe Spectator::NullDouble do
         arg
       end
 
-      stub def self.baz(arg)
+      stub def self.baz(arg, &)
         yield
       end
     end
