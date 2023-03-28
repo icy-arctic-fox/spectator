@@ -13,18 +13,13 @@ module Spectator
 
     # Creates a wrapper for the specified value.
     def initialize(value)
-      @pointer = Box.box(value)
+      @pointer = Value.new(value).as(Void*)
     end
 
     # Retrieves the previously wrapped value.
     # The *type* of the wrapped value must match otherwise an error will be raised.
     def get(type : T.class) : T forall T
-      {% begin %}
-        {% if T.nilable? %}
-          @pointer.null? ? nil :
-        {% end %}
-        Box(T).unbox(@pointer)
-      {% end %}
+      @pointer.unsafe_as(Value(T)).get
     end
 
     # Retrieves the previously wrapped value.
@@ -39,12 +34,20 @@ module Spectator
     # type = wrapper.get { Int32 } # Returns Int32
     # ```
     def get(& : -> T) : T forall T
-      {% begin %}
-        {% if T.nilable? %}
-          @pointer.null? ? nil :
-        {% end %}
-        Box(T).unbox(@pointer)
-      {% end %}
+      @pointer.unsafe_as(Value(T)).get
+    end
+
+    # Wrapper for a value.
+    # Similar to `Box`, but doesn't segfault on nil and unions.
+    private class Value(T)
+      # Creates the wrapper.
+      def initialize(@value : T)
+      end
+
+      # Retrieves the value.
+      def get : T
+        @value
+      end
     end
   end
 end
