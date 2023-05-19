@@ -287,7 +287,7 @@ Spectator.describe Driver do
     # Call the mock method.
     subject.do_something(interface, dbl)
     # Verify everything went okay.
-    expect(interface).to have_received(:invoke).with(thing)
+    expect(interface).to have_received(:invoke).with(dbl)
   end
 end
 ```
