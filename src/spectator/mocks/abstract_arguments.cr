@@ -45,23 +45,14 @@ module Spectator
       when Range
         # Ranges can only be matched against if their right side is comparable.
         # Ensure the right side is comparable, otherwise compare directly.
-        if b.is_a?(Comparable(typeof(b)))
-          a === b
-        else
-          a == b
-        end
+        return a === b if b.is_a?(Comparable(typeof(b)))
+        a == b
       when Tuple, Array
-        if b.is_a?(Tuple) || b.is_a?(Array)
-          compare_tuples(a, b)
-        else
-          a === b
-        end
+        return compare_tuples(a, b) if b.is_a?(Tuple) || b.is_a?(Array)
+        a === b
       when NamedTuple, Hash
-        if b.is_a?(NamedTuple) || b.is_a?(Hash)
-          compare_named_tuples(a, b)
-        else
-          a === b
-        end
+        return compare_named_tuples(a, b) if b.is_a?(NamedTuple) || b.is_a?(Hash)
+        a === b
       else
         a === b
       end
