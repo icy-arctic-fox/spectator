@@ -4,6 +4,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+### Added
+- Added ability to use matchers for case equality. [#55](https://github.com/icy-arctic-fox/spectator/issues/55)
+- Added support for nested case equality when checking arguments with Array, Tuple, Hash, and NamedTuple.
+
+### Fixed
+- Fixed some issues with the `be_within` matcher when used with expected and union types.
+
 ## [0.11.7] - 2023-10-16
 ### Fixed
 - Fix memoized value (`let`) with a union type causing segfault. [#81](https://gitlab.com/arctic-fox/spectator/-/issues/81)
