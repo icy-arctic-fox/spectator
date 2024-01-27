@@ -7,7 +7,7 @@ module Spectator
     end
 
     # Utility method for comparing two tuples considering special types.
-    private def compare_tuples(a : Tuple, b : Tuple)
+    private def compare_tuples(a : Tuple | Array, b : Tuple | Array)
       return false if a.size != b.size
 
       a.zip(b) do |a_value, b_value|
@@ -18,14 +18,14 @@ module Spectator
 
     # Utility method for comparing two tuples considering special types.
     # Supports nilable tuples (ideal for splats).
-    private def compare_tuples(a : Tuple?, b : Tuple?)
+    private def compare_tuples(a : Tuple? | Array?, b : Tuple? | Array?)
       return false if a.nil? ^ b.nil?
 
       compare_tuples(a.not_nil!, b.not_nil!)
     end
 
     # Utility method for comparing two named tuples ignoring order.
-    private def compare_named_tuples(a : NamedTuple, b : NamedTuple)
+    private def compare_named_tuples(a : NamedTuple | Hash, b : NamedTuple | Hash)
       a.each do |k, v1|
         v2 = b.fetch(k) { return false }
         return false unless compare_values(v1, v2)
@@ -49,6 +49,18 @@ module Spectator
           a === b
         else
           a == b
+        end
+      when Tuple, Array
+        if b.is_a?(Tuple) || b.is_a?(Array)
+          compare_tuples(a, b)
+        else
+          a === b
+        end
+      when NamedTuple, Hash
+        if b.is_a?(NamedTuple) || b.is_a?(Hash)
+          compare_named_tuples(a, b)
+        else
+          a === b
         end
       else
         a === b
