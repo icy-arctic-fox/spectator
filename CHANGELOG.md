@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [0.12.0] - 2024-02-03
 ### Added
 - Added ability to use matchers for case equality. [#55](https://github.com/icy-arctic-fox/spectator/issues/55)
 - Added support for nested case equality when checking arguments with Array, Tuple, Hash, and NamedTuple.
@@ -458,7 +458,8 @@ This has been changed so that it compiles and raises an error at runtime with a 
 First version ready for public use.
 
 
-[Unreleased]: https://gitlab.com/arctic-fox/spectator/-/compare/v0.11.7...master
+[Unreleased]: https://gitlab.com/arctic-fox/spectator/-/compare/v0.12.0...master
+[0.12.0]: https://gitlab.com/arctic-fox/spectator/-/compare/v0.11.7...v0.12.0
 [0.11.7]: https://gitlab.com/arctic-fox/spectator/-/compare/v0.11.6...v0.11.7
 [0.11.6]: https://gitlab.com/arctic-fox/spectator/-/compare/v0.11.5...v0.11.6
 [0.11.5]: https://gitlab.com/arctic-fox/spectator/-/compare/v0.11.4...v0.11.5
