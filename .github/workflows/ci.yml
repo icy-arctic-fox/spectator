@@ -1,0 +1,59 @@
+name: Spectator CI
+
+on:
+  push:
+  pull_request:
+    branches: [main]
+  schedule:
+    - cron: "0 6 * * 6"
+
+jobs:
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download source code
+        uses: actions/checkout@v4
+      - name: Install Crystal
+        uses: crystal-lang/install-crystal@v1
+        with:
+          crystal: latest
+      - name: Install shards
+        run: shards install
+      - name: Format
+        run: crystal tool format --check
+      - name: Lint
+        run: ./bin/ameba
+
+  test:
+    name: Test
+    strategy:
+      fail-fast: false
+      matrix:
+        crystal: # Latest version plus 2 previous.
+          - latest
+          - nightly
+          - 1.10
+          - 1.11
+          - 1.12
+        os:
+          - ubuntu-latest
+          - macos-latest
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Download source code
+        uses: actions/checkout@v4
+      - name: Install Crystal
+        uses: crystal-lang/install-crystal@v1
+        with:
+          crystal: ${{ matrix.crystal }}
+      - name: Cache shards
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/shards
+          key: ${{ runner.os }}-shards-${{ hashFiles('shard.yml') }}
+          restore-keys: ${{ runner.os }}-shards-
+      - name: Install shards
+        run: shards update --ignore-crystal-version
+      - name: Run tests
+        run: crystal spec --order=random --error-on-warnings
