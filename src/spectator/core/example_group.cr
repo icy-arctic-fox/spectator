@@ -1,4 +1,4 @@
-module Spectator
+module Spectator::Core
   # Information about a group of examples and functionality for running them.
   # The group can be nested.
   class ExampleGroup

@@ -1,4 +1,4 @@
-module Spectator
+module Spectator::Core
   # Information about a test case and functionality for running it.
   class Example
     # Name of the example.

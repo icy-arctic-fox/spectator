@@ -1,3 +1,5 @@
+require "./spectator/core/**"
+
 # Feature-rich testing framework for Crystal inspired by RSpec.
 module Spectator
   # Current version of the Spectator library.
