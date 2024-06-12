@@ -16,7 +16,7 @@ module Spectator::Core
     # Constructs a string representation of the group.
     # The name will be used if it is set, otherwise the group will be anonymous.
     def to_s(io : IO) : Nil
-      if (name = @name)
+      if name = @name
         io << name
       else
         io << "<Anonymous Context>"

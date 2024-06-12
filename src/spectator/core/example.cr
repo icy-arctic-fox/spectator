@@ -19,7 +19,7 @@ module Spectator::Core
     # Constructs a string representation of the example.
     # The name will be used if it is set, otherwise the example will be anonymous.
     def to_s(io : IO) : Nil
-      if (name = @name)
+      if name = @name
         io << name
       else
         io << "<Anonymous Example>"
