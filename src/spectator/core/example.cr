@@ -1,3 +1,5 @@
+require "./result"
+
 module Spectator::Core
   # Information about a test case and functionality for running it.
   class Example
@@ -12,7 +14,7 @@ module Spectator::Core
     end
 
     # Runs the example.
-    def run
+    def run : Result
       @block.call(self)
     end
 
@@ -23,6 +25,25 @@ module Spectator::Core
         io << name
       else
         io << "<Anonymous Example>"
+      end
+    end
+
+    def to_proc
+      Procsy.new(self)
+    end
+
+    struct Procsy
+      @proc : self ->
+
+      def initialize(@example : Example, &@proc : self ->)
+      end
+
+      def initialize(@example : Example)
+        @proc = ->run
+      end
+
+      def run
+        @example.run
       end
     end
   end
