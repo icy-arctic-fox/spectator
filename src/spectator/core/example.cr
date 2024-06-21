@@ -1,21 +1,30 @@
+require "./item"
+require "./location_range"
 require "./result"
 
 module Spectator::Core
   # Information about a test case and functionality for running it.
-  class Example
-    # Name of the example.
-    # This may be nil if the example does not have a name.
-    # In that case, the description of the first matcher executed in the example should be used.
-    property! name : String
-
+  class Example < Item
     # Creates a new example.
-    # The *name* may be nil if the example has no name.
-    def initialize(@name = nil, &@block : Example -> Nil)
+    #
+    # The *description* can be a string, nil, or any other object.
+    # When it is a string or nil, it will be stored as-is.
+    # Any other types will be converted to a string by calling `#inspect` on it.
+    def initialize(description = nil, location : LocationRange? = nil, &@block : Example -> Nil)
+      super(description, location)
     end
 
     # Runs the example.
     def run : Result
-      @block.call(self)
+      Result.capture do
+        if context = parent?
+          context.with_hooks(self) do
+            @block.call(self)
+          end
+        else
+          @block.call(self)
+        end
+      end
     end
 
     # Constructs a string representation of the example.
@@ -28,8 +37,23 @@ module Spectator::Core
       end
     end
 
-    def to_proc
-      Procsy.new(self)
+    def inspect(io : IO) : Nil
+      io << "#<" << self.class << ' '
+      if description = @description
+        io << '"' << description << '"'
+      else
+        io << "Anonymous Example"
+      end
+      if location = @location
+        io << " @ " << location
+      end
+      io << " 0x"
+      object_id.to_s(io, 16)
+      io << '>'
+    end
+
+    def to_proc(&block : Example ->)
+      Procsy.new(self, &block)
     end
 
     struct Procsy
