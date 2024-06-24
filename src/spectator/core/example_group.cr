@@ -6,15 +6,17 @@ module Spectator::Core
   # Information about a group of examples and functionality for running them.
   # The group can be nested.
   class ExampleGroup < Item
-    include Context(Example)
+    include Context
 
-    @children = [] of Item
+    def self.new(description = nil, location : LocationRange? = nil, &)
+      group = new(description, location)
+      with group yield group
+      group
+    end
 
     def context(description, &)
       self.class.new(description).tap do |child|
         add_child(child)
-        child.parent = self
-        @children << child
         with child yield
       end
     end
@@ -24,6 +26,8 @@ module Spectator::Core
       add_child(example)
       example
     end
+
+    @children = [] of Item
 
     def add_child(child : Item) : Nil
       # Attempt to remove the child from its previous parent.
@@ -41,12 +45,6 @@ module Spectator::Core
 
       @children.delete(child)
       child.parent = nil
-    end
-
-    def self.new(description = nil, location : LocationRange? = nil, &)
-      group = new(description, location)
-      with group yield group
-      group
     end
 
     # Constructs a string representation of the group.

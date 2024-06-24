@@ -2,7 +2,7 @@ require "./hooks"
 require "./example"
 
 module Spectator::Core
-  module Context(T)
+  module Context
     include Hooks
 
     abstract def context(description, &)
@@ -11,9 +11,9 @@ module Spectator::Core
       context(description) { with self yield self }
     end
 
-    abstract def specify(description, &block : T ->) : T
+    abstract def specify(description, &block : Example ->) : Example
 
-    def it(description, &block : T ->) : T
+    def it(description, &block : Example ->) : Example
       specify(description, &block)
     end
   end
