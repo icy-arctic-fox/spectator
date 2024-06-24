@@ -1,26 +1,23 @@
+require "./example"
+
 module Spectator::Core
   module Methods
-    def context(description : String, &)
-      example_group = ExampleGroup.new(description)
-      Spectator.current_example_group.push(example_group) do
-        with self yield
-      end
+    abstract def context(description, &)
+
+    def describe(description, &)
+      context(description) { with self yield self }
     end
 
-    def describe(description : String, &)
-      context(description) { yield }
-    end
+    abstract def specify(description, &block : Example ->) : Example
 
-    def it(description : String)
-    end
+    # def it(description, &block : Example ->) : Example
+    #   specify(description, &block)
+    # end
 
-    def it(description : String, & : Example ->)
-    end
-
-    def pending(description : String)
-    end
-
-    def pending(description : String, & : Example ->)
-    end
+    # macro it(description, &block)
+    #   specify({{description}}) do {% if !block.args.empty? %} |{{block.args.splat}}| {% end %}
+    #     {{yield}}
+    #   end
+    # end
   end
 end

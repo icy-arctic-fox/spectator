@@ -1,20 +1,15 @@
+require "./dsl"
 require "./hooks"
-require "./example"
+require "./memoization"
+require "./methods"
 
 module Spectator::Core
   module Context
+    include DSL
     include Hooks
-
-    abstract def context(description, &)
-
-    def describe(description, &)
-      context(description) { with self yield self }
-    end
-
-    abstract def specify(description, &block : Example ->) : Example
-
-    def it(description, &block : Example ->) : Example
-      specify(description, &block)
-    end
+    include Memoization
+    include Methods
   end
 end
+
+Spectator.def_example_alias(:it)
