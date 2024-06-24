@@ -7,9 +7,17 @@ module Spectator::Core
       hooks << ExampleHook(Example).new(&block)
     end
 
+    def before(&block : Example ->) : Nil
+      before_each(&block)
+    end
+
     def after_each(&block : Example ->)
       hooks = @after_each ||= [] of ExampleHook(Example)
       hooks << ExampleHook(Example).new(&block)
+    end
+
+    def after(&block : Example ->) : Nil
+      after_each(&block)
     end
 
     def before_all(&block : ->)
