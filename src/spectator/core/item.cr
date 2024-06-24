@@ -16,10 +16,11 @@ module Spectator::Core
     end
 
     protected def build_full_description(io : IO) : Nil
-      parent?.try &.build_full_description(io)
-      if description = description?
-        io << ' ' << description
+      if parent = parent?
+        parent.build_full_description(io)
+        io << ' ' if description?
       end
+      description?.try &.to_s(io)
     end
 
     # The location of the item in the source code.
@@ -30,6 +31,8 @@ module Spectator::Core
     # Context (the example group) the item belongs to.
     getter! parent : Context
 
+    # Sets the context (the example group) the item belongs to.
+    # NOTE: It is important that the context should be made aware that this item is a child.
     def parent=(@parent : Context)
     end
 

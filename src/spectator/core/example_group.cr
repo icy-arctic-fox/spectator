@@ -1,17 +1,46 @@
 require "./context"
+require "./example"
 require "./item"
 
 module Spectator::Core
   # Information about a group of examples and functionality for running them.
   # The group can be nested.
   class ExampleGroup < Item
-    include Context
+    include Context(Example)
+
+    @children = [] of Item
 
     def context(description, &)
       self.class.new(description).tap do |child|
+        add_child(child)
         child.parent = self
+        @children << child
         with child yield
       end
+    end
+
+    def specify(description, &block : Example ->) : Example
+      example = Example.new(description, &block)
+      add_child(example)
+      example
+    end
+
+    def add_child(child : Item) : Nil
+      # Attempt to remove the child from its previous parent.
+      child.parent?.try do |prev_parent|
+        prev_parent.remove_child(child) if prev_parent.responds_to?(:remove_child)
+      end
+
+      @children << child
+      child.parent = self
+    end
+
+    def remove_child(child : Item) : Nil
+      # Don't remove the child if it's not ours.
+      return unless child.parent? == self
+
+      @children.delete(child)
+      child.parent = nil
     end
 
     def self.new(description = nil, location : LocationRange? = nil, &)

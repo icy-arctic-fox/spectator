@@ -1,20 +1,20 @@
 require "./hooks"
-require "./item"
+require "./example"
 
 module Spectator::Core
-  module Context
+  module Context(T)
     include Hooks
+
+    abstract def context(description, &)
 
     def describe(description, &)
       context(description) { with self yield self }
     end
 
-    abstract def context(description, &)
+    abstract def specify(description, &block : T ->) : T
 
-    def it(description, &block : Example ->) : Example
-      Example.new(description, &block).tap do |example|
-        example.parent = self
-      end
+    def it(description, &block : T ->) : T
+      specify(description, &block)
     end
   end
 end
