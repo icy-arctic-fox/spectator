@@ -36,6 +36,11 @@ module Spectator::Core
     def parent=(@parent : Context)
     end
 
+    # Clears the context (the example group) the item belongs to.
+    # NOTE: It is important that the context should be made aware that this item is no longer a child.
+    def parent=(@parent : Nil)
+    end
+
     # Creates a new item.
     # The *description* can be a string, nil, or any other object.
     # When it is a string or nil, it will be stored as-is.
