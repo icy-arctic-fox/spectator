@@ -1,6 +1,7 @@
 require "./context"
 require "./example"
 require "./item"
+require "./location_range"
 
 module Spectator::Core
   # Information about a group of examples and functionality for running them.
@@ -14,15 +15,17 @@ module Spectator::Core
       group
     end
 
-    def context(description, &)
-      self.class.new(description).tap do |child|
+    def context(description, file = __FILE__, line = __LINE__, end_line = __END_LINE__, &)
+      location = LocationRange.new(file, line, end_line)
+      self.class.new(description, location).tap do |child|
         add_child(child)
         with child yield
       end
     end
 
-    def specify(description, &block : Example ->) : Example
-      example = Example.new(description, &block)
+    def specify(description, file = __FILE__, line = __LINE__, end_line = __END_LINE__, &block : Example ->) : Example
+      location = LocationRange.new(file, line, end_line)
+      example = Example.new(description, location, &block)
       add_child(example)
       example
     end
@@ -40,11 +43,10 @@ module Spectator::Core
     end
 
     def remove_child(child : Item) : Nil
-      # Don't remove the child if it's not ours.
-      return unless child.parent? == self
-
       @children.delete(child)
-      child.parent = nil
+
+      # Disassociate the child only if it's ours.
+      child.parent = nil if child.parent? == self
     end
 
     # Constructs a string representation of the group.

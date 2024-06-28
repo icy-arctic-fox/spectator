@@ -28,16 +28,20 @@ module Spectator::Core
     end
 
     # Constructs a string representation of the example.
-    # The name will be used if it is set, otherwise the example will be anonymous.
+    # The description will be used if it is set, otherwise the example will be anonymous.
     def to_s(io : IO) : Nil
-      if name = @name
-        io << name
+      if description = @description
+        io << description
       else
         io << "<Anonymous Example>"
       end
     end
 
     def inspect(io : IO) : Nil
+      inspect(io) { }
+    end
+
+    protected def inspect(io : IO, & : IO ->) : Nil
       io << "#<" << self.class << ' '
       if description = @description
         io << '"' << description << '"'
@@ -49,11 +53,16 @@ module Spectator::Core
       end
       io << " 0x"
       object_id.to_s(io, 16)
+      yield io
       io << '>'
     end
 
     def to_proc(&block : Example ->)
       Procsy.new(self, &block)
+    end
+
+    def to_proc
+      Procsy.new(self)
     end
 
     struct Procsy
@@ -63,11 +72,18 @@ module Spectator::Core
       end
 
       def initialize(@example : Example)
-        @proc = ->run
+        @proc = ->@example.run
       end
 
       def run
-        @example.run
+        @proc.call(@example)
+      end
+
+      forward_missing_to @example
+      delegate to_s, to: @example
+
+      def inspect(io : IO) : Nil
+        @example.inspect(io, &.<< " Procsy")
       end
     end
   end
