@@ -23,6 +23,10 @@ module Spectator::Core
     def initialize(@status : Status, @elapsed : Time::Span, @exception = nil)
     end
 
+    # Executes a block of code and creates a new result object based on the outcome.
+    # If the block completed successfully, the returned result will be a pass.
+    # If the block raised an exception, the returned result will be an error.
+    # However, if an `AssertionFailed` exception is raised, the returned result will be a fail.
     def self.capture(&) : self
       exception = nil.as(Exception?)
       status = Status::Error # Safe default.
@@ -43,10 +47,13 @@ module Spectator::Core
       new(status, elapsed, exception)
     end
 
+    # Returns true if the example passed.
     def pass?
       @status.pass?
     end
 
+    # Returns true if the example failed.
+    # Errors are considered failures.
     def fail?
       !@status.pass? && !@status.skip?
     end

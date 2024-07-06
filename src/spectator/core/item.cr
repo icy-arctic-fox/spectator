@@ -1,3 +1,4 @@
+require "./context"
 require "./location_range"
 
 module Spectator::Core
@@ -15,6 +16,7 @@ module Spectator::Core
       end
     end
 
+    # Appends the parent's description and this item's description to the given *io*.
     protected def build_full_description(io : IO) : Nil
       if parent = parent?
         parent.build_full_description(io)

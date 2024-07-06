@@ -15,21 +15,6 @@ module Spectator::Core
       group
     end
 
-    def context(description, file = __FILE__, line = __LINE__, end_line = __END_LINE__, &)
-      location = LocationRange.new(file, line, end_line)
-      self.class.new(description, location).tap do |child|
-        add_child(child)
-        with child yield
-      end
-    end
-
-    def specify(description, file = __FILE__, line = __LINE__, end_line = __END_LINE__, &block : Example ->) : Example
-      location = LocationRange.new(file, line, end_line)
-      example = Example.new(description, location, &block)
-      add_child(example)
-      example
-    end
-
     @children = [] of Item
 
     def add_child(child : Item) : Nil
