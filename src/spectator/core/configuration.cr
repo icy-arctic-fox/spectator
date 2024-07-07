@@ -55,7 +55,7 @@ module Spectator
 
       property order = Order::Defined
 
-      property seed = 0_u64
+      property! seed : UInt64
 
       property error_exit_code = 1
     end
