@@ -1,3 +1,4 @@
+require "./configuration"
 require "./example"
 require "./example_group"
 require "./sandbox"
@@ -6,7 +7,7 @@ require "../reporters/dots_reporter"
 module Spectator
   module Core
     class Runner
-      def initialize(@reporter : Reporters::Reporter)
+      def initialize(@configuration : Configuration)
       end
 
       def run(spec : ExampleGroup)
@@ -20,10 +21,16 @@ module Spectator
       end
 
       private def run_example(example : Example) : Nil
-        @reporter.example_started(example)
+        report &.example_started(example)
         result = example.run
-        @reporter.example_finished(example, result)
+        report &.example_finished(example, result)
         Fiber.yield
+      end
+
+      private def report(& : Reporters::Reporter ->) : Nil
+        @configuration.reporters.each do |reporter|
+          yield reporter
+        end
       end
     end
 
@@ -44,7 +51,7 @@ module Spectator
   class_property? auto_run = true
 
   def self.run
-    runner = Core::Runner.new(Reporters::DotsReporter.new)
+    runner = Core::Runner.new(configuration)
     runner.run(Spectator.sandbox.root_example_group)
   end
 
