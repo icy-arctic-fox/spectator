@@ -34,6 +34,19 @@ module Spectator::Core
       child.parent = nil if child.parent? == self
     end
 
+    def run : Array(Result)
+      results = [] of Result
+      @children.each do |child|
+        result = child.run
+        if result.is_a?(Indexable(Result))
+          results.concat(result)
+        else
+          results << result
+        end
+      end
+      results
+    end
+
     # Constructs a string representation of the group.
     # The name will be used if it is set, otherwise the group will be anonymous.
     def to_s(io : IO) : Nil

@@ -1,58 +1,93 @@
+require "./context_hook"
 require "./example_hook"
 
 module Spectator::Core
   module Hooks
-    def before_each(&block : Example ->) : Nil
+    def before_each(*, file = __FILE__, line = __LINE__, end_line = __END_LINE__, &block : Example ->) : ExampleHook(Example)
+      location = LocationRange.new(file, line, end_line)
+      hook = ExampleHook(Example).new(:before, location, &block)
       hooks = @before_each ||= [] of ExampleHook(Example)
-      hooks << ExampleHook(Example).new(&block)
+      hooks << hook
+      hook
     end
 
-    def before(&block : Example ->) : Nil
-      before_each(&block)
+    private getter critical_before_each_hooks = 0
+
+    private def before_each!(&block : Example ->) : Nil
+      hook = ExampleHook(Example).new(:before, &block)
+      hooks = @before_each ||= [] of ExampleHook(Example)
+      hooks.insert(@critical_before_each_hooks, hook)
+      @critical_before_each_hooks += 1
     end
 
-    def after_each(&block : Example ->)
+    def before(*, file = __FILE__, line = __LINE__, end_line = __END_LINE__, &block : Example ->) : ExampleHook(Example)
+      before_each(file: file, line: line, end_line: end_line, &block)
+    end
+
+    def after_each(*, file = __FILE__, line = __LINE__, end_line = __END_LINE__, &block : Example ->) : ExampleHook(Example)
+      location = LocationRange.new(file, line, end_line)
+      hook = ExampleHook(Example).new(:after, location, &block)
       hooks = @after_each ||= [] of ExampleHook(Example)
-      hooks << ExampleHook(Example).new(&block)
+      hooks << hook
+      hook
     end
 
-    def after(&block : Example ->) : Nil
-      after_each(&block)
+    def after(*, file = __FILE__, line = __LINE__, end_line = __END_LINE__, &block : Example ->) : ExampleHook(Example)
+      after_each(file: file, line: line, end_line: end_line, &block)
     end
 
-    def before_all(&block : ->)
+    private getter critical_after_each_hooks = 0
+
+    private def after_each!(&block : Example ->) : Nil
+      hook = ExampleHook(Example).new(:after, &block)
+      hooks = @after_each ||= [] of ExampleHook(Example)
+      hooks.insert(@critical_after_each_hooks, hook)
+      @critical_after_each_hooks += 1
+    end
+
+    def before_all(*, file = __FILE__, line = __LINE__, end_line = __END_LINE__, &block : ->) : ContextHook
+      location = LocationRange.new(file, line, end_line)
+      hook = ContextHook.new(:before, location, &block)
       hooks = @before_all ||= [] of ContextHook
-      hooks << ContextHook.new(&block)
+      hooks << hook
+      hook
     end
 
-    def after_all(&block : ->)
+    def after_all(*, file = __FILE__, line = __LINE__, end_line = __END_LINE__, &block : ->) : ContextHook
+      location = LocationRange.new(file, line, end_line)
+      hook = ContextHook.new(:after, location, &block)
       hooks = @after_all ||= [] of ContextHook
-      hooks << ContextHook.new(&block)
+      hooks << hook
+      hook
     end
 
-    def around_each(& : Example ->)
+    def around_each(*, file = __FILE__, line = __LINE__, end_line = __END_LINE__, & : Example::Procsy ->) : ExampleHook(Example::Procsy)
+      location = LocationRange.new(file, line, end_line)
+      hook = ExampleHook(Example::Procsy).new(:around, location, &block)
       hooks = @around_each ||= [] of ExampleHook(Example::Procsy)
-      hooks << ExampleHook(Example::Procsy).new(&block)
+      hooks << hook
+      hook
     end
 
-    def around_all(& : ->)
-    end
+    # TODO: around_all
 
     def with_hooks(example : Example, &block : ->) : Nil
+      if context = parent?
+        context.with_hooks(example) do
+          with_current_context_hooks(example, &block)
+        end
+      else
+        with_current_context_hooks(example, &block)
+      end
+    end
+
+    private def with_current_context_hooks(example : Example, &block : ->) : Nil
       @before_all.try &.each &.call
       @before_each.try &.each &.call(example)
-      # proc = wrap_with_around_each_hooks(example, &block)
-      # proc.run
+      # TODO: around_each
       block.call
       @after_each.try &.each &.call(example)
       @after_all.try &.each &.call
-    end
-
-    private def wrap_with_around_each_hooks(example : Example, &block : ->)
-      proc = example.to_proc(&block)
-      @around_each.try do |hooks|
-      end
-      proc
     end
   end
 end

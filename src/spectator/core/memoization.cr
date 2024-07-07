@@ -4,18 +4,16 @@ module Spectator::Core
   end
 
   module Memoization
-    macro let(name, &block)
+    macro let(expr)
+      {{expr}}
+
       %block = -> do
-        {{yield}}
+        {{expr.value}}
       end
 
-      {{name.id}} = ::Spectator::Core.null_value(typeof(%block.call))
-
-      before_each do # TODO: Ensure hook is called before all others.
-        {{name.id}} = %block.call
+      before_each! do
+        {{expr.target}} = %block.call
       end
-
-      {% debug %}
     end
   end
 end

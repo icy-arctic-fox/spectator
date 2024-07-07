@@ -1,16 +1,23 @@
-require "./example"
 require "./location_range"
 
 module Spectator::Core
   class ExampleHook(T)
+    enum Position
+      Before
+      After
+      Around
+    end
+
     getter! location : LocationRange
 
     getter! exception : Exception
 
-    def initialize(@location = nil, &@block : T ->)
+    getter position : Position
+
+    def initialize(@position : Position, @location = nil, &@block : T ->)
     end
 
-    def initialize(@block : T ->)
+    def initialize(@position : Position, @block : T ->)
     end
 
     def call(example : T)
@@ -23,6 +30,23 @@ module Spectator::Core
         @exception = ex
         raise ex
       end
+    end
+
+    def inspect(io : IO) : Nil
+      io << "#<" << self.class << ' '
+
+      case @position
+      in Position::Before then io << "before example"
+      in Position::After  then io << "after example"
+      in Position::Around then io << "around example"
+      end
+
+      if location = @location
+        io << " @ " << location
+      end
+      io << " 0x"
+      object_id.to_s(io, 16)
+      io << '>'
     end
   end
 end

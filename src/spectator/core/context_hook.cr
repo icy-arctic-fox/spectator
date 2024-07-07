@@ -2,16 +2,20 @@ require "./location_range"
 
 module Spectator::Core
   class ContextHook
+    enum Position
+      Before
+      After
+    end
+
     getter! location : LocationRange
 
     getter! exception : Exception
 
+    getter position : Position
+
     @called = Atomic::Flag.new
 
-    def initialize(@location = nil, &@block : ->)
-    end
-
-    def initialize(@block : ->)
+    def initialize(@position, @location = nil, &@block : ->)
     end
 
     def call
@@ -28,6 +32,22 @@ module Spectator::Core
         @exception = ex
         raise ex
       end
+    end
+
+    def inspect(io : IO) : Nil
+      io << "#<" << self.class << ' '
+
+      case @position
+      in Position::Before then io << "before context"
+      in Position::After  then io << "after context"
+      end
+
+      if location = @location
+        io << " @ " << location
+      end
+      io << " 0x"
+      object_id.to_s(io, 16)
+      io << '>'
     end
   end
 end
