@@ -1,10 +1,10 @@
+require "./helpers"
 require "./hooks"
-require "./memoization"
 
 module Spectator
   module Core::Context
+    include Helpers
     include Hooks
-    include Memoization
 
     abstract def add_child(child : Item)
 

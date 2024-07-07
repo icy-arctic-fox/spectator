@@ -1,9 +1,5 @@
 module Spectator::Core
-  def self.null_value(type : T.class) : T forall T
-    value = uninitialized T
-  end
-
-  module Memoization
+  module Helpers
     macro let(expr)
       {{expr}}
 
