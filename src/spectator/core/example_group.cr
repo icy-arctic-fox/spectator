@@ -8,6 +8,7 @@ module Spectator::Core
   # The group can be nested.
   class ExampleGroup < Item
     include Context
+    include Enumerable(Item)
 
     def self.new(description = nil, location : LocationRange? = nil, &)
       group = new(description, location)
@@ -32,6 +33,16 @@ module Spectator::Core
 
       # Disassociate the child only if it's ours.
       child.parent = nil if child.parent? == self
+    end
+
+    def each(&block : Item ->) : Nil
+      @children.each do |child|
+        if child.is_a?(Context)
+          child.each(&block)
+        else
+          yield child
+        end
+      end
     end
 
     def run : Array(Result)
