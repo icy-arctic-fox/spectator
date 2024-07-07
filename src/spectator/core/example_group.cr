@@ -16,7 +16,7 @@ module Spectator::Core
       group
     end
 
-    @children = [] of Item
+    protected getter children = [] of Item
 
     def add_child(child : Item) : Nil
       # Attempt to remove the child from its previous parent.
@@ -35,12 +35,13 @@ module Spectator::Core
       child.parent = nil if child.parent? == self
     end
 
-    def each(&block : Item ->) : Nil
-      @children.each do |child|
-        if child.is_a?(Context)
-          child.each(&block)
-        else
-          yield child
+    def each(& : Item ->) : Nil
+      stack = [self] of Item
+      until stack.empty?
+        item = stack.pop
+        yield item
+        if item.is_a?(ExampleGroup)
+          stack.concat(item.children)
         end
       end
     end
