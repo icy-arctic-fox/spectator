@@ -7,19 +7,15 @@ module Spectator
     include Hooks
 
     abstract def add_child(child : Item)
-
-    def add_example(description = nil, *, file = __FILE__, line = __LINE__, end_line = __END_LINE__, &block : Example ->) : Example
-      location = LocationRange.new(file, line, end_line)
-      example = Example.new(description.try &.to_s, location, &block)
-      add_child(example)
-      example
-    end
   end
 
   macro alias_example_group_to(name)
     module ::Spectator::Core::Context
-      def {{name.id}}(description = nil, *, file = __FILE__, line = __LINE__, end_line = __END_LINE__, &)
-        location = LocationRange.new(file, line, end_line)
+      def {{name.id}}(description = nil, *,
+                      source_file = __FILE__,
+                      source_line = __LINE__,
+                      source_end_line = __END_LINE__, &)
+        location = LocationRange.new(source_file, source_line, source_end_line)
         group = ExampleGroup.new(description.try &.to_s, location)
         add_child(group)
         with group yield group
@@ -33,8 +29,12 @@ module Spectator
 
   macro alias_example_to(name)
     module ::Spectator::Core::Context
-      def {{name.id}}(description = nil, *, file = __FILE__, line = __LINE__, end_line = __END_LINE__, &block : Example ->) : Example
-        location = LocationRange.new(file, line, end_line)
+      def {{name.id}}(description = nil, *,
+                      source_file = __FILE__,
+                      source_line = __LINE__,
+                      source_end_line = __END_LINE__,
+                      &block : Example ->) : Example
+        location = LocationRange.new(source_file, source_line, source_end_line)
         example = Example.new(description.try &.to_s, location, &block)
         add_child(example)
         example

@@ -3,65 +3,113 @@ require "./example_hook"
 
 module Spectator::Core
   module Hooks
-    def before_each(*, file = __FILE__, line = __LINE__, end_line = __END_LINE__, &block : Example ->) : ExampleHook(Example)
-      location = LocationRange.new(file, line, end_line)
+    private macro create_example_hook(position)
+    end
+
+    private macro create_context_hook(position)
+      location = LocationRange.new(source_file, source_line, source_end_line)
+      ContextHook.new({{position}}, location, &block)
+    end
+
+    def before_each(*,
+                    source_file = __FILE__,
+                    source_line = __LINE__,
+                    source_end_line = __END_LINE__,
+                    &block : Example ->) : ExampleHook(Example)
+      hooks = @before_each ||= [] of ExampleHook(Example)
+      location = LocationRange.new(source_file, source_line, source_end_line)
       hook = ExampleHook(Example).new(:before, location, &block)
-      hooks = @before_each ||= [] of ExampleHook(Example)
       hooks << hook
       hook
     end
 
-    private getter critical_before_each_hooks = 0
+    @before_each_priority_hooks = 0
 
-    private def before_each!(&block : Example ->) : Nil
-      hook = ExampleHook(Example).new(:before, &block)
+    private def before_each!(*,
+                             source_file = __FILE__,
+                             source_line = __LINE__,
+                             source_end_line = __END_LINE__,
+                             &block : Example ->) : ExampleHook(Example)
       hooks = @before_each ||= [] of ExampleHook(Example)
-      hooks.insert(@critical_before_each_hooks, hook)
-      @critical_before_each_hooks += 1
+      location = LocationRange.new(source_file, source_line, source_end_line)
+      hook = ExampleHook(Example).new(:before, location, &block)
+      hooks.insert(@before_each_priority_hooks, hook)
+      @before_each_priority_hooks += 1
+      hook
     end
 
-    def before(*, file = __FILE__, line = __LINE__, end_line = __END_LINE__, &block : Example ->) : ExampleHook(Example)
-      before_each(file: file, line: line, end_line: end_line, &block)
+    def before(*,
+               source_file = __FILE__,
+               source_line = __LINE__,
+               source_end_line = __END_LINE__,
+               &block : Example ->) : ExampleHook(Example)
+      before_each(source_file: source_file, source_line: source_line, source_end_line: source_end_line, &block)
     end
 
-    def after_each(*, file = __FILE__, line = __LINE__, end_line = __END_LINE__, &block : Example ->) : ExampleHook(Example)
-      location = LocationRange.new(file, line, end_line)
+    def after_each(*,
+                   source_file = __FILE__,
+                   source_line = __LINE__,
+                   source_end_line = __END_LINE__,
+                   &block : Example ->) : ExampleHook(Example)
+      hooks = @after_each ||= [] of ExampleHook(Example)
+      location = LocationRange.new(source_file, source_line, source_end_line)
       hook = ExampleHook(Example).new(:after, location, &block)
-      hooks = @after_each ||= [] of ExampleHook(Example)
       hooks << hook
       hook
     end
 
-    def after(*, file = __FILE__, line = __LINE__, end_line = __END_LINE__, &block : Example ->) : ExampleHook(Example)
-      after_each(file: file, line: line, end_line: end_line, &block)
+    def after(*,
+              source_file = __FILE__,
+              source_line = __LINE__,
+              source_end_line = __END_LINE__,
+              &block : Example ->) : ExampleHook(Example)
+      after_each(source_file: source_file, source_line: source_line, source_end_line: source_end_line, &block)
     end
 
-    private getter critical_after_each_hooks = 0
+    @after_each_priority_hooks = 0
 
-    private def after_each!(&block : Example ->) : Nil
-      hook = ExampleHook(Example).new(:after, &block)
+    private def after_each!(*,
+                            source_file = __FILE__,
+                            source_line = __LINE__,
+                            source_end_line = __END_LINE__,
+                            &block : Example ->) : ExampleHook(Example)
       hooks = @after_each ||= [] of ExampleHook(Example)
-      hooks.insert(@critical_after_each_hooks, hook)
-      @critical_after_each_hooks += 1
+      location = LocationRange.new(source_file, source_line, source_end_line)
+      hook = ExampleHook(Example).new(:after, location, &block)
+      hooks.insert(@after_each_priority_hooks, hook)
+      @after_each_priority_hooks += 1
+      hook
     end
 
-    def before_all(*, file = __FILE__, line = __LINE__, end_line = __END_LINE__, &block : ->) : ContextHook
-      location = LocationRange.new(file, line, end_line)
-      hook = ContextHook.new(:before, location, &block)
+    def before_all(*,
+                   source_file = __FILE__,
+                   source_line = __LINE__,
+                   source_end_line = __END_LINE__,
+                   &block : ->) : ContextHook
       hooks = @before_all ||= [] of ContextHook
+      location = LocationRange.new(source_file, source_line, source_end_line)
+      hook = ContextHook.new(:before, location, &block)
       hooks << hook
       hook
     end
 
-    def after_all(*, file = __FILE__, line = __LINE__, end_line = __END_LINE__, &block : ->) : ContextHook
-      location = LocationRange.new(file, line, end_line)
-      hook = ContextHook.new(:after, location, &block)
+    def after_all(*,
+                  source_file = __FILE__,
+                  source_line = __LINE__,
+                  source_end_line = __END_LINE__,
+                  &block : ->) : ContextHook
       hooks = @after_all ||= [] of ContextHook
+      location = LocationRange.new(source_file, source_line, source_end_line)
+      hook = ContextHook.new(:after, location, &block)
       hooks << hook
       hook
     end
 
-    def around_each(*, file = __FILE__, line = __LINE__, end_line = __END_LINE__, & : Example::Procsy ->) : ExampleHook(Example::Procsy)
+    def around_each(*,
+                    source_file = __FILE__,
+                    source_line = __LINE__,
+                    source_end_line = __END_LINE__,
+                    & : Example::Procsy ->) : ExampleHook(Example::Procsy)
       location = LocationRange.new(file, line, end_line)
       hook = ExampleHook(Example::Procsy).new(:around, location, &block)
       hooks = @around_each ||= [] of ExampleHook(Example::Procsy)

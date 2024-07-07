@@ -31,14 +31,26 @@ module Spectator
     sandbox.current_example = example
   end
 
-  def self.context(description = nil, *, file = __FILE__, line = __LINE__, end_line = __END_LINE__, &)
-    sandbox.root_example_group.context(description, file: file, line: line, end_line: end_line) do |group|
+  def self.context(description = nil, *,
+                   source_file = __FILE__,
+                   source_line = __LINE__,
+                   source_end_line = __END_LINE__, &)
+    sandbox.root_example_group.context(description,
+      source_file: source_file,
+      source_line: source_line,
+      source_end_line: source_end_line) do |group|
       with group yield group
     end
   end
 
-  def self.describe(description = nil, *, file = __FILE__, line = __LINE__, end_line = __END_LINE__, &)
-    sandbox.root_example_group.describe(description, file: file, line: line, end_line: end_line) do |group|
+  def self.describe(description = nil, *,
+                    source_file = __FILE__,
+                    source_line = __LINE__,
+                    source_end_line = __END_LINE__, &)
+    sandbox.root_example_group.describe(description,
+      source_file: source_file,
+      source_line: source_line,
+      source_end_line: source_end_line) do |group|
       with group yield group
     end
   end
