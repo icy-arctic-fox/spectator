@@ -3,15 +3,18 @@ require "./example_hook"
 
 module Spectator::Core
   module Hooks
+    protected getter before_each_hooks do
+      [] of ExampleHook(Example)
+    end
+
     def before_each(*,
                     source_file = __FILE__,
                     source_line = __LINE__,
                     source_end_line = __END_LINE__,
                     &block : Example ->) : ExampleHook(Example)
-      hooks = @before_each ||= [] of ExampleHook(Example)
       location = LocationRange.new(source_file, source_line, source_end_line)
       hook = ExampleHook(Example).new(:before, location, &block)
-      hooks << hook
+      before_each_hooks << hook
       hook
     end
 
@@ -38,15 +41,18 @@ module Spectator::Core
       before_each(source_file: source_file, source_line: source_line, source_end_line: source_end_line, &block)
     end
 
+    protected getter after_each_hooks do
+      [] of ExampleHook(Example)
+    end
+
     def after_each(*,
                    source_file = __FILE__,
                    source_line = __LINE__,
                    source_end_line = __END_LINE__,
                    &block : Example ->) : ExampleHook(Example)
-      hooks = @after_each ||= [] of ExampleHook(Example)
       location = LocationRange.new(source_file, source_line, source_end_line)
       hook = ExampleHook(Example).new(:after, location, &block)
-      hooks << hook
+      after_each_hooks << hook
       hook
     end
 
@@ -73,16 +79,23 @@ module Spectator::Core
       hook
     end
 
+    protected getter before_all_hooks do
+      [] of ContextHook
+    end
+
     def before_all(*,
                    source_file = __FILE__,
                    source_line = __LINE__,
                    source_end_line = __END_LINE__,
                    &block : ->) : ContextHook
-      hooks = @before_all ||= [] of ContextHook
       location = LocationRange.new(source_file, source_line, source_end_line)
       hook = ContextHook.new(:before, location, &block)
-      hooks << hook
+      before_all_hooks << hook
       hook
+    end
+
+    protected getter after_all_hooks do
+      [] of ContextHook
     end
 
     def after_all(*,
@@ -90,11 +103,14 @@ module Spectator::Core
                   source_line = __LINE__,
                   source_end_line = __END_LINE__,
                   &block : ->) : ContextHook
-      hooks = @after_all ||= [] of ContextHook
       location = LocationRange.new(source_file, source_line, source_end_line)
       hook = ContextHook.new(:after, location, &block)
-      hooks << hook
+      after_all_hooks << hook
       hook
+    end
+
+    protected getter around_each_hooks do
+      [] of ExampleHook(Example::Procsy)
     end
 
     def around_each(*,
@@ -104,14 +120,15 @@ module Spectator::Core
                     & : Example::Procsy ->) : ExampleHook(Example::Procsy)
       location = LocationRange.new(file, line, end_line)
       hook = ExampleHook(Example::Procsy).new(:around, location, &block)
-      hooks = @around_each ||= [] of ExampleHook(Example::Procsy)
-      hooks << hook
+      around_each_hooks << hook
       hook
     end
 
+    # TODO: before_suite and after_suite
+
     # TODO: around_all
 
-    def with_hooks(example : Example, &block : ->) : Nil
+    protected def with_hooks(example : Example, &block : ->) : Nil
       if context = parent?
         context.with_hooks(example) do
           with_current_context_hooks(example, &block)
@@ -122,12 +139,12 @@ module Spectator::Core
     end
 
     private def with_current_context_hooks(example : Example, &block : ->) : Nil
-      @before_all.try &.each &.call
-      @before_each.try &.each &.call(example)
+      @before_all_hooks.try &.each &.call
+      @before_each_hooks.try &.each &.call(example)
       # TODO: around_each
       block.call
-      @after_each.try &.each &.call(example)
-      @after_all.try &.each &.call
+      @after_each_hooks.try &.each &.call(example)
+      @after_all_hooks.try &.each &.call
     end
   end
 end
