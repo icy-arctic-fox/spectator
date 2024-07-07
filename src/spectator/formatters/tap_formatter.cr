@@ -1,13 +1,8 @@
-require "./reporter"
+require "./formatter"
 
-module Spectator::Reporters
-  class TAPReporter
-    include Reporter
-
+module Spectator::Formatters
+  class TAPFormatter
     @example_number = 0
-
-    def initialize(@output = STDOUT)
-    end
 
     def example_started(example : Core::Example) : Nil
       @example_number += 1
@@ -15,16 +10,16 @@ module Spectator::Reporters
 
     def example_finished(example : Core::Example, result : Core::Result) : Nil
       if result.pass?
-        @output << "ok "
+        print "ok "
       else
-        @output << "not ok "
+        print "not ok "
       end
-      @output << @example_number
+      print @example_number
       if example.description?
-        @output << " - "
+        print " - "
         example.full_description(@output)
       end
-      @output.puts
+      puts
     end
   end
 end

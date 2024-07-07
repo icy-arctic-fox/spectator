@@ -2,7 +2,6 @@ require "./configuration"
 require "./example"
 require "./example_group"
 require "./sandbox"
-require "../reporters/dots_reporter"
 
 module Spectator
   module Core
@@ -27,9 +26,9 @@ module Spectator
         Fiber.yield
       end
 
-      private def report(& : Reporters::Reporter ->) : Nil
-        @configuration.reporters.each do |reporter|
-          yield reporter
+      private def report(&) : Nil
+        @configuration.formatters.each do |formatter|
+          yield formatter
         end
       end
     end

@@ -1,4 +1,4 @@
-require "../reporters/dots_reporter"
+require "../formatters/dots_formatter"
 require "./hooks"
 require "./sandbox"
 
@@ -16,17 +16,17 @@ module Spectator
       DEFAULT_FAIL_FAST_EXAMPLES =  1
       DEFAULT_SLOWEST_EXAMPLES   = 10
 
-      property reporters do
-        [Reporters::DotsReporter.new] of Reporters::Reporter
+      property formatters do
+        [Formatters::DotsFormatter.new] of Formatters::Formatter
       end
 
-      def add_reporter(reporter : Reporters::Reporter) : Nil
-        reporters << reporter
+      def add_formatter(formatter : Formatters::Formatter) : Nil
+        formatters << formatter
       end
 
-      def reporter=(reporter : Reporters::Reporter)
-        reporters = [reporter] of Reporters::Reporter
-        reporter
+      def formatter=(formatter : Formatters::Formatter)
+        formatters = [formatter] of Formatters::Formatter
+        formatter
       end
 
       property? dry_run = false
