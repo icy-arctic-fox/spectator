@@ -52,7 +52,7 @@ module Spectator
 
   def self.run
     runner = Core::Runner.new(configuration)
-    runner.run(Spectator.sandbox.root_example_group)
+    runner.run(sandbox.root_example_group)
   end
 
   at_exit do
