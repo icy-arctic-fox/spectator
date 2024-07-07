@@ -3,14 +3,6 @@ require "./example_hook"
 
 module Spectator::Core
   module Hooks
-    private macro create_example_hook(position)
-    end
-
-    private macro create_context_hook(position)
-      location = LocationRange.new(source_file, source_line, source_end_line)
-      ContextHook.new({{position}}, location, &block)
-    end
-
     def before_each(*,
                     source_file = __FILE__,
                     source_line = __LINE__,
