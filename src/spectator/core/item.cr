@@ -10,19 +10,20 @@ module Spectator::Core
 
     # The full description of the item.
     # This is a combination of all parent descriptions and this item's description.
-    def full_description : String
+    def full_description : String?
+      return unless description?
       String.build do |io|
-        build_full_description(io)
+        full_description(io)
       end
     end
 
     # Appends the parent's description and this item's description to the given *io*.
-    protected def build_full_description(io : IO) : Nil
+    def full_description(io : IO) : Nil
+      return unless description?
       if parent = parent?
-        parent.build_full_description(io)
-        io << ' ' if description?
+        parent.full_description(io)
       end
-      description?.try &.to_s(io)
+      io << ' ' << description
     end
 
     # The location of the item in the source code.
