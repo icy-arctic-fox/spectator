@@ -1,6 +1,5 @@
 require "./example"
 require "./example_group"
-require "./location_range"
 
 module Spectator
   module Core
