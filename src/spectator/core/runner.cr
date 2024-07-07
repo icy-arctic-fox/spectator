@@ -1,3 +1,4 @@
+require "./cli"
 require "./configuration"
 require "./example"
 require "./example_group"
@@ -50,6 +51,7 @@ module Spectator
   class_property? auto_run = true
 
   def self.run
+    Core::CLI.configure
     runner = Core::Runner.new(configuration)
     runner.run(sandbox.root_example_group)
   end
