@@ -1,5 +1,9 @@
 module Spectator::Matchers
-  abstract class Matcher
+  # Base type for built-in and custom matchers (made with the DSL).
+  # Ensures that the required methods are implemented.
+  abstract struct Matcher
+    abstract def matches?(actual_value : T) : Bool
+    abstract def failure_message(actual_value : T) : String
   end
 end
 

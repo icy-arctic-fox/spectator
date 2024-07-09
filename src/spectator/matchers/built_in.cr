@@ -1,4 +1,4 @@
-# require "./built_in/*"
+require "./built_in/*"
 
 module Spectator::Matchers
   module BuiltIn
@@ -114,6 +114,7 @@ module Spectator::Matchers
     end
 
     def eq(value)
+      EqualMatcher.new(value)
     end
 
     def equal(value)

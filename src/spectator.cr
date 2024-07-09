@@ -1,4 +1,5 @@
 require "./spectator/core/**"
+require "./spectator/matchers/**"
 
 # Feature-rich testing framework for Crystal inspired by RSpec.
 module Spectator

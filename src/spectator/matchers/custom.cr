@@ -1,3 +1,5 @@
+require "./matcher"
+
 module Spectator::Matchers
   module CustomDSL
     macro match(&block)
@@ -5,18 +7,24 @@ module Spectator::Matchers
         {{yield}}
       end
 
-      def matches?(actual : T) : Bool forall T
-        !!_matches_impl(actual)
+      def matches?(actual_value : T) : Bool forall T
+        !!_matches_impl(actual_value)
+      end
+    end
+
+    macro failure_message(&block)
+      def _failure_message_impl({{block.args.splat}})
+        {{yield}}
+      end
+
+      def failure_message(actual_value : T) : String forall T
+        _failure_message_impl(actual_value)
       end
     end
   end
 
-  abstract struct CustomMatcher
+  abstract struct CustomMatcher < Matcher
     include CustomDSL
-
-    abstract def matches?(actual : T) : Bool forall T
-
-    abstract def failure_message(actual : T) : String
   end
 
   macro define(name, *properties, **kwargs, &)
