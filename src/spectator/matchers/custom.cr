@@ -27,6 +27,9 @@ module Spectator::Matchers
     include CustomDSL
   end
 
+  module Custom
+  end
+
   macro define(name, *properties, **kwargs, &)
     {% raise <<-END_OF_ERROR unless kwargs.empty?
       macro `Spectator::Matchers.define` does not accept named arguments
@@ -38,5 +41,17 @@ module Spectator::Matchers
     ::record(TestCustomMatcher < ::Spectator::Matchers::CustomMatcher, {{properties.splat}}) do
       {{yield}}
     end
+
+    module ::Spectator::Matchers::Custom
+      def {{name.id}}({{properties.splat(", ")}} *,
+                      source_file = __FILE__,
+                      source_line = __LINE__,
+                      source_end_line = __END_LINE__)
+        # TODO: Store location.
+        TestCustomMatcher.new({{properties.map { |prop| prop.var }.splat(", ")}})
+      end
+    end
   end
 end
+
+include Spectator::Matchers::Custom
