@@ -158,3 +158,6 @@ module Spectator::Matchers
     end
   end
 end
+
+# TODO: Is it possible to move this out of the global namespace?
+include Spectator::Matchers::BuiltIn
