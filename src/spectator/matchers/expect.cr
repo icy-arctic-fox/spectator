@@ -58,4 +58,13 @@ module Spectator::Matchers
       raise ArgumentError.new("Matcher must respond to #failure_message") unless matcher.responds_to?(:failure_message)
     end
   end
+
+  module ExpectMethods
+    def expect(actual_value : T) : Spectator::Matchers::Expect(T) forall T
+      Spectator::Matchers::Expect(T).new(actual_value)
+    end
+  end
 end
+
+# TODO: Is it possible to move this out of the global namespace?
+include Spectator::Matchers::ExpectMethods
