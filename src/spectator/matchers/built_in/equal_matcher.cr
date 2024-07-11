@@ -55,7 +55,10 @@ module Spectator::Matchers::BuiltIn
     end
 
     def negative_failure_message(actual_value) : String
-      "Expected #{actual_value.pretty_inspect} not to be equal to #{@expected_value.pretty_inspect}"
+      <<-MSG
+      Expected:     #{actual_value.pretty_inspect}
+      not to equal: #{@expected_value.pretty_inspect}"
+      MSG
     end
   end
 end
