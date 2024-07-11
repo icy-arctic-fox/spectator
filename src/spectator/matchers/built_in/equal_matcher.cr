@@ -35,12 +35,12 @@ module Spectator::Matchers::BuiltIn
         end
         <<-MSG
         Expected: #{expected}
-            got: #{actual}"
+             got: #{actual}"
         MSG
       end
     end
 
-    def strings_failure_message(actual_value : String, expected_value : String) : String
+    private def strings_failure_message(actual_value : String, expected_value : String) : String
       if actual_value.bytesize != expected_value.bytesize
         <<-MSG
         Expected bytesize: #{expected_value.bytesize}
