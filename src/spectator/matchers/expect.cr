@@ -29,8 +29,8 @@ module Spectator::Matchers
         pass(location)
       elsif !matcher.matches?(@actual_value)
         pass(location)
-      elsif !failure_message && matcher.responds_to?(:failure_message_when_negated)
-        fail(matcher.failure_message_when_negated(@actual_value), location)
+      elsif !failure_message && matcher.responds_to?(:negated_failure_message)
+        fail(matcher.negated_failure_message(@actual_value), location)
       else
         fail(failure_message || matcher.failure_message(@actual_value), location)
       end
