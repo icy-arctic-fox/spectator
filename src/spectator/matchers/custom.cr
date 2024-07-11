@@ -7,7 +7,7 @@ module Spectator::Matchers
         {{yield}}
       end
 
-      def matches?(actual_value : T) : Bool forall T
+      def matches?(actual_value) : Bool
         !!_matches_impl(actual_value)
       end
     end
@@ -17,7 +17,7 @@ module Spectator::Matchers
         {{yield}}
       end
 
-      def failure_message(actual_value : T) : String forall T
+      def failure_message(actual_value) : String
         _failure_message_impl(actual_value)
       end
     end

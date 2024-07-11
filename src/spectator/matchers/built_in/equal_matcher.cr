@@ -5,7 +5,7 @@ module Spectator::Matchers::BuiltIn
     def initialize(@expected_value : T)
     end
 
-    def matches?(actual_value : T) : Bool
+    def matches?(actual_value) : Bool
       expected_value = @expected_value
 
       if actual_value.is_a?(String) && expected_value.is_a?(String)
@@ -21,7 +21,7 @@ module Spectator::Matchers::BuiltIn
         actual_value.size == expected_value.size
     end
 
-    def failure_message(actual_value : T) : String
+    def failure_message(actual_value) : String
       expected_value = @expected_value
 
       if actual_value.is_a?(String) && expected_value.is_a?(String) && actual_value == expected_value
