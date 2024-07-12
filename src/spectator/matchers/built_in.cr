@@ -18,11 +18,30 @@ module Spectator::Matchers
       BeAMatcher(T).new
     end
 
+    def be_a(type : Enumerable.class)
+    end
+
+    def be_a(type : Array.class)
+    end
+
+    def be_after(time : Time)
+    end
+
+    def be_after_or_equal(time : Time)
+    end
+
     def be_an(type : T.class) forall T
       be_a type
     end
 
+    def be_before(time : Time)
+    end
+
+    def be_before_or_equal(time : Time)
+    end
+
     def be_between(min, max)
+      BeBetweenMatcher.new(min, max)
     end
 
     def be_blank
@@ -30,6 +49,7 @@ module Spectator::Matchers
     end
 
     def be_close(expected, delta)
+      BeCloseMatcher.new(expected, delta)
     end
 
     def be_close_to(expected, digits)
@@ -51,7 +71,11 @@ module Spectator::Matchers
       be_falsy
     end
 
+    def be_finite
+    end
+
     def be_in(range_or_set)
+      BeInMatcher.new(range_or_set)
     end
 
     def be_infinite
@@ -70,6 +94,9 @@ module Spectator::Matchers
       be_instance_of type
     end
 
+    def be_hexadecimal
+    end
+
     def be_nan
       BeNaNMatcher.new
     end
@@ -80,6 +107,9 @@ module Spectator::Matchers
 
     def be_nil
       BeNilMatcher.new
+    end
+
+    def be_one_of(*values)
     end
 
     def be_positive
@@ -102,6 +132,7 @@ module Spectator::Matchers
     end
 
     def be_within(range : Range)
+      be_in range
     end
 
     def be_zero
@@ -140,13 +171,22 @@ module Spectator::Matchers
     def have_index(value : Int)
     end
 
-    def have_key(value : T)
+    def have_indexes(*values : Int)
+    end
+
+    def have_key(value : T) forall T
+    end
+
+    def have_keys(*values : T) forall T
     end
 
     def have_size(value)
     end
 
-    def have_value(value : T)
+    def have_value(value : T) forall T
+    end
+
+    def have_values(*values : T) forall T
     end
 
     def match(value) # =~
