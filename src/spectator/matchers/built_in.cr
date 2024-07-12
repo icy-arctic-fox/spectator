@@ -72,6 +72,7 @@ module Spectator::Matchers
     end
 
     def be_finite
+      BeFiniteMatcher.new
     end
 
     def be_in(range_or_set)
@@ -110,6 +111,7 @@ module Spectator::Matchers
     end
 
     def be_one_of(*values)
+      BeOneOfMatcher.new(values)
     end
 
     def be_positive
@@ -142,7 +144,8 @@ module Spectator::Matchers
     def change(&block) # by(change) / from(from) / to(to)
     end
 
-    def contain(expected)
+    def contain(*expected)
+      ContainMatcher.new(expected)
     end
 
     def contain_exactly(*values)
