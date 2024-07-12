@@ -4,6 +4,10 @@ module Spectator::Matchers
   abstract struct Matcher
     abstract def matches?(actual_value) : Bool
     abstract def failure_message(actual_value) : String
+
+    def ===(actual_value) : Bool
+      matches?(actual_value)
+    end
   end
 end
 

@@ -3,33 +3,30 @@ require "./built_in/*"
 module Spectator::Matchers
   module BuiltIn
     def all(matcher)
+      AllMatcher.new(matcher)
     end
 
     def be
+      CompareMatcher
     end
 
     def be(expected)
+      BeMatcher.new(expected)
     end
 
-    def be_a(type)
+    def be_a(type : T.class) forall T
+      BeAMatcher(T).new
     end
 
-    def be_an(type)
-      be_a(type)
-    end
-
-    def be_kind_of(type)
-      be_a(type)
-    end
-
-    def be_a_kind_of(type)
-      be_a(type)
+    def be_an(type : T.class) forall T
+      be_a type
     end
 
     def be_between(min, max)
     end
 
     def be_blank
+      BeBlankMatcher.new
     end
 
     def be_close(expected, delta)
@@ -39,54 +36,66 @@ module Spectator::Matchers
     end
 
     def be_empty
+      BeEmptyMatcher.new
     end
 
     def be_false
-    end
-
-    def be_falsey
+      be false
     end
 
     def be_falsy
-      be_falsey
+      BeFalsyMatcher.new
+    end
+
+    def be_falsey
+      be_falsy
     end
 
     def be_in(range_or_set)
     end
 
     def be_infinite
+      BeInfiniteMatcher.new
     end
 
-    def be_instance_of(type)
+    def be_instance_of(type : T.class) forall T
+      BeInstanceOfMatcher(T).new
     end
 
     def be_a_instance_of(type)
-      be_instance_of(type)
+      be_instance_of type
     end
 
     def be_an_instance_of(type)
-      be_instance_of(type)
+      be_instance_of type
     end
 
     def be_nan
+      BeNaNMatcher.new
     end
 
     def be_negative
+      BeNegativeMatcher.new
     end
 
     def be_nil
+      BeNilMatcher.new
     end
 
     def be_positive
+      BePositiveMatcher.new
     end
 
     def be_present
+      BePresentMatcher.new
     end
 
     def be_true
+      BeMatcher.new(true)
     end
 
     def be_truthy
+      BeTruthyMatcher.new
     end
 
     def be_within(delta) # of(expected)
@@ -96,6 +105,7 @@ module Spectator::Matchers
     end
 
     def be_zero
+      BeZeroMatcher.new
     end
 
     def change(&block) # by(change) / from(from) / to(to)
@@ -118,7 +128,7 @@ module Spectator::Matchers
     end
 
     def equal(value)
-      eq(value)
+      eq value
     end
 
     def expect_raises
@@ -145,13 +155,18 @@ module Spectator::Matchers
     def match_array(array)
     end
 
+    def match_size_of(value)
+    end
+
     def raise_error
     end
 
-    def respond_to
-    end
-
-    def satisfy(&block)
+    macro respond_to(method)
+      {% if method.is_a?(SymbolLiteral) || method.is_a?(StringLiteral) %}
+        RespondToMatcher({ {{method.id.stringify}}: Nil }).new
+      {% else %}
+        {% raise "The `respond_to` matcher must be given a symbol or string literal" %}
+      {% end %}
     end
 
     def start_with(expected)
