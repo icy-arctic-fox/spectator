@@ -11,16 +11,31 @@ module Spectator
   end
 
   macro alias_example_group_to(name)
-    module ::Spectator::Core::Context
-      def {{name.id}}(description = nil, *,
-                      source_file = __FILE__,
-                      source_line = __LINE__,
-                      source_end_line = __END_LINE__, &)
-        location = LocationRange.new(source_file, source_line, source_end_line)
-        group = ExampleGroup.new(description.try &.to_s, location)
-        add_child(group)
-        with group yield group
-        group
+    module ::Spectator
+      module Core::Context
+        def {{name.id}}(description = nil, *,
+                        source_file = __FILE__,
+                        source_line = __LINE__,
+                        source_end_line = __END_LINE__, &)
+            puts "{{name.id}}: #{description}"
+          location = LocationRange.new(source_file, source_line, source_end_line)
+          group = ExampleGroup.new(description.try &.to_s, location)
+          add_child(group)
+          with group yield group
+          group
+        end
+      end
+
+      def self.{{name.id}}(description = nil, *,
+                           source_file = __FILE__,
+                           source_line = __LINE__,
+                           source_end_line = __END_LINE__, &)
+        sandbox.root_example_group.{{name.id}}(description,
+          source_file: source_file,
+          source_line: source_line,
+          source_end_line: source_end_line) do |group|
+          with group yield group
+        end
       end
     end
   end
@@ -45,28 +60,4 @@ module Spectator
 
   alias_example_to :specify
   alias_example_to :it
-
-  def self.context(description = nil, *,
-                   source_file = __FILE__,
-                   source_line = __LINE__,
-                   source_end_line = __END_LINE__, &)
-    sandbox.root_example_group.context(description,
-      source_file: source_file,
-      source_line: source_line,
-      source_end_line: source_end_line) do |group|
-      with group yield group
-    end
-  end
-
-  def self.describe(description = nil, *,
-                    source_file = __FILE__,
-                    source_line = __LINE__,
-                    source_end_line = __END_LINE__, &)
-    sandbox.root_example_group.describe(description,
-      source_file: source_file,
-      source_line: source_line,
-      source_end_line: source_end_line) do |group|
-      with group yield group
-    end
-  end
 end
