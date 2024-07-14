@@ -1,7 +1,5 @@
-require "../matcher"
-
 module Spectator::Matchers::BuiltIn
-  struct EqualMatcher(T) < Matcher
+  struct EqualMatcher(T)
     def initialize(@expected_value : T)
     end
 

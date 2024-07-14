@@ -10,12 +10,19 @@ module Spectator::Matchers
            source_file = __FILE__,
            source_line = __LINE__,
            source_end_line = __END_LINE__) : Nil
-      validate_matcher(matcher)
       location = Core::LocationRange.new(source_file, source_line, source_end_line)
-      if matcher.matches?(@actual_value)
-        pass(location)
-      else
-        fail(failure_message || matcher.failure_message(@actual_value), location)
+      if matcher.responds_to?(:match)
+        match_data = matcher.match(@actual_value)
+        return pass(match_data, location) if match_data.success?
+      elsif matcher.responds_to?(:matches?) && matcher.responds_to?(:failure_message)
+        if matcher.matches?(@actual_value)
+          match_data = MatchData.new(true, false, [] of MatchDataField)
+          pass(match_data, location)
+        else
+          failure_message ||= matcher.failure_message(@actual_value)
+          match_data = MatchData.new(false, false, [failure_message] of MatchDataField)
+          fail(match_data, location)
+        end
       end
     end
 

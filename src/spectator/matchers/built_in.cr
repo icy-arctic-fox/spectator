@@ -201,7 +201,16 @@ module Spectator::Matchers
     def match_size_of(value)
     end
 
-    def raise_error
+    def raise_error(error : T.class = Exception, message : String | Regex? = nil) forall T
+      RaiseErrorMatcher(T).new(message)
+    end
+
+    def raise_error(error : Exception)
+      RaiseErrorMatcher.new(error)
+    end
+
+    def raise_error(message : String | Regex)
+      RaiseErrorMatcher(Exception).new(message)
     end
 
     macro respond_to(method)
