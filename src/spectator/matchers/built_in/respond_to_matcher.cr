@@ -1,7 +1,5 @@
-require "../matcher"
-
 module Spectator::Matchers::BuiltIn
-  struct RespondToMatcher(NT) < Matcher
+  struct RespondToMatcher(NT)
     def matches?(actual_value) : Bool
       {% begin %}
         actual_value.responds_to?({{NT.keys.first.symbolize}})

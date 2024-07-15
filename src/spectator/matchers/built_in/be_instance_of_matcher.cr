@@ -1,7 +1,5 @@
-require "../matcher"
-
 module Spectator::Matchers::BuiltIn
-  struct BeInstanceOfMatcher(T) < Matcher
+  struct BeInstanceOfMatcher(T)
     def matches?(actual_value) : Bool
       actual_value.class == T
     end

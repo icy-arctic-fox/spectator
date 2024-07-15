@@ -1,7 +1,5 @@
-require "../matcher"
-
 module Spectator::Matchers::BuiltIn
-  struct BeFalsyMatcher < Matcher
+  struct BeFalsyMatcher
     def matches?(actual_value) : Bool
       !actual_value
     end

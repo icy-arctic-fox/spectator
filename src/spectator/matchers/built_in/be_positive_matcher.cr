@@ -1,7 +1,5 @@
-require "../matcher"
-
 module Spectator::Matchers::BuiltIn
-  struct BePositiveMatcher < Matcher
+  struct BePositiveMatcher
     def matches?(actual_value) : Bool
       actual_value.responds_to?(:positive?) && actual_value.positive?
     end

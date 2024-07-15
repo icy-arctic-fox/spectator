@@ -1,11 +1,16 @@
+require "../core/location_range"
+
 module Spectator::Matchers
   alias MatchDataField = {String, String} | {Symbol, String} | String
 
   struct MatchData
     getter? success : Bool
     getter? negated : Bool
+    getter! message : String
 
-    def initialize(@success : Bool, @negated : Bool, @fields : Array(Field))
+    def initialize(@success : Bool, @negated : Bool, *,
+                   @message : String? = nil,
+                   @fields = [] of MatchDataField)
     end
 
     def each_field(&block : MatchDataField ->) : Nil

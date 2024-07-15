@@ -1,7 +1,5 @@
-require "../matcher"
-
 module Spectator::Matchers::BuiltIn
-  struct BeInfiniteMatcher < Matcher
+  struct BeInfiniteMatcher
     def matches?(actual_value) : Bool
       (actual_value.responds_to?(:infinite?) && actual_value.infinite?) ||
         actual_value == Float64::INFINITY || actual_value == -Float64::INFINITY

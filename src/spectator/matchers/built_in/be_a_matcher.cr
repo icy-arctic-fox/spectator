@@ -1,7 +1,5 @@
-require "../matcher"
-
 module Spectator::Matchers::BuiltIn
-  struct BeAMatcher(T) < Matcher
+  struct BeAMatcher(T)
     def matches?(actual_value) : Bool
       actual_value.is_a?(T)
     end

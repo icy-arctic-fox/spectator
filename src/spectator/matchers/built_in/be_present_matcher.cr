@@ -1,7 +1,5 @@
-require "../matcher"
-
 module Spectator::Matchers::BuiltIn
-  struct BePresentMatcher < Matcher
+  struct BePresentMatcher
     def matches?(actual_value) : Bool
       (actual_value.responds_to?(:present?) && actual_value.present?) ||
         (actual_value.responds_to?(:empty?) && !actual_value.blank?) ||

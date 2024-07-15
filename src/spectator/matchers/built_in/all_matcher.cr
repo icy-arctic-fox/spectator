@@ -1,3 +1,4 @@
+require "../expect"
 require "../matcher"
 
 module Spectator::Matchers::BuiltIn
@@ -5,46 +6,29 @@ module Spectator::Matchers::BuiltIn
     def initialize(@matcher : T)
     end
 
-    def matches?(actual_value) : Bool
-      actual_value.each do |value|
-        return false unless apply_matcher(value)
+    def match(actual_value, failure_message = nil) : MatchData
+      raise "`all` matcher requires value to be `Enumerable`" unless actual_value.is_a?(Enumerable)
+      actual_value.each_with_index do |value, index|
+        match_data = Matchers.process_matcher(@matcher, value, failure_message: failure_message)
+        next if match_data.success?
+        return fail(
+          message: match_data.message,
+          fields: ["Element at index #{index} did not match", *match_data.fields])
       end
-      true
+      pass
     end
 
-    def does_not_match?(actual_value) : Bool
-      actual_value.each do |value|
-        return false if apply_negated_matcher(value)
+    def negated_match(actual_value, failure_message = nil) : MatchData
+      raise "`all` matcher requires value to be `Enumerable`" unless actual_value.is_a?(Enumerable)
+      actual_value.each_with_index do |value, index|
+        match_data = Matchers.process_negative_matcher(@matcher, value, failure_message: failure_message)
+        next if match_data.success?
+        return fail(
+          negated: true,
+          message: match_data.message,
+          fields: ["Element at index #{index} matched", *match_data.fields])
       end
-      true
-    end
-
-    def failure_message(actual_value) : String
-      "Expected #{actual_value.pretty_inspect} to match #{@matcher}"
-    end
-
-    def negated_failure_message(actual_value) : String
-      "Expected #{actual_value.pretty_inspect} not to match #{@matcher}"
-    end
-
-    private def apply_matcher(value) : Bool
-      matcher = @matcher
-      if matcher.responds_to?(:matches?)
-        matcher.matches?(value)
-      else
-        matcher === value
-      end
-    end
-
-    private def apply_negated_matcher(value) : Bool
-      matcher = @matcher
-      if matcher.responds_to?(:does_not_match?)
-        matcher.does_not_match?(value)
-      elsif matcher.responds_to?(:matches?)
-        !matcher.matches?(value)
-      else
-        !(matcher === value)
-      end
+      pass(negated: true)
     end
   end
 end

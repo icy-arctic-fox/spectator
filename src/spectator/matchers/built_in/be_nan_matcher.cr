@@ -1,7 +1,5 @@
-require "../matcher"
-
 module Spectator::Matchers::BuiltIn
-  struct BeNaNMatcher < Matcher
+  struct BeNaNMatcher
     def matches?(actual_value) : Bool
       actual_value.responds_to?(:nan?) && actual_value.nan?
     end

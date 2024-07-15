@@ -1,7 +1,5 @@
-require "../matcher"
-
 module Spectator::Matchers::BuiltIn
-  struct RaiseErrorMatcher(T) < Matcher
+  struct RaiseErrorMatcher(T)
     @expected_error : T?
     @expected_message : String | Regex?
 

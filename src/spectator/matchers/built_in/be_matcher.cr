@@ -1,7 +1,5 @@
-require "../matcher"
-
 module Spectator::Matchers::BuiltIn
-  struct BeMatcher(T) < Matcher
+  struct BeMatcher(T)
     def initialize(@expected_value : T)
     end
 

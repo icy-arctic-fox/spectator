@@ -1,7 +1,5 @@
-require "../matcher"
-
 module Spectator::Matchers::BuiltIn
-  struct BeOneOfMatcher(T) < Matcher
+  struct BeOneOfMatcher(T)
     def initialize(@expected : T)
       {% raise "Expected type must be a Tuple" unless T < Tuple %}
     end

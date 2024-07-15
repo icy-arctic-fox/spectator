@@ -1,7 +1,5 @@
-require "../matcher"
-
 module Spectator::Matchers::BuiltIn
-  struct BeFiniteMatcher < Matcher
+  struct BeFiniteMatcher
     def matches?(actual_value) : Bool
       actual_value.responds_to?(:finite?) && actual_value.finite?
     end

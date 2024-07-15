@@ -1,7 +1,5 @@
-require "../matcher"
-
 module Spectator::Matchers::BuiltIn
-  struct CompareMatcher(T) < Matcher
+  struct CompareMatcher(T)
     enum Relation
       Less
       LessOrEqual

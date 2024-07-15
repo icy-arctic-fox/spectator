@@ -1,7 +1,5 @@
-require "../matcher"
-
 module Spectator::Matchers::BuiltIn
-  struct BeBetweenMatcher(B, E) < Matcher
+  struct BeBetweenMatcher(B, E)
     def initialize(@min : B, @max : E)
     end
 

@@ -1,7 +1,5 @@
-require "../matcher"
-
 module Spectator::Matchers::BuiltIn
-  struct BeEmptyMatcher < Matcher
+  struct BeEmptyMatcher
     def matches?(actual_value) : Bool
       (actual_value.responds_to?(:empty?) && actual_value.empty?) ||
         (actual_value.responds_to?(:size) && actual_value.size == 0)
