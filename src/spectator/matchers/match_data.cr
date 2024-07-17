@@ -7,6 +7,7 @@ module Spectator::Matchers
     getter? success : Bool
     getter? negated : Bool
     getter! message : String
+    getter fields : Array(MatchDataField)
 
     def initialize(@success : Bool, @negated : Bool, *,
                    @message : String? = nil,
