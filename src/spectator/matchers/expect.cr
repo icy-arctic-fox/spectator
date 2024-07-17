@@ -50,18 +50,18 @@ module Spectator::Matchers
   protected def self.process_matcher(matcher, actual_value, *,
                                      failure_message : String? = nil,
                                      location : Core::LocationRange? = nil) : MatchData
-    try_positive_matcher(matcher, failure_message, location) ||
-      try_positive_compatible_matcher(matcher, failure_message, location) ||
-      raise "Unable to match #{matcher} with #{@actual_value.inspect}" # TODO: Improve error message.
+    try_positive_matcher(matcher, actual_value, failure_message, location) ||
+      try_positive_compatible_matcher(matcher, actual_value, failure_message, location) ||
+      raise "Unable to match #{matcher} with #{actual_value.inspect}" # TODO: Improve error message.
   end
 
   protected def self.process_negative_matcher(matcher, actual_value, *,
                                               failure_message : String? = nil,
                                               location : Core::LocationRange? = nil) : MatchData
-    try_negative_matcher(matcher, failure_message, location) ||
-      try_negative_compatible_matcher(matcher, failure_message, location) ||
-      try_inverted_compatible_matcher(matcher, failure_message, location) ||
-      raise "Unable to match #{matcher} with #{@actual_value.inspect}" # TODO: Improve error message.
+    try_negative_matcher(matcher, actual_value, failure_message, location) ||
+      try_negative_compatible_matcher(matcher, actual_value, failure_message, location) ||
+      try_inverted_compatible_matcher(matcher, actual_value, failure_message, location) ||
+      raise "Unable to match #{matcher} with #{actual_value.inspect}" # TODO: Improve error message.
   end
 
   private def self.try_positive_matcher(matcher, actual_value, failure_message, location) : MatchData?
