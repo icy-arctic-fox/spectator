@@ -16,7 +16,8 @@ module Spectator::Core
 
     # Runs the example.
     def run : Result
-      Result.capture do
+      @run = true
+      @previous_result = Result.capture do
         if context = parent?
           context.with_hooks(self) do
             @block.call(self)
@@ -25,6 +26,19 @@ module Spectator::Core
           @block.call(self)
         end
       end
+    end
+
+    # Indicates if the example has been run.
+    getter? run : Bool = false
+
+    getter! previous_result : Result
+
+    def group? : ExampleGroup?
+      parent?.try &.as?(ExampleGroup)
+    end
+
+    def group : ExampleGroup
+      parent.as(ExampleGroup)
     end
 
     # Constructs a string representation of the example.

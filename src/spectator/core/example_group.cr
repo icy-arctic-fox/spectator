@@ -59,6 +59,22 @@ module Spectator::Core
       results
     end
 
+    # Indicates if all examples in the group (and subgroups) have been run.
+    def run? : Bool
+      @children.all? &.run?
+    end
+
+    def no_runs? : Bool
+      @children.each do |child|
+        if child.is_a?(ExampleGroup)
+          return false unless child.no_runs?
+        else
+          return false if child.run?
+        end
+      end
+      true
+    end
+
     # Constructs a string representation of the group.
     # The name will be used if it is set, otherwise the group will be anonymous.
     def to_s(io : IO) : Nil

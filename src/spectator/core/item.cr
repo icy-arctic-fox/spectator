@@ -44,6 +44,9 @@ module Spectator::Core
     def parent=(@parent : Nil)
     end
 
+    # Indicates if the item has been run.
+    abstract def run? : Bool
+
     # Creates a new item.
     # The *description* can be a string, nil, or any other object.
     # When it is a string or nil, it will be stored as-is.
