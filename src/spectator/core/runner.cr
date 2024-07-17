@@ -11,8 +11,29 @@ module Spectator
       end
 
       def run(spec : ExampleGroup)
+        report &.suite_started
+        failures = [] of ExecutionResult
+        pending = [] of ExecutionResult
         examples_to_run(spec).each do |example|
-          run_example(example)
+          if (group = example.group) && group.no_runs?
+            report &.example_group_started(group)
+          end
+          result = run_example(example)
+          if result.failed?
+            failures << result
+          elsif result.skipped?
+            pending << result
+          end
+          if (group = example.group) && group.run?
+            report &.example_group_finished(group)
+          end
+        end
+        report &.suite_finished
+        if failures.any?
+          report &.report_failures(failures)
+        end
+        if pending.any?
+          report &.report_pending(pending)
         end
       end
 
@@ -20,11 +41,13 @@ module Spectator
         group.select(Example)
       end
 
-      private def run_example(example : Example) : Nil
+      private def run_example(example : Example) : ExecutionResult
         report &.example_started(example)
         result = example.run
-        report &.example_finished(example, result)
+        result = ExecutionResult.new(example, result)
+        report &.example_finished(result)
         Fiber.yield
+        result
       end
 
       private def report(&) : Nil
@@ -54,6 +77,10 @@ module Spectator
     Core::CLI.configure
     runner = Core::Runner.new(configuration)
     runner.run(sandbox.root_example_group)
+  rescue ex
+    STDERR.puts "Spectator encountered an unexpected error."
+    ex.inspect_with_backtrace(STDERR)
+    exit 1
   end
 
   at_exit do
