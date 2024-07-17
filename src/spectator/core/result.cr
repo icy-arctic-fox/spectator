@@ -48,14 +48,22 @@ module Spectator::Core
     end
 
     # Returns true if the example passed.
-    def pass?
+    def passed?
       @status.pass?
     end
 
     # Returns true if the example failed.
     # Errors are considered failures.
-    def fail?
+    def failed?
       !@status.pass? && !@status.skip?
+    end
+
+    def skipped?
+      @status.skip?
+    end
+
+    def error_message : String?
+      @exception.try &.message
     end
   end
 end
