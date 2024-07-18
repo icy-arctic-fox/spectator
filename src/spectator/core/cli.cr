@@ -10,7 +10,7 @@ module Spectator::Core
       # Apply configuration files.
       each_configuration_file(env) do |file|
         if File.file?(file)
-          options = File.read(file).split
+          options = Process.parse_arguments(File.read(file))
           option_parser.parse(options)
         end
       end
