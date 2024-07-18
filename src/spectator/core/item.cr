@@ -22,8 +22,9 @@ module Spectator::Core
       return unless description?
       if parent = parent?
         parent.full_description(io)
+        io << ' ' if parent.description?
       end
-      io << ' ' << description
+      io << description
     end
 
     # The location of the item in the source code.

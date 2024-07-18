@@ -31,7 +31,6 @@ module Spectator::Formatters
     #
     #    # spec/example_spec.cr:42
     # ```
-    #
     private def print_failure(result, number, padding) : Nil
       print_indent(padding)
       print "  #{number}) "
