@@ -2,6 +2,9 @@ require "../../spec_helper"
 
 # TODO: Use a mock.
 private class TestItem < Spectator::Core::Item
+  def run? : Bool
+    false
+  end
 end
 
 describe Spectator::Core::Item do
