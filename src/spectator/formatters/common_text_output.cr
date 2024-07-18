@@ -37,14 +37,14 @@ module Spectator::Formatters
       puts result.example.full_description
 
       digit_count = number.to_s.size
-      indent = padding + digit_count + 2 # +2 for the space and the parenthesis.
+      indent = padding + digit_count + 4 # +2 for the space and the parenthesis and +2 for the actual indent.
       error = result.exception
       if error.is_a?(AssertionFailed)
-        print_indent(indent + 2)
+        print_indent(indent)
         print "Failure: "
         puts error.message
         puts
-        print_failure_fields(error.fields, indent + 2) if error.fields.any?
+        print_failure_fields(error.fields, indent) if error.fields.any?
         if location = error.location
           print_indent(indent)
           puts "# #{location}"
@@ -52,7 +52,7 @@ module Spectator::Formatters
         end
       else
         puts
-        print_trace(error, indent + 2)
+        print_trace(error, indent)
       end
       puts
     end
