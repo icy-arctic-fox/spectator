@@ -95,9 +95,15 @@ module Spectator::Formatters
     end
 
     def report_pending(results : Enumerable(Core::ExecutionResult)) : Nil
+      puts "Pending:"
+      puts
+      padding = results.size.to_s.size - 1 # -1 since the minimum width is 1.
+      results.each_with_index(1) do |result, index|
+        print_pending(result, index, padding)
+      end
     end
 
-    private def print_pending(example : Core::Example) : Nil
+    private def print_pending(result, number, padding) : Nil
     end
 
     def report_profile : Nil
