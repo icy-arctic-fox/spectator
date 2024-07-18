@@ -42,12 +42,14 @@ module Spectator
       end
 
       private def run_example(example : Example) : ExecutionResult
-        report &.example_started(example)
-        result = example.run
-        result = ExecutionResult.new(example, result)
-        report &.example_finished(result)
-        Fiber.yield
-        result
+        Spectator.sandbox.with_example(example) do
+          report &.example_started(example)
+          result = example.run
+          result = ExecutionResult.new(example, result)
+          report &.example_finished(result)
+          Fiber.yield
+          result
+        end
       end
 
       private def report(&) : Nil
@@ -60,14 +62,23 @@ module Spectator
     class Sandbox
       property! current_example : Example
       getter root_example_group = ExampleGroup.new
+
+      def with_example(example : Example, &)
+        previous_example = @current_example
+        begin
+          yield
+        ensure
+          @current_example = previous_example
+        end
+      end
     end
   end
 
-  def self.current_example : Example
+  def self.current_example : Core::Example
     sandbox.current_example
   end
 
-  protected def self.current_example=(example : Example)
+  protected def self.current_example=(example : Core::Example)
     sandbox.current_example = example
   end
 
