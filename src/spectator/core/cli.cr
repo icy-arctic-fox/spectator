@@ -104,7 +104,7 @@ module Spectator::Core
         end
 
         parser.on("--dry-run", "Pass all tests without execution") do
-          # TODO
+          configuration.dry_run = true
         end
       end
     end

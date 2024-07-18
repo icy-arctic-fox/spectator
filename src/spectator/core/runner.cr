@@ -44,7 +44,11 @@ module Spectator
       private def run_example(example : Example) : ExecutionResult
         Spectator.sandbox.with_example(example) do
           report &.example_started(example)
-          result = example.run
+          result = if @configuration.dry_run?
+                     Result.new(:pass, Time::Span.zero)
+                   else
+                     example.run
+                   end
           result = ExecutionResult.new(example, result)
           report &.example_finished(result)
           Fiber.yield
