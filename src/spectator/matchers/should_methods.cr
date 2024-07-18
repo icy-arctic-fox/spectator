@@ -25,7 +25,3 @@ module Spectator::Matchers
     end
   end
 end
-
-class Object
-  include Spectator::Matchers::ShouldMethods
-end
