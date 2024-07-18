@@ -1,6 +1,6 @@
 require "../../spec_helper"
 
-describe Spectator::Core::Location do
+Spectator.describe Spectator::Core::Location do
   describe ".parse" do
     it "parses a location" do
       location = Spectator::Core::Location.parse("foo:10")

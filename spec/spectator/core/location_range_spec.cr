@@ -1,6 +1,6 @@
 require "../../spec_helper"
 
-describe Spectator::Core::LocationRange do
+Spectator.describe Spectator::Core::LocationRange do
   describe "#includes?" do
     it "returns true if the location is in the range" do
       range = Spectator::Core::LocationRange.new("foo", 10, 20)

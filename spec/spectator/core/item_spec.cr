@@ -7,7 +7,7 @@ private class TestItem < Spectator::Core::Item
   end
 end
 
-describe Spectator::Core::Item do
+Spectator.describe Spectator::Core::Item do
   describe "#description" do
     it "is the string passed to #initialize" do
       item = TestItem.new("foo")
