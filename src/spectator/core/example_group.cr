@@ -76,10 +76,10 @@ module Spectator::Core
     end
 
     # Constructs a string representation of the group.
-    # The name will be used if it is set, otherwise the group will be anonymous.
+    # The description will be used if it is set, otherwise the group will be anonymous.
     def to_s(io : IO) : Nil
-      if name = @name
-        io << name
+      if description = @description
+        io << description
       else
         io << "<Anonymous ExampleGroup>"
       end
