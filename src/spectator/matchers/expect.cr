@@ -1,5 +1,6 @@
 require "../assertion_failed"
 require "../core/location_range"
+require "./expectations"
 
 module Spectator::Matchers
   struct Expect(T)
@@ -11,10 +12,10 @@ module Spectator::Matchers
            source_line = __LINE__,
            source_end_line = __END_LINE__) : Nil
       location = Core::LocationRange.new(source_file, source_line, source_end_line)
-      match_data = Matchers.process_matcher(matcher, @actual_value,
+      match_data = Expectations.process_matcher(matcher, @actual_value,
         failure_message: failure_message,
         location: location)
-      match_data.success? ? pass(match_data, location) : fail(match_data, location)
+      match_data.success? ? Expectations.pass(match_data, location) : Expectations.fail(match_data, location)
     end
 
     def not_to(matcher, failure_message : String? = nil, *,
@@ -22,10 +23,10 @@ module Spectator::Matchers
                source_line = __LINE__,
                source_end_line = __END_LINE__) : Nil
       location = Core::LocationRange.new(source_file, source_line, source_end_line)
-      match_data = Matchers.process_negative_matcher(matcher, @actual_value,
+      match_data = Expectations.process_negative_matcher(matcher, @actual_value,
         failure_message: failure_message,
         location: location)
-      match_data.success? ? pass(match_data, location) : fail(match_data, location)
+      match_data.success? ? Expectations.pass(match_data, location) : Expectations.fail(match_data, location)
     end
 
     def to_not(matcher, failure_message : String? = nil, *,
@@ -37,62 +38,6 @@ module Spectator::Matchers
         source_line: source_line,
         source_end_line: source_end_line)
     end
-
-    private def pass(match_data, location)
-      # TODO: Do something with the match data.
-    end
-
-    private def fail(match_data, location)
-      raise AssertionFailed.new(match_data.message, location, match_data.fields)
-    end
-  end
-
-  protected def self.process_matcher(matcher, actual_value, *,
-                                     failure_message : String? = nil,
-                                     location : Core::LocationRange? = nil) : MatchData
-    try_positive_matcher(matcher, actual_value, failure_message, location) ||
-      try_positive_compatible_matcher(matcher, actual_value, failure_message, location) ||
-      raise "Unable to match #{matcher} with #{actual_value.inspect}" # TODO: Improve error message.
-  end
-
-  protected def self.process_negative_matcher(matcher, actual_value, *,
-                                              failure_message : String? = nil,
-                                              location : Core::LocationRange? = nil) : MatchData
-    try_negative_matcher(matcher, actual_value, failure_message, location) ||
-      try_negative_compatible_matcher(matcher, actual_value, failure_message, location) ||
-      try_inverted_compatible_matcher(matcher, actual_value, failure_message, location) ||
-      raise "Unable to match #{matcher} with #{actual_value.inspect}" # TODO: Improve error message.
-  end
-
-  private def self.try_positive_matcher(matcher, actual_value, failure_message, location) : MatchData?
-    return unless matcher.responds_to?(:match)
-    match_data = matcher.match(actual_value, failure_message)
-  end
-
-  private def self.try_positive_compatible_matcher(matcher, actual_value, failure_message, location) : MatchData?
-    return unless matcher.responds_to?(:matches?) && matcher.responds_to?(:failure_message)
-    success = matcher.matches?(actual_value)
-    Matchers::MatchData.new(success, false,
-      message: failure_message || matcher.failure_message(actual_value))
-  end
-
-  private def self.try_negative_matcher(matcher, actual_value, failure_message, location) : MatchData?
-    return unless matcher.responds_to?(:negated_match)
-    matcher.negated_match(actual_value, failure_message)
-  end
-
-  private def self.try_negative_compatible_matcher(matcher, actual_value, failure_message, location) : MatchData?
-    return unless matcher.responds_to?(:does_not_match?) && matcher.responds_to?(:negated_failure_message)
-    success = matcher.does_not_match?(actual_value)
-    Matchers::MatchData.new(success, true,
-      message: failure_message || matcher.negated_failure_message(actual_value))
-  end
-
-  private def self.try_inverted_compatible_matcher(matcher, actual_value, failure_message, location) : MatchData?
-    return unless matcher.responds_to?(:matches?) && matcher.responds_to?(:negated_failure_message)
-    success = !matcher.matches?(actual_value)
-    Matchers::MatchData.new(success, true,
-      message: failure_message || matcher.negated_failure_message(actual_value))
   end
 
   module ExpectMethods
