@@ -17,7 +17,6 @@ module Spectator
                         source_file = __FILE__,
                         source_line = __LINE__,
                         source_end_line = __END_LINE__, &)
-            puts "{{name.id}}: #{description}"
           location = LocationRange.new(source_file, source_line, source_end_line)
           group = ExampleGroup.new(description.try &.to_s, location)
           add_child(group)

@@ -23,27 +23,21 @@ module Spectator::Formatters
     end
 
     def started : Nil
-      puts "Starting..."
     end
 
     def finished : Nil
-      puts "Finished."
     end
 
     def suite_started : Nil
-      puts "Starting suite..."
     end
 
     def suite_finished : Nil
-      puts "Finished suite."
     end
 
     def example_group_started(group : Core::ExampleGroup) : Nil
-      puts "Starting #{group.full_description}..."
     end
 
     def example_group_finished(group : Core::ExampleGroup) : Nil
-      puts "Finished #{group.full_description}."
     end
   end
 end
