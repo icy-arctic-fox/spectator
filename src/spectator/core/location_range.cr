@@ -26,6 +26,11 @@ module Spectator::Core
       @line <= line && line <= @end_line
     end
 
+    def relative_to(path : String | Path) : LocationRange
+      relative_path = Path[file].relative_to(path)
+      LocationRange.new(relative_path.to_s, line, end_line)
+    end
+
     # Constructs a string representation of the location range.
     def to_s(io : IO) : Nil
       io << @file << ':' << @line

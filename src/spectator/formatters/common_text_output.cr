@@ -47,7 +47,8 @@ module Spectator::Formatters
         print_failure_fields(error.fields, indent) if error.fields.any?
         if location = error.location
           print_indent(indent)
-          puts "# #{location}"
+          # OPTIMIZE: Store current directory to avoid re-fetching it.
+          puts "# #{location.relative_to(Dir.current)}"
           puts
         end
       else

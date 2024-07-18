@@ -23,6 +23,11 @@ module Spectator::Core
       line ? new(file, line) : new(string)
     end
 
+    def relative_to(path : String | Path) : Location
+      relative_path = Path[file].relative_to(path)
+      Location.new(relative_path.to_s, line)
+    end
+
     # Constructs a string representation of the location.
     def to_s(io : IO) : Nil
       io << @file
