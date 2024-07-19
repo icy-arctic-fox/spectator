@@ -32,6 +32,7 @@ module Spectator::Formatters
     end
 
     def suite_finished : Nil
+      puts
     end
 
     def example_group_started(group : Core::ExampleGroup) : Nil

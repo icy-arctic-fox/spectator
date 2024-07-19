@@ -1,6 +1,7 @@
 module Spectator::Formatters
   module CommonTextOutput
     def report_failures(results : Enumerable(Core::ExecutionResult)) : Nil
+      puts
       puts "Failures:"
       puts
       padding = results.size.to_s.size - 1 # -1 since the minimum width is 1.
@@ -96,6 +97,7 @@ module Spectator::Formatters
     end
 
     def report_pending(results : Enumerable(Core::ExecutionResult)) : Nil
+      puts
       puts "Pending:"
       puts
       padding = results.size.to_s.size - 1 # -1 since the minimum width is 1.
