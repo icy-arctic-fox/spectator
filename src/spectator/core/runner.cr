@@ -11,6 +11,7 @@ module Spectator
       end
 
       def run(spec : ExampleGroup)
+        report &.started
         report &.suite_started
         failures = [] of ExecutionResult
         pending = [] of ExecutionResult
@@ -35,6 +36,10 @@ module Spectator
         if pending.any?
           report &.report_pending(pending)
         end
+        report &.report_profile
+        report &.report_summary
+        report &.report_post_summary
+        report &.finished
       end
 
       private def examples_to_run(group : ExampleGroup) : Array(Example)
