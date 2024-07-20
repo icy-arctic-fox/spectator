@@ -13,7 +13,8 @@ module Spectator::Formatters::JUnit
                    @line : Int32? = nil)
     end
 
-    def to_xml(io : IO) : Nil
+    def to_xml(io : IO, indent : Int = 0) : Nil
+      indent.times { io << ' ' }
       io << "<testcase"
       write_xml_attribute(io, "name", @name)
       write_xml_attribute(io, "classname", @class_name)

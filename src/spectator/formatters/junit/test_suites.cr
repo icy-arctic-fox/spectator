@@ -18,7 +18,8 @@ module Spectator::Formatters::JUnit
                    @test_suites : Array(TestSuite) = [] of TestSuite)
     end
 
-    def to_xml(io : IO) : Nil
+    def to_xml(io : IO, indent : Int = 0) : Nil
+      indent.times { io << ' ' }
       io << "<testsuites"
       write_xml_attribute(io, "name", @name)
       write_xml_attribute(io, "tests", @tests)
@@ -33,9 +34,12 @@ module Spectator::Formatters::JUnit
         io << " />"
       else
         io << ">"
+        io.puts
         @test_suites.each do |test_suite|
-          test_suite.to_xml(io)
+          test_suite.to_xml(io, indent + 2)
+          io.puts
         end
+        indent.times { io << ' ' }
         io << "</testsuites>"
       end
     end
