@@ -23,7 +23,7 @@ module Spectator::Matchers
     end
   end
 
-  abstract struct CustomMatcher < Matcher
+  abstract struct CustomMatcher
     include CustomDSL
   end
 
