@@ -20,7 +20,7 @@ module Spectator::Formatters::JUnit
     end
 
     def to_xml(io : IO, indent : Int = 0) : Nil
-      indent.times { io << ' ' }
+      print_indent(io, indent)
       io << "<testsuite"
       write_xml_attribute(io, "name", @name)
       write_xml_attribute(io, "tests", @tests)
@@ -38,10 +38,10 @@ module Spectator::Formatters::JUnit
         io << ">"
         io.puts
         @test_cases.each do |test_case|
-          test_case.to_xml(io, indent + 2)
+          test_case.to_xml(io, indent + 1)
           io.puts
         end
-        indent.times { io << ' ' }
+        print_indent(io, indent)
         io << "</testsuite>"
       end
     end

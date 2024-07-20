@@ -11,5 +11,9 @@ module Spectator::Formatters::JUnit
       HTML.escape(value.to_s, io)
       io << '"'
     end
+
+    private def print_indent(io : IO, indent : Int) : Nil
+      indent.times { io << "  " }
+    end
   end
 end
