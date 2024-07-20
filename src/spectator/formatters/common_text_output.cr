@@ -14,7 +14,7 @@ module Spectator::Formatters
     #
     # ```text
     # 1) Full example description
-    #    Failure: "bar" did not equal "foo"
+    #    Failure: <SOURCE CODE>
     #
     #    Expected: "foo"
     #         got: "bar"
@@ -43,9 +43,11 @@ module Spectator::Formatters
       if error.is_a?(AssertionFailed)
         print_indent(indent)
         print "Failure: "
+        puts "<TODO: INSERT SOURCE CODE>"
+        puts
+        print_indent(indent)
         puts error.message
         puts
-        print_failure_fields(error.fields, indent) if error.fields.any?
         if location = error.location
           print_indent(indent)
           # OPTIMIZE: Store current directory to avoid re-fetching it.
@@ -57,28 +59,6 @@ module Spectator::Formatters
         print_trace(error, indent)
       end
       puts
-    end
-
-    private def print_failure_fields(fields, indent) : Nil
-      max_name_length = fields.max_of do |field|
-        if field.is_a?({Symbol, String}) || field.is_a?({String, String})
-          field[0].to_s.size
-        else
-          0
-        end
-      end
-
-      fields.each do |field|
-        print_indent(indent)
-        if field.is_a?({String | Symbol, String})
-          name, value = field
-          print name.to_s.rjust(max_name_length)
-          print ": "
-          puts value
-        else # String
-          puts field
-        end
-      end
     end
 
     private def print_trace(error, indent) : Nil
