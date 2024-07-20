@@ -1,3 +1,6 @@
+require "../core/execution_result"
+require "../core/source_cache"
+
 module Spectator::Formatters
   module CommonTextOutput
     def report_failures(results : Enumerable(Core::ExecutionResult)) : Nil
@@ -43,7 +46,10 @@ module Spectator::Formatters
       if error.is_a?(AssertionFailed)
         print_indent(indent)
         print "Failure: "
-        puts "<TODO: INSERT SOURCE CODE>"
+        if location = error.location
+          source_code = Spectator.source_cache.get(location.file, location.line)
+          puts source_code.strip if source_code
+        end
         puts
         print_indent(indent)
         puts error.message
