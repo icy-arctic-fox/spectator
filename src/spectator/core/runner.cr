@@ -11,6 +11,7 @@ module Spectator
       end
 
       def run(spec : ExampleGroup)
+        report &.started
         report &.suite_started
         failures = [] of ExecutionResult
         pending = [] of ExecutionResult
@@ -35,6 +36,10 @@ module Spectator
         if pending.any?
           report &.report_pending(pending)
         end
+        report &.report_summary
+        report &.report_profile
+        report &.report_post_summary
+        report &.finished
       end
 
       private def examples_to_run(group : ExampleGroup) : Array(Example)
@@ -66,6 +71,7 @@ module Spectator
     class Sandbox
       property! current_example : Example
       getter root_example_group = ExampleGroup.new
+      getter path : Path = Path[Dir.current]
 
       def with_example(example : Example, &)
         previous_example = @current_example
@@ -84,6 +90,10 @@ module Spectator
 
   protected def self.current_example=(example : Core::Example)
     sandbox.current_example = example
+  end
+
+  def self.working_path : Path
+    sandbox.path
   end
 
   class_property? auto_run = true
