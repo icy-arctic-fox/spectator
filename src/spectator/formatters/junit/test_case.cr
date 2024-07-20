@@ -23,34 +23,67 @@ module Spectator::Formatters::JUnit
       write_xml_attribute(io, "time", @time.try &.total_seconds)
       write_xml_attribute(io, "file", @file)
       write_xml_attribute(io, "line", @line)
-      case error = @error
-      when Nil # Passed
+
+      error = @error
+      unless error
         io << " />"
-      when Spectator::AssertionFailed # Failed
-        output_failure(io, "failure", error, indent + 2)
-      else # Error
-        output_failure(io, "error", error, indent + 2)
+        return
+      end
+
+      write_context(io, indent) do
+        if error.is_a?(Spectator::AssertionFailed)
+          output_failure(io, error, indent + 2)
+        else
+          output_error(io, error, indent + 2)
+        end
       end
     end
 
-    private def output_failure(io, type, error, indent) : Nil
-      io << ">"
-      io.puts
+    private def write_context(io, indent, &) : Nil
+      io.puts '>'
+      yield
       indent.times { io << ' ' }
-      io << '<' << type
+      io << "</testcase>"
+    end
+
+    private def output_failure(io, error, indent) : Nil
+      indent.times { io << ' ' }
+      io << "<failure"
       write_xml_attribute(io, "message", error.message)
       write_xml_attribute(io, "type", error.class.name)
+
+      if error.fields.empty?
+        io.puts " />"
+        return
+      end
+
+      io.puts '>'
+      error.fields.each do |(key, value)|
+        HTML.escape(key, io)
+        io << ": "
+        HTML.escape(value, io)
+        io.puts
+      end
+      indent.times { io << ' ' }
+      io.puts "</failure>"
+    end
+
+    private def output_error(io, error, indent) : Nil
+      indent.times { io << ' ' }
+      io << "<error"
+      write_xml_attribute(io, "message", error.message)
+      write_xml_attribute(io, "type", error.class.name)
+
       if backtrace = error.backtrace?
         io << '>'
         io.puts
         HTML.escape(backtrace.join('\n'), io)
         io.puts
-        io << "</" << type << '>'
+        indent.times { io << ' ' }
+        io.puts "</error>"
       else
-        io << " />"
+        io.puts " />"
       end
-      io.puts
-      io << "</testcase>"
     end
   end
 end
