@@ -58,6 +58,10 @@ module Spectator::Core
       !@status.pass? && !@status.skip?
     end
 
+    def error?
+      @status.error?
+    end
+
     def skipped?
       @status.skip?
     end
