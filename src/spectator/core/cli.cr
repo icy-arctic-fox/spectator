@@ -1,4 +1,6 @@
 require "option_parser"
+require "./configuration"
+require "../formatters/*"
 
 module Spectator::Core
   module CLI
@@ -78,8 +80,8 @@ module Spectator::Core
           # TODO
         end
 
-        parser.on("--junit_output OUTPUT_PATH", "Generate JUnit XML output within the given OUTPUT_PATH") do
-          # TODO
+        parser.on("--junit_output OUTPUT_PATH", "Generate JUnit XML output within the given OUTPUT_PATH") do |output_path|
+          configuration.add_formatter(Formatters::CompatibleJUnitFormatter.file(output_path))
         end
 
         parser.on("-h", "--help", "Show this help") do
