@@ -24,8 +24,7 @@ module Spectator::Formatters::JUnit
       write_xml_attribute(io, "file", @file)
       write_xml_attribute(io, "line", @line)
 
-      error = @error
-      unless error
+      unless error = @error
         io << " />"
         return
       end
@@ -74,16 +73,17 @@ module Spectator::Formatters::JUnit
       write_xml_attribute(io, "message", error.message)
       write_xml_attribute(io, "type", error.class.name)
 
-      if backtrace = error.backtrace?
-        io << '>'
-        io.puts
-        HTML.escape(backtrace.join('\n'), io)
-        io.puts
-        indent.times { io << ' ' }
-        io.puts "</error>"
-      else
+      unless backtrace = error.backtrace?
         io.puts " />"
+        return
       end
+
+      io << '>'
+      io.puts
+      HTML.escape(backtrace.join('\n'), io)
+      io.puts
+      indent.times { io << ' ' }
+      io.puts "</error>"
     end
   end
 end
