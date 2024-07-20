@@ -1,3 +1,5 @@
+require "./match_data"
+
 module Spectator::Matchers
   abstract struct Matcher
     abstract def match(actual_value, failure_message = nil) : MatchData
@@ -19,12 +21,15 @@ module Spectator::Matchers
       negated_match(actual_value).message
     end
 
-    private def pass(*, negated = false) : MatchData
-      MatchData.new(true, negated)
+    private def pass(*, negated : Bool = false) : MatchData
+      MatchData.pass(negated: negated)
     end
 
-    private def fail(*, negated = false, message = nil, fields = nil) : MatchData
-      MatchData.new(false, negated, message: message, fields: fields)
+    private def fail(*,
+                     negated : Bool = false,
+                     message : String? = nil,
+                     fields : Enumerable(MatchData::Field) = [] of MatchData::Field) : MatchData
+      MatchData.fail(negated: negated, message: message, fields: fields)
     end
   end
 end
