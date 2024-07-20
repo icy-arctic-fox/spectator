@@ -1,36 +1,89 @@
-require "../../core/execution_result"
 require "./xml_element"
 
 module Spectator::Formatters::JUnit
-  record(TestCase,
-    name : String,
-    class_name : String,
-    assertions : Int32?,
-    time : Time::Span?,
-    file : String?,
-    line : Int32?) do
+  struct TestCase
     include XMLElement
 
-    def self.from_result(result : Core::ExecutionResult) : self
-      new(
-        name: result.example.description,
-        class_name: result.example.group.description,
-        assertions: nil,
-        time: result.elapsed,
-        file: result.example.location.try &.file,
-        line: result.example.location.try &.line
-      )
+    def initialize(*,
+                   @name : String,
+                   @class_name : String,
+                   @assertions : Int32? = nil,
+                   @time : Time::Span? = nil,
+                   @file : String? = nil,
+                   @line : Int32? = nil,
+                   @error : Exception? = nil)
     end
 
-    def to_xml(io : IO) : Nil
+    def to_xml(io : IO, indent : Int = 0) : Nil
+      indent.times { io << ' ' }
       io << "<testcase"
-      write_attribute("name", name, io)
-      write_attribute("classname", class_name, io)
-      assertions.try { |a| write_attribute("assertions", a, io) }
-      time.try { |t| write_attribute("time", t.total_seconds, io) }
-      file.try { |f| write_attribute("file", f, io) }
-      line.try { |l| write_attribute("line", l, io) }
-      io << " />"
+      write_xml_attribute(io, "name", @name)
+      write_xml_attribute(io, "classname", @class_name)
+      write_xml_attribute(io, "assertions", @assertions)
+      write_xml_attribute(io, "time", @time.try &.total_seconds)
+      write_xml_attribute(io, "file", @file)
+      write_xml_attribute(io, "line", @line)
+
+      unless error = @error
+        io << " />"
+        return
+      end
+
+      write_context(io, indent) do
+        if error.is_a?(Spectator::AssertionFailed)
+          output_failure(io, error, indent + 2)
+        else
+          output_error(io, error, indent + 2)
+        end
+      end
+    end
+
+    private def write_context(io, indent, &) : Nil
+      io.puts '>'
+      yield
+      indent.times { io << ' ' }
+      io << "</testcase>"
+    end
+
+    private def output_failure(io, error, indent) : Nil
+      indent.times { io << ' ' }
+      io << "<failure"
+      write_xml_attribute(io, "message", error.message)
+      write_xml_attribute(io, "type", error.class.name)
+
+      if error.fields.empty?
+        io.puts " />"
+        return
+      end
+
+      io.puts '>'
+      error.fields.each do |(key, value)|
+        HTML.escape(key, io)
+        io << ": "
+        HTML.escape(value, io)
+        io.puts
+      end
+      indent.times { io << ' ' }
+      io.puts "</failure>"
+    end
+
+    private def output_error(io, error, indent) : Nil
+      indent.times { io << ' ' }
+      io << "<error"
+      write_xml_attribute(io, "message", error.message)
+      write_xml_attribute(io, "type", error.class.name)
+
+      unless backtrace = error.backtrace?
+        io.puts " />"
+        return
+      end
+
+      io << '>'
+      io.puts
+      HTML.escape(backtrace.join('\n'), io)
+      io.puts
+      indent.times { io << ' ' }
+      io.puts "</error>"
     end
   end
 end

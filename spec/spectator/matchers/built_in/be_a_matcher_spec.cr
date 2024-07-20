@@ -34,4 +34,18 @@ Spectator.describe Spectator::Matchers::BuiltIn::BeAMatcher do
       expect(matcher.matches?(Base.new)).to be_false
     end
   end
+
+  describe "#failure_message" do
+    it "returns the failure message" do
+      matcher = BeAMatcher(Int32).new
+      expect(matcher.failure_message("foo")).to eq("Expected \"foo\" to be a Int32")
+    end
+  end
+
+  describe "#negative_failure_message" do
+    it "returns the negative failure message" do
+      matcher = BeAMatcher(String).new
+      expect(matcher.negative_failure_message("foo")).to eq("Expected \"foo\" not to be a String")
+    end
+  end
 end
