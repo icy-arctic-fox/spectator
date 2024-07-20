@@ -24,66 +24,32 @@ module Spectator::Formatters::JUnit
       write_xml_attribute(io, "file", @file)
       write_xml_attribute(io, "line", @line)
 
-      unless error = @error
+      if error = @error
+        io.puts '>'
+        output_failure(io, error, indent + 2)
+        io << "</testcase>"
+      else
         io << " />"
-        return
       end
-
-      write_context(io, indent) do
-        if error.is_a?(Spectator::AssertionFailed)
-          output_failure(io, error, indent + 2)
-        else
-          output_error(io, error, indent + 2)
-        end
-      end
-    end
-
-    private def write_context(io, indent, &) : Nil
-      io.puts '>'
-      yield
-      indent.times { io << ' ' }
-      io << "</testcase>"
     end
 
     private def output_failure(io, error, indent) : Nil
+      type = error.is_a?(AssertionFailed) ? "failure" : "error"
       indent.times { io << ' ' }
-      io << "<failure"
+      io << '<' << type
       write_xml_attribute(io, "message", error.message)
       write_xml_attribute(io, "type", error.class.name)
 
-      if error.fields.empty?
-        io.puts " />"
-        return
-      end
-
-      io.puts '>'
-      error.fields.each do |(key, value)|
-        HTML.escape(key, io)
-        io << ": "
-        HTML.escape(value, io)
+      if backtrace = error.backtrace?
+        io.puts '>'
+        HTML.escape(backtrace.join('\n'), io)
         io.puts
-      end
-      indent.times { io << ' ' }
-      io.puts "</failure>"
-    end
-
-    private def output_error(io, error, indent) : Nil
-      indent.times { io << ' ' }
-      io << "<error"
-      write_xml_attribute(io, "message", error.message)
-      write_xml_attribute(io, "type", error.class.name)
-
-      unless backtrace = error.backtrace?
+        indent.times { io << ' ' }
+        io << "</" << type
+        io.puts '>'
+      else
         io.puts " />"
-        return
       end
-
-      io << '>'
-      io.puts
-      HTML.escape(backtrace.join('\n'), io)
-      io.puts
-      indent.times { io << ' ' }
-      io.puts "</error>"
     end
   end
 end
