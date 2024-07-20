@@ -75,6 +75,7 @@ module Spectator::Formatters
         class_name: class_name,
         file: location.try &.file,
         line: location.try &.line,
+        error: result.exception?,
       )
 
       @failure_count += 1 if result.failed?
