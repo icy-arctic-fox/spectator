@@ -10,12 +10,10 @@ module Spectator::Matchers::BuiltIn
     end
 
     def matches?(actual_value) : Bool
-      begin
-        actual_value.call
-        false # Didn't raise an error
-      rescue ex
-        matches_error?(ex)
-      end
+      actual_value.call
+      false
+    rescue ex
+      matches_error?(ex)
     end
 
     private def matches_error?(actual_error)

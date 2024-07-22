@@ -48,7 +48,7 @@ module Spectator::Matchers
                       source_line = __LINE__,
                       source_end_line = __END_LINE__)
         # TODO: Store location.
-        TestCustomMatcher.new({{properties.map { |prop| prop.var }.splat(", ")}})
+        TestCustomMatcher.new({{properties.map(&.var).splat(", ")}})
       end
     end
   end

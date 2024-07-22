@@ -64,28 +64,28 @@ module Spectator::Matchers::BuiltIn
       "Expected #{actual_value.pretty_inspect} to be #{@relation.negate} #{@expected_value.pretty_inspect}"
     end
 
-    def self.<(expected_value : T) : self
-      new(expected_value, :less)
+    def self.<(other : T) : self
+      new(other, :less)
     end
 
-    def self.<=(expected_value : T) : self
-      new(expected_value, :less_or_equal)
+    def self.<=(other : T) : self
+      new(other, :less_or_equal)
     end
 
-    def self.==(expected_value : T) : self
-      new(expected_value, :equal)
+    def self.==(other : T) : self
+      new(other, :equal)
     end
 
-    def self.>=(expected_value : T) : self
-      new(expected_value, :greater_or_equal)
+    def self.>=(other : T) : self
+      new(other, :greater_or_equal)
     end
 
-    def self.>(expected_value : T) : self
-      new(expected_value, :greater)
+    def self.>(other : T) : self
+      new(other, :greater)
     end
 
-    def self.!=(expected_value : T) : self
-      new(expected_value, :not_equal)
+    def self.!=(other : T) : self
+      new(other, :not_equal)
     end
   end
 end

@@ -30,12 +30,8 @@ module Spectator
           end
         end
         report &.suite_finished
-        if failures.any?
-          report &.report_failures(failures)
-        end
-        if pending.any?
-          report &.report_pending(pending)
-        end
+        report &.report_failures(failures) unless failures.empty?
+        report &.report_pending(pending) unless pending.empty?
         report &.report_profile
         report &.report_summary
         report &.report_post_summary

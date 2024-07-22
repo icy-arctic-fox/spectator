@@ -141,7 +141,7 @@ module Spectator::Matchers
       BeZeroMatcher.new
     end
 
-    def change(&block) # by(change) / from(from) / to(to)
+    def change(&) # by(change) / from(from) / to(to)
     end
 
     def contain(*expected)

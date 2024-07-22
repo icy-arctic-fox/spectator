@@ -25,7 +25,7 @@ module Spectator
       end
 
       def formatter=(formatter : Formatters::Formatter)
-        formatters = [formatter] of Formatters::Formatter
+        self.formatters = [formatter] of Formatters::Formatter
         formatter
       end
 
@@ -41,7 +41,7 @@ module Spectator
         @fail_fast = flag ? DEFAULT_FAIL_FAST_EXAMPLES : 0
       end
 
-      property fail_if_no_examples = true
+      property? fail_if_no_examples = true
 
       property profile_examples = 0
 
