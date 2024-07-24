@@ -40,9 +40,50 @@ module Spectator::Matchers
     end
   end
 
+  struct BlockExpectation(T)
+    def initialize(@block : -> T)
+    end
+
+    def to(matcher, failure_message : String? = nil, *,
+           source_file = __FILE__,
+           source_line = __LINE__,
+           source_end_line = __END_LINE__) : Nil
+      location = Core::LocationRange.new(source_file, source_line, source_end_line)
+      failure = Matcher.process_block(matcher, @block,
+        failure_message: failure_message,
+        location: location)
+      raise failure if failure
+    end
+
+    def not_to(matcher, failure_message : String? = nil, *,
+               source_file = __FILE__,
+               source_line = __LINE__,
+               source_end_line = __END_LINE__) : Nil
+      location = Core::LocationRange.new(source_file, source_line, source_end_line)
+      failure = Matcher.process_block_negated(matcher, @block,
+        failure_message: failure_message,
+        location: location)
+      raise failure if failure
+    end
+
+    def to_not(matcher, failure_message : String? = nil, *,
+               source_file = __FILE__,
+               source_line = __LINE__,
+               source_end_line = __END_LINE__) : Nil
+      not_to(matcher, failure_message,
+        source_file: source_file,
+        source_line: source_line,
+        source_end_line: source_end_line)
+    end
+  end
+
   module ExpectMethods
     def expect(actual_value : T) : Expect(T) forall T
       Expect(T).new(actual_value)
+    end
+
+    def expect(&block : -> T) : BlockExpectation(T) forall T
+      BlockExpectation(T).new(block)
     end
   end
 end
