@@ -48,4 +48,14 @@ Spectator.describe Spectator::Matchers::BuiltIn::BeAMatcher do
       expect(matcher.negative_failure_message("foo")).to eq("Expected \"foo\" not to be a String")
     end
   end
+
+  context "DSL" do
+    describe "be_a" do
+      it "matches if the value is an instance of the type" do
+        expect do
+          expect(42).to be_a(Int32)
+        end.to be_successful
+      end
+    end
+  end
 end

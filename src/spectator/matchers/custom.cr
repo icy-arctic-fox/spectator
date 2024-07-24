@@ -2,24 +2,48 @@ require "./matcher"
 
 module Spectator::Matchers
   module CustomDSL
-    macro match(&block)
-      private def _matches_impl({{block.args.splat}})
-        {{yield}}
-      end
+    macro match(*, block = false, &impl)
+      {% if block %}
+        {% unless impl.args.empty?
+             raise "The `match` definition for a custom matcher accepting a block cannot have arguments.\nInstead of `match do |#{impl.args.splat}|`, use `match { ... }`."
+           end %}
 
-      def matches?(actual_value) : Bool
-        !!_matches_impl(actual_value)
-      end
+        private def _matches_impl({{impl.args.splat(",")}} &)
+          {{yield}}
+        end
+
+        def matches?(&block) : Bool
+          !!_matches_impl(&block)
+        end
+      {% else %}
+        private def _matches_impl({{impl.args.splat}})
+          {{yield}}
+        end
+
+        def matches?(actual_value) : Bool
+          !!_matches_impl(actual_value)
+        end
+      {% end %}
     end
 
-    macro failure_message(&block)
-      private def _failure_message_impl({{block.args.splat}})
-        {{yield}}
-      end
+    macro failure_message(*, block = false, &impl)
+      {% if block %}
+        private def _failure_message_impl({{impl.args.splat(",")}} &)
+          {{yield}}
+        end
 
-      def failure_message(actual_value) : String
-        _failure_message_impl(actual_value)
-      end
+        def failure_message(&block) : String
+          _failure_message_impl(&block)
+        end
+      {% else %}
+        private def _failure_message_impl({{impl.args.splat}})
+          {{yield}}
+        end
+
+        def failure_message(actual_value) : String
+          _failure_message_impl(actual_value)
+        end
+      {% end %}
     end
   end
 
