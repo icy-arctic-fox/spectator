@@ -3,7 +3,7 @@ require "./matcher"
 module Spectator::Matchers
   module CustomDSL
     macro match(&block)
-      def _matches_impl({{block.args.splat}})
+      private def _matches_impl({{block.args.splat}})
         {{yield}}
       end
 
@@ -13,7 +13,7 @@ module Spectator::Matchers
     end
 
     macro failure_message(&block)
-      def _failure_message_impl({{block.args.splat}})
+      private def _failure_message_impl({{block.args.splat}})
         {{yield}}
       end
 
