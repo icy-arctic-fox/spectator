@@ -9,7 +9,7 @@ module Spectator::Matchers
     abstract def failure_message(actual_value) : String
 
     def negated_failure_message(actual_value) : String
-      raise "Negated match of #{self.class} is not supported."
+      raise FrameworkError.new("Matcher #{self.class} does not support negated matching.")
     end
 
     def self.process(matcher, actual_value, *,
@@ -20,7 +20,8 @@ module Spectator::Matchers
         failure_message ||= matcher.failure_message(actual_value)
         AssertionFailed.new(failure_message, location)
       else
-        raise "Unable to match #{matcher} with #{actual_value.inspect}" # TODO: Improve error message.
+        # TODO: Add more information, such as missing methods and suggestions.
+        raise FrameworkError.new("Matcher #{matcher.class} does not support matching.")
       end
     end
 
@@ -33,13 +34,15 @@ module Spectator::Matchers
                  elsif matcher.responds_to?(:matches?)
                    !matcher.matches?(actual_value)
                  else
-                   raise "Negated match of #{matcher.class} is not supported."
+                   # TODO: Add more information, such as missing methods and suggestions.
+                   raise FrameworkError.new("Matcher #{matcher.class} does not support negated matching.")
                  end
         return if passed
         failure_message ||= matcher.negated_failure_message(actual_value)
         AssertionFailed.new(failure_message, location)
       else
-        raise "Matcher #{matcher} does not support negated match." # TODO: Improve error message.
+        # TODO: Add more information, such as missing methods and suggestions.
+        raise FrameworkError.new("Matcher #{matcher.class} does not support negated matching.")
       end
     end
 
@@ -51,7 +54,8 @@ module Spectator::Matchers
         failure_message ||= matcher.failure_message(&block)
         AssertionFailed.new(failure_message, location)
       else
-        raise "Unable to match #{matcher} with block" # TODO: Improve error message.
+        # TODO: Add more information, such as missing methods and suggestions.
+        raise FrameworkError.new("Matcher #{matcher.class} does not support matching with a block.")
       end
     end
 
@@ -64,13 +68,15 @@ module Spectator::Matchers
                  elsif matcher.responds_to?(:matches?)
                    !matcher.matches?(&block)
                  else
-                   raise "Negated match of #{matcher.class} is not supported."
+                   # TODO: Add more information, such as missing methods and suggestions.
+                   raise FrameworkError.new("Matcher #{matcher.class} does not support negated matching with a block.")
                  end
         return if passed
         failure_message ||= matcher.negated_failure_message(&block)
         AssertionFailed.new(failure_message, location)
       else
-        raise "Matcher #{matcher} does not support negated match." # TODO: Improve error message.
+        # TODO: Add more information, such as missing methods and suggestions.
+        raise FrameworkError.new("Matcher #{matcher.class} does not support negated matching with a block.")
       end
     end
   end
