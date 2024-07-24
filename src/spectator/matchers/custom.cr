@@ -99,7 +99,7 @@ module Spectator::Matchers
         end
 
         def failure_message(&block) : String
-          _failure_message_impl(&block)
+          _failure_message_impl(&block).to_s
         end
       {% else %}
         {% raise <<-END_OF_ERROR if impl.args.size > 1
@@ -123,7 +123,7 @@ module Spectator::Matchers
         end
 
         def failure_message(actual_value) : String
-          !!_failure_message_impl({% unless impl.args.empty? %}actual_value{% end %})
+          !!_failure_message_impl({% unless impl.args.empty? %}actual_value{% end %}).to_s
         end
       {% end %}
     end
