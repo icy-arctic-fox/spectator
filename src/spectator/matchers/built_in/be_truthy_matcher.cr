@@ -8,7 +8,7 @@ module Spectator::Matchers::BuiltIn
       "Expected #{actual_value.pretty_inspect} to be truthy"
     end
 
-    def negative_failure_message(actual_value) : String
+    def negated_failure_message(actual_value) : String
       "Expected #{actual_value.pretty_inspect} to be falsy"
     end
   end

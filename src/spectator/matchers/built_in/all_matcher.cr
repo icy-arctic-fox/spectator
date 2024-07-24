@@ -38,14 +38,14 @@ module Spectator::Matchers::BuiltIn
       end
     end
 
-    def negative_failure_message(actual_value) : String
+    def negated_failure_message(actual_value) : String
       if (index = @failed_index) && (failure = @failure)
         <<-END_MESSAGE
         Expected no elements to be satisfied, but element #{index} did.
         #{failure.message}
         END_MESSAGE
       else
-        raise ApplicationError.new("`negative_failure_message` was called on a successful expectation")
+        raise ApplicationError.new("`negated_failure_message` was called on a successful expectation")
       end
     end
   end

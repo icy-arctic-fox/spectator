@@ -60,7 +60,7 @@ module Spectator::Matchers::BuiltIn
       "Expected #{actual_value.pretty_inspect} to be #{@relation} #{@expected_value.pretty_inspect}"
     end
 
-    def negative_failure_message(actual_value) : String
+    def negated_failure_message(actual_value) : String
       "Expected #{actual_value.pretty_inspect} to be #{@relation.negate} #{@expected_value.pretty_inspect}"
     end
 

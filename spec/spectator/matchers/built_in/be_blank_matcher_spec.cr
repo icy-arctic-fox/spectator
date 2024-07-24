@@ -43,10 +43,10 @@ Spectator.describe BeBlankMatcher do
     end
   end
 
-  describe "#negative_failure_message" do
+  describe "#negated_failure_message" do
     it "returns the negative failure message" do
       matcher = BeBlankMatcher.new
-      expect(matcher.negative_failure_message("foo")).to eq("Expected String not to be blank")
+      expect(matcher.negated_failure_message("foo")).to eq("Expected String not to be blank")
     end
   end
 
