@@ -39,17 +39,17 @@ module Spectator::Matchers
           !!_matches_impl(&block)
         end
       {% else %}
-        {% raise <<-END_OF_ERROR if impl.args.size != 1
-          The `match` definition for a custom matcher must have exactly one block argument - the actual value.
+        {% raise <<-END_OF_ERROR if impl.args.size > 1
+          The `match` definition for a custom matcher cannot have more than one block argument - the actual value.
           Instead of:
 
-            match do#{" |#{impl.args.splat}|".id if impl.args.size > 0}
+            match do |#{impl.args.splat}|
               ...
             end
 
           Use:
 
-            match do |#{impl.args[0] || :actual_value.id}|
+            match do |#{impl.args[0]}|
               ...
             end
           END_OF_ERROR
@@ -60,7 +60,7 @@ module Spectator::Matchers
         end
 
         def matches?(actual_value) : Bool
-          !!_matches_impl(actual_value)
+          !!_matches_impl({% unless impl.args.empty? %}actual_value{% end %})
         end
       {% end %}
     end
@@ -102,17 +102,17 @@ module Spectator::Matchers
           _failure_message_impl(&block)
         end
       {% else %}
-        {% raise <<-END_OF_ERROR if impl.args.size != 1
-          The `failure_message` definition for a custom matcher must have exactly one block argument - the actual value.
+        {% raise <<-END_OF_ERROR if impl.args.size > 1
+          The `failure_message` definition for a custom matcher cannot have more than one block argument - the actual value.
           Instead of:
 
-            failure_message do#{" |#{impl.args.splat}|".id if impl.args.size > 0}
+            failure_message do |#{impl.args.splat}|
               ...
             end
 
           Use:
 
-            failure_message do |#{impl.args[0] || :actual_value.id}|
+            failure_message do |#{impl.args[0]}|
               ...
             end
           END_OF_ERROR
@@ -123,7 +123,7 @@ module Spectator::Matchers
         end
 
         def failure_message(actual_value) : String
-          _failure_message_impl(actual_value)
+          !!_failure_message_impl({% unless impl.args.empty? %}actual_value{% end %})
         end
       {% end %}
     end
