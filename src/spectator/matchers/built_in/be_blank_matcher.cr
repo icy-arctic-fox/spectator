@@ -11,7 +11,7 @@ module Spectator::Matchers::BuiltIn
     end
 
     def negative_failure_message(actual_value) : String
-      "Expected #{actual_value.pretty_inspect} not to be blank"
+      "Expected #{actual_value.class} not to be blank"
     end
   end
 end
