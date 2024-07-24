@@ -1,7 +1,7 @@
 require "./built_in/*"
 
-module Spectator::Matchers
-  module BuiltIn
+module Spectator::Matchers::BuiltIn
+  module Methods
     def all(matcher)
       AllMatcher.new(matcher)
     end
@@ -227,4 +227,4 @@ module Spectator::Matchers
 end
 
 # TODO: Is it possible to move this out of the global namespace?
-include Spectator::Matchers::BuiltIn
+include Spectator::Matchers::BuiltIn::Methods

@@ -7,7 +7,9 @@ end
 class Child < Base
 end
 
-Spectator.describe Spectator::Matchers::BuiltIn::BeAMatcher do
+alias BeAMatcher = Spectator::Matchers::BuiltIn::BeAMatcher
+
+Spectator.describe BeAMatcher do
   describe "#matches?" do
     it "returns true if the value is an instance of the type" do
       matcher = BeAMatcher(Int32).new
