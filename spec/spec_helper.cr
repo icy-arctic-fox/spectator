@@ -12,7 +12,7 @@ Spectator::Matchers.define :be_successful do
   end
 
   failure_message(block: true) do
-    result = @result.not_nil!
+    result = @result.not_nil!("`match` must be called before `failure_message`")
     <<-END_OF_MESSAGE
       Expected block to be successful, but the result was #{result.status}
 
