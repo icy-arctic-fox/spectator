@@ -38,7 +38,8 @@ module Spectator::Matchers
         Spectator::Matchers.define #{name}, #{(properties + kwargs.map { |k, v| "#{k} : #{v}" }).join(", ").id}
       END_OF_ERROR
     %}
-    ::record(TestCustomMatcher < ::Spectator::Matchers::CustomMatcher, {{properties.splat}}) do
+    {% matcher_name = name.id.camelcase %}
+    ::record({{matcher_name}} < ::Spectator::Matchers::CustomMatcher, {{properties.splat}}) do
       {{yield}}
     end
 
@@ -48,10 +49,11 @@ module Spectator::Matchers
                       source_line = __LINE__,
                       source_end_line = __END_LINE__)
         # TODO: Store location.
-        TestCustomMatcher.new({{properties.map(&.var).splat(", ")}})
+        {{matcher_name}}.new({{properties.map(&.var).splat(", ")}})
       end
     end
   end
 end
 
+# TODO: Is it possible to move this out of the global namespace?
 include Spectator::Matchers::Custom
