@@ -12,11 +12,11 @@ module Spectator::Matchers::BuiltIn
     end
 
     def failure_message(actual_value) : String
-      "Expected #{actual_value.pretty_inspect} to be between #{@min.pretty_inspect} and #{@max.pretty_inspect}"
+      "Expected #{actual_value.pretty_inspect} to be between #{@min.pretty_inspect} and #{@max.pretty_inspect} (#{@exclusive ? "exclusive" : "inclusive"})"
     end
 
     def negated_failure_message(actual_value) : String
-      "Expected #{actual_value.pretty_inspect} not to be between #{@min.pretty_inspect} and #{@max.pretty_inspect}"
+      "Expected #{actual_value.pretty_inspect} not to be between #{@min.pretty_inspect} and #{@max.pretty_inspect} (#{@exclusive ? "exclusive" : "inclusive"})"
     end
 
     def exclusive
