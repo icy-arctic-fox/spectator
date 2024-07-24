@@ -127,6 +127,69 @@ module Spectator::Matchers
         end
       {% end %}
     end
+
+    macro negated_failure_message(*, block = false, &impl)
+      {% raise <<-END_OF_ERROR unless impl
+        The `negated_failure_message` definition for a custom matcher requires a block.
+
+        Use:
+
+          negated_failure_message#{"(block: #{block})".id if block} do
+            ...
+          end
+        END_OF_ERROR
+      %}
+
+      {% if block %}
+        {% raise <<-END_OF_ERROR unless impl.args.empty?
+          The `negated_failure_message` definition for a custom matcher accepting a block cannot have arguments.
+          Instead of:
+
+            negated_failure_message(block: #{block}) do |#{impl.args.splat}|
+              ...
+            end
+
+          Use:
+
+            negated_failure_message(block: #{block}) do
+              ...
+            end
+          END_OF_ERROR
+        %}
+
+        private def _negated_failure_message_impl({{impl.args.splat(",")}} &)
+          {{yield}}
+        end
+
+        def negated_failure_message(&block) : String
+          _negated_failure_message_impl(&block).to_s
+        end
+      {% else %}
+        {% raise <<-END_OF_ERROR if impl.args.size > 1
+          The `negated_failure_message` definition for a custom matcher cannot have more than one block argument - the actual value.
+          Instead of:
+
+            negated_failure_message do |#{impl.args.splat}|
+              ...
+            end
+
+          Use:
+
+            negated_failure_message do |#{impl.args[0]}|
+              ...
+            end
+          END_OF_ERROR
+        %}
+
+        private def _negated_failure_message_impl({{impl.args.splat}})
+          {{yield}}
+        end
+
+        def negated_failure_message(actual_value) : String
+          _negated_failure_message_impl({% unless impl.args.empty? %}actual_value{% end %}).to_s
+        end
+      {% end %}
+    end
   end
 
   abstract struct CustomMatcher
