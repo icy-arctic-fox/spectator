@@ -59,7 +59,7 @@ module Spectator::Matchers
       end
     end
 
-    def self.process_negated_block(matcher, block, *,
+    def self.process_block_negated(matcher, block, *,
                                    failure_message : String? = nil,
                                    location : Core::LocationRange? = nil) : AssertionFailed?
       if matcher.responds_to?(:negated_failure_message)
