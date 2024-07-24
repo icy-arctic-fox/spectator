@@ -56,31 +56,31 @@ Spectator.describe BeAMatcher do
       it "matches if the value is an instance of the type" do
         expect do
           expect(42).to be_a(Int32)
-        end.to be_successful
+        end.to pass_check
       end
 
       it "does not match if the value is not an instance of the type" do
         expect do
           expect("foo").to be_a(Int32)
-        end.not_to be_successful
+        end.to fail_check
       end
 
       it "does not match if the value is nil" do
         expect do
           expect(nil).to be_a(Int32)
-        end.not_to be_successful
+        end.to fail_check
       end
 
       it "matches if the value is a subclass of the type" do
         expect do
           expect(Child.new).to be_a(Base)
-        end.to be_successful
+        end.to pass_check
       end
 
       it "does not match if the value is a parent of the type" do
         expect do
           expect(Base.new).to be_a(Child)
-        end.not_to be_successful
+        end.to fail_check
       end
     end
 
@@ -88,31 +88,31 @@ Spectator.describe BeAMatcher do
       it "matches if the value is an instance of the type" do
         expect do
           expect(42).to be_an(Int32)
-        end.to be_successful
+        end.to pass_check
       end
 
       it "does not match if the value is not an instance of the type" do
         expect do
           expect("foo").to be_an(Int32)
-        end.not_to be_successful
+        end.to fail_check
       end
 
       it "does not match if the value is nil" do
         expect do
           expect(nil).to be_an(Int32)
-        end.not_to be_successful
+        end.to fail_check
       end
 
       it "matches if the value is a subclass of the type" do
         expect do
           expect(Child.new).to be_an(Base)
-        end.to be_successful
+        end.to pass_check
       end
 
       it "does not match if the value is a parent of the type" do
         expect do
           expect(Base.new).to be_an(Child)
-        end.not_to be_successful
+        end.to fail_check
       end
     end
   end

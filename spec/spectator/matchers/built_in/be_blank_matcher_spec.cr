@@ -56,27 +56,27 @@ Spectator.describe BeBlankMatcher do
         object = BlankObject.new
         expect do
           expect(object).to be_blank
-        end.to be_successful
+        end.to pass_check
       end
 
       it "does not match if the value is not blank" do
         object = BlankObject.new(false)
         expect do
           expect(object).to be_blank
-        end.not_to be_successful
+        end.to fail_check
       end
 
       context "with a string" do
         it "matches if the value is blank" do
           expect do
             expect("").to be_blank
-          end.to be_successful
+          end.to pass_check
         end
 
         it "does not match if the value is not blank" do
           expect do
             expect("foo").to be_blank
-          end.not_to be_successful
+          end.to fail_check
         end
       end
     end

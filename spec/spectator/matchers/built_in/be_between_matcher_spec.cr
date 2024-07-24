@@ -117,59 +117,59 @@ Spectator.describe BeBetweenMatcher do
       it "matches if the value is between the min and max" do
         expect do
           expect(42).to be_between(40, 50)
-        end.to be_successful
+        end.to pass_check
       end
 
       it "does not match if the value is less than the min" do
         expect do
           expect(38).to be_between(40, 50)
-        end.not_to be_successful
+        end.to fail_check
       end
 
       it "does not match if the value is greater than the max" do
         expect do
           expect(52).to be_between(40, 50)
-        end.not_to be_successful
+        end.to fail_check
       end
 
       it "is inclusive by default" do
         expect do
           expect(40).to be_between(40, 50)
-        end.to be_successful
+        end.to pass_check
         expect do
           expect(50).to be_between(40, 50)
-        end.to be_successful
+        end.to pass_check
       end
 
       describe "inclusive" do
         it "matches if the value is equal to the min" do
           expect do
             expect(40).to be_between(40, 50).inclusive
-          end.to be_successful
+          end.to pass_check
         end
 
         it "matches if the value is equal to the max" do
           expect do
             expect(50).to be_between(40, 50).inclusive
-          end.to be_successful
+          end.to pass_check
         end
 
         it "does not match if the value is less than the min" do
           expect do
             expect(38).to be_between(40, 50).inclusive
-          end.not_to be_successful
+          end.to fail_check
         end
 
         it "does not match if the value is greater than the max" do
           expect do
             expect(52).to be_between(40, 50).inclusive
-          end.not_to be_successful
+          end.to fail_check
         end
 
         it "matches if the value is between the min and max" do
           expect do
             expect(42).to be_between(40, 50).inclusive
-          end.to be_successful
+          end.to pass_check
         end
       end
 
@@ -177,31 +177,31 @@ Spectator.describe BeBetweenMatcher do
         it "does not match if the value is equal to the min" do
           expect do
             expect(40).to be_between(40, 50).exclusive
-          end.not_to be_successful
+          end.to fail_check
         end
 
         it "does not match if the value is equal to the max" do
           expect do
             expect(50).to be_between(40, 50).exclusive
-          end.not_to be_successful
+          end.to fail_check
         end
 
         it "does not match if the value is less than the min" do
           expect do
             expect(38).to be_between(40, 50).exclusive
-          end.not_to be_successful
+          end.to fail_check
         end
 
         it "does not match if the value is greater than the max" do
           expect do
             expect(52).to be_between(40, 50).exclusive
-          end.not_to be_successful
+          end.to fail_check
         end
 
         it "matches if the value is between the min and max" do
           expect do
             expect(42).to be_between(40, 50).exclusive
-          end.to be_successful
+          end.to pass_check
         end
       end
     end
