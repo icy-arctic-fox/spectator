@@ -62,13 +62,13 @@ Spectator.describe BeAMatcher do
       it "does not match if the value is not an instance of the type" do
         expect do
           expect("foo").to be_a(Int32)
-        end.to fail_check
+        end.to fail_check("Expected \"foo\" to be a Int32")
       end
 
       it "does not match if the value is nil" do
         expect do
           expect(nil).to be_a(Int32)
-        end.to fail_check
+        end.to fail_check("Expected nil to be a Int32")
       end
 
       it "matches if the value is a subclass of the type" do
@@ -80,7 +80,7 @@ Spectator.describe BeAMatcher do
       it "does not match if the value is a parent of the type" do
         expect do
           expect(Base.new).to be_a(Child)
-        end.to fail_check
+        end.to fail_check(/^Expected .*?Base.*? to be a Child$/)
       end
     end
 
@@ -94,13 +94,13 @@ Spectator.describe BeAMatcher do
       it "does not match if the value is not an instance of the type" do
         expect do
           expect("foo").to be_an(Int32)
-        end.to fail_check
+        end.to fail_check("Expected \"foo\" to be a Int32")
       end
 
       it "does not match if the value is nil" do
         expect do
           expect(nil).to be_an(Int32)
-        end.to fail_check
+        end.to fail_check("Expected nil to be a Int32")
       end
 
       it "matches if the value is a subclass of the type" do
@@ -112,7 +112,7 @@ Spectator.describe BeAMatcher do
       it "does not match if the value is a parent of the type" do
         expect do
           expect(Base.new).to be_an(Child)
-        end.to fail_check
+        end.to fail_check(/^Expected .*?Base.*? to be a Child$/)
       end
     end
   end

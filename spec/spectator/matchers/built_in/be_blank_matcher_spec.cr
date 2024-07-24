@@ -63,7 +63,7 @@ Spectator.describe BeBlankMatcher do
         object = BlankObject.new(false)
         expect do
           expect(object).to be_blank
-        end.to fail_check
+        end.to fail_check(/^Expected .*?BlankObject.*? to be blank$/)
       end
 
       context "with a string" do
@@ -76,7 +76,7 @@ Spectator.describe BeBlankMatcher do
         it "does not match if the value is not blank" do
           expect do
             expect("foo").to be_blank
-          end.to fail_check
+          end.to fail_check("Expected \"foo\" to be blank")
         end
       end
     end

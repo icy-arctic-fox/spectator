@@ -123,13 +123,13 @@ Spectator.describe BeBetweenMatcher do
       it "does not match if the value is less than the min" do
         expect do
           expect(38).to be_between(40, 50)
-        end.to fail_check
+        end.to fail_check("Expected 38 to be between 40 and 50 (inclusive)")
       end
 
       it "does not match if the value is greater than the max" do
         expect do
           expect(52).to be_between(40, 50)
-        end.to fail_check
+        end.to fail_check("Expected 52 to be between 40 and 50 (inclusive)")
       end
 
       it "is inclusive by default" do
@@ -157,13 +157,13 @@ Spectator.describe BeBetweenMatcher do
         it "does not match if the value is less than the min" do
           expect do
             expect(38).to be_between(40, 50).inclusive
-          end.to fail_check
+          end.to fail_check("Expected 38 to be between 40 and 50 (inclusive)")
         end
 
         it "does not match if the value is greater than the max" do
           expect do
             expect(52).to be_between(40, 50).inclusive
-          end.to fail_check
+          end.to fail_check("Expected 52 to be between 40 and 50 (inclusive)")
         end
 
         it "matches if the value is between the min and max" do
@@ -177,25 +177,25 @@ Spectator.describe BeBetweenMatcher do
         it "does not match if the value is equal to the min" do
           expect do
             expect(40).to be_between(40, 50).exclusive
-          end.to fail_check
+          end.to fail_check("Expected 40 to be between 40 and 50 (exclusive)")
         end
 
         it "does not match if the value is equal to the max" do
           expect do
             expect(50).to be_between(40, 50).exclusive
-          end.to fail_check
+          end.to fail_check("Expected 50 to be between 40 and 50 (exclusive)")
         end
 
         it "does not match if the value is less than the min" do
           expect do
             expect(38).to be_between(40, 50).exclusive
-          end.to fail_check
+          end.to fail_check("Expected 38 to be between 40 and 50 (exclusive)")
         end
 
         it "does not match if the value is greater than the max" do
           expect do
             expect(52).to be_between(40, 50).exclusive
-          end.to fail_check
+          end.to fail_check("Expected 52 to be between 40 and 50 (exclusive)")
         end
 
         it "matches if the value is between the min and max" do
