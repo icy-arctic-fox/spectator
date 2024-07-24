@@ -21,6 +21,7 @@ Spectator::Matchers.define :pass_check do
   end
 end
 
+# ameba:disable Lint/UselessAssign
 Spectator::Matchers.define :fail_check, message : String | Regex do
   @result : Spectator::Core::Result?
 
