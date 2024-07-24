@@ -65,6 +65,69 @@ module Spectator::Matchers
       {% end %}
     end
 
+    macro negated_match(*, block = false, &impl)
+      {% raise <<-END_OF_ERROR unless impl
+        The `negated_match` definition for a custom matcher requires a block.
+
+        Use:
+
+          negated_match#{"(block: #{block})".id if block} do
+            ...
+          end
+        END_OF_ERROR
+      %}
+
+      {% if block %}
+        {% raise <<-END_OF_ERROR unless impl.args.empty?
+          The `negated_match` definition for a custom matcher accepting a block cannot have arguments.
+          Instead of:
+
+            negated_match(block: #{block}) do |#{impl.args.splat}|
+              ...
+            end
+
+          Use:
+
+            negated_match(block: #{block}) do
+              ...
+            end
+          END_OF_ERROR
+        %}
+
+        private def _negated_match_impl({{impl.args.splat(",")}} &)
+          {{yield}}
+        end
+
+        def does_not_match?(&block) : Bool
+          !!_negated_match_impl(&block)
+        end
+      {% else %}
+        {% raise <<-END_OF_ERROR if impl.args.size > 1
+          The `negated_match` definition for a custom matcher cannot have more than one block argument - the actual value.
+          Instead of:
+
+            negated_match do |#{impl.args.splat}|
+              ...
+            end
+
+          Use:
+
+            negated_match do |#{impl.args[0]}|
+              ...
+            end
+          END_OF_ERROR
+        %}
+
+        private def _negated_match_impl({{impl.args.splat}})
+          {{yield}}
+        end
+
+        def does_not_match?(actual_value) : Bool
+          !!_negated_match_impl({% unless impl.args.empty? %}actual_value{% end %})
+        end
+      {% end %}
+    end
+
     macro failure_message(*, block = false, &impl)
       {% raise <<-END_OF_ERROR unless impl
         The `failure_message` definition for a custom matcher requires a block.
