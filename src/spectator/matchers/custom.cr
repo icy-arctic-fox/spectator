@@ -3,10 +3,33 @@ require "./matcher"
 module Spectator::Matchers
   module CustomDSL
     macro match(*, block = false, &impl)
+      {% raise <<-END_OF_ERROR unless impl
+        The `match` definition for a custom matcher requires a block.
+
+        Use:
+
+          match#{"(block: #{block})".id if block} do
+            ...
+          end
+        END_OF_ERROR
+      %}
+
       {% if block %}
-        {% unless impl.args.empty?
-             raise "The `match` definition for a custom matcher accepting a block cannot have arguments.\nInstead of `match do |#{impl.args.splat}|`, use `match { ... }`."
-           end %}
+        {% raise <<-END_OF_ERROR unless impl.args.empty?
+          The `match` definition for a custom matcher accepting a block cannot have arguments.
+          Instead of:
+
+            match(block: #{block}) do |#{impl.args.splat}|
+              ...
+            end
+
+          Use:
+
+            match(block: #{block}) do
+              ...
+            end
+          END_OF_ERROR
+        %}
 
         private def _matches_impl({{impl.args.splat(",")}} &)
           {{yield}}
@@ -16,6 +39,22 @@ module Spectator::Matchers
           !!_matches_impl(&block)
         end
       {% else %}
+        {% raise <<-END_OF_ERROR if impl.args.size != 1
+          The `match` definition for a custom matcher must have exactly one block argument - the actual value.
+          Instead of:
+
+            match do#{" |#{impl.args.splat}|".id if impl.args.size > 0}
+              ...
+            end
+
+          Use:
+
+            match do |#{impl.args[0] || :actual_value.id}|
+              ...
+            end
+          END_OF_ERROR
+        %}
+
         private def _matches_impl({{impl.args.splat}})
           {{yield}}
         end
@@ -27,7 +66,34 @@ module Spectator::Matchers
     end
 
     macro failure_message(*, block = false, &impl)
+      {% raise <<-END_OF_ERROR unless impl
+        The `failure_message` definition for a custom matcher requires a block.
+
+        Use:
+
+          failure_message#{"(block: #{block})".id if block} do
+            ...
+          end
+        END_OF_ERROR
+      %}
+
       {% if block %}
+        {% raise <<-END_OF_ERROR unless impl.args.empty?
+          The `failure_message` definition for a custom matcher accepting a block cannot have arguments.
+          Instead of:
+
+            failure_message(block: #{block}) do |#{impl.args.splat}|
+              ...
+            end
+
+          Use:
+
+            failure_message(block: #{block}) do
+              ...
+            end
+          END_OF_ERROR
+        %}
+
         private def _failure_message_impl({{impl.args.splat(",")}} &)
           {{yield}}
         end
@@ -36,6 +102,22 @@ module Spectator::Matchers
           _failure_message_impl(&block)
         end
       {% else %}
+        {% raise <<-END_OF_ERROR if impl.args.size != 1
+          The `failure_message` definition for a custom matcher must have exactly one block argument - the actual value.
+          Instead of:
+
+            failure_message do#{" |#{impl.args.splat}|".id if impl.args.size > 0}
+              ...
+            end
+
+          Use:
+
+            failure_message do |#{impl.args[0] || :actual_value.id}|
+              ...
+            end
+          END_OF_ERROR
+        %}
+
         private def _failure_message_impl({{impl.args.splat}})
           {{yield}}
         end
