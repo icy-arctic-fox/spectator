@@ -8,17 +8,13 @@ module Spectator::Matchers::BuiltIn
     end
 
     def failure_message(actual_value) : String
-      <<-END_OF_MESSAGE
-      Expected: #{actual_value.pretty_inspect}
-      to match: #{@expected_value.pretty_inspect}
-      END_OF_MESSAGE
+      "Expected: #{actual_value.pretty_inspect}\n" +
+        "to match: #{@expected_value.pretty_inspect}"
     end
 
     def negated_failure_message(actual_value) : String
-      <<-END_OF_MESSAGE
-          Expected: #{actual_value.pretty_inspect}
-      not to match: #{@expected_value.pretty_inspect}
-      END_OF_MESSAGE
+      "    Expected: #{actual_value.pretty_inspect}\n" +
+        "not to match: #{@expected_value.pretty_inspect}"
     end
   end
 end

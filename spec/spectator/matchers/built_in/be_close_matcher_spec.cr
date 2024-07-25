@@ -33,14 +33,16 @@ Spectator.describe BeCloseMatcher do
   describe "#failure_message" do
     it "returns the failure message" do
       matcher = BeCloseMatcher.new(1.0, 0.1)
-      expect(matcher.failure_message(1.11)).to eq("Expected 1.11 to be close to 1.0 ± 0.1")
+      expect(matcher.failure_message(1.11)).to eq("    Expected: 1.11\n" +
+                                                  "to be within: 1.0 ± 0.1")
     end
   end
 
   describe "#negated_failure_message" do
     it "returns the negative failure message" do
       matcher = BeCloseMatcher.new(1.0, 0.1)
-      expect(matcher.negated_failure_message(1.01)).to eq("Expected 1.01 not to be close to 1.0 ± 0.1")
+      expect(matcher.negated_failure_message(1.01)).to eq("     Expected: 1.01\n" +
+                                                          "to be outside: 1.0 ± 0.1")
     end
   end
 
@@ -55,7 +57,8 @@ Spectator.describe BeCloseMatcher do
       it "does not match if the value is outside the delta" do
         expect do
           expect(1.11).to be_close(1.0, delta: 0.1)
-        end.to fail_check("Expected 1.11 to be close to 1.0 ± 0.1")
+        end.to fail_check("    Expected: 1.11\n" +
+                          "to be within: 1.0 ± 0.1")
       end
 
       it "matches if the values are equal" do
@@ -81,7 +84,8 @@ Spectator.describe BeCloseMatcher do
       it "does not match if the value is within the delta" do
         expect do
           expect(1.01).not_to be_close(1.0, delta: 0.1)
-        end.to fail_check("Expected 1.01 not to be close to 1.0 ± 0.1")
+        end.to fail_check("     Expected: 1.01\n" +
+                          "to be outside: 1.0 ± 0.1")
       end
 
       it "matches if the value is outside the delta" do
@@ -93,19 +97,22 @@ Spectator.describe BeCloseMatcher do
       it "does not match if the values are equal" do
         expect do
           expect(1.0).not_to be_close(1.0, delta: 0.1)
-        end.to fail_check("Expected 1.0 not to be close to 1.0 ± 0.1")
+        end.to fail_check("     Expected: 1.0\n" +
+                          "to be outside: 1.0 ± 0.1")
       end
 
       it "does not match if the value is at the minimum" do
         expect do
           expect(0.9).not_to be_close(1.0, delta: 0.1)
-        end.to fail_check("Expected 0.9 not to be close to 1.0 ± 0.1")
+        end.to fail_check("     Expected: 0.9\n" +
+                          "to be outside: 1.0 ± 0.1")
       end
 
       it "does not match if the value is at the maximum" do
         expect do
           expect(1.1).not_to be_close(1.0, delta: 0.1)
-        end.to fail_check("Expected 1.1 not to be close to 1.0 ± 0.1")
+        end.to fail_check("     Expected: 1.1\n" +
+                          "to be outside: 1.0 ± 0.1")
       end
     end
   end

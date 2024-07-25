@@ -9,11 +9,13 @@ module Spectator::Matchers::BuiltIn
     end
 
     def failure_message(actual_value) : String
-      "Expected #{actual_value.pretty_inspect} to be close to #{@expected_value.pretty_inspect} ± #{@delta.pretty_inspect}"
+      "    Expected: #{actual_value.pretty_inspect}\n" +
+        "to be within: #{@expected_value.pretty_inspect} ± #{@delta.pretty_inspect}"
     end
 
     def negated_failure_message(actual_value) : String
-      "Expected #{actual_value.pretty_inspect} not to be close to #{@expected_value.pretty_inspect} ± #{@delta.pretty_inspect}"
+      "     Expected: #{actual_value.pretty_inspect}\n" +
+        "to be outside: #{@expected_value.pretty_inspect} ± #{@delta.pretty_inspect}"
     end
   end
 end
