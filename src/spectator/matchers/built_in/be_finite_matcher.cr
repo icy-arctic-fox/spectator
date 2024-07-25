@@ -1,7 +1,9 @@
 module Spectator::Matchers::BuiltIn
   struct BeFiniteMatcher
     def matches?(actual_value) : Bool
-      actual_value.responds_to?(:finite?) && actual_value.finite?
+      !!((actual_value.responds_to?(:finite?) && actual_value.finite?) ||
+        (actual_value.is_a?(Number) &&
+          actual_value != Float64::INFINITY && actual_value != -Float64::INFINITY))
     end
 
     def failure_message(actual_value) : String
