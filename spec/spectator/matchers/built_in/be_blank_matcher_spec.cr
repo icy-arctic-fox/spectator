@@ -52,31 +52,63 @@ Spectator.describe BeBlankMatcher do
 
   context "DSL" do
     describe "be_blank" do
-      it "matches if the value is blank" do
-        object = BlankObject.new
-        expect do
-          expect(object).to be_blank
-        end.to pass_check
-      end
-
-      it "does not match if the value is not blank" do
-        object = BlankObject.new(false)
-        expect do
-          expect(object).to be_blank
-        end.to fail_check(/^Expected .*?BlankObject.*? to be blank$/)
-      end
-
-      context "with a string" do
+      context "with .to" do
         it "matches if the value is blank" do
+          object = BlankObject.new
           expect do
-            expect("").to be_blank
+            expect(object).to be_blank
           end.to pass_check
         end
 
         it "does not match if the value is not blank" do
+          object = BlankObject.new(false)
           expect do
-            expect("foo").to be_blank
-          end.to fail_check("Expected \"foo\" to be blank")
+            expect(object).to be_blank
+          end.to fail_check(/^Expected .*?BlankObject.*? to be blank$/)
+        end
+
+        context "with a string" do
+          it "matches if the value is blank" do
+            expect do
+              expect("").to be_blank
+            end.to pass_check
+          end
+
+          it "does not match if the value is not blank" do
+            expect do
+              expect("foo").to be_blank
+            end.to fail_check("Expected \"foo\" to be blank")
+          end
+        end
+      end
+
+      context "with .not_to" do
+        it "does not match if the value is blank" do
+          object = BlankObject.new
+          expect do
+            expect(object).not_to be_blank
+          end.to fail_check(/^Expected .*?BlankObject.*? not to be blank$/)
+        end
+
+        it "matches if the value is not blank" do
+          object = BlankObject.new(false)
+          expect do
+            expect(object).not_to be_blank
+          end.to pass_check
+        end
+
+        context "with a string" do
+          it "does not match if the value is blank" do
+            expect do
+              expect("").not_to be_blank
+            end.to fail_check("Expected String not to be blank")
+          end
+
+          it "matches if the value is not blank" do
+            expect do
+              expect("foo").not_to be_blank
+            end.to pass_check
+          end
         end
       end
     end
