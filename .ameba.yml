@@ -16,6 +16,7 @@ Documentation/DocumentationAdmonition:
     - src/spectator/matchers/built_in.cr
     - src/spectator/matchers/expect.cr
     - src/spectator/matchers/matcher.cr
+    - src/spectator/matchers/negated.cr
   Admonitions:
     - TODO
     - FIXME
