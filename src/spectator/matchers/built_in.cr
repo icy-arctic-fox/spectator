@@ -192,7 +192,8 @@ module Spectator::Matchers::BuiltIn
     def have_values(*values : T) forall T
     end
 
-    def match(value) # =~
+    def match(value)
+      MatchMatcher.new(value)
     end
 
     def match_array(array)
