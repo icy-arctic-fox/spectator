@@ -46,7 +46,7 @@ Spectator.describe BeBlankMatcher do
   describe "#negated_failure_message" do
     it "returns the negative failure message" do
       matcher = BeBlankMatcher.new
-      expect(matcher.negated_failure_message("foo")).to eq("Expected String not to be blank")
+      expect(matcher.negated_failure_message("foo")).to eq("Expected string not to be blank")
     end
   end
 
@@ -64,7 +64,7 @@ Spectator.describe BeBlankMatcher do
           object = BlankObject.new(false)
           expect do
             expect(object).to be_blank
-          end.to fail_check(/^Expected .*?BlankObject.*? to be blank$/)
+          end.to fail_check(/^Expected .*?BlankObject.+? to be blank$/)
         end
 
         context "with a string" do
@@ -87,7 +87,7 @@ Spectator.describe BeBlankMatcher do
           object = BlankObject.new
           expect do
             expect(object).not_to be_blank
-          end.to fail_check(/^Expected .*?BlankObject.*? not to be blank$/)
+          end.to fail_check(/^Expected .*?BlankObject.+? not to be blank$/)
         end
 
         it "matches if the value is not blank" do
@@ -101,7 +101,7 @@ Spectator.describe BeBlankMatcher do
           it "does not match if the value is blank" do
             expect do
               expect("").not_to be_blank
-            end.to fail_check("Expected String not to be blank")
+            end.to fail_check("Expected string not to be blank")
           end
 
           it "matches if the value is not blank" do
