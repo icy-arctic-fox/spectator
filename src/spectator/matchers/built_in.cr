@@ -1,4 +1,5 @@
 require "./built_in/*"
+require "./negated"
 
 module Spectator::Matchers::BuiltIn
   module Methods
@@ -72,7 +73,7 @@ module Spectator::Matchers::BuiltIn
     end
 
     def be_finite
-      BeFiniteMatcher.new
+      NegatedMatcher.new(be_infinite)
     end
 
     def be_in(range_or_set)
