@@ -131,6 +131,9 @@ Spectator.describe BeInstanceOfMatcher do
           end.to pass_check
         end
 
+        # FIXME: Enabling this test causes a segfault.
+        # This only occurs when running all specs, not just this file.
+        # To reproduce, uncomment this test and run `crystal spec`.
         # it "matches if the object is a parent type" do
         #   expect do
         #     expect(Base.new).not_to be_instance_of(Derived)
