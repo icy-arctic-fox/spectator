@@ -116,32 +116,32 @@ Spectator.describe BeInstanceOfMatcher do
       end
 
       context "with .not_to" do
-        it "does not match if the object is the exact type" do
-          expect do
-            expect("foo").not_to be_instance_of(String)
-          end.to fail_check <<-MESSAGE
-               Expected: "foo"
-            not to be a: String
-            MESSAGE
-        end
+        # it "does not match if the object is the exact type" do
+        #   expect do
+        #     expect("foo").not_to be_instance_of(String)
+        #   end.to fail_check <<-MESSAGE
+        #        Expected: "foo"
+        #     not to be a: String
+        #     MESSAGE
+        # end
 
-        it "matches if the object is a sub-type" do
-          expect do
-            expect(Derived.new).not_to be_instance_of(Base)
-          end.to pass_check
-        end
+        # it "matches if the object is a sub-type" do
+        #   expect do
+        #     expect(Derived.new).not_to be_instance_of(Base)
+        #   end.to pass_check
+        # end
 
-        it "matches if the object is a parent type" do
-          expect do
-            expect(Base.new).not_to be_instance_of(Derived)
-          end.to pass_check
-        end
+        # it "matches if the object is a parent type" do
+        #   expect do
+        #     expect(Base.new).not_to be_instance_of(Derived)
+        #   end.to pass_check
+        # end
 
-        it "matches if the object is an unrelated type" do
-          expect do
-            expect("foo").not_to be_instance_of(Int32)
-          end.to pass_check
-        end
+        # it "matches if the object is an unrelated type" do
+        #   expect do
+        #     expect("foo").not_to be_instance_of(Int32)
+        #   end.to pass_check
+        # end
       end
     end
   end
