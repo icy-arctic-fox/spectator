@@ -15,7 +15,7 @@ module Spectator::Matchers::BuiltIn
     def negated_failure_message(actual_value) : String
       <<-MESSAGE
          Expected: #{actual_value.pretty_inspect}
-      not to be a: #{T}
+      not to be a: #{T}#{" (#{actual_value.class} is a sub-type of #{T})" if actual_value.class != T}
       MESSAGE
     end
   end

@@ -120,7 +120,7 @@ Spectator.describe BeAMatcher do
           expect do
             expect(object).not_to be_a(Base)
           end.to fail_check("   Expected: #{object.pretty_inspect}\n" +
-                            "not to be a: Base")
+                            "not to be a: Base (Child is a sub-type of Base)")
         end
 
         it "matches if the value is a parent of the type" do
@@ -196,7 +196,7 @@ Spectator.describe BeAMatcher do
           expect do
             expect(object).not_to be_an(Base)
           end.to fail_check("   Expected: #{object.pretty_inspect}\n" +
-                            "not to be a: Base")
+                            "not to be a: Base (Child is a sub-type of Base)")
         end
 
         it "matches if the value is a parent of the type" do
