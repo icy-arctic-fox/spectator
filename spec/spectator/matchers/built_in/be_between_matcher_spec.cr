@@ -125,7 +125,7 @@ Spectator.describe BeBetweenMatcher do
   end
 
   context "DSL" do
-    describe "be_between" do
+    describe "`be_between`" do
       it "is inclusive by default" do
         expect do
           expect(40).to be_between(40, 50)
@@ -135,7 +135,7 @@ Spectator.describe BeBetweenMatcher do
         end.to pass_check
       end
 
-      context "with .to" do
+      context "with `.to`" do
         it "matches if the value is between the min and max" do
           expect do
             expect(42).to be_between(40, 50)
@@ -243,7 +243,7 @@ Spectator.describe BeBetweenMatcher do
         end
       end
 
-      context "with .not_to" do
+      context "with `.not_to`" do
         it "does not match if the value is between the min and max" do
           expect do
             expect(42).not_to be_between(40, 50)

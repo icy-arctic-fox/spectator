@@ -113,103 +113,108 @@ Spectator.describe MatchMatcher do
   end
 
   describe "DSL" do
-    context "with .to" do
-      it "matches if the value matches" do
-        expect do
-          expect(MatchObject.new).to match(nil)
-        end.to pass_check
-      end
-
-      it "does not match if the value does not match" do
-        object = MatchObject.new(false)
-        expect do
-          expect(object).to match(nil)
-        end.to fail_check <<-MESSAGE
-          Expected: #{object.pretty_inspect}
-          to match: nil
-          MESSAGE
-      end
-
-      context "with a string" do
-        it "matches if the string matches" do
+    describe "`match`" do
+      context "with `.to`" do
+        it "matches if the value matches" do
           expect do
-            expect(/foo/).to match("foobar")
+            expect(MatchObject.new).to match(nil)
           end.to pass_check
         end
 
-        it "does not match if the string does not match" do
+        it "does not match if the value does not match" do
+          object = MatchObject.new(false)
           expect do
-            expect(/foo/).to match("bar")
+            expect(object).to match(nil)
           end.to fail_check <<-MESSAGE
-            Expected: /foo/
-            to match: "bar"
-            MESSAGE
-        end
-      end
-
-      context "with a regex" do
-        it "matches if the regex matches" do
-          expect do
-            expect("foobar").to match(/foo/)
-          end.to pass_check
-        end
-
-        it "does not match if the regex does not match" do
-          expect do
-            expect("bar").to match(/foo/)
-          end.to fail_check("Expected: \"bar\"\nto match: /foo/")
-        end
-      end
-    end
-
-    context "with .not_to" do
-      it "does not match if the value matches" do
-        object = MatchObject.new
-        expect do
-          expect(object).not_to match(nil)
-        end.to fail_check <<-MESSAGE
-              Expected: #{object}
-          not to match: nil
-          MESSAGE
-      end
-
-      it "matches if the value does not match" do
-        expect do
-          expect(MatchObject.new(false)).not_to match(nil)
-        end.to pass_check
-      end
-
-      context "with a string" do
-        it "does not match if the string matches" do
-          expect do
-            expect(/foo/).not_to match("foobar")
-          end.to fail_check <<-MESSAGE
-                Expected: /foo/
-            not to match: "foobar"
+            Expected: #{object.pretty_inspect}
+            to match: nil
             MESSAGE
         end
 
-        it "matches if the string does not match" do
-          expect do
-            expect(/foo/).not_to match("bar")
-          end.to pass_check
+        context "with a string" do
+          it "matches if the string matches" do
+            expect do
+              expect(/foo/).to match("foobar")
+            end.to pass_check
+          end
+
+          it "does not match if the string does not match" do
+            expect do
+              expect(/foo/).to match("bar")
+            end.to fail_check <<-MESSAGE
+              Expected: /foo/
+              to match: "bar"
+              MESSAGE
+          end
+        end
+
+        context "with a regex" do
+          it "matches if the regex matches" do
+            expect do
+              expect("foobar").to match(/foo/)
+            end.to pass_check
+          end
+
+          it "does not match if the regex does not match" do
+            expect do
+              expect("bar").to match(/foo/)
+            end.to fail_check <<-MESSAGE
+              Expected: "bar"
+              to match: /foo/
+              MESSAGE
+          end
         end
       end
 
-      context "with a regex" do
-        it "does not match if the regex matches" do
+      context "with `.not_to`" do
+        it "does not match if the value matches" do
+          object = MatchObject.new
           expect do
-            expect("foobar").not_to match(/foo/)
+            expect(object).not_to match(nil)
           end.to fail_check <<-MESSAGE
-                Expected: "foobar"
-            not to match: /foo/
+                Expected: #{object}
+            not to match: nil
             MESSAGE
         end
 
-        it "matches if the regex does not match" do
+        it "matches if the value does not match" do
           expect do
-            expect("bar").not_to match(/foo/)
+            expect(MatchObject.new(false)).not_to match(nil)
           end.to pass_check
+        end
+
+        context "with a string" do
+          it "does not match if the string matches" do
+            expect do
+              expect(/foo/).not_to match("foobar")
+            end.to fail_check <<-MESSAGE
+                  Expected: /foo/
+              not to match: "foobar"
+              MESSAGE
+          end
+
+          it "matches if the string does not match" do
+            expect do
+              expect(/foo/).not_to match("bar")
+            end.to pass_check
+          end
+        end
+
+        context "with a regex" do
+          it "does not match if the regex matches" do
+            expect do
+              expect("foobar").not_to match(/foo/)
+            end.to fail_check <<-MESSAGE
+                  Expected: "foobar"
+              not to match: /foo/
+              MESSAGE
+          end
+
+          it "matches if the regex does not match" do
+            expect do
+              expect("bar").not_to match(/foo/)
+            end.to pass_check
+          end
         end
       end
     end

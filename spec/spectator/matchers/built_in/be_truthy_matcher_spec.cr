@@ -82,8 +82,8 @@ Spectator.describe BeTruthyMatcher do
   end
 
   context "DSL" do
-    describe "be_truthy" do
-      context "with .to" do
+    describe "`be_truthy`" do
+      context "with `.to`" do
         it "matches if the value is true" do
           expect do
             expect(true).to be_truthy
@@ -121,7 +121,7 @@ Spectator.describe BeTruthyMatcher do
         end
       end
 
-      context "with .not_to" do
+      context "with `.not_to`" do
         it "does not match if the value is true" do
           expect do
             expect(true).not_to be_truthy
@@ -160,8 +160,8 @@ Spectator.describe BeTruthyMatcher do
       end
     end
 
-    describe "be_falsy" do
-      context "with .to" do
+    describe "`be_falsy`" do
+      context "with `.to`" do
         it "matches if the value is false" do
           expect do
             expect(false).to be_falsy
@@ -199,7 +199,7 @@ Spectator.describe BeTruthyMatcher do
         end
       end
 
-      context "with .not_to" do
+      context "with `.not_to`" do
         it "does not match if the value is false" do
           expect do
             expect(false).not_to be_falsy
@@ -238,8 +238,8 @@ Spectator.describe BeTruthyMatcher do
       end
     end
 
-    describe "be_falsey" do
-      context "with .to" do
+    describe "`be_falsey`" do
+      context "with `.to`" do
         it "matches if the value is false" do
           expect do
             expect(false).to be_falsey
@@ -277,7 +277,7 @@ Spectator.describe BeTruthyMatcher do
         end
       end
 
-      context "with .not_to" do
+      context "with `.not_to`" do
         it "does not match if the value is false" do
           expect do
             expect(false).not_to be_falsey

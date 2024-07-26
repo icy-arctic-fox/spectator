@@ -51,8 +51,8 @@ Spectator.describe BeBlankMatcher do
   end
 
   context "DSL" do
-    describe "be_blank" do
-      context "with .to" do
+    describe "`be_blank`" do
+      context "with `.to`" do
         it "matches if the value is blank" do
           object = BlankObject.new
           expect do
@@ -82,7 +82,7 @@ Spectator.describe BeBlankMatcher do
         end
       end
 
-      context "with .not_to" do
+      context "with `.not_to`" do
         it "does not match if the value is blank" do
           object = BlankObject.new
           expect do

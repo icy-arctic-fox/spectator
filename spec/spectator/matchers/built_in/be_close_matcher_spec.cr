@@ -51,82 +51,84 @@ Spectator.describe BeCloseMatcher do
   end
 
   describe "DSL" do
-    context "with .to" do
-      it "matches if the value is within the delta" do
-        expect do
-          expect(1.01).to be_close(1.0, delta: 0.1)
-        end.to pass_check
+    describe "`be_close`" do
+      context "with `.to`" do
+        it "matches if the value is within the delta" do
+          expect do
+            expect(1.01).to be_close(1.0, delta: 0.1)
+          end.to pass_check
+        end
+
+        it "does not match if the value is outside the delta" do
+          expect do
+            expect(1.11).to be_close(1.0, delta: 0.1)
+          end.to fail_check <<-MESSAGE
+                Expected: 1.11
+            to be within: 1.0 ± 0.1
+            MESSAGE
+        end
+
+        it "matches if the values are equal" do
+          expect do
+            expect(1.0).to be_close(1.0, delta: 0.1)
+          end.to pass_check
+        end
+
+        it "matches if the value is at the minimum" do
+          expect do
+            expect(0.9).to be_close(1.0, delta: 0.1)
+          end.to pass_check
+        end
+
+        it "matches if the value is at the maximum" do
+          expect do
+            expect(1.1).to be_close(1.0, delta: 0.1)
+          end.to pass_check
+        end
       end
 
-      it "does not match if the value is outside the delta" do
-        expect do
-          expect(1.11).to be_close(1.0, delta: 0.1)
-        end.to fail_check <<-MESSAGE
-              Expected: 1.11
-          to be within: 1.0 ± 0.1
-          MESSAGE
-      end
+      context "with `.not_to`" do
+        it "does not match if the value is within the delta" do
+          expect do
+            expect(1.01).not_to be_close(1.0, delta: 0.1)
+          end.to fail_check <<-MESSAGE
+                 Expected: 1.01
+            to be outside: 1.0 ± 0.1
+            MESSAGE
+        end
 
-      it "matches if the values are equal" do
-        expect do
-          expect(1.0).to be_close(1.0, delta: 0.1)
-        end.to pass_check
-      end
+        it "matches if the value is outside the delta" do
+          expect do
+            expect(1.11).not_to be_close(1.0, delta: 0.1)
+          end.to pass_check
+        end
 
-      it "matches if the value is at the minimum" do
-        expect do
-          expect(0.9).to be_close(1.0, delta: 0.1)
-        end.to pass_check
-      end
+        it "does not match if the values are equal" do
+          expect do
+            expect(1.0).not_to be_close(1.0, delta: 0.1)
+          end.to fail_check <<-MESSAGE
+                 Expected: 1.0
+            to be outside: 1.0 ± 0.1
+            MESSAGE
+        end
 
-      it "matches if the value is at the maximum" do
-        expect do
-          expect(1.1).to be_close(1.0, delta: 0.1)
-        end.to pass_check
-      end
-    end
+        it "does not match if the value is at the minimum" do
+          expect do
+            expect(0.9).not_to be_close(1.0, delta: 0.1)
+          end.to fail_check <<-MESSAGE
+                 Expected: 0.9
+            to be outside: 1.0 ± 0.1
+            MESSAGE
+        end
 
-    context "with .not_to" do
-      it "does not match if the value is within the delta" do
-        expect do
-          expect(1.01).not_to be_close(1.0, delta: 0.1)
-        end.to fail_check <<-MESSAGE
-               Expected: 1.01
-          to be outside: 1.0 ± 0.1
-          MESSAGE
-      end
-
-      it "matches if the value is outside the delta" do
-        expect do
-          expect(1.11).not_to be_close(1.0, delta: 0.1)
-        end.to pass_check
-      end
-
-      it "does not match if the values are equal" do
-        expect do
-          expect(1.0).not_to be_close(1.0, delta: 0.1)
-        end.to fail_check <<-MESSAGE
-               Expected: 1.0
-          to be outside: 1.0 ± 0.1
-          MESSAGE
-      end
-
-      it "does not match if the value is at the minimum" do
-        expect do
-          expect(0.9).not_to be_close(1.0, delta: 0.1)
-        end.to fail_check <<-MESSAGE
-               Expected: 0.9
-          to be outside: 1.0 ± 0.1
-          MESSAGE
-      end
-
-      it "does not match if the value is at the maximum" do
-        expect do
-          expect(1.1).not_to be_close(1.0, delta: 0.1)
-        end.to fail_check <<-MESSAGE
-               Expected: 1.1
-          to be outside: 1.0 ± 0.1
-          MESSAGE
+        it "does not match if the value is at the maximum" do
+          expect do
+            expect(1.1).not_to be_close(1.0, delta: 0.1)
+          end.to fail_check <<-MESSAGE
+                 Expected: 1.1
+            to be outside: 1.0 ± 0.1
+            MESSAGE
+        end
       end
     end
   end

@@ -36,8 +36,8 @@ Spectator.describe BeInMatcher do
   end
 
   describe "DSL" do
-    describe "be_in" do
-      context "with .to" do
+    describe "`be_in`" do
+      context "with `.to`" do
         it "matches if the value is in the list" do
           expect do
             expect(2).to be_in([1, 2, 3])
@@ -54,7 +54,7 @@ Spectator.describe BeInMatcher do
         end
       end
 
-      context "with .not_to" do
+      context "with `.not_to`" do
         it "matches if the value is not in the list" do
           expect do
             expect(4).not_to be_in([1, 2, 3])

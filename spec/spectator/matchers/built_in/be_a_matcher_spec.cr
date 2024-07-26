@@ -59,8 +59,8 @@ Spectator.describe BeAMatcher do
   end
 
   context "DSL" do
-    describe "be_a" do
-      context "with .to" do
+    describe "`be_a`" do
+      context "with `.to`" do
         it "matches if the value is an instance of the type" do
           expect do
             expect(42).to be_a(Int32)
@@ -105,7 +105,7 @@ Spectator.describe BeAMatcher do
         end
       end
 
-      context "with .not_to" do
+      context "with `.not_to`" do
         it "does not match if the value is an instance of the type" do
           expect do
             expect(42).not_to be_a(Int32)
@@ -145,8 +145,8 @@ Spectator.describe BeAMatcher do
       end
     end
 
-    describe "be_an" do
-      context "with .to" do
+    describe "`be_an`" do
+      context "with `.to`" do
         it "matches if the value is an instance of the type" do
           expect do
             expect(42).to be_an(Int32)
@@ -191,7 +191,7 @@ Spectator.describe BeAMatcher do
         end
       end
 
-      context "with .not_to" do
+      context "with `.not_to`" do
         it "does not match if the value is an instance of the type" do
           expect do
             expect(42).not_to be_an(Int32)

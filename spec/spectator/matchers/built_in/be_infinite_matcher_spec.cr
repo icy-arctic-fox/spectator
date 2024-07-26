@@ -127,8 +127,8 @@ Spectator.describe BeInfiniteMatcher do
   end
 
   context "DSL" do
-    describe "#be_infinite" do
-      context "with .to" do
+    describe "`be_infinite`" do
+      context "with `.to`" do
         it "does not match a finite value" do
           object = InfiniteObject.new
           expect do
@@ -184,7 +184,7 @@ Spectator.describe BeInfiniteMatcher do
         end
       end
 
-      context "with .not_to" do
+      context "with `.not_to`" do
         it "matches a finite object" do
           object = InfiniteObject.new(false)
           expect do
@@ -241,8 +241,8 @@ Spectator.describe BeInfiniteMatcher do
       end
     end
 
-    describe "#be_finite" do
-      context "with .to" do
+    describe "`be_finite`" do
+      context "with `.to`" do
         it "matches a finite value" do
           object = InfiniteObject.new(false)
           expect do
@@ -286,7 +286,7 @@ Spectator.describe BeInfiniteMatcher do
         end
       end
 
-      context "with .not_to" do
+      context "with `.not_to`" do
         it "does not match finite value" do
           object = InfiniteObject.new(false)
           expect do

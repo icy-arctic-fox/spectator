@@ -76,8 +76,8 @@ Spectator.describe BeMatcher do
   end
 
   describe "DSL" do
-    describe "be" do
-      context "with .to" do
+    describe "`be`" do
+      context "with `.to`" do
         it "matches if the objects are the same" do
           object = [] of Int32
           expect do
@@ -132,7 +132,7 @@ Spectator.describe BeMatcher do
         end
       end
 
-      context "with .not_to" do
+      context "with `.not_to`" do
         it "does not match if the objects are the same" do
           object = [] of Int32
           expect do

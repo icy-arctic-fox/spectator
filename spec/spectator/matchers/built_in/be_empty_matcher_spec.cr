@@ -67,8 +67,8 @@ Spectator.describe BeEmptyMatcher do
   end
 
   context "DSL" do
-    describe "be_empty" do
-      context "with .to" do
+    describe "`be_empty`" do
+      context "with `.to`" do
         it "matches if the value is empty" do
           expect do
             expect(EmptyObject.new).to be_empty
@@ -97,7 +97,7 @@ Spectator.describe BeEmptyMatcher do
         end
       end
 
-      context "with .not_to" do
+      context "with `.not_to`" do
         it "does not match if the value is empty" do
           object = EmptyObject.new
           expect do

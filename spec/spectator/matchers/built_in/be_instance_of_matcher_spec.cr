@@ -67,8 +67,8 @@ Spectator.describe BeInstanceOfMatcher do
   end
 
   describe "DSL" do
-    describe "be_instance_of" do
-      context "with .to" do
+    describe "`be_instance_of`" do
+      context "with `.to`" do
         it "matches if the object is the exact type" do
           expect do
             expect("foo").to be_instance_of(String)
@@ -115,7 +115,7 @@ Spectator.describe BeInstanceOfMatcher do
         end
       end
 
-      context "with .not_to" do
+      context "with `.not_to`" do
         it "does not match if the object is the exact type" do
           expect do
             expect("foo").not_to be_instance_of(String)
