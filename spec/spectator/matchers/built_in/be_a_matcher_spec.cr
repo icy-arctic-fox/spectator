@@ -1,10 +1,10 @@
 require "../../../spec_helper"
 
 # Types used to test sub-classes.
-class Base
+private class Base
 end
 
-class Child < Base
+private class Derived < Base
 end
 
 alias BeAMatcher = Spectator::Matchers::BuiltIn::BeAMatcher
@@ -28,11 +28,11 @@ Spectator.describe BeAMatcher do
 
     it "returns true if the value is a subclass of the type" do
       matcher = BeAMatcher(Base).new
-      expect(matcher.matches?(Child.new)).to be_true
+      expect(matcher.matches?(Derived.new)).to be_true
     end
 
     it "returns false if the value is a parent of the type" do
-      matcher = BeAMatcher(Child).new
+      matcher = BeAMatcher(Derived).new
       expect(matcher.matches?(Base.new)).to be_false
     end
   end
@@ -89,17 +89,17 @@ Spectator.describe BeAMatcher do
 
         it "matches if the value is a subclass of the type" do
           expect do
-            expect(Child.new).to be_a(Base)
+            expect(Derived.new).to be_a(Base)
           end.to pass_check
         end
 
         it "does not match if the value is a parent of the type" do
           object = Base.new
           expect do
-            expect(object).to be_a(Child)
+            expect(object).to be_a(Derived)
           end.to fail_check <<-MESSAGE
              Expected: #{object.pretty_inspect}
-              to be a: Child
+              to be a: Derived
             but was a: Base
             MESSAGE
         end
@@ -128,18 +128,18 @@ Spectator.describe BeAMatcher do
         end
 
         it "does not match if the value is a subclass of the type" do
-          object = Child.new
+          object = Derived.new
           expect do
             expect(object).not_to be_a(Base)
           end.to fail_check <<-MESSAGE
                Expected: #{object.pretty_inspect}
-            not to be a: Base (Child is a sub-type of Base)
+            not to be a: Base (Derived is a sub-type of Base)
             MESSAGE
         end
 
         it "matches if the value is a parent of the type" do
           expect do
-            expect(Base.new).not_to be_a(Child)
+            expect(Base.new).not_to be_a(Derived)
           end.to pass_check
         end
       end
@@ -175,17 +175,17 @@ Spectator.describe BeAMatcher do
 
         it "matches if the value is a subclass of the type" do
           expect do
-            expect(Child.new).to be_an(Base)
+            expect(Derived.new).to be_an(Base)
           end.to pass_check
         end
 
         it "does not match if the value is a parent of the type" do
           object = Base.new
           expect do
-            expect(object).to be_an(Child)
+            expect(object).to be_an(Derived)
           end.to fail_check <<-MESSAGE
              Expected: #{object.pretty_inspect}
-              to be a: Child
+              to be a: Derived
             but was a: Base
             MESSAGE
         end
@@ -214,18 +214,18 @@ Spectator.describe BeAMatcher do
         end
 
         it "does not match if the value is a subclass of the type" do
-          object = Child.new
+          object = Derived.new
           expect do
             expect(object).not_to be_an(Base)
           end.to fail_check <<-MESSAGE
                Expected: #{object.pretty_inspect}
-            not to be a: Base (Child is a sub-type of Base)
+            not to be a: Base (Derived is a sub-type of Base)
             MESSAGE
         end
 
         it "matches if the value is a parent of the type" do
           expect do
-            expect(Base.new).not_to be_an(Child)
+            expect(Base.new).not_to be_an(Derived)
           end.to pass_check
         end
       end
