@@ -35,6 +35,38 @@ Spectator.describe BeTruthyMatcher do
     end
   end
 
+  describe "#does_not_match?" do
+    it "returns true if the value is false" do
+      matcher = BeTruthyMatcher.new
+      expect(matcher.does_not_match?(false)).to be_true
+    end
+
+    it "returns true if the value is nil" do
+      matcher = BeTruthyMatcher.new
+      expect(matcher.does_not_match?(nil)).to be_true
+    end
+
+    it "returns false if the value is truthy" do
+      matcher = BeTruthyMatcher.new
+      expect(matcher.does_not_match?(42)).to be_false
+    end
+
+    it "returns false if the value is true" do
+      matcher = BeTruthyMatcher.new
+      expect(matcher.does_not_match?(true)).to be_false
+    end
+
+    it "returns false if the value is zero" do
+      matcher = BeTruthyMatcher.new
+      expect(matcher.does_not_match?(0)).to be_false
+    end
+
+    it "returns false if the value is an empty string" do
+      matcher = BeTruthyMatcher.new
+      expect(matcher.does_not_match?("")).to be_false
+    end
+  end
+
   describe "#failure_message" do
     it "returns the failure message" do
       matcher = BeTruthyMatcher.new
@@ -123,6 +155,162 @@ Spectator.describe BeTruthyMatcher do
         it "matches if the value is nil" do
           expect do
             expect(nil).not_to be_truthy
+          end.to pass_check
+        end
+      end
+    end
+
+    describe "be_falsy" do
+      context "with .to" do
+        it "matches if the value is false" do
+          expect do
+            expect(false).to be_falsy
+          end.to pass_check
+        end
+
+        it "matches if the value is nil" do
+          expect do
+            expect(nil).to be_falsy
+          end.to pass_check
+        end
+
+        it "does not match if the value is truthy" do
+          expect do
+            expect(42).to be_falsy
+          end.to fail_check("Expected 42 to be falsy")
+        end
+
+        it "does not match if the value is true" do
+          expect do
+            expect(true).to be_falsy
+          end.to fail_check("Expected true to be falsy")
+        end
+
+        it "does not match if the value is zero" do
+          expect do
+            expect(0).to be_falsy
+          end.to fail_check("Expected 0 to be falsy")
+        end
+
+        it "does not match if the value is an empty string" do
+          expect do
+            expect("").to be_falsy
+          end.to fail_check("Expected \"\" to be falsy")
+        end
+      end
+
+      context "with .not_to" do
+        it "does not match if the value is false" do
+          expect do
+            expect(false).not_to be_falsy
+          end.to fail_check("Expected false to be truthy")
+        end
+
+        it "does not match if the value is nil" do
+          expect do
+            expect(nil).not_to be_falsy
+          end.to fail_check("Expected nil to be truthy")
+        end
+
+        it "matches if the value is truthy" do
+          expect do
+            expect(42).not_to be_falsy
+          end.to pass_check
+        end
+
+        it "matches if the value is true" do
+          expect do
+            expect(true).not_to be_falsy
+          end.to pass_check
+        end
+
+        it "matches if the value is zero" do
+          expect do
+            expect(0).not_to be_falsy
+          end.to pass_check
+        end
+
+        it "matches if the value is an empty string" do
+          expect do
+            expect("").not_to be_falsy
+          end.to pass_check
+        end
+      end
+    end
+
+    describe "be_falsey" do
+      context "with .to" do
+        it "matches if the value is false" do
+          expect do
+            expect(false).to be_falsey
+          end.to pass_check
+        end
+
+        it "matches if the value is nil" do
+          expect do
+            expect(nil).to be_falsey
+          end.to pass_check
+        end
+
+        it "does not match if the value is truthy" do
+          expect do
+            expect(42).to be_falsey
+          end.to fail_check("Expected 42 to be falsy")
+        end
+
+        it "does not match if the value is true" do
+          expect do
+            expect(true).to be_falsey
+          end.to fail_check("Expected true to be falsy")
+        end
+
+        it "does not match if the value is zero" do
+          expect do
+            expect(0).to be_falsey
+          end.to fail_check("Expected 0 to be falsy")
+        end
+
+        it "does not match if the value is an empty string" do
+          expect do
+            expect("").to be_falsey
+          end.to fail_check("Expected \"\" to be falsy")
+        end
+      end
+
+      context "with .not_to" do
+        it "does not match if the value is false" do
+          expect do
+            expect(false).not_to be_falsey
+          end.to fail_check("Expected false to be truthy")
+        end
+
+        it "does not match if the value is nil" do
+          expect do
+            expect(nil).not_to be_falsey
+          end.to fail_check("Expected nil to be truthy")
+        end
+
+        it "matches if the value is truthy" do
+          expect do
+            expect(42).not_to be_falsey
+          end.to pass_check
+        end
+
+        it "matches if the value is true" do
+          expect do
+            expect(true).not_to be_falsey
+          end.to pass_check
+        end
+
+        it "matches if the value is zero" do
+          expect do
+            expect(0).not_to be_falsey
+          end.to pass_check
+        end
+
+        it "matches if the value is an empty string" do
+          expect do
+            expect("").not_to be_falsey
           end.to pass_check
         end
       end

@@ -65,7 +65,7 @@ module Spectator::Matchers::BuiltIn
     end
 
     def be_falsy
-      BeFalsyMatcher.new
+      NegatedMatcher.new(be_truthy)
     end
 
     def be_falsey
