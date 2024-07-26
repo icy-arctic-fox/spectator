@@ -10,6 +10,7 @@ Documentation/DocumentationAdmonition:
   Timezone: UTC
   Excluded:
     - spec/spectator/core/item_spec.cr
+    - spec/spectator/matchers/built_in/be_instance_of_matcher_spec.cr
     - src/spectator/formatters/compatible_junit_formatter.cr
     - src/spectator/core/cli.cr
     - src/spectator/core/hooks.cr

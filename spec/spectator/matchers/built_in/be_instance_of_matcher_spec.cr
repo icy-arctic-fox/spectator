@@ -48,7 +48,7 @@ Spectator.describe BeInstanceOfMatcher do
          Expected: #{object.pretty_inspect}
           to be a: Base
         but was a: Derived
-        
+
         Derived is a sub-type of Base.
         Using `be_instance_of` ensures the type matches EXACTLY.
         If you want to match sub-types, use `be_a` instead.
@@ -83,7 +83,7 @@ Spectator.describe BeInstanceOfMatcher do
              Expected: #{object.pretty_inspect}
               to be a: Base
             but was a: Derived
-            
+
             Derived is a sub-type of Base.
             Using `be_instance_of` ensures the type matches EXACTLY.
             If you want to match sub-types, use `be_a` instead.
