@@ -88,14 +88,6 @@ module Spectator::Matchers::BuiltIn
       BeInstanceOfMatcher(T).new
     end
 
-    def be_a_instance_of(type)
-      be_instance_of type
-    end
-
-    def be_an_instance_of(type)
-      be_instance_of type
-    end
-
     def be_hexadecimal
     end
 
