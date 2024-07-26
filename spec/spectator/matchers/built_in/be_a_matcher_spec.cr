@@ -40,17 +40,21 @@ Spectator.describe BeAMatcher do
   describe "#failure_message" do
     it "returns the failure message" do
       matcher = BeAMatcher(Int32).new
-      expect(matcher.failure_message("foo")).to eq(" Expected: \"foo\"\n" +
-                                                   "  to be a: Int32\n" +
-                                                   "but was a: String")
+      expect(matcher.failure_message("foo")).to eq <<-MESSAGE
+         Expected: "foo"
+          to be a: Int32
+        but was a: String
+        MESSAGE
     end
   end
 
   describe "#negated_failure_message" do
     it "returns the negative failure message" do
       matcher = BeAMatcher(String).new
-      expect(matcher.negated_failure_message("foo")).to eq("   Expected: \"foo\"\n" +
-                                                           "not to be a: String")
+      expect(matcher.negated_failure_message("foo")).to eq <<-MESSAGE
+           Expected: "foo"
+        not to be a: String
+        MESSAGE
     end
   end
 
@@ -66,17 +70,21 @@ Spectator.describe BeAMatcher do
         it "does not match if the value is not an instance of the type" do
           expect do
             expect("foo").to be_a(Int32)
-          end.to fail_check(" Expected: \"foo\"\n" +
-                            "  to be a: Int32\n" +
-                            "but was a: String")
+          end.to fail_check <<-MESSAGE
+             Expected: "foo"
+              to be a: Int32
+            but was a: String
+            MESSAGE
         end
 
         it "does not match if the value is nil" do
           expect do
             expect(nil).to be_a(Int32)
-          end.to fail_check(" Expected: nil\n" +
-                            "  to be a: Int32\n" +
-                            "but was a: Nil")
+          end.to fail_check <<-MESSAGE
+             Expected: nil
+              to be a: Int32
+            but was a: Nil
+            MESSAGE
         end
 
         it "matches if the value is a subclass of the type" do
@@ -89,9 +97,11 @@ Spectator.describe BeAMatcher do
           object = Base.new
           expect do
             expect(object).to be_a(Child)
-          end.to fail_check(" Expected: #{object.pretty_inspect}\n" +
-                            "  to be a: Child\n" +
-                            "but was a: Base")
+          end.to fail_check <<-MESSAGE
+             Expected: #{object.pretty_inspect}
+              to be a: Child
+            but was a: Base
+            MESSAGE
         end
       end
 
@@ -99,8 +109,10 @@ Spectator.describe BeAMatcher do
         it "does not match if the value is an instance of the type" do
           expect do
             expect(42).not_to be_a(Int32)
-          end.to fail_check("   Expected: 42\n" +
-                            "not to be a: Int32")
+          end.to fail_check <<-MESSAGE
+               Expected: 42
+            not to be a: Int32
+            MESSAGE
         end
 
         it "matches if the value is not an instance of the type" do
@@ -119,8 +131,10 @@ Spectator.describe BeAMatcher do
           object = Child.new
           expect do
             expect(object).not_to be_a(Base)
-          end.to fail_check("   Expected: #{object.pretty_inspect}\n" +
-                            "not to be a: Base (Child is a sub-type of Base)")
+          end.to fail_check <<-MESSAGE
+               Expected: #{object.pretty_inspect}
+            not to be a: Base (Child is a sub-type of Base)
+            MESSAGE
         end
 
         it "matches if the value is a parent of the type" do
@@ -142,17 +156,21 @@ Spectator.describe BeAMatcher do
         it "does not match if the value is not an instance of the type" do
           expect do
             expect("foo").to be_an(Int32)
-          end.to fail_check(" Expected: \"foo\"\n" +
-                            "  to be a: Int32\n" +
-                            "but was a: String")
+          end.to fail_check <<-MESSAGE
+             Expected: "foo"
+              to be a: Int32
+            but was a: String
+            MESSAGE
         end
 
         it "does not match if the value is nil" do
           expect do
             expect(nil).to be_an(Int32)
-          end.to fail_check(" Expected: nil\n" +
-                            "  to be a: Int32\n" +
-                            "but was a: Nil")
+          end.to fail_check <<-MESSAGE
+             Expected: nil
+              to be a: Int32
+            but was a: Nil
+            MESSAGE
         end
 
         it "matches if the value is a subclass of the type" do
@@ -165,9 +183,11 @@ Spectator.describe BeAMatcher do
           object = Base.new
           expect do
             expect(object).to be_an(Child)
-          end.to fail_check(" Expected: #{object.pretty_inspect}\n" +
-                            "  to be a: Child\n" +
-                            "but was a: Base")
+          end.to fail_check <<-MESSAGE
+             Expected: #{object.pretty_inspect}
+              to be a: Child
+            but was a: Base
+            MESSAGE
         end
       end
 
@@ -175,8 +195,10 @@ Spectator.describe BeAMatcher do
         it "does not match if the value is an instance of the type" do
           expect do
             expect(42).not_to be_an(Int32)
-          end.to fail_check("   Expected: 42\n" +
-                            "not to be a: Int32")
+          end.to fail_check <<-MESSAGE
+               Expected: 42
+            not to be a: Int32
+            MESSAGE
         end
 
         it "matches if the value is not an instance of the type" do
@@ -195,8 +217,10 @@ Spectator.describe BeAMatcher do
           object = Child.new
           expect do
             expect(object).not_to be_an(Base)
-          end.to fail_check("   Expected: #{object.pretty_inspect}\n" +
-                            "not to be a: Base (Child is a sub-type of Base)")
+          end.to fail_check <<-MESSAGE
+               Expected: #{object.pretty_inspect}
+            not to be a: Base (Child is a sub-type of Base)
+            MESSAGE
         end
 
         it "matches if the value is a parent of the type" do

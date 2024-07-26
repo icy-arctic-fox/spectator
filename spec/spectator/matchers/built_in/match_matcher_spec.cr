@@ -54,20 +54,29 @@ Spectator.describe MatchMatcher do
     it "returns the failure message" do
       matcher = MatchMatcher.new(nil)
       object = MatchObject.new
-      expect(matcher.failure_message(object)).to match(/^Expected: .*?MatchObject.+?\nto match: nil$/)
+      expect(matcher.failure_message(object)).to eq <<-MESSAGE
+        Expected: #{object.pretty_inspect}
+        to match: nil
+        MESSAGE
     end
 
     context "with a string" do
       it "returns the failure message" do
         matcher = MatchMatcher.new(/foo/)
-        expect(matcher.failure_message("bar")).to eq("Expected: \"bar\"\nto match: /foo/")
+        expect(matcher.failure_message("bar")).to eq <<-MESSAGE
+          Expected: "bar"
+          to match: /foo/
+          MESSAGE
       end
     end
 
     context "with a regex" do
       it "returns the failure message" do
         matcher = MatchMatcher.new("foobar")
-        expect(matcher.failure_message(/foo/)).to eq("Expected: /foo/\nto match: \"foobar\"")
+        expect(matcher.failure_message(/foo/)).to eq <<-MESSAGE
+          Expected: /foo/
+          to match: "foobar"
+          MESSAGE
       end
     end
   end
@@ -76,20 +85,29 @@ Spectator.describe MatchMatcher do
     it "returns the negated failure message" do
       matcher = MatchMatcher.new(nil)
       object = MatchObject.new
-      expect(matcher.negated_failure_message(object)).to match(/^    Expected: .*?MatchObject.+?\nnot to match: nil$/)
+      expect(matcher.negated_failure_message(object)).to eq <<-MESSAGE
+            Expected: #{object.pretty_inspect}
+        not to match: nil
+        MESSAGE
     end
 
     context "with a string" do
       it "returns the negated failure message" do
         matcher = MatchMatcher.new(/foo/)
-        expect(matcher.negated_failure_message("bar")).to eq("    Expected: \"bar\"\nnot to match: /foo/")
+        expect(matcher.negated_failure_message("bar")).to eq <<-MESSAGE
+              Expected: "bar"
+          not to match: /foo/
+          MESSAGE
       end
     end
 
     context "with a regex" do
       it "returns the negated failure message" do
         matcher = MatchMatcher.new("foobar")
-        expect(matcher.negated_failure_message(/foo/)).to eq("    Expected: /foo/\nnot to match: \"foobar\"")
+        expect(matcher.negated_failure_message(/foo/)).to eq <<-MESSAGE
+              Expected: /foo/
+          not to match: "foobar"
+          MESSAGE
       end
     end
   end
@@ -103,9 +121,13 @@ Spectator.describe MatchMatcher do
       end
 
       it "does not match if the value does not match" do
+        object = MatchObject.new(false)
         expect do
-          expect(MatchObject.new(false)).to match(nil)
-        end.to fail_check(/^Expected: .*?MatchObject.+?\nto match: nil$/)
+          expect(object).to match(nil)
+        end.to fail_check <<-MESSAGE
+          Expected: #{object.pretty_inspect}
+          to match: nil
+          MESSAGE
       end
 
       context "with a string" do
@@ -118,7 +140,10 @@ Spectator.describe MatchMatcher do
         it "does not match if the string does not match" do
           expect do
             expect(/foo/).to match("bar")
-          end.to fail_check("Expected: /foo/\nto match: \"bar\"")
+          end.to fail_check <<-MESSAGE
+            Expected: /foo/
+            to match: "bar"
+            MESSAGE
         end
       end
 
@@ -139,9 +164,13 @@ Spectator.describe MatchMatcher do
 
     context "with .not_to" do
       it "does not match if the value matches" do
+        object = MatchObject.new
         expect do
-          expect(MatchObject.new).not_to match(nil)
-        end.to fail_check(/^    Expected: .*?MatchObject.+?\nnot to match: nil$/)
+          expect(object).not_to match(nil)
+        end.to fail_check <<-MESSAGE
+              Expected: #{object}
+          not to match: nil
+          MESSAGE
       end
 
       it "matches if the value does not match" do
@@ -154,7 +183,10 @@ Spectator.describe MatchMatcher do
         it "does not match if the string matches" do
           expect do
             expect(/foo/).not_to match("foobar")
-          end.to fail_check("    Expected: /foo/\nnot to match: \"foobar\"")
+          end.to fail_check <<-MESSAGE
+                Expected: /foo/
+            not to match: "foobar"
+            MESSAGE
         end
 
         it "matches if the string does not match" do
@@ -168,7 +200,10 @@ Spectator.describe MatchMatcher do
         it "does not match if the regex matches" do
           expect do
             expect("foobar").not_to match(/foo/)
-          end.to fail_check("    Expected: \"foobar\"\nnot to match: /foo/")
+          end.to fail_check <<-MESSAGE
+                Expected: "foobar"
+            not to match: /foo/
+            MESSAGE
         end
 
         it "matches if the regex does not match" do

@@ -40,7 +40,7 @@ Spectator.describe BeEmptyMatcher do
     it "returns the failure message" do
       matcher = BeEmptyMatcher.new
       object = EmptyObject.new(false)
-      expect(matcher.failure_message(object)).to match(/^Expected .*?EmptyObject.+? to be empty$/)
+      expect(matcher.failure_message(object)).to eq("Expected #{object.pretty_inspect} to be empty")
     end
 
     context "with an array" do
@@ -55,7 +55,7 @@ Spectator.describe BeEmptyMatcher do
     it "returns the negative failure message" do
       matcher = BeEmptyMatcher.new
       object = EmptyObject.new
-      expect(matcher.negated_failure_message(object)).to match(/^Expected .*?EmptyObject.+? not to be empty$/)
+      expect(matcher.negated_failure_message(object)).to eq("Expected #{object.pretty_inspect} not to be empty")
     end
 
     context "with an array" do
@@ -76,9 +76,10 @@ Spectator.describe BeEmptyMatcher do
         end
 
         it "does not match if the value is not empty" do
+          object = EmptyObject.new(false)
           expect do
-            expect(EmptyObject.new(false)).to be_empty
-          end.to fail_check(/^Expected .*?EmptyObject.+? to be empty$/)
+            expect(object).to be_empty
+          end.to fail_check("Expected #{object.pretty_inspect} to be empty")
         end
 
         context "with an array" do
@@ -98,9 +99,10 @@ Spectator.describe BeEmptyMatcher do
 
       context "with .not_to" do
         it "does not match if the value is empty" do
+          object = EmptyObject.new
           expect do
-            expect(EmptyObject.new).not_to be_empty
-          end.to fail_check(/^Expected .*?EmptyObject.+? not to be empty$/)
+            expect(object).not_to be_empty
+          end.to fail_check("Expected #{object.pretty_inspect} not to be empty")
         end
 
         it "matches if the value is not empty" do
