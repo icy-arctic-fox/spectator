@@ -1,0 +1,10 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "crystal: build current file (debug)",
+      "type": "shell",
+      "command": "crystal build -d ${relativeFile} -o bin/${fileBasenameNoExtension}",
+    }
+  ]
+}
