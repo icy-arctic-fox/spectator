@@ -1,3 +1,5 @@
+require "../framework_error"
+
 module Spectator::Matchers
   struct NegatedMatcher(T)
     def initialize(@matcher : T)

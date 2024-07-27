@@ -1,4 +1,3 @@
-require "../assertion_failed"
 require "../core/location_range"
 require "./matcher"
 

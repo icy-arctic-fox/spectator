@@ -1,3 +1,4 @@
+require "../../assertion_failed"
 require "./xml_element"
 
 module Spectator::Formatters::JUnit

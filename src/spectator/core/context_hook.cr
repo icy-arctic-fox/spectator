@@ -38,8 +38,8 @@ module Spectator::Core
       io << "#<" << self.class << ' '
 
       case @position
-      in Position::Before then io << "before context"
-      in Position::After  then io << "after context"
+      in .before? then io << "before context"
+      in .after?  then io << "after context"
       end
 
       if location = @location

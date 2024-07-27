@@ -1,3 +1,4 @@
+require "../assertion_failed"
 require "../core/execution_result"
 require "../core/source_cache"
 

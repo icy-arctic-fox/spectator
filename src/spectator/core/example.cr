@@ -1,5 +1,4 @@
 require "./item"
-require "./location_range"
 require "./result"
 
 module Spectator::Core

@@ -1,4 +1,4 @@
-require "../formatters/dots_formatter"
+require "../formatters/*"
 require "./hooks"
 require "./sandbox"
 

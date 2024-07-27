@@ -1,3 +1,7 @@
+require "../assertion_failed"
+require "../core/location_range"
+require "../framework_error"
+
 module Spectator::Matchers
   module Matcher
     abstract def matches?(actual_value) : Bool

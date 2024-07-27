@@ -36,9 +36,9 @@ module Spectator::Core
       io << "#<" << self.class << ' '
 
       case @position
-      in Position::Before then io << "before example"
-      in Position::After  then io << "after example"
-      in Position::Around then io << "around example"
+      in .before? then io << "before example"
+      in .after?  then io << "after example"
+      in .around? then io << "around example"
       end
 
       if location = @location

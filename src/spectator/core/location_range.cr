@@ -1,3 +1,5 @@
+require "./location"
+
 module Spectator::Core
   # Information about a range in the source code.
   struct LocationRange

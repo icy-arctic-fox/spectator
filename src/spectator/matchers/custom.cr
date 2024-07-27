@@ -1,5 +1,3 @@
-require "./matcher"
-
 module Spectator::Matchers
   module CustomDSL
     macro match(*, block = false, &impl)
