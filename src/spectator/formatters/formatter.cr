@@ -23,9 +23,7 @@ module Spectator::Formatters
 
     abstract def example_finished(result : Core::ExecutionResult) : Nil
 
-    abstract def report_failures(results : Enumerable(Core::ExecutionResult)) : Nil
-
-    abstract def report_pending(results : Enumerable(Core::ExecutionResult)) : Nil
+    abstract def report_results(results : Enumerable(Core::ExecutionResult)) : Nil
 
     abstract def report_profile : Nil
 

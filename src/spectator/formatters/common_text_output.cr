@@ -4,7 +4,14 @@ require "../core/source_cache"
 
 module Spectator::Formatters
   module CommonTextOutput
-    def report_failures(results : Enumerable(Core::ExecutionResult)) : Nil
+    def report_results(results : Enumerable(Core::ExecutionResult)) : Nil
+      failures = results.select &.failed?
+      report_failures(failures) unless failures.empty?
+      skipped = results.select &.skipped?
+      report_skipped(skipped) unless skipped.empty?
+    end
+
+    private def report_failures(results : Enumerable(Core::ExecutionResult)) : Nil
       puts
       puts "Failures:"
       puts
@@ -83,17 +90,17 @@ module Spectator::Formatters
       end
     end
 
-    def report_pending(results : Enumerable(Core::ExecutionResult)) : Nil
+    private def report_skipped(results : Enumerable(Core::ExecutionResult)) : Nil
       puts
-      puts "Pending:"
+      puts "Skipped:"
       puts
       padding = results.size.to_s.size - 1 # -1 since the minimum width is 1.
       results.each_with_index(1) do |result, index|
-        print_pending(result, index, padding)
+        print_skipped(result, index, padding)
       end
     end
 
-    private def print_pending(result, number, padding) : Nil
+    private def print_skipped(result, number, padding) : Nil
     end
 
     def report_profile : Nil

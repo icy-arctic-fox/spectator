@@ -94,10 +94,7 @@ module Spectator::Formatters
       parts.join('.')
     end
 
-    def report_failures(results : Enumerable(Core::ExecutionResult)) : Nil
-    end
-
-    def report_pending(results : Enumerable(Core::ExecutionResult)) : Nil
+    def report_results(results : Enumerable(Core::ExecutionResult)) : Nil
     end
 
     def report_profile : Nil

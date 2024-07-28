@@ -13,25 +13,19 @@ module Spectator
       def run(spec : ExampleGroup)
         report &.started
         report &.suite_started
-        failures = [] of ExecutionResult
-        pending = [] of ExecutionResult
-        examples_to_run(spec).each do |example|
-          if (group = example.group) && group.no_runs?
-            report &.example_group_started(group)
+        results =
+          examples_to_run(spec).map do |example|
+            if (group = example.group) && group.no_runs?
+              report &.example_group_started(group)
+            end
+            result = run_example(example)
+            if (group = example.group) && group.run?
+              report &.example_group_finished(group)
+            end
+            result
           end
-          result = run_example(example)
-          if result.failed?
-            failures << result
-          elsif result.skipped?
-            pending << result
-          end
-          if (group = example.group) && group.run?
-            report &.example_group_finished(group)
-          end
-        end
         report &.suite_finished
-        report &.report_failures(failures) unless failures.empty?
-        report &.report_pending(pending) unless pending.empty?
+        report &.report_results(results)
         report &.report_profile
         report &.report_summary
         report &.report_post_summary
