@@ -21,6 +21,13 @@ module Spectator::Core
       @end_line = @line
     end
 
+    def self.here(offset = 0, *,
+                  file = __FILE__,
+                  line = __LINE__,
+                  end_line = __END_LINE__) : self
+      new(file, line + offset, end_line + offset)
+    end
+
     # Checks if the location is in the range.
     def includes?(location : Location)
       return false if location.file != @file

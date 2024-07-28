@@ -11,6 +11,10 @@ module Spectator::Core
     def initialize(@file, @line = nil)
     end
 
+    def self.here(offset = 0, *, file = __FILE__, line = __LINE__) : self
+      new(file, line + offset)
+    end
+
     # Parses a string into a location.
     def self.parse(string : String) : self
       # Avoid issues on Windows with colons in filenames (drive letters).
