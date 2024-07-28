@@ -47,3 +47,17 @@ Spectator::Matchers.define :fail_check, message : String | Regex do
     end
   end
 end
+
+Spectator::Matchers.define :have_location,
+  location : Spectator::Core::Location do
+  match do |actual|
+    return false unless actual.responds_to?(:location)
+    return false unless actual_location = actual.location
+    actual_location.file == location.file &&
+      actual_location.line == location.line
+  end
+
+  failure_message do |actual|
+    "Expected #{actual.inspect} to have location #{location}"
+  end
+end
