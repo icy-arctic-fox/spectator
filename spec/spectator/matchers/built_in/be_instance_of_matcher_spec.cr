@@ -90,19 +90,20 @@ Spectator.describe BeInstanceOfMatcher do
             MESSAGE
         end
 
-        # FIXME: Enabling this test causes a segfault.
-        # This only occurs when running all specs, not just this file.
-        # To reproduce, uncomment this test and run `crystal spec`.
-        # it "does not match if the object is a parent type" do
-        #   object = Base.new
-        #   expect do
-        #     expect(object).to be_instance_of(Derived)
-        #   end.to fail_check <<-MESSAGE
-        #      Expected: #{object.pretty_inspect}
-        #       to be a: Derived
-        #     but was a: Base
-        #     MESSAGE
-        # end
+        it "does not match if the object is a parent type" do
+          # Enabling this test causes a segfault.
+          # This only occurs when running all specs, not just this file.
+          # To reproduce, remove the following `skip` line and run `crystal spec`.
+          skip "This test causes a segfault for an unknown and unrelated reason."
+          object = Base.new
+          expect do
+            expect(object).to be_instance_of(Derived)
+          end.to fail_check <<-MESSAGE
+             Expected: #{object.pretty_inspect}
+              to be a: Derived
+            but was a: Base
+            MESSAGE
+        end
 
         it "does not match if the object is an unrelated type" do
           expect do
@@ -131,14 +132,15 @@ Spectator.describe BeInstanceOfMatcher do
           end.to pass_check
         end
 
-        # FIXME: Enabling this test causes a segfault.
-        # This only occurs when running all specs, not just this file.
-        # To reproduce, uncomment this test and run `crystal spec`.
-        # it "matches if the object is a parent type" do
-        #   expect do
-        #     expect(Base.new).not_to be_instance_of(Derived)
-        #   end.to pass_check
-        # end
+        it "matches if the object is a parent type" do
+          # Enabling this test causes a segfault.
+          # This only occurs when running all specs, not just this file.
+          # To reproduce, remove the following `skip` line and run `crystal spec`.
+          skip "This test causes a segfault for an unknown and unrelated reason."
+          expect do
+            expect(Base.new).not_to be_instance_of(Derived)
+          end.to pass_check
+        end
 
         it "matches if the object is an unrelated type" do
           expect do
