@@ -1,6 +1,6 @@
 require "./spectator/assertion_failed"
 require "./spectator/error"
-require "./spectator/example_pending"
+require "./spectator/example_skipped"
 require "./spectator/framework_error"
 
 require "./spectator/core/**"

@@ -32,6 +32,17 @@ Spectator.describe "Assertions" do
   end
 
   describe "#skip" do
-    # TODO
+    it "raises an ExampleSkipped error" do
+      expect { skip }.to raise_error(Spectator::ExampleSkipped)
+    end
+
+    it "raises an ExampleSkipped error with a message" do
+      expect { skip "foo" }.to raise_error(Spectator::ExampleSkipped, "foo")
+    end
+
+    it "stores the location of the assertion" do
+      error = expect { skip }.to raise_error(Spectator::ExampleSkipped)
+      expect(error).to have_location(Spectator::Core::Location.here(-1))
+    end
   end
 end

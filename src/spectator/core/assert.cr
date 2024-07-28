@@ -1,4 +1,5 @@
 require "../assertion_failed"
+require "../example_skipped"
 require "./location_range"
 
 module Spectator::Core
@@ -20,8 +21,12 @@ module Spectator::Core
         LocationRange.new(source_file, source_line, source_end_line))
     end
 
-    def skip
-      # TODO
+    def skip(message = nil, *,
+             source_file = __FILE__,
+             source_line = __LINE__,
+             source_end_line = __END_LINE__) : Nil
+      raise ExampleSkipped.new(message || "Example skipped",
+        LocationRange.new(source_file, source_line, source_end_line))
     end
   end
 end
