@@ -1,5 +1,5 @@
 module Spectator::Matchers::BuiltIn
-  struct RaiseErrorMatcher(T)
+  class RaiseErrorMatcher(T)
     @expected_error : T?
     @expected_message : String | Regex?
 
@@ -9,8 +9,8 @@ module Spectator::Matchers::BuiltIn
     def initialize(@expected_message : String | Regex? = nil)
     end
 
-    def matches?(actual_value)
-      actual_value.call
+    def matches?
+      yield
       false
     rescue ex
       matches_error?(ex)
@@ -30,12 +30,12 @@ module Spectator::Matchers::BuiltIn
       end
     end
 
-    def failure_message(actual_value)
-      "Expected #{actual_value.pretty_inspect} to raise error #{@expected_error.pretty_inspect}"
+    def failure_message(&)
+      "Expected block to raise error #{@expected_error.pretty_inspect}"
     end
 
-    def negated_failure_message(actual_value)
-      "Expected #{actual_value.pretty_inspect} not to raise error #{@expected_error.pretty_inspect}"
+    def negated_failure_message(&)
+      "Expected block not to raise error #{@expected_error.pretty_inspect}"
     end
   end
 end
