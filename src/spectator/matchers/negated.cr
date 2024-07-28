@@ -5,7 +5,7 @@ module Spectator::Matchers
     def initialize(@matcher : T)
     end
 
-    def matches?(actual_value) : Bool
+    def matches?(actual_value)
       matcher = @matcher
       if matcher.responds_to?(:negated_failure_message)
         if matcher.responds_to?(:does_not_match?)
@@ -21,7 +21,7 @@ module Spectator::Matchers
       end
     end
 
-    def does_not_match?(actual_value) : Bool
+    def does_not_match?(actual_value)
       matcher = @matcher
       if matcher.responds_to?(:matches?)
         matcher.matches?(actual_value)
@@ -30,7 +30,7 @@ module Spectator::Matchers
       end
     end
 
-    def failure_message(actual_value) : String
+    def failure_message(actual_value)
       matcher = @matcher
       if matcher.responds_to?(:negated_failure_message)
         matcher.negated_failure_message(actual_value)
@@ -39,7 +39,7 @@ module Spectator::Matchers
       end
     end
 
-    def negated_failure_message(actual_value) : String
+    def negated_failure_message(actual_value)
       matcher = @matcher
       if matcher.responds_to?(:failure_message)
         matcher.failure_message(actual_value)

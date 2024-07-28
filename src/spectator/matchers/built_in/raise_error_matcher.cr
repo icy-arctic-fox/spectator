@@ -9,7 +9,7 @@ module Spectator::Matchers::BuiltIn
     def initialize(@expected_message : String | Regex? = nil)
     end
 
-    def matches?(actual_value) : Bool
+    def matches?(actual_value)
       actual_value.call
       false
     rescue ex
@@ -30,11 +30,11 @@ module Spectator::Matchers::BuiltIn
       end
     end
 
-    def failure_message(actual_value) : String
+    def failure_message(actual_value)
       "Expected #{actual_value.pretty_inspect} to raise error #{@expected_error.pretty_inspect}"
     end
 
-    def negated_failure_message(actual_value) : String
+    def negated_failure_message(actual_value)
       "Expected #{actual_value.pretty_inspect} not to raise error #{@expected_error.pretty_inspect}"
     end
   end

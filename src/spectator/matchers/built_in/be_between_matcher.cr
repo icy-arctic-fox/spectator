@@ -3,7 +3,7 @@ module Spectator::Matchers::BuiltIn
     def initialize(@min : B, @max : E, @exclusive : Bool = false)
     end
 
-    def matches?(actual_value) : Bool
+    def matches?(actual_value)
       if @exclusive
         actual_value > @min && actual_value < @max
       else
@@ -11,14 +11,14 @@ module Spectator::Matchers::BuiltIn
       end
     end
 
-    def failure_message(actual_value) : String
+    def failure_message(actual_value)
       <<-MESSAGE
            Expected: #{actual_value.pretty_inspect}
       to be between: #{@min.pretty_inspect} and #{@max.pretty_inspect} (#{@exclusive ? "exclusive" : "inclusive"})
       MESSAGE
     end
 
-    def negated_failure_message(actual_value) : String
+    def negated_failure_message(actual_value)
       <<-MESSAGE
            Expected: #{actual_value.pretty_inspect}
       to be outside: #{@min.pretty_inspect} and #{@max.pretty_inspect} (#{@exclusive ? "exclusive" : "inclusive"})

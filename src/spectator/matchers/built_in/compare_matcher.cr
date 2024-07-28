@@ -45,7 +45,7 @@ module Spectator::Matchers::BuiltIn
     def initialize(@expected_value : T, @relation : Relation)
     end
 
-    def matches?(actual_value) : Bool
+    def matches?(actual_value)
       case @relation
       in .less?             then actual_value < @expected_value
       in .less_or_equal?    then actual_value <= @expected_value
@@ -56,11 +56,11 @@ module Spectator::Matchers::BuiltIn
       end
     end
 
-    def failure_message(actual_value) : String
+    def failure_message(actual_value)
       "Expected #{actual_value.pretty_inspect} to be #{@relation} #{@expected_value.pretty_inspect}"
     end
 
-    def negated_failure_message(actual_value) : String
+    def negated_failure_message(actual_value)
       "Expected #{actual_value.pretty_inspect} to be #{@relation.negate} #{@expected_value.pretty_inspect}"
     end
 

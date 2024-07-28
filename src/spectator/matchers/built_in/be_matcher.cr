@@ -3,7 +3,7 @@ module Spectator::Matchers::BuiltIn
     def initialize(@expected_value : T)
     end
 
-    def matches?(actual_value) : Bool
+    def matches?(actual_value)
       expected_value = @expected_value
       if expected_value.is_a?(Reference) && actual_value.is_a?(Reference)
         # Both are references, check if they're the same object.
@@ -17,14 +17,14 @@ module Spectator::Matchers::BuiltIn
       end
     end
 
-    def failure_message(actual_value) : String
+    def failure_message(actual_value)
       <<-MESSAGE
       Expected: #{stringify(actual_value)}
          to be: #{stringify(@expected_value)}
       MESSAGE
     end
 
-    def negated_failure_message(actual_value) : String
+    def negated_failure_message(actual_value)
       <<-MESSAGE
        Expected: #{stringify(actual_value)}
       not to be: #{stringify(@expected_value)}

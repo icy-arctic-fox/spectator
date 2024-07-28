@@ -1,10 +1,10 @@
 module Spectator::Matchers::BuiltIn
   struct BeInstanceOfMatcher(T)
-    def matches?(actual_value) : Bool
+    def matches?(actual_value)
       actual_value.class == T
     end
 
-    def failure_message(actual_value) : String
+    def failure_message(actual_value)
       if actual_value.is_a?(T)
         <<-MESSAGE
          Expected: #{actual_value.pretty_inspect}
@@ -24,7 +24,7 @@ module Spectator::Matchers::BuiltIn
       end
     end
 
-    def negated_failure_message(actual_value) : String
+    def negated_failure_message(actual_value)
       <<-MESSAGE
          Expected: #{actual_value.pretty_inspect}
       not to be a: #{T}

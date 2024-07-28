@@ -1,16 +1,16 @@
 module Spectator::Matchers::BuiltIn
   struct RespondToMatcher(NT)
-    def matches?(actual_value) : Bool
+    def matches?(actual_value)
       {% begin %}
         actual_value.responds_to?({{NT.keys.first.symbolize}})
       {% end %}
     end
 
-    def failure_message(actual_value) : String
+    def failure_message(actual_value)
       "Expected #{actual_value.pretty_inspect} to respond to #{method_name}"
     end
 
-    def negated_failure_message(actual_value) : String
+    def negated_failure_message(actual_value)
       "Expected #{actual_value.pretty_inspect} not to respond to #{method_name}"
     end
 

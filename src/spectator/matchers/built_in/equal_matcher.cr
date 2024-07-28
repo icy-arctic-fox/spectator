@@ -3,7 +3,7 @@ module Spectator::Matchers::BuiltIn
     def initialize(@expected_value : T)
     end
 
-    def matches?(actual_value) : Bool
+    def matches?(actual_value)
       expected_value = @expected_value
 
       if actual_value.is_a?(String) && expected_value.is_a?(String)
@@ -19,7 +19,7 @@ module Spectator::Matchers::BuiltIn
         actual_value.size == expected_value.size
     end
 
-    def failure_message(actual_value) : String
+    def failure_message(actual_value)
       expected_value = @expected_value
 
       if actual_value.is_a?(String) && expected_value.is_a?(String) && actual_value == expected_value
@@ -52,7 +52,7 @@ module Spectator::Matchers::BuiltIn
       end
     end
 
-    def negated_failure_message(actual_value) : String
+    def negated_failure_message(actual_value)
       <<-MSG
       Expected:     #{actual_value.pretty_inspect}
       not to equal: #{@expected_value.pretty_inspect}"

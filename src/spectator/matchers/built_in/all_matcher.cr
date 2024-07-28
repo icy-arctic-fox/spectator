@@ -5,7 +5,7 @@ module Spectator::Matchers::BuiltIn
     def initialize(@matcher : T)
     end
 
-    def matches?(actual_value) : Bool
+    def matches?(actual_value)
       raise "`all` matcher requires value to be `Enumerable`" unless actual_value.is_a?(Enumerable)
       actual_value.each_with_index do |value, index|
         next unless failure = Matcher.process(@matcher, value)
@@ -16,7 +16,7 @@ module Spectator::Matchers::BuiltIn
       true
     end
 
-    def does_not_match?(actual_value) : Bool
+    def does_not_match?(actual_value)
       raise "`all` matcher requires value to be `Enumerable`" unless actual_value.is_a?(Enumerable)
       actual_value.each_with_index do |value, index|
         next unless failure = Matcher.process_negated(@matcher, value)
@@ -27,7 +27,7 @@ module Spectator::Matchers::BuiltIn
       true
     end
 
-    def failure_message(actual_value) : String
+    def failure_message(actual_value)
       if (index = @failed_index) && (failure = @failure)
         <<-END_MESSAGE
         Expected all elements to be satisfied, but element #{index} did not.
@@ -38,7 +38,7 @@ module Spectator::Matchers::BuiltIn
       end
     end
 
-    def negated_failure_message(actual_value) : String
+    def negated_failure_message(actual_value)
       if (index = @failed_index) && (failure = @failure)
         <<-END_MESSAGE
         Expected no elements to be satisfied, but element #{index} did.
