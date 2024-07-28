@@ -14,6 +14,10 @@ Spectator.describe "Assertions" do
       error = expect { assert false }.to raise_error(Spectator::AssertionFailed)
       expect(error).to have_location(Spectator::Core::Location.here(-1))
     end
+
+    it "produces a 'fail' result" do
+      expect { assert false }.to fail_check("Assert failed: Value was false")
+    end
   end
 
   describe "#fail" do
@@ -29,6 +33,10 @@ Spectator.describe "Assertions" do
       error = expect { fail }.to raise_error(Spectator::AssertionFailed)
       expect(error).to have_location(Spectator::Core::Location.here(-1))
     end
+
+    it "produces a 'fail' result" do
+      expect { fail }.to fail_check("Example failed")
+    end
   end
 
   describe "#skip" do
@@ -43,6 +51,10 @@ Spectator.describe "Assertions" do
     it "stores the location of the assertion" do
       error = expect { skip }.to raise_error(Spectator::ExampleSkipped)
       expect(error).to have_location(Spectator::Core::Location.here(-1))
+    end
+
+    it "produces a 'skip' result" do
+      expect { skip }.to skip_check
     end
   end
 end
