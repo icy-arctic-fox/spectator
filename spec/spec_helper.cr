@@ -21,7 +21,6 @@ Spectator::Matchers.define :pass_check do
   end
 end
 
-# ameba:disable Lint/UselessAssign
 Spectator::Matchers.define :fail_check, message : String | Regex do
   @result : Spectator::Core::Result?
 
@@ -75,8 +74,8 @@ Spectator::Matchers.define :skip_check, message : String | Regex? = nil do
   end
 end
 
-Spectator::Matchers.define :have_location,
-  location : Spectator::Core::Location do
+# ameba:disable Lint/UselessAssign
+Spectator::Matchers.define :have_location, location : Spectator::Core::Location do
   match do |actual|
     return false unless actual.responds_to?(:location)
     return false unless actual_location = actual.location

@@ -11,7 +11,7 @@ module Spectator::Matchers::BuiltIn
     def initialize(@expected_message : String | Regex? = nil)
     end
 
-    def matches?
+    def matches?(&)
       yield
       false
     rescue ex
