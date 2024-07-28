@@ -28,7 +28,6 @@ module Spectator
         report &.report_results(results)
         report &.report_profile
         report &.report_summary
-        report &.report_post_summary
         report &.finished
       end
 

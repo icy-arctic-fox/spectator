@@ -109,9 +109,6 @@ module Spectator::Formatters
     def report_summary : Nil
     end
 
-    def report_post_summary : Nil
-    end
-
     private def print_indent(amount) : Nil
       amount.times { print ' ' }
     end

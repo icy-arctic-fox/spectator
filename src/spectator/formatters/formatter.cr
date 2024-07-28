@@ -29,8 +29,6 @@ module Spectator::Formatters
 
     abstract def report_summary : Nil
 
-    abstract def report_post_summary : Nil
-
     delegate print, printf, puts, set_encoding, to: @output
   end
 end

@@ -102,8 +102,5 @@ module Spectator::Formatters
 
     def report_summary : Nil
     end
-
-    def report_post_summary : Nil
-    end
   end
 end
