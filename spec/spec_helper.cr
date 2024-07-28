@@ -57,7 +57,7 @@ Spectator::Matchers.define :skip_check, message : String | Regex? = nil do
       yield
     end
     @result = result
-    result.skipped? && message.try &.=== result.error_message
+    result.skipped? && (!message || message === result.error_message)
   end
 
   failure_message(block: true) do
