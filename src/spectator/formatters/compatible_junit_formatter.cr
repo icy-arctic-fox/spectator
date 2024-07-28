@@ -70,13 +70,20 @@ module Spectator::Formatters
       location = result.example.location
       class_name = construct_class_name(location)
 
-      @test_cases << JUnit::TestCase.new(
-        name: result.example.full_description || "<Anonymous>",
+      properties = {
+        name:       result.example.full_description || "<Anonymous>",
         class_name: class_name,
-        file: location.try &.file,
-        line: location.try &.line,
-        error: result.exception?,
-      )
+        file:       location.try &.file,
+        line:       location.try &.line,
+      }
+
+      @test_cases << if result.failed?
+        JUnit::FailedTestCase.new(**properties, error: result.exception)
+      elsif result.skipped?
+        JUnit::SkippedTestCase.new(**properties, skip_message: result.error_message)
+      else
+        JUnit::PassedTestCase.new(**properties)
+      end
 
       @failure_count += 1 if result.failed?
       @skipped_count += 1 if result.skipped?

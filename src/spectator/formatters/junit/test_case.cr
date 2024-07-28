@@ -1,8 +1,7 @@
-require "../../assertion_failed"
 require "./xml_element"
 
 module Spectator::Formatters::JUnit
-  struct TestCase
+  abstract struct TestCase
     include XMLElement
 
     def initialize(*,
@@ -11,8 +10,7 @@ module Spectator::Formatters::JUnit
                    @assertions : Int32? = nil,
                    @time : Time::Span? = nil,
                    @file : String? = nil,
-                   @line : Int32? = nil,
-                   @error : Exception? = nil)
+                   @line : Int32? = nil)
     end
 
     def to_xml(io : IO, indent : Int = 0) : Nil
@@ -25,32 +23,18 @@ module Spectator::Formatters::JUnit
       write_xml_attribute(io, "file", @file)
       write_xml_attribute(io, "line", @line)
 
-      if error = @error
-        io.puts '>'
-        print_failure(io, error, indent + 1)
+      if has_inner_content?
+        io.puts ">"
+        print_inner(io, indent + 1)
+        print_indent(io, indent)
         io << "</testcase>"
       else
         io << " />"
       end
     end
 
-    private def print_failure(io, error, indent) : Nil
-      type = error.is_a?(AssertionFailed) ? "failure" : "error"
-      print_indent(io, indent)
-      io << '<' << type
-      write_xml_attribute(io, "message", error.message)
-      write_xml_attribute(io, "type", error.class.name)
+    private abstract def has_inner_content? : Bool
 
-      if backtrace = error.backtrace?
-        io.puts '>'
-        HTML.escape(backtrace.join('\n'), io)
-        io.puts
-        print_indent(io, indent)
-        io << "</" << type
-        io.puts '>'
-      else
-        io.puts " />"
-      end
-    end
+    private abstract def print_inner(io : IO, indent : Int) : Nil
   end
 end
