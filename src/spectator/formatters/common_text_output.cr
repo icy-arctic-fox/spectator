@@ -93,14 +93,11 @@ module Spectator::Formatters
     private def report_skipped(results : Enumerable(Core::ExecutionResult)) : Nil
       puts
       puts "Skipped:"
-      puts
-      padding = results.size.to_s.size - 1 # -1 since the minimum width is 1.
-      results.each_with_index(1) do |result, index|
-        print_skipped(result, index, padding)
+      results.each do |result|
+        print "  "
+        puts result.example.full_description
       end
-    end
-
-    private def print_skipped(result, number, padding) : Nil
+      puts
     end
 
     def report_profile : Nil
