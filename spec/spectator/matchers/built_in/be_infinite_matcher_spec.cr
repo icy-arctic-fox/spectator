@@ -1,13 +1,13 @@
 require "../../../spec_helper"
 
 private struct InfiniteObject
-  getter? infinite : Bool
+  getter? infinite : Int32
 
-  def initialize(@infinite : Bool = true)
+  def initialize(@infinite : Int32 = 1)
   end
 
   def finite?
-    !@infinite
+    @infinite.zero?
   end
 end
 
@@ -22,7 +22,7 @@ Spectator.describe BeInfiniteMatcher do
 
     it "returns false if the object is finite" do
       matcher = BeInfiniteMatcher.new
-      expect(matcher.matches?(InfiniteObject.new(false))).to be_false
+      expect(matcher.matches?(InfiniteObject.new(0))).to be_false
     end
 
     context "with a Float" do
@@ -63,7 +63,7 @@ Spectator.describe BeInfiniteMatcher do
   describe "#does_not_match?" do
     it "returns true if the object is finite" do
       matcher = BeInfiniteMatcher.new
-      expect(matcher.does_not_match?(InfiniteObject.new(false))).to be_true
+      expect(matcher.does_not_match?(InfiniteObject.new(0))).to be_true
     end
 
     it "returns false if the object is infinite" do
@@ -99,7 +99,7 @@ Spectator.describe BeInfiniteMatcher do
   describe "#failure_message" do
     it "returns the failure message" do
       matcher = BeInfiniteMatcher.new
-      object = InfiniteObject.new(false)
+      object = InfiniteObject.new(0)
       expect(matcher.failure_message(object)).to eq("Expected #{object.pretty_inspect} to be infinite")
     end
 
@@ -137,7 +137,7 @@ Spectator.describe BeInfiniteMatcher do
         end
 
         it "matches an infinite value" do
-          object = InfiniteObject.new(false)
+          object = InfiniteObject.new(0)
           expect do
             expect(object).to be_infinite
           end.to fail_check("Expected #{object.pretty_inspect} to be infinite")
@@ -186,7 +186,7 @@ Spectator.describe BeInfiniteMatcher do
 
       context "with `.not_to`" do
         it "matches a finite object" do
-          object = InfiniteObject.new(false)
+          object = InfiniteObject.new(0)
           expect do
             expect(object).not_to be_infinite
           end.to pass_check
@@ -244,7 +244,7 @@ Spectator.describe BeInfiniteMatcher do
     describe "`be_finite`" do
       context "with `.to`" do
         it "matches a finite value" do
-          object = InfiniteObject.new(false)
+          object = InfiniteObject.new(0)
           expect do
             expect(object).to be_finite
           end.to pass_check
@@ -288,7 +288,7 @@ Spectator.describe BeInfiniteMatcher do
 
       context "with `.not_to`" do
         it "does not match finite value" do
-          object = InfiniteObject.new(false)
+          object = InfiniteObject.new(0)
           expect do
             expect(object).not_to be_finite
           end.to fail_check("Expected #{object.pretty_inspect} to be infinite")
