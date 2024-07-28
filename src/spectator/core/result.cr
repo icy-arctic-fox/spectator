@@ -1,4 +1,5 @@
 require "../assertion_failed"
+require "../example_skipped"
 
 module Spectator::Core
   enum Status
@@ -37,6 +38,9 @@ module Spectator::Core
           status = Status::Pass
         rescue ex : AssertionFailed
           status = Status::Fail
+          exception = ex
+        rescue ex : ExampleSkipped
+          status = Status::Skip
           exception = ex
         rescue ex
           status = Status::Error
