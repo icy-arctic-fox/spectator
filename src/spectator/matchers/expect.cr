@@ -1,5 +1,6 @@
 require "../core/location_range"
 require "./matcher"
+require "./built_in/raise_error_matcher"
 
 module Spectator::Matchers
   struct Expect(T)
@@ -52,6 +53,18 @@ module Spectator::Matchers
         failure_message: failure_message,
         location: location)
       raise failure if failure
+    end
+
+    def to(matcher : BuiltIn::RaiseErrorMatcher, failure_message : String? = nil, *,
+           source_file = __FILE__,
+           source_line = __LINE__,
+           source_end_line = __END_LINE__) : Exception
+      location = Core::LocationRange.new(source_file, source_line, source_end_line)
+      failure = Matcher.process_block(matcher, @block,
+        failure_message: failure_message,
+        location: location)
+      raise failure if failure
+      matcher.rescued_error
     end
 
     def not_to(matcher, failure_message : String? = nil, *,
