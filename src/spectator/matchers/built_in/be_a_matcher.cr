@@ -1,5 +1,13 @@
+require "../matchable"
+
 module Spectator::Matchers::BuiltIn
   struct BeAMatcher(T)
+    include Matchable
+
+    def description
+      "be a #{T}"
+    end
+
     def matches?(actual_value)
       actual_value.is_a?(T)
     end
