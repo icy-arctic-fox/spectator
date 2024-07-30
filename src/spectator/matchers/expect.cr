@@ -12,7 +12,7 @@ module Spectator::Matchers
            source_line = __LINE__,
            source_end_line = __END_LINE__) : Nil
       location = Core::LocationRange.new(source_file, source_line, source_end_line)
-      failure = Matcher.process(matcher, @actual_value,
+      failure = Matcher.match(matcher, @actual_value,
         failure_message: failure_message,
         location: location)
       raise failure if failure
@@ -23,7 +23,7 @@ module Spectator::Matchers
                source_line = __LINE__,
                source_end_line = __END_LINE__) : Nil
       location = Core::LocationRange.new(source_file, source_line, source_end_line)
-      failure = Matcher.process_negated(matcher, @actual_value,
+      failure = Matcher.match_negated(matcher, @actual_value,
         failure_message: failure_message,
         location: location)
       raise failure if failure
@@ -49,7 +49,7 @@ module Spectator::Matchers
            source_line = __LINE__,
            source_end_line = __END_LINE__) : Nil
       location = Core::LocationRange.new(source_file, source_line, source_end_line)
-      failure = Matcher.process_block(matcher, @block,
+      failure = Matcher.match_block(matcher, @block,
         failure_message: failure_message,
         location: location)
       raise failure if failure
@@ -60,7 +60,7 @@ module Spectator::Matchers
            source_line = __LINE__,
            source_end_line = __END_LINE__) : Exception
       location = Core::LocationRange.new(source_file, source_line, source_end_line)
-      failure = Matcher.process_block(matcher, @block,
+      failure = Matcher.match_block(matcher, @block,
         failure_message: failure_message,
         location: location)
       raise failure if failure
@@ -72,7 +72,7 @@ module Spectator::Matchers
                source_line = __LINE__,
                source_end_line = __END_LINE__) : Nil
       location = Core::LocationRange.new(source_file, source_line, source_end_line)
-      failure = Matcher.process_block_negated(matcher, @block,
+      failure = Matcher.match_block_negated(matcher, @block,
         failure_message: failure_message,
         location: location)
       raise failure if failure

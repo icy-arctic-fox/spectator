@@ -8,7 +8,7 @@ module Spectator::Matchers
                source_line = __LINE__,
                source_end_line = __END_LINE__) : Nil
       location = Core::LocationRange.new(source_file, source_line, source_end_line)
-      failure = Matcher.process(matcher, self,
+      failure = Matcher.match(matcher, self,
         failure_message: failure_message,
         location: location)
       raise failure if failure
@@ -19,7 +19,7 @@ module Spectator::Matchers
                    source_line = __LINE__,
                    source_end_line = __END_LINE__) : Nil
       location = Core::LocationRange.new(source_file, source_line, source_end_line)
-      failure = Matcher.process_negated(matcher, self,
+      failure = Matcher.match_negated(matcher, self,
         failure_message: failure_message,
         location: location)
       raise failure if failure

@@ -8,7 +8,7 @@ module Spectator::Matchers::BuiltIn
     def matches?(actual_value)
       raise "`all` matcher requires value to be `Enumerable`" unless actual_value.is_a?(Enumerable)
       actual_value.each_with_index do |value, index|
-        next unless failure = Matcher.process(@matcher, value)
+        next unless failure = Matcher.match(@matcher, value)
         @failed_index = index
         @failure = failure
         return false
@@ -19,7 +19,7 @@ module Spectator::Matchers::BuiltIn
     def does_not_match?(actual_value)
       raise "`all` matcher requires value to be `Enumerable`" unless actual_value.is_a?(Enumerable)
       actual_value.each_with_index do |value, index|
-        next unless failure = Matcher.process_negated(@matcher, value)
+        next unless failure = Matcher.match_negated(@matcher, value)
         @failed_index = index
         @failure = failure
         return false

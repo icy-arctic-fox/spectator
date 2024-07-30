@@ -6,9 +6,9 @@ module Spectator::Matchers
   module Matcher
     extend self
 
-    def process(matcher, actual_value, *,
-                failure_message : String? = nil,
-                location : Core::LocationRange? = nil) : AssertionFailed?
+    def match(matcher, actual_value, *,
+              failure_message : String? = nil,
+              location : Core::LocationRange? = nil) : AssertionFailed?
       if matcher.responds_to?(:matches?) && matcher.responds_to?(:failure_message)
         return if matcher.matches?(actual_value)
         failure_message ||= matcher.failure_message(actual_value).to_s
@@ -19,9 +19,9 @@ module Spectator::Matchers
       end
     end
 
-    def process_negated(matcher, actual_value, *,
-                        failure_message : String? = nil,
-                        location : Core::LocationRange? = nil) : AssertionFailed?
+    def match_negated(matcher, actual_value, *,
+                      failure_message : String? = nil,
+                      location : Core::LocationRange? = nil) : AssertionFailed?
       if matcher.responds_to?(:negated_failure_message)
         passed = if matcher.responds_to?(:does_not_match?)
                    matcher.does_not_match?(actual_value)
@@ -40,9 +40,9 @@ module Spectator::Matchers
       end
     end
 
-    def process_block(matcher, block, *,
-                      failure_message : String? = nil,
-                      location : Core::LocationRange? = nil) : AssertionFailed?
+    def match_block(matcher, block, *,
+                    failure_message : String? = nil,
+                    location : Core::LocationRange? = nil) : AssertionFailed?
       if matcher.responds_to?(:matches?) && matcher.responds_to?(:failure_message)
         return if matcher.matches?(&block)
         failure_message ||= matcher.failure_message(&block).to_s
@@ -53,9 +53,9 @@ module Spectator::Matchers
       end
     end
 
-    def process_block_negated(matcher, block, *,
-                              failure_message : String? = nil,
-                              location : Core::LocationRange? = nil) : AssertionFailed?
+    def match_block_negated(matcher, block, *,
+                            failure_message : String? = nil,
+                            location : Core::LocationRange? = nil) : AssertionFailed?
       if matcher.responds_to?(:negated_failure_message)
         passed = if matcher.responds_to?(:does_not_match?)
                    matcher.does_not_match?(&block)
