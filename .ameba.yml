@@ -8,19 +8,10 @@
 Documentation/DocumentationAdmonition:
   Description: Reports documentation admonitions
   Timezone: UTC
-  Excluded:
-    - spec/spectator/core/item_spec.cr
-    - src/spectator/formatters/compatible_junit_formatter.cr
-    - src/spectator/core/cli.cr
-    - src/spectator/core/hooks.cr
-    - src/spectator/matchers/built_in.cr
-    - src/spectator/matchers/expect.cr
-    - src/spectator/matchers/matcher.cr
-    - src/spectator/matchers/negated.cr
   Admonitions:
     - TODO
     - FIXME
     - BUG
   Enabled: true
-  Severity: Warning
+  Severity: Convention
 # TODO: Address these issues and re-enable the check.

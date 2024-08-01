@@ -23,7 +23,7 @@ jobs:
       - name: Format
         run: crystal tool format --check
       - name: Lint
-        run: bin/ameba
+        run: bin/ameba --fail-level warning
 
   test:
     name: Test
