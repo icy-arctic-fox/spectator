@@ -1,6 +1,6 @@
-require "../assertion_failed"
 require "../core/location_range"
 require "../framework_error"
+require "./match_data"
 
 module Spectator::Matchers
   module Matcher
@@ -8,11 +8,14 @@ module Spectator::Matchers
 
     def match(matcher, actual_value, *,
               failure_message : String? = nil,
-              location : Core::LocationRange? = nil) : AssertionFailed?
+              location : Core::LocationRange? = nil) : MatchData
       if matcher.responds_to?(:matches?) && matcher.responds_to?(:failure_message)
-        return if matcher.matches?(actual_value)
-        failure_message ||= matcher.failure_message(actual_value).to_s
-        AssertionFailed.new(failure_message, location)
+        if matcher.matches?(actual_value)
+          Matchers.passed(location)
+        else
+          failure_message ||= matcher.failure_message(actual_value).to_s
+          Matchers.failed(failure_message, location)
+        end
       else
         # TODO: Add more information, such as missing methods and suggestions.
         raise FrameworkError.new("Matcher #{matcher.class} does not support matching.")
@@ -21,7 +24,7 @@ module Spectator::Matchers
 
     def match_negated(matcher, actual_value, *,
                       failure_message : String? = nil,
-                      location : Core::LocationRange? = nil) : AssertionFailed?
+                      location : Core::LocationRange? = nil) : MatchData
       if matcher.responds_to?(:negated_failure_message)
         passed = if matcher.responds_to?(:does_not_match?)
                    matcher.does_not_match?(actual_value)
@@ -31,9 +34,12 @@ module Spectator::Matchers
                    # TODO: Add more information, such as missing methods and suggestions.
                    raise FrameworkError.new("Matcher #{matcher.class} does not support negated matching.")
                  end
-        return if passed
-        failure_message ||= matcher.negated_failure_message(actual_value).to_s
-        AssertionFailed.new(failure_message, location)
+        if passed
+          Matchers.passed(location)
+        else
+          failure_message ||= matcher.negated_failure_message(actual_value).to_s
+          Matchers.failed(failure_message, location)
+        end
       else
         # TODO: Add more information, such as missing methods and suggestions.
         raise FrameworkError.new("Matcher #{matcher.class} does not support negated matching.")
@@ -42,11 +48,14 @@ module Spectator::Matchers
 
     def match_block(matcher, block, *,
                     failure_message : String? = nil,
-                    location : Core::LocationRange? = nil) : AssertionFailed?
+                    location : Core::LocationRange? = nil) : MatchData
       if matcher.responds_to?(:matches?) && matcher.responds_to?(:failure_message)
-        return if matcher.matches?(&block)
-        failure_message ||= matcher.failure_message(&block).to_s
-        AssertionFailed.new(failure_message, location)
+        if matcher.matches?(&block)
+          Matchers.passed(location)
+        else
+          failure_message ||= matcher.failure_message(&block).to_s
+          Matchers.failed(failure_message, location)
+        end
       else
         # TODO: Add more information, such as missing methods and suggestions.
         raise FrameworkError.new("Matcher #{matcher.class} does not support matching with a block.")
@@ -55,7 +64,7 @@ module Spectator::Matchers
 
     def match_block_negated(matcher, block, *,
                             failure_message : String? = nil,
-                            location : Core::LocationRange? = nil) : AssertionFailed?
+                            location : Core::LocationRange? = nil) : MatchData
       if matcher.responds_to?(:negated_failure_message)
         passed = if matcher.responds_to?(:does_not_match?)
                    matcher.does_not_match?(&block)
@@ -65,9 +74,12 @@ module Spectator::Matchers
                    # TODO: Add more information, such as missing methods and suggestions.
                    raise FrameworkError.new("Matcher #{matcher.class} does not support negated matching with a block.")
                  end
-        return if passed
-        failure_message ||= matcher.negated_failure_message(&block).to_s
-        AssertionFailed.new(failure_message, location)
+        if passed
+          Matchers.passed(location)
+        else
+          failure_message ||= matcher.negated_failure_message(&block).to_s
+          Matchers.failed(failure_message, location)
+        end
       else
         # TODO: Add more information, such as missing methods and suggestions.
         raise FrameworkError.new("Matcher #{matcher.class} does not support negated matching with a block.")

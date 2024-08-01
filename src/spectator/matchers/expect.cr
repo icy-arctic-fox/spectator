@@ -12,10 +12,10 @@ module Spectator::Matchers
            source_line = __LINE__,
            source_end_line = __END_LINE__) : Nil
       location = Core::LocationRange.new(source_file, source_line, source_end_line)
-      failure = Matcher.match(matcher, @actual_value,
+      match_data = Matcher.match(matcher, @actual_value,
         failure_message: failure_message,
         location: location)
-      raise failure if failure
+      match_data.try_raise
     end
 
     def not_to(matcher, failure_message : String? = nil, *,
@@ -23,10 +23,10 @@ module Spectator::Matchers
                source_line = __LINE__,
                source_end_line = __END_LINE__) : Nil
       location = Core::LocationRange.new(source_file, source_line, source_end_line)
-      failure = Matcher.match_negated(matcher, @actual_value,
+      match_data = Matcher.match_negated(matcher, @actual_value,
         failure_message: failure_message,
         location: location)
-      raise failure if failure
+      match_data.try_raise
     end
 
     def to_not(matcher, failure_message : String? = nil, *,
@@ -49,10 +49,10 @@ module Spectator::Matchers
            source_line = __LINE__,
            source_end_line = __END_LINE__) : Nil
       location = Core::LocationRange.new(source_file, source_line, source_end_line)
-      failure = Matcher.match_block(matcher, @block,
+      match_data = Matcher.match_block(matcher, @block,
         failure_message: failure_message,
         location: location)
-      raise failure if failure
+      match_data.try_raise
     end
 
     def to(matcher : BuiltIn::RaiseErrorMatcher, failure_message : String? = nil, *,
@@ -60,10 +60,10 @@ module Spectator::Matchers
            source_line = __LINE__,
            source_end_line = __END_LINE__) : Exception
       location = Core::LocationRange.new(source_file, source_line, source_end_line)
-      failure = Matcher.match_block(matcher, @block,
+      match_data = Matcher.match_block(matcher, @block,
         failure_message: failure_message,
         location: location)
-      raise failure if failure
+      match_data.try_raise
       matcher.rescued_error
     end
 
@@ -72,10 +72,10 @@ module Spectator::Matchers
                source_line = __LINE__,
                source_end_line = __END_LINE__) : Nil
       location = Core::LocationRange.new(source_file, source_line, source_end_line)
-      failure = Matcher.match_block_negated(matcher, @block,
+      match_data = Matcher.match_block_negated(matcher, @block,
         failure_message: failure_message,
         location: location)
-      raise failure if failure
+      match_data.try_raise
     end
 
     def to_not(matcher, failure_message : String? = nil, *,
