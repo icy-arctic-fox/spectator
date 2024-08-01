@@ -1,3 +1,4 @@
+require "colorize"
 require "../core/location_range"
 
 module Spectator::Matchers
@@ -31,7 +32,14 @@ module Spectator::Matchers
   end
 
   struct FailedMatchData < MatchData
-    getter message : String?
+    getter message : String do
+      color_enabled = Colorize.enabled?
+      begin
+        to_s
+      ensure
+        Colorize.enabled = color_enabled
+      end
+    end
 
     @proc : (IO ->)?
 
