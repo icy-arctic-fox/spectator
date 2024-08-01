@@ -4,7 +4,9 @@ require "../core/execution_result"
 
 module Spectator::Formatters
   abstract class Formatter
-    def initialize(@output = STDOUT)
+    private getter io : IO
+
+    def initialize(@io = STDOUT)
     end
 
     abstract def started : Nil
@@ -29,6 +31,6 @@ module Spectator::Formatters
 
     abstract def report_summary : Nil
 
-    delegate print, printf, puts, set_encoding, to: @output
+    delegate print, printf, puts, set_encoding, to: io
   end
 end

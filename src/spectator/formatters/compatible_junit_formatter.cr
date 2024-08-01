@@ -11,7 +11,8 @@ module Spectator::Formatters
     @skipped_count = 0
     @elapsed_time = Time::Span.zero
 
-    def initialize(@output : IO, *, @close_output : Bool = false)
+    def initialize(io : IO, *, @close_output : Bool = false)
+      super(io)
     end
 
     def self.file(output_path : String) : self
@@ -38,7 +39,7 @@ module Spectator::Formatters
       @skipped_count = 0
       @elapsed_time = Time::Span.zero
 
-      @output.close if @close_output
+      io.close if @close_output
     end
 
     def suite_started : Nil
@@ -54,7 +55,7 @@ module Spectator::Formatters
         timestamp: Time.utc, # TODO: Should be start time.
         hostname: System.hostname,
         test_cases: @test_cases,
-      ).to_xml(@output)
+      ).to_xml(io)
     end
 
     def example_group_started(group : Core::ExampleGroup) : Nil

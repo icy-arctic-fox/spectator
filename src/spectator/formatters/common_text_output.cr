@@ -4,6 +4,8 @@ require "../core/source_cache"
 
 module Spectator::Formatters
   module CommonTextOutput
+    private abstract def io : IO
+
     def report_results(results : Enumerable(Core::ExecutionResult)) : Nil
       failures = results.select &.failed?
       report_failures(failures) unless failures.empty?
@@ -60,7 +62,11 @@ module Spectator::Formatters
         end
         puts
         print_indent(indent)
-        puts error.message
+        if match_data = error.match_data
+          match_data.to_s(io)
+        else
+          puts error.message
+        end
         puts
         if location = error.location
           print_indent(indent)
