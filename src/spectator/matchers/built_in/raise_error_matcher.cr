@@ -3,7 +3,7 @@ module Spectator::Matchers::BuiltIn
     @expected_error : T?
     @expected_message : String | Regex?
 
-    getter! rescued_error : Exception
+    getter rescued_error : Exception?
 
     def initialize(@expected_error : T)
     end

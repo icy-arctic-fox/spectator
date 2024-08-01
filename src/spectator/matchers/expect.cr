@@ -64,7 +64,7 @@ module Spectator::Matchers
         failure_message: failure_message,
         location: location)
       match_data.try_raise
-      matcher.rescued_error
+      matcher.rescued_error.not_nil!("BUG: Error should have been captured")
     end
 
     def not_to(matcher, failure_message : String? = nil, *,

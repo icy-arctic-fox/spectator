@@ -5,7 +5,7 @@ module Spectator::Core
     getter file : String
 
     # Line number in the source file.
-    getter! line : Int32
+    getter line : Int32?
 
     # Creates a new location.
     def initialize(@file, @line = nil)

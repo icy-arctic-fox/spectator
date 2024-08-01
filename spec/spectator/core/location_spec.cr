@@ -5,25 +5,25 @@ Spectator.describe Spectator::Core::Location do
     it "parses a location" do
       location = Spectator::Core::Location.parse("foo:10")
       expect(location.file).to eq("foo")
-      expect(location.line?).to eq(10)
+      expect(location.line).to eq(10)
     end
 
     it "parses a location with no line number" do
       location = Spectator::Core::Location.parse("foo")
       expect(location.file).to eq("foo")
-      expect(location.line?).to be_nil
+      expect(location.line).to be_nil
     end
 
     it "parses a Windows path with a colon" do
       location = Spectator::Core::Location.parse("C:\\foo:10")
       expect(location.file).to eq("C:\\foo")
-      expect(location.line?).to eq(10)
+      expect(location.line).to eq(10)
     end
 
     it "parses a Windows path with no line number" do
       location = Spectator::Core::Location.parse("C:\\foo")
       expect(location.file).to eq("C:\\foo")
-      expect(location.line?).to be_nil
+      expect(location.line).to be_nil
     end
   end
 

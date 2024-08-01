@@ -20,7 +20,7 @@ module Spectator::Core
 
     def add_child(child : Item) : Nil
       # Attempt to remove the child from its previous parent.
-      child.parent?.try do |prev_parent|
+      child.parent.try do |prev_parent|
         prev_parent.remove_child(child) if prev_parent.responds_to?(:remove_child)
       end
 
@@ -32,7 +32,7 @@ module Spectator::Core
       @children.delete(child)
 
       # Disassociate the child only if it's ours.
-      child.parent = nil if child.parent? == self
+      child.parent = nil if child.parent == self
     end
 
     def each(& : Item ->) : Nil

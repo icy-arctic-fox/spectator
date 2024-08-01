@@ -58,7 +58,7 @@ module Spectator
     end
 
     class Sandbox
-      property! current_example : Example
+      property current_example : Example?
       getter root_example_group = ExampleGroup.new
       getter path : Path = Path[Dir.current]
 

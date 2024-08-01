@@ -80,8 +80,8 @@ module Spectator::Formatters
 
       @test_cases << if result.failed?
         JUnit::FailedTestCase.new(**properties, error: result.exception)
-      elsif result.skipped?
-        JUnit::SkippedTestCase.new(**properties, skip_message: result.error_message)
+      elsif result.skipped? && (skip_message = result.error_message)
+        JUnit::SkippedTestCase.new(**properties, skip_message: skip_message)
       else
         JUnit::PassedTestCase.new(**properties)
       end

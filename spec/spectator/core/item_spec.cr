@@ -16,7 +16,7 @@ Spectator.describe Spectator::Core::Item do
 
     it "is nil if the item does not have a description" do
       item = TestItem.new
-      expect(item.description?).to be_nil
+      expect(item.description).to be_nil
     end
 
     it "is the result of #inspect when passing a non-string to #initialize" do

@@ -7,9 +7,9 @@ module Spectator::Core
       After
     end
 
-    getter! location : LocationRange
+    getter location : LocationRange?
 
-    getter! exception : Exception
+    getter exception : Exception?
 
     getter position : Position
 

@@ -6,12 +6,12 @@ module Spectator::Core
   abstract class Item
     # The description of the item.
     # This may be nil if the item does not have a description.
-    getter! description : String
+    getter description : String?
 
     # The full description of the item.
     # This is a combination of all parent descriptions and this item's description.
     def full_description : String?
-      return unless description?
+      return unless description
       String.build do |io|
         full_description(io)
       end
@@ -19,10 +19,10 @@ module Spectator::Core
 
     # Appends the parent's description and this item's description to the given *io*.
     def full_description(io : IO) : Nil
-      return unless description?
-      if parent = parent?
-        parent.full_description(io)
-        io << ' ' if parent.description?
+      return unless description
+      parent.try do |context|
+        context.full_description(io)
+        io << ' ' if context.description
       end
       io << description
     end
@@ -30,10 +30,10 @@ module Spectator::Core
     # The location of the item in the source code.
     # This may be nil if the item does not have a location,
     # such as if it was dynamically generated.
-    getter! location : LocationRange
+    getter location : LocationRange?
 
     # Context (the example group) the item belongs to.
-    getter! parent : Context
+    getter parent : Context?
 
     # Sets the context (the example group) the item belongs to.
     # NOTE: It is important that the context should be made aware that this item is a child.

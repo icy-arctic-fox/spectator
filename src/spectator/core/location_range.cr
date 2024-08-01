@@ -31,7 +31,7 @@ module Spectator::Core
     # Checks if the location is in the range.
     def includes?(location : Location)
       return false if location.file != @file
-      return true unless line = location.line?
+      return true unless line = location.line
       @line <= line && line <= @end_line
     end
 

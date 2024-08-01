@@ -129,7 +129,7 @@ module Spectator::Core
     # TODO: around_all
 
     protected def with_hooks(example : Example, &block : ->) : Nil
-      if context = parent?
+      if context = parent
         context.with_hooks(example) do
           with_current_context_hooks(example, &block)
         end
