@@ -62,7 +62,7 @@ module Spectator::Formatters
           if location = error.location
             if source_code = Spectator.source_cache.get(location.file, location.line, location.end_line)
               if location.line == location.end_line
-                printer.print_code(source_code)
+                printer.print_code(source_code.strip)
               else
                 printer.puts
                 printer.indent &.print_code(source_code)
