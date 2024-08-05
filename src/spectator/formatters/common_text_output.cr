@@ -1,10 +1,15 @@
 require "../assertion_failed"
 require "../core/execution_result"
 require "../core/source_cache"
+require "./terminal_printer"
 
 module Spectator::Formatters
   module CommonTextOutput
     private abstract def io : IO
+
+    private getter printer do
+      TerminalPrinter.new(io)
+    end
 
     def report_results(results : Enumerable(Core::ExecutionResult)) : Nil
       failures = results.select &.failed?
@@ -14,10 +19,10 @@ module Spectator::Formatters
     end
 
     private def report_failures(results : Enumerable(Core::ExecutionResult)) : Nil
-      puts
-      puts "Failures:"
-      puts
-      padding = results.size.to_s.size - 1 # -1 since the minimum width is 1.
+      printer.puts
+      printer.print_title(:error) { |io| io << "Failures:" }
+      printer.puts
+      padding = results.size.to_s.size + 1
       results.each_with_index(1) do |result, index|
         print_failure(result, index, padding)
       end
@@ -46,74 +51,68 @@ module Spectator::Formatters
     #    # spec/example_spec.cr:42
     # ```
     private def print_failure(result, number, padding) : Nil
-      print_indent(padding)
-      print "  #{number}) "
-      puts result.example.full_description
-
       digit_count = number.to_s.size
-      indent = padding + digit_count + 4 # +2 for the space and the parenthesis and +2 for the actual indent.
-      error = result.exception
-      if error.is_a?(AssertionFailed)
-        print_indent(indent)
-        print "Failure: "
-        if location = error.location
-          source_code = Spectator.source_cache.get(location.file, location.line)
-          puts source_code.strip if source_code
-        end
-        puts
-        print_indent(indent)
-        if match_data = error.match_data
-          match_data.to_s(io)
+      padding -= digit_count
+      printer.print_inline_label("#{number})", padding: padding) do
+        printer.puts result.example.full_description
+
+        error = result.exception
+        if error.is_a?(AssertionFailed)
+          printer.print_label(:error) { |io| io << "Failure: " }
+          if location = error.location
+            source_code = Spectator.source_cache.get(location.file, location.line)
+            printer.print_code(source_code.strip) if source_code
+          end
+          printer.puts
+          if match_data = error.match_data
+            match_data.format(printer)
+            printer.puts
+          else
+            printer.puts error.message
+          end
+          printer.puts
+          if location = error.location
+            # OPTIMIZE: Store current directory to avoid re-fetching it.
+            printer.puts "# #{location.relative_to(Dir.current)}"
+            printer.puts
+          end
         else
-          puts error.message
+          print_trace(error)
         end
-        puts
-        if location = error.location
-          print_indent(indent)
-          # OPTIMIZE: Store current directory to avoid re-fetching it.
-          puts "# #{location.relative_to(Dir.current)}"
-          puts
-        end
-      else
-        puts
-        print_trace(error, indent)
       end
-      puts
     end
 
-    private def print_trace(error, indent) : Nil
-      print_indent(indent)
-      puts "#{error.message} (#{error.class})"
+    private def print_trace(error) : Nil
+      printer.print_label(:error) { |io| io << "#{error.class}: " }
+      printer.puts "#{error.message}"
+      printer.puts
 
       error.backtrace?.try &.each do |frame|
-        print_indent(indent)
-        print "  from "
-        puts frame
+        printer << "  from "
+        printer.puts frame
       end
 
       if cause = error.cause
-        print_trace(cause, indent)
+        print_trace(cause)
       end
     end
 
     private def report_skipped(results : Enumerable(Core::ExecutionResult)) : Nil
-      puts
-      puts "Skipped:"
-      results.each do |result|
-        print "  "
-        puts result.example.full_description
+      printer.puts
+      printer.print_title(:warning) { |io| io << "Skipped:" }
+      printer.puts
+      printer.indent do
+        results.each do |result|
+          printer.puts result.example.full_description
+        end
       end
-      puts
+      printer.puts
     end
 
     def report_profile : Nil
     end
 
     def report_summary : Nil
-    end
-
-    private def print_indent(amount) : Nil
-      amount.times { print ' ' }
     end
   end
 end
