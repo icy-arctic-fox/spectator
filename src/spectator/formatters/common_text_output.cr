@@ -20,7 +20,7 @@ module Spectator::Formatters
 
     private def report_failures(results : Enumerable(Core::ExecutionResult)) : Nil
       printer.puts
-      printer.print_title(:error) { |io| io << "Failures:" }
+      printer.print_title(:error, &.<< "Failures:")
       printer.puts
       padding = results.size.to_s.size + 1
       results.each_with_index(1) do |result, index|
@@ -58,7 +58,7 @@ module Spectator::Formatters
 
         error = result.exception
         if error.is_a?(AssertionFailed)
-          printer.print_label(:error) { |io| io << "Failure: " }
+          printer.print_label(:error, &.<< "Failure: ")
           if location = error.location
             source_code = Spectator.source_cache.get(location.file, location.line)
             printer.print_code(source_code.strip) if source_code
@@ -83,7 +83,7 @@ module Spectator::Formatters
     end
 
     private def print_trace(error) : Nil
-      printer.print_label(:error) { |io| io << "#{error.class}: " }
+      printer.print_label(:error, &.<< "#{error.class}: ")
       printer.puts "#{error.message}"
       printer.puts
 
@@ -99,7 +99,7 @@ module Spectator::Formatters
 
     private def report_skipped(results : Enumerable(Core::ExecutionResult)) : Nil
       printer.puts
-      printer.print_title(:warning) { |io| io << "Skipped:" }
+      printer.print_title(:warning, &.<< "Skipped:")
       printer.puts
       printer.indent do
         results.each do |result|
