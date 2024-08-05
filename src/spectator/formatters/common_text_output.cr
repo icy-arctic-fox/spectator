@@ -91,16 +91,22 @@ module Spectator::Formatters
     private def print_trace(error) : Nil
       printer.print_label(:error, &.<< "#{error.class}: ")
       printer.puts "#{error.message}"
-      printer.puts
 
       error.backtrace?.try &.each do |frame|
-        printer << "  from "
+        frame = frame.colorize.dim if external_frame?(frame)
         printer.puts frame
       end
 
       if cause = error.cause
         print_trace(cause)
       end
+    end
+
+    private def external_frame?(frame : String)
+      frame.starts_with?("lib/") ||    # Crystal shards
+        frame.starts_with?('/') ||     # POSIX absolute path
+        frame.starts_with?(/^\w+:/) || # Windows absolute path
+        frame == "???"
     end
 
     private def report_skipped(results : Enumerable(Core::ExecutionResult)) : Nil
