@@ -10,19 +10,33 @@ module Spectator
       @pool = StringPool.new
 
       def get(path : String, line : Int) : String?
-        lines = @cache[path]?
-        unless lines
-          return unless lines = load_file(path)
-          @cache[path] = lines
+        with_file_cache(path) do |lines|
+          lines[line - 1]?
         end
-        lines[line - 1]?
+      end
+
+      def get(path : String, line : Int, end_line : Int) : String?
+        with_file_cache(path) do |lines|
+          lines[line - 1, end_line - line + 1]?.try &.join
+        end
+      end
+
+      private def with_file_cache(path : String, & : Array(String) -> _)
+        if lines = @cache[path]?
+          yield lines
+        else
+          lines = load_file(path)
+          return unless lines
+          @cache[path] = lines
+          yield lines
+        end
       end
 
       private def load_file(path : String) : Array(String)?
         return unless File.file?(path)
 
         lines = [] of String
-        File.each_line(path) do |line|
+        File.each_line(path, chomp: false) do |line|
           lines << @pool.get(line)
         end
         lines
