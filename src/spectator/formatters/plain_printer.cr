@@ -5,6 +5,14 @@ module Spectator::Formatters
   class PlainPrinter < Printer
     include Indent
 
+    def puts(*objects, style : Style) : Nil
+      puts *objects # Uses Indent#puts
+    end
+
+    def print(*objects, style : Style) : Nil
+      print *objects # Uses Indent#print
+    end
+
     def print_value(& : IO ->) : Nil
       yield io
     end

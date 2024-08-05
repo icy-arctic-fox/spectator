@@ -54,7 +54,7 @@ module Spectator::Formatters
       digit_count = number.to_s.size
       padding -= digit_count
       printer.print_inline_label("#{number})", padding: padding) do
-        printer.puts result.example.full_description
+        printer.puts result.example.full_description, style: :error
 
         error = result.exception
         if error.is_a?(AssertionFailed)
@@ -73,7 +73,7 @@ module Spectator::Formatters
           printer.puts
           if location = error.location
             # OPTIMIZE: Store current directory to avoid re-fetching it.
-            printer.puts "# #{location.relative_to(Dir.current)}"
+            printer.puts "# #{location.relative_to(Dir.current)}", style: :info
             printer.puts
           end
         else
