@@ -63,6 +63,7 @@ module Spectator::Formatters
     end
 
     def print_code(code : String) : Nil
+      print_indent
       indent = " " * indent_amount
       indented_code = code.gsub('\n', "\n#{indent}")
       Crystal::SyntaxHighlighter::Colorize.highlight(io, indented_code)
