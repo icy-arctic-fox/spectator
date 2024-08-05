@@ -92,9 +92,11 @@ module Spectator::Formatters
       printer.print_label(:error, &.<< "#{error.class}: ")
       printer.puts "#{error.message}"
 
-      error.backtrace?.try &.each do |frame|
-        frame = frame.colorize.dim if external_frame?(frame)
-        printer.puts frame
+      printer.indent do
+        error.backtrace?.try &.each do |frame|
+          frame = frame.colorize.dim if external_frame?(frame)
+          printer.puts frame
+        end
       end
 
       if cause = error.cause
