@@ -62,11 +62,31 @@ module Spectator::Formatters
       end
     end
 
+    private getter syntax_highlighter : Crystal::SyntaxHighlighter do
+      Crystal::SyntaxHighlighter::Colorize.new(io).tap do |highlighter|
+        highlighter.colors = {
+          :comment           => :dark_gray,
+          :number            => :magenta,
+          :symbol            => :magenta,
+          :char              => :green,
+          :string            => :green,
+          :interpolation     => :green,
+          :const             => :cyan,
+          :operator          => :white,
+          :ident             => :blue,
+          :keyword           => :blue,
+          :primitive_literal => :magenta,
+          :self              => :blue,
+          :unknown           => :white,
+        } of Crystal::SyntaxHighlighter::TokenType => Colorize::Color
+      end
+    end
+
     def print_code(code : String) : Nil
       print_indent
       indent = " " * indent_amount
       indented_code = code.gsub('\n', "\n#{indent}")
-      Crystal::SyntaxHighlighter::Colorize.highlight(io, indented_code)
+      syntax_highlighter.highlight(indented_code)
       io.puts unless code.ends_with?("\n")
     end
 
