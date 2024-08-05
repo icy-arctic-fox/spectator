@@ -7,10 +7,10 @@ module Spectator::Formatters
     private property indent_amount = 0
     private property? newline = true
 
-    def indent(amount : Int = DEFAULT_INDENT_AMOUNT, &) : Nil
+    def indent(amount : Int = DEFAULT_INDENT_AMOUNT, & : self ->) : Nil
       self.indent_amount += amount
       begin
-        yield
+        yield self
       ensure
         self.indent_amount -= amount
       end
