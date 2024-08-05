@@ -1,5 +1,6 @@
-require "colorize"
 require "../core/location_range"
+require "../formatters/plain_printer"
+require "../formatters/printer"
 
 module Spectator::Matchers
   abstract struct MatchData
@@ -15,6 +16,8 @@ module Spectator::Matchers
     end
 
     abstract def try_raise : Nil
+
+    abstract def format(printer : Formatters::Printer) : Nil
   end
 
   struct PassedMatchData < MatchData
@@ -29,25 +32,24 @@ module Spectator::Matchers
     def try_raise : Nil
       # ...
     end
+
+    def format(printer : Formatters::Printer) : Nil
+      # TODO: Print "Passed" string
+    end
   end
 
   struct FailedMatchData < MatchData
     getter message : String do
-      color_enabled = Colorize.enabled?
-      begin
-        to_s
-      ensure
-        Colorize.enabled = color_enabled
-      end
+      to_s
     end
 
-    @proc : (IO ->)?
+    @proc : (Formatters::Printer ->)?
 
     def initialize(@message : String, location : Core::LocationRange? = nil)
       super(location)
     end
 
-    def initialize(location : Core::LocationRange? = nil, &block : IO ->)
+    def initialize(location : Core::LocationRange? = nil, &block : Formatters::Printer ->)
       super(location)
       @proc = block
     end
@@ -60,14 +62,20 @@ module Spectator::Matchers
       raise AssertionFailed.new(self)
     end
 
-    def to_s(io : IO) : Nil
+    def format(printer : Formatters::Printer) : Nil
       if proc = @proc
-        proc.call(io)
+        proc.call(printer)
       elsif message = @message
-        io << message
+        printer.print_value do |io|
+          io << message
+        end
       else
-        io << "Failed"
+        # TODO: Print "Failed" string
       end
+    end
+
+    def to_s(io : IO) : Nil
+      format(Formatters::PlainPrinter.new(io))
     end
   end
 
@@ -79,7 +87,7 @@ module Spectator::Matchers
     FailedMatchData.new(message, location)
   end
 
-  def self.failed(location : Core::LocationRange? = nil, &block : IO ->) : MatchData
+  def self.failed(location : Core::LocationRange? = nil, &block : Formatters::Printer ->) : MatchData
     FailedMatchData.new(location, &block)
   end
 end

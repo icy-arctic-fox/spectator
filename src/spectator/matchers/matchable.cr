@@ -1,5 +1,6 @@
-require "./formatting"
+require "../formatters/printer"
 require "../framework_error"
+require "./formatting"
 
 module Spectator::Matchers
   module Matchable
@@ -21,16 +22,16 @@ module Spectator::Matchers
       "Expected #{description_of actual_value} to #{description}"
     end
 
-    def format_failure_message(io : IO, actual_value) : Nil
-      io << failure_message(actual_value)
+    def format_failure_message(printer : Formatters::Printer, actual_value) : Nil
+      printer << failure_message(actual_value)
     end
 
     def negated_failure_message(actual_value)
       "Expected #{description_of actual_value} not to #{description}"
     end
 
-    def format_negated_failure_message(io : IO, actual_value) : Nil
-      io << negated_failure_message(actual_value)
+    def format_negated_failure_message(printer : Formatters::Printer, actual_value) : Nil
+      printer << negated_failure_message(actual_value)
     end
 
     def =~(other)
