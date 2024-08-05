@@ -60,8 +60,14 @@ module Spectator::Formatters
         if error.is_a?(AssertionFailed)
           printer.print_label(:error, &.<< "Failure: ")
           if location = error.location
-            source_code = Spectator.source_cache.get(location.file, location.line)
-            printer.print_code(source_code.strip) if source_code
+            if source_code = Spectator.source_cache.get(location.file, location.line, location.end_line)
+              if location.line == location.end_line
+                printer.print_code(source_code)
+              else
+                printer.puts
+                printer.indent &.print_code(source_code)
+              end
+            end
           end
           printer.puts
           if match_data = error.match_data
