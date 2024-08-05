@@ -74,6 +74,7 @@ module Spectator::Formatters
       case style
       in .none?    then base
       in .info?    then base.blue
+      in .success? then base.green
       in .warning? then base.yellow
       in .error?   then base.red
       end
@@ -84,6 +85,7 @@ module Spectator::Formatters
       case style
       in .none?    then base.black.on_white
       in .info?    then base.on_blue
+      in .success? then base.on_green
       in .warning? then base.on_yellow
       in .error?   then base.on_red
       end.bold

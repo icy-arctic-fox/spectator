@@ -2,6 +2,7 @@ module Spectator::Formatters
   enum Style
     None
     Info
+    Success
     Warning
     Error
   end

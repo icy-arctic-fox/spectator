@@ -10,15 +10,20 @@ module Spectator::Formatters
     ERROR_CHAR = 'E'
     SKIP_CHAR  = '*'
 
+    PASS_STYLE  = Style::Success
+    FAIL_STYLE  = Style::Error
+    ERROR_STYLE = Style::Error
+    SKIP_STYLE  = Style::Warning
+
     def example_started(example : Core::Example) : Nil
     end
 
     def example_finished(result : Core::ExecutionResult) : Nil
-      print case result.status
-      in .pass?  then PASS_CHAR
-      in .fail?  then FAIL_CHAR
-      in .error? then ERROR_CHAR
-      in .skip?  then SKIP_CHAR
+      case result.status
+      in .pass?  then printer.print PASS_CHAR, style: PASS_STYLE
+      in .fail?  then printer.print FAIL_CHAR, style: FAIL_STYLE
+      in .error? then printer.print ERROR_CHAR, style: ERROR_STYLE
+      in .skip?  then printer.print SKIP_CHAR, style: SKIP_STYLE
       end
     end
 
