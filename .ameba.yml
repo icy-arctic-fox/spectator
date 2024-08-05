@@ -12,6 +12,7 @@ Documentation/DocumentationAdmonition:
     - TODO
     - FIXME
     - BUG
+    - OPTIMIZE
   Enabled: true
   Severity: Convention
 # TODO: Address these issues and re-enable the check.
