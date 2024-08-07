@@ -10,8 +10,6 @@ module Spectator::Core
 
     getter location : LocationRange?
 
-    getter exception : Exception?
-
     getter position : Position
 
     def initialize(@position : Position, @location = nil, &@block : T ->)
@@ -21,15 +19,7 @@ module Spectator::Core
     end
 
     def call(example : T)
-      # Re-raise previous error if there was one.
-      @exception.try { |ex| raise ex }
-
-      begin
-        @block.call(example)
-      rescue ex
-        @exception = ex
-        raise ex
-      end
+      @block.call(example)
     end
 
     def inspect(io : IO) : Nil
