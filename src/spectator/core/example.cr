@@ -17,13 +17,23 @@ module Spectator::Core
     def run : Result
       @run = true
       @previous_result = Result.capture do
+        # Capture exceptions raised in the example block.
+        # Defer raising them until after hooks have finished.
+        exception = nil.as(Exception?)
         if context = parent
           context.with_hooks(self) do
             @block.call(self)
+          rescue ex
+            exception = ex
           end
         else
-          @block.call(self)
+          begin
+            @block.call(self)
+          rescue ex
+            exception = ex
+          end
         end
+        exception.try { |ex| raise ex }
       end
     end
 
