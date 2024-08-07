@@ -1,6 +1,5 @@
 require "./context_hook"
 require "./example_hook"
-require "./result"
 
 module Spectator::Core
   module Hooks
