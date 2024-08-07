@@ -70,12 +70,12 @@ module Spectator::Core
       io << '>'
     end
 
-    def to_proc(&block : Example ->)
+    def to_proc(&block : Procsy ->)
       Procsy.new(self, &block)
     end
 
     def to_proc
-      Procsy.new(self)
+      to_proc { run }
     end
 
     struct Procsy
@@ -84,12 +84,15 @@ module Spectator::Core
       def initialize(@example : Example, &@proc : self ->)
       end
 
-      def initialize(@example : Example)
-        @proc = ->@example.run
+      def run
+        @proc.call(self)
       end
 
-      def run
-        @proc.call(@example)
+      def wrap(&block : self ->)
+        Procsy.new(@example) do
+          block.call(self)
+          # TODO: Warn if block did not run example (call #run).
+        end
       end
 
       forward_missing_to @example

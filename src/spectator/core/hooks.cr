@@ -1,5 +1,6 @@
 require "./context_hook"
 require "./example_hook"
+require "./result"
 
 module Spectator::Core
   module Hooks
@@ -117,18 +118,26 @@ module Spectator::Core
                     source_file = __FILE__,
                     source_line = __LINE__,
                     source_end_line = __END_LINE__,
-                    & : Example::Procsy ->) : ExampleHook(Example::Procsy)
-      location = LocationRange.new(file, line, end_line)
+                    &block : Example::Procsy ->) : ExampleHook(Example::Procsy)
+      location = LocationRange.new(source_file, source_line, source_end_line)
       hook = ExampleHook(Example::Procsy).new(:around, location, &block)
       around_each_hooks << hook
       hook
+    end
+
+    def around(*,
+               source_file = __FILE__,
+               source_line = __LINE__,
+               source_end_line = __END_LINE__,
+               &block : Example::Procsy ->) : ExampleHook(Example::Procsy)
+      around_each(source_file: source_file, source_line: source_line, source_end_line: source_end_line, &block)
     end
 
     # TODO: before_suite and after_suite
 
     # TODO: around_all
 
-    protected def with_hooks(example : Example, &block : ->) : Nil
+    protected def with_hooks(example : Example, &block : Example::Procsy ->)
       if context = parent
         context.with_hooks(example) do
           with_current_context_hooks(example, &block)
@@ -138,12 +147,18 @@ module Spectator::Core
       end
     end
 
-    private def with_current_context_hooks(example : Example, &block : ->) : Nil
+    private def with_current_context_hooks(example : Example, &block : Example::Procsy ->)
+      proc = example.to_proc do |procsy|
+        @before_each_hooks.try &.each &.call(example)
+        block.call(procsy)
+        @after_each_hooks.try &.each &.call(example)
+      end
+      @around_each_hooks.try &.reverse_each do |hook|
+        proc = proc.wrap(&->hook.call(Example::Procsy))
+      end
+
       @before_all_hooks.try &.each &.call
-      @before_each_hooks.try &.each &.call(example)
-      # TODO: around_each
-      block.call
-      @after_each_hooks.try &.each &.call(example)
+      proc.run
       @after_all_hooks.try &.each &.call
     end
   end
