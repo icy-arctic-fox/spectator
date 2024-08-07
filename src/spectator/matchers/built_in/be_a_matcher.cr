@@ -12,32 +12,19 @@ module Spectator::Matchers::BuiltIn
       actual_value.is_a?(T)
     end
 
-    def failure_message(actual_value)
-      <<-MESSAGE
-       Expected: #{actual_value.pretty_inspect}
-        to be a: #{T}
-      but was a: #{actual_value.class}
-      MESSAGE
+    format_messages
+
+    def failure_message(actual_value) : Nil
+      puts << " Expected: " << description_of(actual_value)
+      puts << "  to be a: " << description_of(T)
+      puts << "but was a: " << description_of(actual_value.class)
     end
 
-    def format_failure_message(printer : Formatters::Printer, actual_value) : Nil
-      printer << " Expected: "
-      format_description_of(printer, actual_value)
-      printer.puts
-
-      printer << "  to be a: "
-      format_description_of(printer, T)
-      printer.puts
-
-      printer << "but was a: "
-      format_description_of(printer, actual_value.class)
-    end
-
-    def negated_failure_message(actual_value)
-      <<-MESSAGE
-         Expected: #{actual_value.pretty_inspect}
-      not to be a: #{T}#{" (#{actual_value.class} is a sub-type of #{T})" if actual_value.class != T}
-      MESSAGE
+    def negated_failure_message(actual_value) : Nil
+      puts << "   Expected: " << description_of(actual_value)
+      puts << "not to be a: " << description_of(T)
+      return if actual_value.class == T
+      puts << description_of(actual_value.class) << " is a sub-type of " << description_of(T)
     end
   end
 end

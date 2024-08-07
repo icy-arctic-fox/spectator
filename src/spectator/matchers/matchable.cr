@@ -22,16 +22,8 @@ module Spectator::Matchers
       "Expected #{description_of actual_value} to #{description}"
     end
 
-    def format_failure_message(printer : Formatters::Printer, actual_value) : Nil
-      printer << failure_message(actual_value)
-    end
-
     def negated_failure_message(actual_value)
       "Expected #{description_of actual_value} not to #{description}"
-    end
-
-    def format_negated_failure_message(printer : Formatters::Printer, actual_value) : Nil
-      printer << negated_failure_message(actual_value)
     end
 
     def =~(other)
@@ -50,10 +42,10 @@ module Spectator::Matchers
       def negated_failure_message(actual_value)
         no_negation!
       end
+    end
 
-      def format_negated_failure_message(io : IO, actual_value) : Nil
-        no_negation!
-      end
+    macro format_messages
+      include Formatting::Printable
     end
   end
 end

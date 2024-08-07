@@ -15,9 +15,9 @@ module Spectator::Matchers
         else
           if failure_message
             Matchers.failed(failure_message, location)
-          elsif matcher.responds_to?(:format_failure_message)
+          elsif matcher.responds_to?(:with_printer)
             Matchers.failed(location) do |printer|
-              matcher.format_failure_message(printer, actual_value)
+              matcher.with_printer(printer, &.failure_message(actual_value))
             end
           else
             failure_message = matcher.failure_message(actual_value).to_s
@@ -45,8 +45,16 @@ module Spectator::Matchers
         if passed
           Matchers.passed(location)
         else
-          failure_message ||= matcher.negated_failure_message(actual_value).to_s
-          Matchers.failed(failure_message, location)
+          if failure_message
+            Matchers.failed(failure_message, location)
+          elsif matcher.responds_to?(:with_printer)
+            Matchers.failed(location) do |printer|
+              matcher.with_printer(printer, &.negated_failure_message(actual_value))
+            end
+          else
+            failure_message = matcher.negated_failure_message(actual_value).to_s
+            Matchers.failed(failure_message, location)
+          end
         end
       else
         # TODO: Add more information, such as missing methods and suggestions.
