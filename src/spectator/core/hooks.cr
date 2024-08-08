@@ -109,6 +109,22 @@ module Spectator::Core
       hook
     end
 
+    def before_suite(*,
+                     source_file = __FILE__,
+                     source_line = __LINE__,
+                     source_end_line = __END_LINE__,
+                     &block : ->) : ContextHook
+      Spectator.root_example_group.before_all(source_file: source_file, source_line: source_line, source_end_line: source_end_line, &block)
+    end
+
+    def after_suite(*,
+                    source_file = __FILE__,
+                    source_line = __LINE__,
+                    source_end_line = __END_LINE__,
+                    &block : ->) : ContextHook
+      Spectator.root_example_group.after_all(source_file: source_file, source_line: source_line, source_end_line: source_end_line, &block)
+    end
+
     protected getter around_each_hooks do
       [] of ExampleHook(Example::Procsy)
     end
@@ -131,8 +147,6 @@ module Spectator::Core
                &block : Example::Procsy ->) : ExampleHook(Example::Procsy)
       around_each(source_file: source_file, source_line: source_line, source_end_line: source_end_line, &block)
     end
-
-    # TODO: before_suite and after_suite
 
     # TODO: around_all
 

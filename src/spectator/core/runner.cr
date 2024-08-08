@@ -73,6 +73,10 @@ module Spectator
     end
   end
 
+  def self.root_example_group : Core::ExampleGroup
+    sandbox.root_example_group
+  end
+
   def self.current_example : Core::Example
     sandbox.current_example
   end
