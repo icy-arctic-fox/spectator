@@ -274,12 +274,8 @@ module Spectator::Matchers
     end
 
     module ::Spectator::Matchers::Custom
-      def {{name.id}}({{properties.splat(", ")}} *,
-                      source_file = __FILE__,
-                      source_line = __LINE__,
-                      source_end_line = __END_LINE__)
-        # TODO: Store location.
-        {{matcher_name}}.new({{properties.map(&.var).splat(", ")}})
+      def {{name.id}}({{properties.splat}})
+        {{matcher_name}}.new({{properties.map(&.var).splat}})
       end
     end
   end
