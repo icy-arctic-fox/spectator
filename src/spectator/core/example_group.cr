@@ -37,8 +37,7 @@ module Spectator::Core
 
     def each(& : Item ->) : Nil
       stack = [self] of Item
-      until stack.empty?
-        item = stack.shift
+      while item = stack.shift?
         yield item
         if item.is_a?(ExampleGroup)
           stack.concat(item.children)
