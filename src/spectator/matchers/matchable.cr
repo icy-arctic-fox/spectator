@@ -10,6 +10,10 @@ module Spectator::Matchers
 
     abstract def matches?(actual_value)
 
+    def matches?(&)
+      matches?(yield)
+    end
+
     getter matcher_name do
       self.class.name.split("::").last.rchop("Matcher").underscore
     end
@@ -18,12 +22,24 @@ module Spectator::Matchers
       !matches?(actual_value)
     end
 
+    def does_not_match?(&)
+      does_not_match?(yield)
+    end
+
     def failure_message(actual_value)
       "Expected #{description_of actual_value} to #{description}"
     end
 
+    def failure_message(&)
+      failure_message(yield)
+    end
+
     def negated_failure_message(actual_value)
       "Expected #{description_of actual_value} not to #{description}"
+    end
+
+    def negated_failure_message(&)
+      negated_failure_message(yield)
     end
 
     def =~(other)
@@ -39,7 +55,15 @@ module Spectator::Matchers
         no_negation!
       end
 
+      def does_not_match?(&)
+        no_negation!
+      end
+
       def negated_failure_message(actual_value)
+        no_negation!
+      end
+
+      def negated_failure_message(&)
         no_negation!
       end
     end
