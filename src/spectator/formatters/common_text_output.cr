@@ -98,6 +98,7 @@ module Spectator::Formatters
           printer.puts frame
         end
       end
+      printer.puts
 
       if cause = error.cause
         print_trace(cause)
