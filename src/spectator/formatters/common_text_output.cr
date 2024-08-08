@@ -12,6 +12,7 @@ module Spectator::Formatters
     end
 
     def report_results(results : Enumerable(Core::ExecutionResult)) : Nil
+      printer.puts
       failures = results.select &.failed?
       report_failures(failures) unless failures.empty?
       skipped = results.select &.skipped?
@@ -19,7 +20,6 @@ module Spectator::Formatters
     end
 
     private def report_failures(results : Enumerable(Core::ExecutionResult)) : Nil
-      printer.puts
       printer.print_title(:error, &.<< "Failures:")
       printer.puts
       padding = results.size.to_s.size + 1
@@ -113,7 +113,6 @@ module Spectator::Formatters
     end
 
     private def report_skipped(results : Enumerable(Core::ExecutionResult)) : Nil
-      printer.puts
       printer.print_title(:warning, &.<< "Skipped:")
       printer.puts
       printer.indent do
