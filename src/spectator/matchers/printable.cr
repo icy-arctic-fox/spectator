@@ -16,30 +16,30 @@ module Spectator::Matchers
     end
 
     def failure_message(actual_value)
-      Printable.build_message do |printer|
+      build_message do |printer|
         failure_message(printer, actual_value)
       end
     end
 
     def failure_message(&)
-      Printable.build_message do |printer|
+      build_message do |printer|
         failure_message(printer, yield)
       end
     end
 
     def negated_failure_message(actual_value)
-      Printable.build_message do |printer|
+      build_message do |printer|
         negated_failure_message(printer, actual_value)
       end
     end
 
     def negated_failure_message(&)
-      Printable.build_message do |printer|
+      build_message do |printer|
         negated_failure_message(printer, yield)
       end
     end
 
-    def self.build_message(&)
+    private def build_message(&)
       String.build do |io|
         printer = Formatters::PlainPrinter.new(io)
         yield FormattingPrinter.new(printer)
