@@ -32,7 +32,7 @@ module Spectator::Matchers
 
     macro disable_negation
       private def no_negation!
-        raise FrameworkError.new("Matcher `#{matcher_name}` does not support negated matching.")
+        raise ::Spectator::FrameworkError.new("Matcher `#{matcher_name}` does not support negated matching.")
       end
 
       def does_not_match?(actual_value)
@@ -45,7 +45,7 @@ module Spectator::Matchers
     end
 
     macro format_messages
-      include Formatting::Printable
+      include ::Spectator::Matchers::Formatting::Printable
     end
   end
 end
