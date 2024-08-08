@@ -33,7 +33,7 @@ module Spectator::Core
             exception = ex
           end
         end
-        exception.try { |ex| raise ex }
+        exception.try { |error| raise error }
       end
     end
 
