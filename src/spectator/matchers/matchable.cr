@@ -1,6 +1,7 @@
 require "../formatters/printer"
 require "../framework_error"
 require "./formatting"
+require "./printable"
 
 module Spectator::Matchers
   module Matchable
@@ -68,8 +69,8 @@ module Spectator::Matchers
       end
     end
 
-    macro format_messages
-      include ::Spectator::Matchers::Formatting::Printable
+    macro print_messages
+      include ::Spectator::Matchers::Printable
     end
   end
 end
