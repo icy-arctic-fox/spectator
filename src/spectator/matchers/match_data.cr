@@ -1,6 +1,6 @@
 require "../core/location_range"
 require "../formatters/plain_printer"
-require "../formatters/printer"
+require "./formatting"
 
 module Spectator::Matchers
   abstract struct MatchData
@@ -34,7 +34,7 @@ module Spectator::Matchers
     end
 
     def format(printer : Formatters::Printer) : Nil
-      # TODO: Print "Passed" string
+      printer << "Passed"
     end
   end
 
@@ -43,13 +43,13 @@ module Spectator::Matchers
       to_s
     end
 
-    @proc : (Formatters::Printer ->)?
+    @proc : (FormattingPrinter ->)?
 
     def initialize(@message : String, location : Core::LocationRange? = nil)
       super(location)
     end
 
-    def initialize(location : Core::LocationRange? = nil, &block : Formatters::Printer ->)
+    def initialize(location : Core::LocationRange? = nil, &block : FormattingPrinter ->)
       super(location)
       @proc = block
     end
@@ -64,13 +64,13 @@ module Spectator::Matchers
 
     def format(printer : Formatters::Printer) : Nil
       if proc = @proc
-        proc.call(printer)
+        proc.call(FormattingPrinter.new(printer))
       elsif message = @message
         printer.print_value do |io|
           io << message
         end
       else
-        # TODO: Print "Failed" string
+        printer << "Failed"
       end
     end
 
@@ -87,7 +87,7 @@ module Spectator::Matchers
     FailedMatchData.new(message, location)
   end
 
-  def self.failed(location : Core::LocationRange? = nil, &block : Formatters::Printer ->) : MatchData
+  def self.failed(location : Core::LocationRange? = nil, &block : FormattingPrinter ->) : MatchData
     FailedMatchData.new(location, &block)
   end
 end
