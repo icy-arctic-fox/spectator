@@ -21,6 +21,11 @@ module Spectator::Formatters
       super
     end
 
+    def print(*objects) : Nil
+      print_indent
+      io.print(*objects)
+    end
+
     def puts(*objects) : Nil
       objects.each do |object|
         print_indent
