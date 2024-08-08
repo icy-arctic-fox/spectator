@@ -34,9 +34,10 @@ module Spectator::Matchers::BuiltIn
 
       printer << "not to be a: "
       printer.description_of(T)
-      printer.puts
 
       return if actual_value.class == T
+      printer.puts
+
       printer.description_of(actual_value.class)
       printer << " is a sub-type of "
       printer.description_of(T)

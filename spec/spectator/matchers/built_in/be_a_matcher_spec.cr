@@ -133,7 +133,8 @@ Spectator.describe BeAMatcher do
             expect(object).not_to be_a(Base)
           end.to fail_check <<-MESSAGE
                Expected: #{object.pretty_inspect}
-            not to be a: Base (Derived is a sub-type of Base)
+            not to be a: Base
+            Derived is a sub-type of Base
             MESSAGE
         end
 
@@ -219,7 +220,8 @@ Spectator.describe BeAMatcher do
             expect(object).not_to be_an(Base)
           end.to fail_check <<-MESSAGE
                Expected: #{object.pretty_inspect}
-            not to be a: Base (Derived is a sub-type of Base)
+            not to be a: Base
+            Derived is a sub-type of Base
             MESSAGE
         end
 
