@@ -133,7 +133,7 @@ module Spectator::Formatters
                when .skipped? then "Passed (with skipped examples)"
                else                "Finished"
                end
-      printer.print_title(summary.style, &.<< status)
+      printer.print_title(summary.title_style, &.<< status)
       printer.puts
 
       printer << "Finished after " << humanize(summary.total_time)

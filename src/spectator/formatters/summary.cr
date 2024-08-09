@@ -46,6 +46,15 @@ module Spectator::Formatters
       end
     end
 
+    def title_style : Style
+      case self
+      when .passed?  then Style::Success
+      when .failed?  then Style::Error
+      when .skipped? then Style::Success
+      else                Style::Info
+      end
+    end
+
     def overhead_time : Time::Span
       total_time - test_time
     end
