@@ -143,10 +143,10 @@ module Spectator::Formatters
       printer.puts(summary.style) do |io|
         io << summary.total << " examples, "
         io << summary.failed << " failures"
-        if (summary.errors > 0)
+        if summary.errors > 0
           io << " (" << summary.errors << " errors)"
         end
-        if (summary.skipped > 0)
+        if summary.skipped > 0
           io << ", " << summary.skipped << " skipped"
         end
       end

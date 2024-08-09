@@ -15,7 +15,7 @@ module Spectator::Formatters
       puts
     end
 
-    def print(style : Style) : Nil
+    def print(style : Style, & : IO ->) : Nil
       print_indent
       colorize_style(style).surround(io) do
         yield io
