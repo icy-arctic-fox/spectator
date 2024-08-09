@@ -18,9 +18,21 @@ module Spectator::Formatters
       self
     end
 
-    abstract def puts(*objects, style : Style) : Nil
+    abstract def puts(style : Style, & : IO ->) : Nil
 
-    abstract def print(*objects, style : Style) : Nil
+    def puts(*objects, style : Style) : Nil
+      objects.each do |object|
+        puts style, &.puts(object)
+      end
+    end
+
+    abstract def print(style : Style, & : IO ->) : Nil
+
+    def print(*objects, style : Style) : Nil
+      objects.each do |object|
+        print style, &.print(object)
+      end
+    end
 
     abstract def print_value(& : IO ->) : Nil
 

@@ -7,16 +7,18 @@ module Spectator::Formatters
   class TerminalPrinter < Printer
     include Indent
 
-    def puts(*objects, style : Style) : Nil
-      colorize_style(style).surround(io) do
-        puts *objects # Uses Indent#puts
-      end
-    end
-
-    def print(*objects, style : Style) : Nil
+    def puts(style : Style, &) : Nil
       print_indent
       colorize_style(style).surround(io) do
-        print *objects # Uses Indent#print
+        yield io
+      end
+      puts
+    end
+
+    def print(style : Style) : Nil
+      print_indent
+      colorize_style(style).surround(io) do
+        yield io
       end
     end
 
