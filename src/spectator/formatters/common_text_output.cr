@@ -126,7 +126,43 @@ module Spectator::Formatters
     def report_profile : Nil
     end
 
-    def report_summary : Nil
+    def report_summary(summary : Summary) : Nil
+      status = case summary
+               when .passed?  then "Passed"
+               when .failed?  then "Failed"
+               when .skipped? then "Passed (with skipped examples)"
+               else                "Finished"
+               end
+      printer.print_title(summary.style, &.<< status)
+      printer.puts
+
+      printer << "Finished after " << humanize(summary.total_time)
+      printer << " (" << humanize(summary.test_time) << " in tests)"
+      printer.puts
+
+      printer.puts(summary.style) do |io|
+        io << summary.total << " examples, "
+        io << summary.failed << " failures"
+        if (summary.errors > 0)
+          io << " (" << summary.errors << " errors)"
+        end
+        if (summary.skipped > 0)
+          io << ", " << summary.skipped << " skipped"
+        end
+      end
+    end
+
+    # TODO: Move to a utility module.
+    private def humanize(span : Time::Span) : String
+      if span < 1.millisecond
+        "#{span.total_microseconds.round} microseconds"
+      elsif span < 1.second
+        "#{span.total_milliseconds.round(2)} milliseconds"
+      elsif span < 1.minute
+        "#{span.total_seconds.round(2)} seconds"
+      else
+        span.to_i.seconds.to_s
+      end
     end
   end
 end

@@ -1,6 +1,7 @@
 require "../core/example"
 require "../core/example_group"
 require "../core/execution_result"
+require "./summary"
 
 module Spectator::Formatters
   abstract class Formatter
@@ -29,7 +30,7 @@ module Spectator::Formatters
 
     abstract def report_profile : Nil
 
-    abstract def report_summary : Nil
+    abstract def report_summary(summary : Summary) : Nil
 
     delegate print, printf, puts, set_encoding, to: io
   end

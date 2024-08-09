@@ -106,7 +106,7 @@ module Spectator::Formatters
     def report_profile : Nil
     end
 
-    def report_summary : Nil
+    def report_summary(summary : Summary) : Nil
     end
   end
 end

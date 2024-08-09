@@ -1,3 +1,4 @@
+require "../formatters/summary"
 require "./cli"
 require "./configuration"
 require "./example"
@@ -27,7 +28,8 @@ module Spectator
         report &.suite_finished
         report &.report_results(results)
         report &.report_profile
-        report &.report_summary
+        summary = Formatters::Summary.from_results(results.map &.result, Spectator.elapsed_time)
+        report &.report_summary(summary)
         report &.finished
       end
 
