@@ -78,8 +78,8 @@ module Spectator::Formatters
           end
           printer.puts
           if location = error.location
-            # OPTIMIZE: Store current directory to avoid re-fetching it.
-            printer.puts "# #{location.relative_to(Dir.current)}", style: :info
+            relative_path = location.relative_to(Spectator.working_path)
+            printer.puts "# #{relative_path}", style: :info
             printer.puts
           end
         else
