@@ -37,7 +37,6 @@ module Spectator::Formatters
       @failure_count = 0
       @error_count = 0
       @skipped_count = 0
-      @elapsed_time = Time::Span.zero
 
       io.close if @close_output
     end
@@ -51,8 +50,8 @@ module Spectator::Formatters
         failures: @failure_count,
         errors: @error_count,
         skipped: @skipped_count,
-        time: @elapsed_time, # TODO: Should be total time, not just the time spent in tests.
-        timestamp: Time.utc, # TODO: Should be start time.
+        time: Spectator.elapsed_time,
+        timestamp: Spectator.start_time,
         hostname: System.hostname,
         test_cases: @test_cases,
       ).to_xml(io)
@@ -89,7 +88,6 @@ module Spectator::Formatters
       @failure_count += 1 if result.failed?
       @skipped_count += 1 if result.skipped?
       @error_count += 1 if result.error?
-      @elapsed_time += result.elapsed
     end
 
     private def construct_class_name(location) : String

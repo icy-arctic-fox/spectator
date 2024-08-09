@@ -70,6 +70,14 @@ module Spectator
           @current_example = previous_example
         end
       end
+
+      getter start_time : Time = Time.local
+
+      @start_monotonic : Time::Span = Time.monotonic
+
+      def elapsed_time : Time::Span
+        Time.monotonic - @start_monotonic
+      end
     end
   end
 
@@ -87,6 +95,14 @@ module Spectator
 
   def self.working_path : Path
     sandbox.path
+  end
+
+  def self.start_time : Time
+    sandbox.start_time
+  end
+
+  def self.elapsed_time : Time::Span
+    sandbox.elapsed_time
   end
 
   class_property? auto_run = true
