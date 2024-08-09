@@ -14,18 +14,22 @@ module Spectator::Formatters
     end
 
     def print_value(& : IO ->) : Nil
+      print_indent
       yield io
     end
 
     def print_type(& : IO ->) : Nil
+      print_indent
       yield io
     end
 
     def print_title(style : Style = :none, & : IO ->) : Nil
+      print_indent
       yield io
     end
 
     def print_label(style : Style = :none, & : IO ->) : Nil
+      print_indent
       yield io
     end
 
@@ -39,6 +43,7 @@ module Spectator::Formatters
     end
 
     def print_code(code : String) : Nil
+      print_indent
       io.puts code
     end
   end
