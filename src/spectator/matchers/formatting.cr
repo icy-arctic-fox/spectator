@@ -6,6 +6,10 @@ module Spectator::Matchers
       # TODO: Actually format the value.
       value.inspect
     end
+
+    def description_of(matchable : Matchable)
+      matchable.description
+    end
   end
 
   struct FormattingPrinter
@@ -23,6 +27,12 @@ module Spectator::Matchers
     def description_of(value : T.class) : Nil forall T
       @printer.print_type do |io|
         value.inspect(io)
+      end
+    end
+
+    def description_of(matchable : Matchable) : Nil
+      @printer.print do |io|
+        io << matchable.description
       end
     end
   end

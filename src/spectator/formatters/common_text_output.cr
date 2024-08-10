@@ -53,19 +53,19 @@ module Spectator::Formatters
     private def print_failure(result, number, padding) : Nil
       digit_count = number.to_s.size
       padding -= digit_count
-      printer.print_inline_label("#{number})", padding: padding) do
-        printer.puts result.example.full_description, style: :error
+      printer.label("#{number})", padding: padding) do
+        printer.with_style(:error, &.puts result.example.full_description)
 
         error = result.exception
         if error.is_a?(AssertionFailed)
-          printer.print_label(:error, &.<< "Failure: ")
+          printer.label(:error, "Failure: ")
           if location = error.location
             if source_code = Spectator.source_cache.get(location.file, location.line, location.end_line)
               if location.line == location.end_line
-                printer.print_code(source_code.strip)
+                printer.code(source_code.strip)
               else
                 printer.puts
-                printer.indent &.print_code(source_code)
+                printer.indent &.code(source_code)
               end
             end
           end
@@ -79,7 +79,8 @@ module Spectator::Formatters
           printer.puts
           if location = error.location
             relative_path = location.relative_to(Spectator.working_path)
-            printer.puts "# #{relative_path}", style: :info
+            printer.with_style(:info, &.print "# ", relative_path)
+            printer.puts
             printer.puts
           end
         else
@@ -89,7 +90,7 @@ module Spectator::Formatters
     end
 
     private def print_trace(error) : Nil
-      printer.print_label(:error, &.<< "#{error.class}: ")
+      printer.label(:error, &.<< "#{error.class}: ")
       printer.puts "#{error.message}"
 
       printer.indent do
@@ -141,7 +142,7 @@ module Spectator::Formatters
       printer << " (" << humanize(summary.test_time) << " in tests)"
       printer.puts
 
-      printer.puts(summary.style) do |io|
+      printer.print(summary.style) do |io|
         io << summary.total << " examples, "
         io << summary.failed << " failures"
         if summary.errors > 0
@@ -151,6 +152,7 @@ module Spectator::Formatters
           io << ", " << summary.skipped << " skipped"
         end
       end
+      printer.puts
     end
 
     # TODO: Move to a utility module.

@@ -13,37 +13,28 @@ module Spectator::Formatters
     def initialize(@io = STDOUT)
     end
 
-    def <<(object) : self
-      io << object
-      self
-    end
+    abstract def <<(object) : self
 
-    abstract def puts(style : Style, & : IO ->) : Nil
+    abstract def print(*objects) : Nil
 
-    def puts(*objects, style : Style) : Nil
-      objects.each do |object|
-        puts style, &.puts(object)
+    abstract def puts(*objects) : Nil
+
+    abstract def title(text : String) : Nil
+
+    def label(label : String, text : String, *, padding : Int = 0) : Nil
+      labeled(label, padding: padding) do |printer|
+        printer << text
       end
     end
 
-    abstract def print(style : Style, & : IO ->) : Nil
+    abstract def label(label : String, *, padding : Int = 0, & : self ->) : Nil
 
-    def print(*objects, style : Style) : Nil
-      objects.each do |object|
-        print style, &.print(object)
-      end
-    end
+    abstract def value(value) : Nil
 
-    abstract def print_value(& : IO ->) : Nil
+    abstract def type(type) : Nil
 
-    abstract def print_type(& : IO ->) : Nil
+    abstract def code(code : String) : Nil
 
-    abstract def print_title(style : Style = :none, & : IO ->) : Nil
-
-    abstract def print_label(style : Style = :none, & : IO ->) : Nil
-
-    abstract def print_inline_label(label : String, style : Style = :none, padding : Int = 0, &) : Nil
-
-    abstract def print_code(code : String) : Nil
+    abstract def with_style(style : Style, & : self ->) : Nil
   end
 end

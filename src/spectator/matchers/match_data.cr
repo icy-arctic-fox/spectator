@@ -1,5 +1,6 @@
 require "../core/location_range"
 require "../formatters/plain_printer"
+require "../formatters/printer"
 require "./formatting"
 
 module Spectator::Matchers
@@ -17,7 +18,11 @@ module Spectator::Matchers
 
     abstract def try_raise : Nil
 
-    abstract def format(printer : Formatters::Printer) : Nil
+    abstract def format(printer : FormattingPrinter) : Nil
+
+    def format(printer : Formatters::Printer) : Nil
+      format(FormattingPrinter.new(printer))
+    end
   end
 
   struct PassedMatchData < MatchData
@@ -33,7 +38,7 @@ module Spectator::Matchers
       # ...
     end
 
-    def format(printer : Formatters::Printer) : Nil
+    def format(printer : FormattingPrinter) : Nil
       printer << "Passed"
     end
   end
@@ -62,9 +67,9 @@ module Spectator::Matchers
       raise AssertionFailed.new(self)
     end
 
-    def format(printer : Formatters::Printer) : Nil
+    def format(printer : FormattingPrinter) : Nil
       if proc = @proc
-        proc.call(FormattingPrinter.new(printer))
+        proc.call(printer)
       elsif message = @message
         printer.print_value do |io|
           io << message
@@ -75,7 +80,9 @@ module Spectator::Matchers
     end
 
     def to_s(io : IO) : Nil
-      format(Formatters::PlainPrinter.new(io))
+      printer = Formatters::PlainPrinter.new(io)
+      printer = FormattingPrinter.new(printer)
+      format(printer)
     end
   end
 

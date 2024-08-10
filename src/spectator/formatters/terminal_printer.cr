@@ -7,60 +7,68 @@ module Spectator::Formatters
   class TerminalPrinter < Printer
     include Indent
 
-    def puts(style : Style, &) : Nil
-      print_indent
-      colorize_style(style).surround(io) do
-        yield io
-      end
-      puts
+    private getter style : Style = :none
+
+    def <<(object) : self
+      print_indented(io, object)
+      self
     end
 
-    def print(style : Style, & : IO ->) : Nil
-      print_indent
-      colorize_style(style).surround(io) do
-        yield io
-      end
+    def print(*objects) : Nil
+      print_indented(io, *objects)
     end
 
-    def print_value(& : IO ->) : Nil
-      print_indent
-      Colorize.with.bold.surround(io) do
-        yield io
-      end
+    def puts(*objects) : Nil
+      puts_indented(io, *objects)
     end
 
-    def print_type(& : IO ->) : Nil
-      print_indent
-      Colorize.with.bold.cyan.surround(io) do
-        yield io
-      end
-    end
-
-    def print_title(style : Style = :none, & : IO ->) : Nil
-      print_indent
+    def title(text : String) : Nil
+      puts_indented(io)
       emphasized_colorize_style(style).surround(io) do
-        io << ' '
-        yield io
-        io << ' '
+        print_indented(io, ' ', text, ' ')
       end
-      puts
+      puts_indented(io)
+      puts_indented(io)
     end
 
-    def print_label(style : Style = :none, & : IO ->) : Nil
-      print_indent
-      colorize_style(style).surround(io) do
-        yield io
+    def label(label : String, *, padding : Int = 0, & : self ->) : Nil
+      puts_indented(io)
+      emphasized_colorize_style(style).surround(io) do
+        print_indented(io, " " * padding, label, ' ')
+      end
+      indent(label.size + 1) do
+        yield self
       end
     end
 
-    def print_inline_label(label : String, style : Style = :none, padding : Int = 0, &) : Nil
-      indent(padding) do
-        emphasized_colorize_style(style, label).surround(io) do
-          print_indent
-          io << label
-        end
-        io << ' '
-        indent(label.size + 1) { yield }
+    def value(value) : Nil
+      Colorize.with.bold.surround(io) do
+        print_indented(io, value)
+      end
+    end
+
+    def type(type) : Nil
+      Colorize.with.bold.cyan.surround(io) do
+        print_indented(io, type)
+      end
+    end
+
+    def code(code : String) : Nil
+      lines = code.lines(false)
+      min_code_indent = lines.min_of { |line| indent_size(line) }
+      lines.map! { |line| line[min_code_indent..] }
+      code = lines.join
+      highlighted = syntax_highlighter.highlight(code)
+      puts_indented(io, highlighted)
+    end
+
+    def with_style(style : Style, & : self ->) : Nil
+      previous_style = self.style
+      begin
+        self.style = style
+        yield self
+      ensure
+        self.style = previous_style
       end
     end
 
@@ -82,14 +90,6 @@ module Spectator::Formatters
           :unknown           => :white,
         } of Crystal::SyntaxHighlighter::TokenType => Colorize::Color
       end
-    end
-
-    def print_code(code : String) : Nil
-      print_indent
-      indent = " " * indent_amount
-      indented_code = code.gsub('\n', "\n#{indent}")
-      syntax_highlighter.highlight(indented_code)
-      io.puts unless code.ends_with?("\n")
     end
 
     private def colorize_style(style : Style, object = nil)

@@ -5,48 +5,47 @@ module Spectator::Formatters
   class PlainPrinter < Printer
     include Indent
 
-    def puts(style : Style, & : IO ->) : Nil
-      print_indent
-      yield io
+    def <<(object) : self
+      print_indented(io, object)
+      self
     end
 
-    def print(style : Style, & : IO ->) : Nil
-      print_indent
-      yield io
+    def print(*objects) : Nil
+      print_indented(io, *objects)
     end
 
-    def print_value(& : IO ->) : Nil
-      print_indent
-      yield io
+    def puts(*objects) : Nil
+      puts_indented(io, *objects)
     end
 
-    def print_type(& : IO ->) : Nil
-      print_indent
-      yield io
+    def title(text : String) : Nil
+      puts_indented(io)
+      puts_indented(io, text)
+      puts_indented(io)
     end
 
-    def print_title(style : Style = :none, & : IO ->) : Nil
-      print_indent
-      yield io
-    end
-
-    def print_label(style : Style = :none, & : IO ->) : Nil
-      print_indent
-      yield io
-    end
-
-    def print_inline_label(label : String, style : Style = :none, padding : Int = 0, &) : Nil
-      indent(padding) do
-        print_indent
-        io << label
-        io << ' '
-        indent(label.size + padding + 1) { yield }
+    def label(label : String, *, padding : Int = 0, & : self ->) : Nil
+      puts_indented(io)
+      print_indented(io, " " * padding, label, ' ')
+      indent(label.size + 1) do
+        yield self
       end
     end
 
-    def print_code(code : String) : Nil
-      print_indent
-      io.puts code
+    def value(value) : Nil
+      print_indented(io, value)
+    end
+
+    def type(type) : Nil
+      print_indented(io, type)
+    end
+
+    def code(code : String) : Nil
+      puts_indented(io, code)
+    end
+
+    def with_style(style : Style, & : self ->) : Nil
+      yield self
     end
   end
 end
