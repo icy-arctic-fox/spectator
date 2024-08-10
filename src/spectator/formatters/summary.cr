@@ -33,6 +33,10 @@ module Spectator::Formatters
       failed > 0
     end
 
+    def errored? : Bool
+      errors > 0
+    end
+
     def skipped? : Bool
       skipped > 0
     end
