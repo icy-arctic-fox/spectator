@@ -119,7 +119,7 @@ module Spectator::Formatters
       printer.with_style(:warning, &.title "Skipped:")
       printer.indent do
         results.each do |result|
-          printer.puts result.example.full_description
+          printer.with_style(:warning, &.puts result.example.full_description)
         end
       end
       printer.puts
