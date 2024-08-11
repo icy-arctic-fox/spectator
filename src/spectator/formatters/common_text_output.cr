@@ -20,8 +20,7 @@ module Spectator::Formatters
     end
 
     private def report_failures(results : Enumerable(Core::ExecutionResult)) : Nil
-      printer.print_title(:error, &.<< "Failures:")
-      printer.puts
+      printer.with_style(:error, &.title "Failures:")
       padding = results.size.to_s.size + 1
       results.each_with_index(1) do |result, index|
         print_failure(result, index, padding)
@@ -58,17 +57,20 @@ module Spectator::Formatters
 
         error = result.exception
         if error.is_a?(AssertionFailed)
-          printer.label(:error, "Failure: ")
+          printer.with_style(:error, &.<< "Failure: ")
           if location = error.location
             if source_code = Spectator.source_cache.get(location.file, location.line, location.end_line)
               if location.line == location.end_line
                 printer.code(source_code.strip)
               else
                 printer.puts
-                printer.indent &.code(source_code)
+                printer.indent do
+                  printer.code(source_code.chomp)
+                end
               end
             end
           end
+          printer.puts
           printer.puts
           if match_data = error.match_data
             match_data.format(printer)
@@ -90,8 +92,8 @@ module Spectator::Formatters
     end
 
     private def print_trace(error) : Nil
-      printer.label(:error, &.<< "#{error.class}: ")
-      printer.puts "#{error.message}"
+      printer.with_style(:error, &.print error.class, ": ")
+      printer.puts error.message
 
       printer.indent do
         error.backtrace?.try &.each do |frame|
@@ -114,8 +116,7 @@ module Spectator::Formatters
     end
 
     private def report_skipped(results : Enumerable(Core::ExecutionResult)) : Nil
-      printer.print_title(:warning, &.<< "Skipped:")
-      printer.puts
+      printer.with_style(:warning, &.title "Skipped:")
       printer.indent do
         results.each do |result|
           printer.puts result.example.full_description
@@ -135,36 +136,34 @@ module Spectator::Formatters
                when .skipped? then "Passed (with skipped examples)"
                else                "Finished"
                end
-      printer.print_title(summary.title_style, &.<< status)
-      printer.puts
-
+      printer.with_style(summary.title_style, &.title status)
       printer << "Finished after " << humanize(summary.total_time)
       printer << " (" << humanize(summary.test_time) << " in tests)"
       printer.puts
 
-      printer.print(summary.style) do |io|
-        io << summary.total << " examples, "
-        io << summary.failed << " failures"
+      printer.with_style(summary.style) do
+        printer << summary.total << " examples, "
+        printer << summary.failed << " failures"
         if summary.errors > 0
-          io << " (" << summary.errors << " errors)"
+          printer << " (" << summary.errors << " errors)"
         end
         if summary.skipped > 0
-          io << ", " << summary.skipped << " skipped"
+          printer << ", " << summary.skipped << " skipped"
         end
       end
       printer.puts
     end
 
     # TODO: Move to a utility module.
-    private def humanize(span : Time::Span) : String
+    private def humanize(span : Time::Span) : Nil
       if span < 1.millisecond
-        "#{span.total_microseconds.round} microseconds"
+        printer << span.total_microseconds.round << " microseconds"
       elsif span < 1.second
-        "#{span.total_milliseconds.round(2)} milliseconds"
+        printer << span.total_milliseconds.round(2) << " milliseconds"
       elsif span < 1.minute
-        "#{span.total_seconds.round(2)} seconds"
+        printer << span.total_seconds.round(2) << " seconds"
       else
-        span.to_i.seconds.to_s
+        printer << span.to_i.seconds
       end
     end
   end

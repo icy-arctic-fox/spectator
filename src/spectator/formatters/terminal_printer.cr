@@ -7,24 +7,27 @@ module Spectator::Formatters
   class TerminalPrinter < Printer
     include Indent
 
-    private getter style : Style = :none
+    private property style : Style = :none
 
     def <<(object) : self
-      print_indented(io, object)
+      print_indented(io, colorize_style(object))
       self
     end
 
     def print(*objects) : Nil
-      print_indented(io, *objects)
+      colorize_style.surround(io) do
+        print_indented(io, *objects)
+      end
     end
 
     def puts(*objects) : Nil
-      puts_indented(io, *objects)
+      colorize_style.surround(io) do
+        puts_indented(io, *objects)
+      end
     end
 
     def title(text : String) : Nil
-      puts_indented(io)
-      emphasized_colorize_style(style).surround(io) do
+      emphasized_colorize_style.surround(io) do
         print_indented(io, ' ', text, ' ')
       end
       puts_indented(io)
@@ -32,18 +35,19 @@ module Spectator::Formatters
     end
 
     def label(label : String, *, padding : Int = 0, & : self ->) : Nil
-      puts_indented(io)
-      emphasized_colorize_style(style).surround(io) do
-        print_indented(io, " " * padding, label, ' ')
+      puts_indented(io) unless newline?
+      emphasized_colorize_style.surround(io) do
+        print_indented(io, " " * padding, label)
       end
-      indent(label.size + 1) do
+      io << ' '
+      indent(padding + label.size + 1) do
         yield self
       end
     end
 
     def value(value) : Nil
       Colorize.with.bold.surround(io) do
-        print_indented(io, value)
+        print_indented(io, value.inspect)
       end
     end
 
@@ -54,12 +58,9 @@ module Spectator::Formatters
     end
 
     def code(code : String) : Nil
-      lines = code.lines(false)
-      min_code_indent = lines.min_of { |line| indent_size(line) }
-      lines.map! { |line| line[min_code_indent..] }
-      code = lines.join
-      highlighted = syntax_highlighter.highlight(code)
-      puts_indented(io, highlighted)
+      code = reduce_indent(code)
+      highlighted = highlight_syntax(code)
+      print_indented(io, highlighted)
     end
 
     def with_style(style : Style, & : self ->) : Nil
@@ -72,27 +73,29 @@ module Spectator::Formatters
       end
     end
 
-    private getter syntax_highlighter : Crystal::SyntaxHighlighter do
-      Crystal::SyntaxHighlighter::Colorize.new(io).tap do |highlighter|
-        highlighter.colors = {
-          :comment           => :dark_gray,
-          :number            => :magenta,
-          :symbol            => :magenta,
-          :char              => :green,
-          :string            => :green,
-          :interpolation     => :green,
-          :const             => :cyan,
-          :operator          => :white,
-          :ident             => :blue,
-          :keyword           => :blue,
-          :primitive_literal => :magenta,
-          :self              => :blue,
-          :unknown           => :white,
-        } of Crystal::SyntaxHighlighter::TokenType => Colorize::Color
+    private def highlight_syntax(code : String) : String
+      String.build do |io|
+        Crystal::SyntaxHighlighter::Colorize.new(io).tap do |highlighter|
+          highlighter.colors = {
+            :comment           => :dark_gray,
+            :number            => :magenta,
+            :symbol            => :magenta,
+            :char              => :green,
+            :string            => :green,
+            :interpolation     => :green,
+            :const             => :cyan,
+            :operator          => :white,
+            :ident             => :blue,
+            :keyword           => :blue,
+            :primitive_literal => :magenta,
+            :self              => :blue,
+            :unknown           => :white,
+          } of Crystal::SyntaxHighlighter::TokenType => Colorize::Color
+        end.highlight(code)
       end
     end
 
-    private def colorize_style(style : Style, object = nil)
+    private def colorize_style(object = nil)
       base = object.colorize
       case style
       in .none?    then base
@@ -103,7 +106,7 @@ module Spectator::Formatters
       end
     end
 
-    private def emphasized_colorize_style(style : Style, object = nil)
+    private def emphasized_colorize_style(object = nil)
       base = object.colorize
       case style
       in .none?    then base.black.on_white

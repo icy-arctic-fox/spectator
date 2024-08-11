@@ -71,9 +71,7 @@ module Spectator::Matchers
       if proc = @proc
         proc.call(printer)
       elsif message = @message
-        printer.print_value do |io|
-          io << message
-        end
+        printer << message
       else
         printer << "Failed"
       end

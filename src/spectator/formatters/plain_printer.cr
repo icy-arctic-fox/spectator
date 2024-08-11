@@ -25,7 +25,7 @@ module Spectator::Formatters
     end
 
     def label(label : String, *, padding : Int = 0, & : self ->) : Nil
-      puts_indented(io)
+      puts_indented(io) unless newline?
       print_indented(io, " " * padding, label, ' ')
       indent(label.size + 1) do
         yield self
@@ -33,7 +33,7 @@ module Spectator::Formatters
     end
 
     def value(value) : Nil
-      print_indented(io, value)
+      print_indented(io, value.inspect)
     end
 
     def type(type) : Nil

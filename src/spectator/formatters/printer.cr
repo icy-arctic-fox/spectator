@@ -22,7 +22,7 @@ module Spectator::Formatters
     abstract def title(text : String) : Nil
 
     def label(label : String, text : String, *, padding : Int = 0) : Nil
-      labeled(label, padding: padding) do |printer|
+      label(label, padding: padding) do |printer|
         printer << text
       end
     end

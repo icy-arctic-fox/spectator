@@ -19,21 +19,15 @@ module Spectator::Matchers
     end
 
     def description_of(value) : Nil
-      @printer.print_value do |io|
-        value.inspect(io)
-      end
+      @printer.value(value)
     end
 
     def description_of(value : T.class) : Nil forall T
-      @printer.print_type do |io|
-        value.inspect(io)
-      end
+      @printer.type(value)
     end
 
     def description_of(matchable : Matchable) : Nil
-      @printer.print do |io|
-        io << matchable.description
-      end
+      @printer << matchable.description
     end
   end
 end

@@ -4,12 +4,16 @@ module Spectator::Formatters
     INDENT_STRING         = " "
 
     private property indent = ""
-    private property indent_size = 0
+    private getter indent_size = 0
     private property? newline = true
+
+    private def indent_size=(@indent_size : Int)
+      self.indent = INDENT_STRING * indent_size
+      indent_size
+    end
 
     def indent(amount : Int = DEFAULT_INDENT_AMOUNT, & : self ->) : Nil
       self.indent_size += amount
-      self.indent = INDENT_STRING * indent_size
       begin
         yield self
       ensure
@@ -50,6 +54,25 @@ module Spectator::Formatters
     private def insert_indent(text : String) : String
       return text unless text.includes?('\n')
       text.gsub('\n', "\n#{indent}")
+    end
+
+    private def count_indent(text : String) : Int
+      i = 0
+      text.each_char do |char|
+        return i unless char.whitespace?
+        i += 1
+      end
+      -1 # Blank lines are not considered as indented.
+    end
+
+    private def reduce_indent(text : String) : String
+      lines = text.lines(false)
+      min_indent = lines.min_of do |line|
+        size = count_indent(line)
+        size < 0 ? Int32::MAX : size # Skip empty lines to avoid min being zero.
+      end
+      lines.map! { |line| line[min_indent..]? || "" }
+      lines.join
     end
   end
 end

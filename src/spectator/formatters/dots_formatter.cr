@@ -10,10 +10,10 @@ module Spectator::Formatters
 
     def example_finished(result : Core::ExecutionResult) : Nil
       case result.status
-      in .pass?  then printer.print('.', style: :success)
-      in .fail?  then printer.print('F', style: :error)
-      in .error? then printer.print('E', style: :error)
-      in .skip?  then printer.print('*', style: :warning)
+      in .pass?  then printer.with_style(:success, &.<< '.')
+      in .fail?  then printer.with_style(:error, &.<< 'F')
+      in .error? then printer.with_style(:error, &.<< 'E')
+      in .skip?  then printer.with_style(:warning, &.<< '*')
       end
     end
 
@@ -27,7 +27,7 @@ module Spectator::Formatters
     end
 
     def suite_finished : Nil
-      puts
+      io.puts
     end
 
     def example_group_started(group : Core::ExampleGroup) : Nil
