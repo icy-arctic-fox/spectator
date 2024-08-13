@@ -82,6 +82,10 @@ module Spectator::Matchers
         no_block!
       end
 
+      def does_not_match?(&block)
+        !matches?(&block)
+      end
+
       def failure_message(actual_value)
         no_block!
       end
