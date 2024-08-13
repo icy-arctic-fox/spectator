@@ -7,7 +7,7 @@ Spectator.describe "Assertions" do
     end
 
     it "does not raise an error if the value is true" do
-      expect { assert true }.to_not raise_error
+      expect { assert true }.not_to raise_error
     end
 
     it "stores the location of the assertion" do
