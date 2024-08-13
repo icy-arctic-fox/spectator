@@ -1,5 +1,13 @@
+require "../matchable"
+
 module Spectator::Matchers::BuiltIn
   struct BeInMatcher(T)
+    include Matchable
+
+    def description
+      "be in #{@expected_value}"
+    end
+
     def initialize(@expected_value : T)
     end
 
@@ -7,18 +15,24 @@ module Spectator::Matchers::BuiltIn
       actual_value.in?(@expected_value)
     end
 
-    def failure_message(actual_value)
-      <<-MESSAGE
-      Expected: #{actual_value.pretty_inspect}
-      to be in: #{@expected_value.pretty_inspect}
-      MESSAGE
+    print_messages
+
+    def failure_message(printer : FormattingPrinter, actual_value) : Nil
+      printer << "Expected: "
+      printer.description_of(actual_value)
+      printer.puts
+
+      printer << "to be in: "
+      printer.description_of(@expected_value)
     end
 
-    def negated_failure_message(actual_value)
-      <<-MESSAGE
-          Expected: #{actual_value.pretty_inspect}
-      not to be in: #{@expected_value.pretty_inspect}
-      MESSAGE
+    def negated_failure_message(printer : FormattingPrinter, actual_value) : Nil
+      printer << "    Expected: "
+      printer.description_of(actual_value)
+      printer.puts
+
+      printer << "not to be in: "
+      printer.description_of(@expected_value)
     end
   end
 end

@@ -1,5 +1,13 @@
+require "../matchable"
+
 module Spectator::Matchers::BuiltIn
   struct BeMatcher(T)
+    include Matchable
+
+    def description
+      "be #{stringify(@expected_value)}"
+    end
+
     def initialize(@expected_value : T)
     end
 
@@ -17,20 +25,21 @@ module Spectator::Matchers::BuiltIn
       end
     end
 
-    def failure_message(actual_value)
-      <<-MESSAGE
-      Expected: #{stringify(actual_value)}
-         to be: #{stringify(@expected_value)}
-      MESSAGE
+    print_messages
+
+    def failure_message(printer : FormattingPrinter, actual_value) : Nil
+      printer << "Expected: " << stringify(actual_value)
+      printer.puts
+      printer << "   to be: " << stringify(@expected_value)
     end
 
-    def negated_failure_message(actual_value)
-      <<-MESSAGE
-       Expected: #{stringify(actual_value)}
-      not to be: #{stringify(@expected_value)}
-      MESSAGE
+    def negated_failure_message(printer : FormattingPrinter, actual_value) : Nil
+      printer << " Expected: " << stringify(actual_value)
+      printer.puts
+      printer << "not to be: " << stringify(@expected_value)
     end
 
+    # TODO: Move this to printer.
     private def stringify(value) : String
       string = value.pretty_inspect
       if value.is_a?(Reference)

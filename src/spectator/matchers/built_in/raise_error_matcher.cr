@@ -1,15 +1,25 @@
+require "../matchable"
+
 module Spectator::Matchers::BuiltIn
   class RaiseErrorMatcher(T)
+    include Matchable
+
     @expected_error : T?
     @expected_message : String | Regex?
 
     getter rescued_error : Exception?
+
+    def description
+      "raise error #{@expected_error.inspect}"
+    end
 
     def initialize(@expected_error : T)
     end
 
     def initialize(@expected_message : String | Regex? = nil)
     end
+
+    require_block
 
     def matches?(&)
       yield
@@ -33,12 +43,16 @@ module Spectator::Matchers::BuiltIn
       end
     end
 
-    def failure_message(&)
-      "Expected block to raise error #{@expected_error.pretty_inspect}"
+    print_messages
+
+    def failure_message(printer : FormattingPrinter, &) : Nil
+      printer << "Expected block to raise error "
+      printer.description_of(@expected_error)
     end
 
-    def negated_failure_message(&)
-      "Expected block not to raise error #{@expected_error.pretty_inspect}"
+    def negated_failure_message(printer : FormattingPrinter, &) : Nil
+      printer << "Expected block not to raise error "
+      printer.description_of(@expected_error)
     end
   end
 end

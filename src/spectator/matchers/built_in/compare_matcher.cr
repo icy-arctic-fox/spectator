@@ -1,5 +1,9 @@
+require "../matchable"
+
 module Spectator::Matchers::BuiltIn
   struct CompareMatcher(T)
+    include Matchable
+
     enum Relation
       Less
       LessOrEqual
@@ -42,6 +46,10 @@ module Spectator::Matchers::BuiltIn
       end
     end
 
+    def description
+      "be #{@relation} #{@expected_value}"
+    end
+
     def initialize(@expected_value : T, @relation : Relation)
     end
 
@@ -56,12 +64,20 @@ module Spectator::Matchers::BuiltIn
       end
     end
 
-    def failure_message(actual_value)
-      "Expected #{actual_value.pretty_inspect} to be #{@relation} #{@expected_value.pretty_inspect}"
+    print_messages
+
+    def failure_message(printer : FormattingPrinter, actual_value) : Nil
+      printer << "Expected: "
+      printer.description_of(actual_value)
+      printer << " to be " << @relation << ' '
+      printer.description_of(@expected_value)
     end
 
-    def negated_failure_message(actual_value)
-      "Expected #{actual_value.pretty_inspect} to be #{@relation.negate} #{@expected_value.pretty_inspect}"
+    def negated_failure_message(printer : FormattingPrinter, actual_value) : Nil
+      printer << "Expected: "
+      printer.description_of(actual_value)
+      printer << " to be " << @relation.negate << ' '
+      printer.description_of(@expected_value)
     end
 
     def self.<(other : T) : self

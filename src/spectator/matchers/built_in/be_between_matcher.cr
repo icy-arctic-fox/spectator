@@ -1,5 +1,13 @@
+require "../matchable"
+
 module Spectator::Matchers::BuiltIn
   struct BeBetweenMatcher(B, E)
+    include Matchable
+
+    def description
+      "be between #{@min} and #{@max} (#{@exclusive ? "exclusive" : "inclusive"})"
+    end
+
     def initialize(@min : B, @max : E, @exclusive : Bool = false)
     end
 
@@ -11,18 +19,30 @@ module Spectator::Matchers::BuiltIn
       end
     end
 
-    def failure_message(actual_value)
-      <<-MESSAGE
-           Expected: #{actual_value.pretty_inspect}
-      to be between: #{@min.pretty_inspect} and #{@max.pretty_inspect} (#{@exclusive ? "exclusive" : "inclusive"})
-      MESSAGE
+    print_messages
+
+    def failure_message(printer : FormattingPrinter, actual_value) : Nil
+      printer << "     Expected: "
+      printer.description_of(actual_value)
+      printer.puts
+
+      printer << "to be between: "
+      printer.description_of(@min)
+      printer << " and "
+      printer.description_of(@max)
+      printer << " (" << (@exclusive ? "exclusive" : "inclusive") << ')'
     end
 
-    def negated_failure_message(actual_value)
-      <<-MESSAGE
-           Expected: #{actual_value.pretty_inspect}
-      to be outside: #{@min.pretty_inspect} and #{@max.pretty_inspect} (#{@exclusive ? "exclusive" : "inclusive"})
-      MESSAGE
+    def negated_failure_message(printer : FormattingPrinter, actual_value) : Nil
+      printer << "     Expected: "
+      printer.description_of(actual_value)
+      printer.puts
+
+      printer << "to be outside: "
+      printer.description_of(@min)
+      printer << " and "
+      printer.description_of(@max)
+      printer << " (" << (@exclusive ? "exclusive" : "inclusive") << ')'
     end
 
     def exclusive

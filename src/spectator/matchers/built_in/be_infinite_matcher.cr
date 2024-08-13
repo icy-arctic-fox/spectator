@@ -1,5 +1,13 @@
+require "../matchable"
+
 module Spectator::Matchers::BuiltIn
   struct BeInfiniteMatcher
+    include Matchable
+
+    def description
+      "be infinite"
+    end
+
     def matches?(actual_value)
       if actual_value.responds_to?(:infinite?)
         # The `infinite?` method returns 0 for finite values, -1 for negative infinity, and 1 for positive infinity.
@@ -19,12 +27,18 @@ module Spectator::Matchers::BuiltIn
           actual_value != Float64::INFINITY && actual_value != -Float64::INFINITY)
     end
 
-    def failure_message(actual_value)
-      "Expected #{actual_value.pretty_inspect} to be infinite"
+    print_messages
+
+    def failure_message(printer : FormattingPrinter, actual_value) : Nil
+      printer << "Expected "
+      printer.description_of(actual_value)
+      printer << " to be infinite"
     end
 
-    def negated_failure_message(actual_value)
-      "Expected #{actual_value.pretty_inspect} to be finite"
+    def negated_failure_message(printer : FormattingPrinter, actual_value) : Nil
+      printer << "Expected "
+      printer.description_of(actual_value)
+      printer << " to be finite"
     end
   end
 end

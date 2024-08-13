@@ -1,5 +1,13 @@
+require "../matchable"
+
 module Spectator::Matchers::BuiltIn
   struct BeCloseMatcher(T, D)
+    include Matchable
+
+    def description
+      "be within #{@delta} of #{@expected_value}"
+    end
+
     def initialize(@expected_value : T, @delta : D)
     end
 
@@ -8,18 +16,28 @@ module Spectator::Matchers::BuiltIn
         actual_value >= @expected_value - @delta
     end
 
-    def failure_message(actual_value)
-      <<-MESSAGE
-          Expected: #{actual_value.pretty_inspect}
-      to be within: #{@expected_value.pretty_inspect} ± #{@delta.pretty_inspect}
-      MESSAGE
+    print_messages
+
+    def failure_message(printer : FormattingPrinter, actual_value) : Nil
+      printer << "    Expected: "
+      printer.description_of(actual_value)
+      printer.puts
+
+      printer << "to be within: "
+      printer.description_of(@expected_value)
+      printer << " ± "
+      printer.description_of(@delta)
     end
 
-    def negated_failure_message(actual_value)
-      <<-MESSAGE
-           Expected: #{actual_value.pretty_inspect}
-      to be outside: #{@expected_value.pretty_inspect} ± #{@delta.pretty_inspect}
-      MESSAGE
+    def negated_failure_message(printer : FormattingPrinter, actual_value) : Nil
+      printer << "     Expected: "
+      printer.description_of(actual_value)
+      printer.puts
+
+      printer << "to be outside: "
+      printer.description_of(@expected_value)
+      printer << " ± "
+      printer.description_of(@delta)
     end
   end
 end

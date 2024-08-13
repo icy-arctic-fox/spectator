@@ -1,5 +1,13 @@
+require "../matchable"
+
 module Spectator::Matchers::BuiltIn
   struct MatchMatcher(T)
+    include Matchable
+
+    def description
+      "match #{@expected_value}"
+    end
+
     def initialize(@expected_value : T)
     end
 
@@ -7,18 +15,24 @@ module Spectator::Matchers::BuiltIn
       !!(actual_value =~ @expected_value)
     end
 
-    def failure_message(actual_value)
-      <<-MESSAGE
-      Expected: #{actual_value.pretty_inspect}
-      to match: #{@expected_value.pretty_inspect}
-      MESSAGE
+    print_messages
+
+    def failure_message(printer : FormattingPrinter, actual_value) : Nil
+      printer << "Expected: "
+      printer.description_of(actual_value)
+      printer.puts
+
+      printer << "to match: "
+      printer.description_of(@expected_value)
     end
 
-    def negated_failure_message(actual_value)
-      <<-MESSAGE
-          Expected: #{actual_value.pretty_inspect}
-      not to match: #{@expected_value.pretty_inspect}
-      MESSAGE
+    def negated_failure_message(printer : FormattingPrinter, actual_value) : Nil
+      printer << "    Expected: "
+      printer.description_of(actual_value)
+      printer.puts
+
+      printer << "not to match: "
+      printer.description_of(@expected_value)
     end
   end
 end

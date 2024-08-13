@@ -1,15 +1,29 @@
+require "../matchable"
+
 module Spectator::Matchers::BuiltIn
   struct BeNegativeMatcher
+    include Matchable
+
+    def description
+      "be negative"
+    end
+
     def matches?(actual_value)
       actual_value.responds_to?(:negative?) && actual_value.negative?
     end
 
-    def failure_message(actual_value)
-      "Expected #{actual_value.pretty_inspect} to be negative"
+    print_messages
+
+    def failure_message(printer : FormattingPrinter, actual_value) : Nil
+      printer << "Expected "
+      printer.description_of(actual_value)
+      printer << " to be negative"
     end
 
-    def negated_failure_message(actual_value)
-      "Expected #{actual_value.pretty_inspect} not to be negative"
+    def negated_failure_message(printer : FormattingPrinter, actual_value) : Nil
+      printer << "Expected "
+      printer.description_of(actual_value)
+      printer << " not to be negative"
     end
   end
 end

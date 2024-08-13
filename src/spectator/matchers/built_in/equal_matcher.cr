@@ -1,5 +1,13 @@
+require "../matchable"
+
 module Spectator::Matchers::BuiltIn
   struct EqualMatcher(T)
+    include Matchable
+
+    def description
+      "be equal to #{@expected_value}"
+    end
+
     def initialize(@expected_value : T)
     end
 
@@ -18,6 +26,8 @@ module Spectator::Matchers::BuiltIn
         actual_value.bytesize == expected_value.bytesize &&
         actual_value.size == expected_value.size
     end
+
+    # TODO: print_messages
 
     def failure_message(actual_value)
       expected_value = @expected_value
