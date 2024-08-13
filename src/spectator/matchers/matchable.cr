@@ -69,6 +69,36 @@ module Spectator::Matchers
       end
     end
 
+    macro require_block
+      private def no_block!
+        raise ::Spectator::FrameworkError.new("Matcher `#{matcher_name}` must be used with a block.")
+      end
+
+      def matches?(actual_value)
+        no_block!
+      end
+
+      def does_not_match?(actual_value)
+        no_block!
+      end
+
+      def failure_message(actual_value)
+        no_block!
+      end
+
+      def negated_failure_message(actual_value)
+        no_block!
+      end
+
+      def failure_message(printer : ::Spectator::Matchers::FormattingPrinter, actual_value) : Nil
+        no_block!
+      end
+
+      def negated_failure_message(printer : ::Spectator::Matchers::FormattingPrinter, actual_value) : Nil
+        no_block!
+      end
+    end
+
     macro print_messages
       include ::Spectator::Matchers::Printable
     end
