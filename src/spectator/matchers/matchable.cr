@@ -15,7 +15,7 @@ module Spectator::Matchers
       matches?(yield)
     end
 
-    getter matcher_name do
+    getter matcher_name : String do
       self.class.name.split("::").last.rchop("Matcher").underscore
     end
 
