@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.12.1] - 2024-08-13
+### Fixed
+- Fixed some global namespace issues with Crystal 1.13. [#57](https://github.com/icy-arctic-fox/spectator/pull/57) Thanks @GrantBirki !
+- Remove usage of deprecated double splat in macros.
+
 ## [0.12.0] - 2024-02-03
 ### Added
 - Added ability to use matchers for case equality. [#55](https://github.com/icy-arctic-fox/spectator/issues/55)
@@ -458,7 +463,8 @@ This has been changed so that it compiles and raises an error at runtime with a 
 First version ready for public use.
 
 
-[Unreleased]: https://gitlab.com/arctic-fox/spectator/-/compare/v0.12.0...master
+[Unreleased]: https://gitlab.com/arctic-fox/spectator/-/compare/v0.12.1...master
+[0.12.1]: https://gitlab.com/arctic-fox/spectator/-/compare/v0.12.0...v0.12.1
 [0.12.0]: https://gitlab.com/arctic-fox/spectator/-/compare/v0.11.7...v0.12.0
 [0.11.7]: https://gitlab.com/arctic-fox/spectator/-/compare/v0.11.6...v0.11.7
 [0.11.6]: https://gitlab.com/arctic-fox/spectator/-/compare/v0.11.5...v0.11.6
