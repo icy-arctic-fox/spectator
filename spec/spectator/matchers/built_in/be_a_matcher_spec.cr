@@ -7,6 +7,13 @@ end
 private class Derived < Base
 end
 
+private module Module
+end
+
+private struct Mod
+  include Module
+end
+
 alias BeAMatcher = Spectator::Matchers::BuiltIn::BeAMatcher
 
 Spectator.describe BeAMatcher do
@@ -103,6 +110,29 @@ Spectator.describe BeAMatcher do
             but was a: Base
             MESSAGE
         end
+
+        it "matches a type that includes a module" do
+          object = Mod.new
+          expect do
+            expect(object).to be_a(Module)
+          end.to pass_check
+        end
+
+        it "doesn't match a differing generic type" do
+          expect do
+            expect([1, 2, 3]).to be_a(Array(Symbol))
+          end.to fail_check <<-MESSAGE
+             Expected: [1, 2, 3]
+              to be a: Array(Symbol)
+            but was a: Array(Int32)
+            MESSAGE
+        end
+
+        it "matches a type that includes a generic module" do
+          expect do
+            expect([1, 2, 3]).to be_a(Enumerable(Int32))
+          end.to pass_check
+        end
       end
 
       context "with `.not_to`" do
@@ -142,6 +172,33 @@ Spectator.describe BeAMatcher do
           expect do
             expect(Base.new).not_to be_a(Derived)
           end.to pass_check
+        end
+
+        it "doesn't match a type that includes a module" do
+          object = Mod.new
+          expect do
+            expect(object).not_to be_a(Module)
+          end.to fail_check <<-MESSAGE
+               Expected: #{object.pretty_inspect}
+            not to be a: Module
+            Mod is a sub-type of Module
+            MESSAGE
+        end
+
+        it "matches a differing generic type" do
+          expect do
+            expect([1, 2, 3]).not_to be_a(Array(Symbol))
+          end.to pass_check
+        end
+
+        it "doesn't match a type that includes a generic module" do
+          expect do
+            expect([1, 2, 3]).not_to be_a(Enumerable(Int32))
+          end.to fail_check <<-MESSAGE
+               Expected: [1, 2, 3]
+            not to be a: Enumerable(Int32)
+            Array(Int32) is a sub-type of Enumerable(Int32)
+            MESSAGE
         end
       end
     end
@@ -190,6 +247,29 @@ Spectator.describe BeAMatcher do
             but was a: Base
             MESSAGE
         end
+
+        it "matches a type that includes a module" do
+          object = Mod.new
+          expect do
+            expect(object).to be_an(Module)
+          end.to pass_check
+        end
+
+        it "doesn't match a differing generic type" do
+          expect do
+            expect([1, 2, 3]).to be_an(Array(Symbol))
+          end.to fail_check <<-MESSAGE
+             Expected: [1, 2, 3]
+              to be a: Array(Symbol)
+            but was a: Array(Int32)
+            MESSAGE
+        end
+
+        it "matches a type that includes a generic module" do
+          expect do
+            expect([1, 2, 3]).to be_an(Enumerable(Int32))
+          end.to pass_check
+        end
       end
 
       context "with `.not_to`" do
@@ -229,6 +309,33 @@ Spectator.describe BeAMatcher do
           expect do
             expect(Base.new).not_to be_an(Derived)
           end.to pass_check
+        end
+
+        it "doesn't match a type that includes a module" do
+          object = Mod.new
+          expect do
+            expect(object).not_to be_an(Module)
+          end.to fail_check <<-MESSAGE
+               Expected: #{object.pretty_inspect}
+            not to be a: Module
+            Mod is a sub-type of Module
+            MESSAGE
+        end
+
+        it "matches a differing generic type" do
+          expect do
+            expect([1, 2, 3]).not_to be_an(Array(Symbol))
+          end.to pass_check
+        end
+
+        it "doesn't match a type that includes a generic module" do
+          expect do
+            expect([1, 2, 3]).not_to be_an(Enumerable(Int32))
+          end.to fail_check <<-MESSAGE
+               Expected: [1, 2, 3]
+            not to be a: Enumerable(Int32)
+            Array(Int32) is a sub-type of Enumerable(Int32)
+            MESSAGE
         end
       end
     end

@@ -19,12 +19,6 @@ module Spectator::Matchers::BuiltIn
       BeAMatcher(T).new
     end
 
-    def be_a(type : Enumerable.class)
-    end
-
-    def be_a(type : Array.class)
-    end
-
     def be_after(time : Time)
     end
 
