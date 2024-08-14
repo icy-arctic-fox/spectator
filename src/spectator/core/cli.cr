@@ -98,11 +98,11 @@ module Spectator::Core
         end
 
         parser.on("--color", "Enable ANSI colored output") do
-          # TODO
+          Colorize.enabled = true
         end
 
         parser.on("--no-color", "Disable ANSI colored output") do
-          # TODO
+          Colorize.enabled = false
         end
 
         parser.on("--dry-run", "Pass all tests without execution") do
