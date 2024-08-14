@@ -226,7 +226,7 @@ module Spectator::DSL
 
          # Store information about how the mock is defined and its context.
          # This is important for constructing an instance of the mock later.
-         ::Spectator::DSL::Mocks::TYPES << {type.id.symbolize, @type.name(generic_args: false).symbolize, "::#{resolved.name}::#{mock_type_name}".id.symbolize}
+         ::Spectator::DSL::Mocks::TYPES << {type.id.symbolize, @type.name(generic_args: false).symbolize, "#{"::".id unless resolved.name.starts_with?("::")}#{resolved.name}::#{mock_type_name}".id.symbolize}
 
          base = if resolved.class?
                   :class
@@ -237,7 +237,7 @@ module Spectator::DSL
                 end %}
 
       {% begin %}
-        {{base.id}} ::{{resolved.name}}
+        {{base.id}} {{"::".id unless resolved.name.starts_with?("::")}}{{resolved.name}}
           ::Spectator::Mock.define_subtype({{base}}, {{type.id}}, {{mock_type_name}}, {{name}}, {{**value_methods}}) {{block}}
         end
       {% end %}
