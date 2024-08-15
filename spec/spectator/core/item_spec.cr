@@ -28,7 +28,7 @@ Spectator.describe Spectator::Core::Item do
   describe "#location" do
     it "is the value passed to #initialize" do
       location = Spectator::Core::LocationRange.new("foo", 10)
-      item = TestItem.new("foo", location)
+      item = TestItem.new("foo", nil, location)
       expect(item.location).to eq(location)
     end
   end

@@ -1,12 +1,17 @@
 require "./context"
 require "./location_range"
+require "./tags"
 
 module Spectator::Core
   # Base class for all items in the test suite.
   abstract class Item
+    include Taggable
+
     # The description of the item.
     # This may be nil if the item does not have a description.
     getter description : String?
+
+    getter? tags : TagModifiers?
 
     # The full description of the item.
     # This is a combination of all parent descriptions and this item's description.
@@ -52,7 +57,7 @@ module Spectator::Core
     # The *description* can be a string, nil, or any other object.
     # When it is a string or nil, it will be stored as-is.
     # Any other types will be converted to a string by calling `#inspect` on it.
-    def initialize(description = nil, @location = nil)
+    def initialize(description = nil, @tags : TagModifiers? = nil, @location = nil)
       @description = description.is_a?(String) ? description : description.try &.inspect
     end
   end

@@ -9,8 +9,8 @@ module Spectator::Core
     # The *description* can be a string, nil, or any other object.
     # When it is a string or nil, it will be stored as-is.
     # Any other types will be converted to a string by calling `#inspect` on it.
-    def initialize(description = nil, location : LocationRange? = nil, &@block : Example -> Nil)
-      super(description, location)
+    def initialize(description = nil, tags : TagModifiers? = nil, location : LocationRange? = nil, &@block : Example -> Nil)
+      super(description, tags, location)
     end
 
     # Runs the example.

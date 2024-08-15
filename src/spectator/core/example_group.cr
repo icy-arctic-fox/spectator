@@ -10,8 +10,8 @@ module Spectator::Core
     include Context
     include Enumerable(Item)
 
-    def self.new(description = nil, location : LocationRange? = nil, &)
-      group = new(description, location)
+    def self.new(description = nil, tags : TagModifiers? = nil, location : LocationRange? = nil, &)
+      group = new(description, tags, location)
       with group yield group
       group
     end
