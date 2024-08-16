@@ -90,11 +90,11 @@ Spectator.describe BeInstanceOfMatcher do
             MESSAGE
         end
 
-        it "does not match if the object is a parent type" do
-          # Enabling this test causes a segfault.
-          # This only occurs when running all specs, not just this file.
-          # To reproduce, remove the following `skip` line and run `crystal spec`.
-          skip "This test causes a segfault for an unknown and unrelated reason."
+        # Enabling this test causes a segfault.
+        # This only occurs when running all specs, not just this file.
+        # To reproduce, remove the following `skip` line and run `crystal spec`.
+        it "does not match if the object is a parent type",
+          skip: "This test causes a segfault for an unknown and unrelated reason." do
           object = Base.new
           expect do
             expect(object).to be_instance_of(Derived)
@@ -132,11 +132,11 @@ Spectator.describe BeInstanceOfMatcher do
           end.to pass_check
         end
 
-        it "matches if the object is a parent type" do
-          # Enabling this test causes a segfault.
-          # This only occurs when running all specs, not just this file.
-          # To reproduce, remove the following `skip` line and run `crystal spec`.
-          skip "This test causes a segfault for an unknown and unrelated reason."
+        # Enabling this test causes a segfault.
+        # This only occurs when running all specs, not just this file.
+        # To reproduce, remove the following `skip` line and run `crystal spec`.
+        it "matches if the object is a parent type",
+          skip: "This test causes a segfault for an unknown and unrelated reason." do
           expect do
             expect(Base.new).not_to be_instance_of(Derived)
           end.to pass_check
