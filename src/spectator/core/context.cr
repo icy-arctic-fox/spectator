@@ -50,6 +50,8 @@ module Spectator
 
   alias_example_group_to :context
   alias_example_group_to :describe
+  alias_example_group_to :xcontext, skip: "Skipped with xcontext"
+  alias_example_group_to :xdescribe, skip: "Skipped with xdescribe"
 
   macro alias_example_to(name, *tags, **tagged_values)
     module ::Spectator::Core::Context
@@ -74,4 +76,6 @@ module Spectator
 
   alias_example_to :specify
   alias_example_to :it
+  alias_example_to :xspecify, skip: "Skipped with xspecify"
+  alias_example_to :xit, skip: "Skipped with xit"
 end
