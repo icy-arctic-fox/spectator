@@ -74,6 +74,8 @@ module Spectator::Core
       if location = @location
         io << " @ " << location
       end
+      io << " tags: "
+      print_tags(io)
       io << " 0x"
       object_id.to_s(io, 16)
       yield io

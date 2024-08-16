@@ -19,6 +19,16 @@ module Spectator::Core
       tags["skip"]? || tags["pending"]?
     end
 
+    def print_tags(io : IO) : Nil
+      io << '{'
+      tags.each_with_index do |(key, value), index|
+        io << key << ": "
+        value.inspect(io)
+        io << ", " if index < tags.size - 1
+      end
+      io << '}'
+    end
+
     def self.create_tags(names : Tuple, values : NamedTuple) : TagModifiers?
       return if names.empty? && values.empty?
       tags = TagModifiers.new
