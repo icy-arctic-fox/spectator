@@ -1,7 +1,6 @@
 module Spectator::Core
-  alias Tag = String | Bool
-  alias Tags = Hash(String, Tag)
-  alias TagModifiers = Hash(String, Tag | Nil)
+  alias Tags = Hash(String, String)
+  alias TagModifiers = Hash(String, String?)
 
   module Taggable
     abstract def tags? : TagModifiers?
@@ -29,16 +28,9 @@ module Spectator::Core
       io << '}'
     end
 
-    def self.create_tags(names : Tuple, values : NamedTuple) : TagModifiers?
-      return if names.empty? && values.empty?
-      tags = TagModifiers.new
-      names.each do |name|
-        tags[name.to_s] = true
-      end
-      values.each do |key, value|
-        tags[key.to_s] = value
-      end
-      tags
+    def self.create_tags(tags : Tuple, tagged_values : NamedTuple) : TagModifiers?
+      return if tags.empty? && tagged_values.empty?
+      apply_tag_modifiers(TagModifiers.new, tags, tagged_values)
     end
 
     def self.create_and_merge_tags(
@@ -47,32 +39,29 @@ module Spectator::Core
     ) : TagModifiers?
       tags = create_tags(tags_b, tagged_values_b)
       return if tags.nil? && tags_a.empty? && tagged_values_a.empty?
+      apply_tag_modifiers(tags || TagModifiers.new, tags_a, tagged_values_a)
+    end
 
-      tags ||= TagModifiers.new
-      tags_a.each do |name|
+    private def self.apply_tag_modifiers(hash, tags : Tuple, tagged_values : NamedTuple)
+      tags.each do |name|
         key = name.to_s
-        value = tags[key]?
-        # Override non-strings with true.
-        # Keep the existing value if it is a string.
-        # Additionally, false is changed to true.
-        unless value && value.is_a?(String)
-          tags[key] = true
-        end
+        # Prevent overwriting existing tag values.
+        hash[key] = key unless hash.has_key?(key)
       end
 
-      # All existing tagged values are overridden
-      tagged_values_a.each do |key, value|
-        tags[key.to_s] = value
+      tagged_values.each do |key, value|
+        key = key.to_s
+        hash[key] = value ? value.to_s : nil
       end
-      tags
+      hash
     end
 
     def self.merge_tags(a : Tags, b : Tags | TagModifiers) : Tags
       b.each do |key, value|
-        if value.nil?
-          a.delete(key)
-        else
+        if value
           a[key] = value
+        else
+          a.delete(key)
         end
       end
       a
