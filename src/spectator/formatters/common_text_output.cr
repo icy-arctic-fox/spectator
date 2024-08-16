@@ -120,6 +120,8 @@ module Spectator::Formatters
       printer.indent do
         results.each do |result|
           printer.with_style(:warning, &.puts result.example.full_description)
+          next unless skip_message = result.error_message
+          printer.indent { printer.puts skip_message }
         end
       end
       printer.puts
