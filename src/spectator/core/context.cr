@@ -11,7 +11,7 @@ module Spectator
     abstract def add_child(child : Item)
   end
 
-  macro alias_example_group_to(name)
+  macro alias_example_group_to(name, *tags, **tagged_values)
     module ::Spectator
       module Core::Context
         def {{name.id}}(description = nil, *tags,
@@ -22,7 +22,8 @@ module Spectator
           location = LocationRange.new(source_file, source_line, source_end_line)
           group = ExampleGroup.new(
             description: description.try &.to_s,
-            tags: Taggable.create_tags(tags, tagged_values),
+            tags: Taggable.create_and_merge_tags(
+              tags, tagged_values, {{tags.splat(", ")}} {{tagged_values.double_splat}}),
             location: location,
           )
           add_child(group)
@@ -50,7 +51,7 @@ module Spectator
   alias_example_group_to :context
   alias_example_group_to :describe
 
-  macro alias_example_to(name)
+  macro alias_example_to(name, *tags, **tagged_values)
     module ::Spectator::Core::Context
       def {{name.id}}(description = nil, *tags,
                       source_file = __FILE__,
@@ -61,7 +62,8 @@ module Spectator
         location = LocationRange.new(source_file, source_line, source_end_line)
         example = Example.new(
           description: description.try &.to_s,
-          tags: Taggable.create_tags(tags, tagged_values),
+          tags: Taggable.create_and_merge_tags(
+            tags, tagged_values, {{tags.splat(", ")}} {{tagged_values.double_splat}}),
           location: location,
           &block)
         add_child(example)

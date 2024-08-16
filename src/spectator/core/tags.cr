@@ -41,6 +41,32 @@ module Spectator::Core
       tags
     end
 
+    def self.create_and_merge_tags(
+      tags_a : Tuple, tagged_values_a : NamedTuple,
+      *tags_b, **tagged_values_b
+    ) : TagModifiers?
+      tags = create_tags(tags_b, tagged_values_b)
+      return if tags.nil? && tags_a.empty? && tagged_values_a.empty?
+
+      tags ||= TagModifiers.new
+      tags_a.each do |name|
+        key = name.to_s
+        value = tags[key]?
+        # Override non-strings with true.
+        # Keep the existing value if it is a string.
+        # Additionally, false is changed to true.
+        unless value && value.is_a?(String)
+          tags[key] = true
+        end
+      end
+
+      # All existing tagged values are overridden
+      tagged_values_a.each do |key, value|
+        tags[key.to_s] = value
+      end
+      tags
+    end
+
     def self.merge_tags(a : Tags, b : Tags | TagModifiers) : Tags
       b.each do |key, value|
         if value.nil?
@@ -58,6 +84,9 @@ module Spectator::Core
 
     def self.merge_tags(a : Tags, b : Nil) : Tags
       a
+    end
+
+    def self.merge_tags(a : Nil, b : Nil) : Nil
     end
   end
 end
