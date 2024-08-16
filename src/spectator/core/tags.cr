@@ -14,6 +14,11 @@ module Spectator::Core
       end
     end
 
+    def skip?
+      tags = self.tags
+      tags["skip"]? || tags["pending"]?
+    end
+
     def self.create_tags(names : Tuple, values : NamedTuple) : TagModifiers?
       return if names.empty? && values.empty?
       tags = TagModifiers.new
