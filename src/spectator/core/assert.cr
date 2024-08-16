@@ -25,7 +25,7 @@ module Spectator::Core
              source_file = __FILE__,
              source_line = __LINE__,
              source_end_line = __END_LINE__) : Nil
-      raise ExampleSkipped.new(message || "Example skipped",
+      raise ExampleSkipped.new(message,
         LocationRange.new(source_file, source_line, source_end_line))
     end
   end

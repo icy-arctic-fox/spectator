@@ -5,7 +5,7 @@ module Spectator
   class ExampleSkipped < Error
     getter location : Core::LocationRange?
 
-    def initialize(message : String, @location : Core::LocationRange? = nil)
+    def initialize(message : String? = nil, @location : Core::LocationRange? = nil)
       super(message)
     end
   end

@@ -41,7 +41,7 @@ module Spectator
         Spectator.sandbox.with_example(example) do
           report &.example_started(example)
           result = if skip_tag_value = example.skip?
-                     skip_message = skip_tag_value.is_a?(Bool) ? "Example Skipped" : skip_tag_value.to_s
+                     skip_message = skip_tag_value.to_s unless skip_tag_value.is_a?(Bool)
                      error = ExampleSkipped.new(skip_message, example.location)
                      Result.new(:skip, Time::Span.zero, error)
                    elsif @configuration.dry_run?
