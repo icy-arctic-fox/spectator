@@ -10,6 +10,10 @@ Spectator.describe "Assertions" do
       expect { assert true }.not_to raise_error
     end
 
+    it "raises an AssertionFailed error with a message" do
+      expect { assert false, "foo" }.to raise_error(Spectator::AssertionFailed, /foo/)
+    end
+
     it "stores the location of the assertion" do
       error = expect { assert false }.to raise_error(Spectator::AssertionFailed)
       expect(error).to have_location(Spectator::Core::Location.here(-1))
