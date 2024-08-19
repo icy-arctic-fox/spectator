@@ -128,7 +128,8 @@ module Spectator::Matchers::BuiltIn
       BeZeroMatcher.new
     end
 
-    def change(&) # by(change) / from(from) / to(to)
+    def change(&subject : -> _)
+      ChangeMatcher.new(subject)
     end
 
     def contain(*expected)
