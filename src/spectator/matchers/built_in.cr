@@ -19,20 +19,12 @@ module Spectator::Matchers::BuiltIn
       BeAMatcher(T).new
     end
 
-    def be_after(time : Time)
-    end
-
-    def be_after_or_equal(time : Time)
-    end
-
     def be_an(type : T.class) forall T
       be_a type
     end
 
-    def be_before(time : Time)
-    end
-
-    def be_before_or_equal(time : Time)
+    def be_base64
+      raise NotImplementedError.new("be_base64")
     end
 
     def be_between(min, max)
@@ -48,6 +40,7 @@ module Spectator::Matchers::BuiltIn
     end
 
     def be_close_to(expected, digits)
+      raise NotImplementedError.new("be_close_to")
     end
 
     def be_empty
@@ -83,6 +76,7 @@ module Spectator::Matchers::BuiltIn
     end
 
     def be_hexadecimal
+      raise NotImplementedError.new("be_hexadecimal")
     end
 
     def be_nan
@@ -109,6 +103,10 @@ module Spectator::Matchers::BuiltIn
       BePresentMatcher.new
     end
 
+    def be_timestamp(format)
+      raise NotImplementedError.new("be_timestamp")
+    end
+
     def be_true
       BeMatcher.new(true)
     end
@@ -117,7 +115,12 @@ module Spectator::Matchers::BuiltIn
       BeTruthyMatcher.new
     end
 
+    def be_uuid(version = nil)
+      raise NotImplementedError.new("be_uuid")
+    end
+
     def be_within(delta) # of(expected)
+      raise NotImplementedError.new("be_within")
     end
 
     def be_within(range : Range)
@@ -137,12 +140,19 @@ module Spectator::Matchers::BuiltIn
     end
 
     def contain_exactly(*values)
+      raise NotImplementedError.new("contain_exactly")
     end
 
     def cover(*value)
+      raise NotImplementedError.new("cover")
+    end
+
+    def decrease(&subject : -> _)
+      raise NotImplementedError.new("decrease")
     end
 
     def end_with(expected)
+      raise NotImplementedError.new("end_with")
     end
 
     def eq(value)
@@ -154,30 +164,43 @@ module Spectator::Matchers::BuiltIn
     end
 
     def expect_raises
+      raise NotImplementedError.new("expect_raises")
     end
 
     def have_attributes(**attributes)
+      raise NotImplementedError.new("have_attributes")
     end
 
     def have_index(value : Int)
+      raise NotImplementedError.new("have_index")
     end
 
     def have_indexes(*values : Int)
+      raise NotImplementedError.new("have_indexes")
     end
 
     def have_key(value : T) forall T
+      raise NotImplementedError.new("have_key")
     end
 
     def have_keys(*values : T) forall T
+      raise NotImplementedError.new("have_keys")
     end
 
     def have_size(value)
+      raise NotImplementedError.new("have_size")
     end
 
     def have_value(value : T) forall T
+      raise NotImplementedError.new("have_value")
     end
 
     def have_values(*values : T) forall T
+      raise NotImplementedError.new("have_values")
+    end
+
+    def increase(&subject : -> _)
+      raise NotImplementedError.new("increase")
     end
 
     def match(value)
@@ -185,9 +208,15 @@ module Spectator::Matchers::BuiltIn
     end
 
     def match_array(array)
+      raise NotImplementedError.new("match_array")
     end
 
     def match_size_of(value)
+      raise NotImplementedError.new("match_size_of")
+    end
+
+    def output(value = nil) # to_stdout/to_stderr
+      raise NotImplementedError.new("output")
     end
 
     def raise_error(error : T.class = Exception, message : String | Regex? = nil) forall T
@@ -211,6 +240,7 @@ module Spectator::Matchers::BuiltIn
     end
 
     def start_with(expected)
+      raise NotImplementedError.new("start_with")
     end
   end
 end
