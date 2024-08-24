@@ -147,7 +147,7 @@ module Spectator::Matchers::BuiltIn
       raise NotImplementedError.new("cover")
     end
 
-    def decrease(&subject : -> _)
+    def decrease(& : -> _)
       raise NotImplementedError.new("decrease")
     end
 
@@ -199,7 +199,7 @@ module Spectator::Matchers::BuiltIn
       raise NotImplementedError.new("have_values")
     end
 
-    def increase(&subject : -> _)
+    def increase(& : -> _)
       raise NotImplementedError.new("increase")
     end
 

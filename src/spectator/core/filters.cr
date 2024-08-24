@@ -29,9 +29,6 @@ module Spectator::Core
     end
 
     def matches?(example : Example)
-      @filters.each do |filter|
-        p! filter, example, filter.matches?(example)
-      end
       @filters.any? &.matches?(example)
     end
 
