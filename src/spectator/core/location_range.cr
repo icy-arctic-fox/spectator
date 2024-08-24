@@ -32,6 +32,10 @@ module Spectator::Core
     def includes?(location : Location)
       return false if location.file != @file
       return true unless line = location.line
+      includes?(line)
+    end
+
+    def includes?(line : Int)
       @line <= line && line <= @end_line
     end
 

@@ -1,6 +1,7 @@
 require "option_parser"
-require "./configuration"
 require "../formatters/*"
+require "./configuration"
+require "./filters"
 
 module Spectator::Core
   module CLI
@@ -45,6 +46,13 @@ module Spectator::Core
     end
 
     private def build_option_parser(configuration : Configuration) : OptionParser
+      configure_inclusion_filter = Proc(CompoundFilter).new do
+        filter = configuration.inclusion_filter
+        next filter if filter.is_a?(CompoundFilter)
+        filter = CompoundFilter.new(filter ? [filter] of Filter : [] of Filter)
+        configuration.inclusion_filter = filter
+      end
+
       OptionParser.new do |parser|
         parser.banner = "Usage: crystal spec [options] [files] [runtime_options]"
 
@@ -52,8 +60,9 @@ module Spectator::Core
           # TODO
         end
 
-        parser.on("-l", "--line LINE", "Run examples whose line matches LINE") do
-          # TODO
+        parser.on("-l", "--line LINE", "Run examples whose line matches LINE") do |line|
+          filter = configure_inclusion_filter.call
+          filter.add_filter(LineFilter.new(line: line.to_i))
         end
 
         parser.on("-p [NUMBER]", "--profile [NUMBER]", "Print the NUMBER slowest specs (default: 10)") do
@@ -64,8 +73,9 @@ module Spectator::Core
           # TODO
         end
 
-        parser.on("--location FILE:LINE", "Run example at LINE in FILE, multiple allowed") do
-          # TODO
+        parser.on("--location FILE:LINE", "Run example at LINE in FILE, multiple allowed") do |location|
+          filter = configure_inclusion_filter.call
+          filter.add_filter(LocationFilter.new(Location.parse(location)))
         end
 
         parser.on("--tag TAG", "Run examples with the specified TAG, or exclude examples by adding ~ before the TAG") do

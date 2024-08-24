@@ -34,7 +34,14 @@ module Spectator
       end
 
       private def examples_to_run(group : ExampleGroup) : Array(Example)
-        group.select(Example)
+        examples = group.select(Example)
+        if filter = @configuration.inclusion_filter
+          examples.select! { |example| filter.matches?(example) }
+        end
+        if filter = @configuration.exclusion_filter
+          examples.reject! { |example| filter.matches?(example) }
+        end
+        examples
       end
 
       private def run_example(example : Example) : ExecutionResult

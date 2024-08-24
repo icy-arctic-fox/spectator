@@ -1,4 +1,5 @@
 require "../formatters/*"
+require "./filters"
 require "./hooks"
 require "./sandbox"
 
@@ -58,6 +59,17 @@ module Spectator
       property seed : UInt64?
 
       property error_exit_code = 1
+
+      property inclusion_filter : Filter?
+
+      property exclusion_filter : Filter?
+
+      def filter : Filter?
+        @inclusion_filter
+      end
+
+      def filter=(@inclusion_filter : Filter?)
+      end
     end
 
     class Sandbox
