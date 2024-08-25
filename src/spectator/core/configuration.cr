@@ -4,6 +4,7 @@ require "./hooks"
 require "./sandbox"
 
 module Spectator::Core
+  # Options for controlling the behavior of Spectator.
   class Configuration
     include Hooks
 
@@ -71,8 +72,12 @@ module Spectator::Core
     end
   end
 
+  # Current configuration.
   Spectator.sandbox_getter configuration = Configuration.new
 
+  # Modifies the current configuration.
+  # The configuration is provided as an argument to the block.
+  # See `Configuration` for available options.
   def Spectator.configure(& : Core::Configuration ->) : Core::Configuration
     yield configuration
     configuration

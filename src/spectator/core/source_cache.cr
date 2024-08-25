@@ -42,5 +42,6 @@ module Spectator::Core
     end
   end
 
+  # Cache of source code for the current sandbox.
   Spectator.sandbox_getter source_cache = SourceCache.new
 end

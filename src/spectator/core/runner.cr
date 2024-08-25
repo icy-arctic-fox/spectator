@@ -69,16 +69,33 @@ module Spectator::Core
     end
   end
 
+  # Current running example.
+  # Returns `nil` if no example is running.
   Spectator.sandbox_property current_example : Example?
+
+  # The root example group.
+  # Everything contained in this group (and children) is run.
   Spectator.sandbox_getter root_example_group = ExampleGroup.new
+
+  # The current working path.
+  # This is the directory that the application starts in.
+  # All relative file and directory paths are relative to this.
   Spectator.sandbox_getter working_path : Path = Path[Dir.current]
+
+  # The date and time the application started.
+  # For sandboxes, this is the time at which the sandbox was created.
   Spectator.sandbox_getter start_time : Time = Time.local
 
+  # The elapsed time since the application started.
+  # For sandboxes, this is the time elapsed since the sandbox was created.
   def Spectator.elapsed_time : Time::Span
     sandbox.elapsed_time
   end
 
   class Sandbox
+    # Updates the current example.
+    # The `#current_example` property is set for the duration of the block.
+    # The previous example (if there was one) is restored when the block exits.
     def with_example(example : Example, &)
       previous_example = @current_example
       begin
@@ -90,6 +107,7 @@ module Spectator::Core
 
     @start_monotonic : Time::Span = Time.monotonic
 
+    # Elapsed time since the sandbox was created.
     def elapsed_time : Time::Span
       Time.monotonic - @start_monotonic
     end

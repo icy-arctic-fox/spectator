@@ -11,8 +11,12 @@ module Spectator
   # Current version of the Spectator library.
   VERSION = {{ `shards version "#{__DIR__}"`.stringify.chomp }}
 
+  # Indicates whether tests will run automatically after all examples and groups have been defined.
+  # Disable this to prevent tests from running automatically.
   class_property? auto_run = true
 
+  # Runs all examples in the current sandbox.
+  # The application's command-line arguments and environment variables are used for configuration.
   def self.run
     Core::CLI.configure
     runner = Core::Runner.new(configuration)
@@ -23,7 +27,5 @@ module Spectator
     exit 1
   end
 
-  at_exit do
-    run if auto_run?
-  end
+  at_exit { run if auto_run? }
 end
