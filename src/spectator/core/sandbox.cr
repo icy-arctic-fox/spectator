@@ -6,9 +6,9 @@ module Spectator
 
   protected class_property sandbox = Core::Sandbox.new
 
-  def self.with_sandbox(& : Sandbox ->)
+  def self.with_sandbox(& : Core::Sandbox ->)
     previous_sandbox = self.sandbox
-    sandbox = Sandbox.new
+    sandbox = Core::Sandbox.new
     begin
       self.sandbox = sandbox
       yield sandbox
