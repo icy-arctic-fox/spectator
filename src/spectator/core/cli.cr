@@ -56,8 +56,9 @@ module Spectator::Core
       OptionParser.new do |parser|
         parser.banner = "Usage: crystal spec [options] [files] [runtime_options]"
 
-        parser.on("-e", "--example STRING", "Run examples whose full nested names include STRING") do
-          # TODO
+        parser.on("-e", "--example STRING", "Run examples whose full nested names include STRING") do |substring|
+          filter = configure_inclusion_filter.call
+          filter.add_filter(ExampleFilter.new(substring))
         end
 
         parser.on("-l", "--line LINE", "Run examples whose line matches LINE") do |line|

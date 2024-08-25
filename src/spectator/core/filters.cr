@@ -6,6 +6,15 @@ module Spectator::Core
     abstract def matches?(example : Example)
   end
 
+  struct ExampleFilter < Filter
+    def initialize(@substring : String)
+    end
+
+    def matches?(example : Example)
+      example.full_description.try &.includes?(@substring)
+    end
+  end
+
   struct LineFilter < Filter
     def initialize(@line : Int32)
     end
