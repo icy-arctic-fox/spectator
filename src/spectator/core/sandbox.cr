@@ -50,14 +50,15 @@ module Spectator
   # end
   # ```
   macro sandbox_getter(prop)
+    {% if prop.is_a?(TypeDeclaration)
+         name = prop.var
+       elsif prop.is_a?(Assign)
+         name = prop.target
+       else
+         name = prop
+       end %}
+
     module ::Spectator
-      {% if prop.is_a?(TypeDeclaration)
-           name = prop.var
-         elsif prop.is_a?(Assign)
-           name = prop.target
-         else
-           name = prop
-         end %}
       def self.{{name.id}}
         sandbox.{{name.id}}
       end
@@ -96,14 +97,15 @@ module Spectator
   # end
   # ```
   macro sandbox_property(prop)
+    {% if prop.is_a?(TypeDeclaration)
+         name = prop.var
+       elsif prop.is_a?(Assign)
+         name = prop.target
+       else
+         name = prop
+       end %}
+
     module ::Spectator
-      {% if prop.is_a?(TypeDeclaration)
-           name = prop.var
-         elsif prop.is_a?(Assign)
-           name = prop.target
-         else
-           name = prop
-         end %}
       def self.{{name.id}}
         sandbox.{{name.id}}
       end
