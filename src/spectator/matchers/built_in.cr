@@ -163,8 +163,16 @@ module Spectator::Matchers::BuiltIn
       eq value
     end
 
-    def expect_raises
-      raise NotImplementedError.new("expect_raises")
+    def expect_raises(error : T.class = Exception, message : String | Regex? = nil, &block) forall T
+      expect(&block).to raise_error(error, message)
+    end
+
+    def expect_raises(error : Exception, &block)
+      expect(&block).to raise_error(error)
+    end
+
+    def expect_raises(message : String | Regex, &block)
+      expect(&block).to raise_error(message)
     end
 
     def have_attributes(**attributes)
