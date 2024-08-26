@@ -18,15 +18,23 @@ module Spectator
 
   # Runs all examples in the current sandbox.
   # The application's command-line arguments and environment variables are used for configuration.
-  def self.run
+  # Returns true if there were no failures, false otherwise.
+  def self.run : Bool
     Core::CLI.configure
     runner = Core::Runner.new(configuration)
     runner.run(sandbox.root_example_group)
   rescue ex
     STDERR.puts "Spectator encountered an unexpected error."
     ex.inspect_with_backtrace(STDERR)
-    exit 1
+    false
   end
 
-  at_exit { run if auto_run? }
+  at_exit do
+    next unless auto_run?
+    successful = run
+    exit Spectator.configuration.error_exit_code unless successful
+  end
+
+  # The exit code used when an error occurs.
+  Spectator.config_property error_exit_code = 1
 end

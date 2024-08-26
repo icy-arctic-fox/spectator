@@ -10,7 +10,7 @@ module Spectator::Core
     def initialize(@configuration : Configuration)
     end
 
-    def run(spec : ExampleGroup)
+    def run(spec : ExampleGroup) : Bool
       report &.started
       report &.suite_started
       results =
@@ -30,6 +30,8 @@ module Spectator::Core
       summary = Formatters::Summary.from_results(results.map &.result, Spectator.elapsed_time)
       report &.report_summary(summary)
       report &.finished
+
+      results.none? &.failed?
     end
 
     private def examples_to_run(group : ExampleGroup) : Array(Example)
@@ -112,9 +114,6 @@ module Spectator::Core
 
   # The seed used to initialize the Crystal's default random number generator.
   Spectator.config_property seed : UInt64?
-
-  # The exit code used when an error occurs.
-  Spectator.config_property error_exit_code = 1
 
   # The order in which examples are run.
   enum Order
