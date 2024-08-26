@@ -3,8 +3,9 @@ require "./spectator/error"
 require "./spectator/example_skipped"
 require "./spectator/framework_error"
 
-require "./spectator/core/**"
-require "./spectator/matchers/**"
+require "./spectator/core"
+require "./spectator/formatters"
+require "./spectator/matchers"
 
 # Feature-rich testing framework for Crystal inspired by RSpec.
 module Spectator
