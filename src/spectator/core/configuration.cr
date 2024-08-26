@@ -1,74 +1,82 @@
-require "../formatters/*"
-require "./filters"
 require "./hooks"
 require "./sandbox"
 
-module Spectator::Core
-  # Options for controlling the behavior of Spectator.
-  class Configuration
-    include Hooks
-
-    enum Order
-      Defined
-      Random
-      RecentlyModified
+module Spectator
+  module Core
+    # Options for controlling the behavior of Spectator.
+    class Configuration
+      include Hooks
     end
+  end
 
-    DEFAULT_FAIL_FAST_EXAMPLES =  1
-    DEFAULT_SLOWEST_EXAMPLES   = 10
-
-    property formatters do
-      [Formatters::DotsFormatter.new] of Formatters::Formatter
+  # Defines a property that can be accessed from the configuration.
+  # This is effectively the same as using the `property` macro within the `Core::Configuration` class.
+  macro config_property(prop)
+    module ::Spectator::Core
+      class Configuration
+        property {{prop}}
+      end
     end
+  end
 
-    def add_formatter(formatter : Formatters::Formatter) : Nil
-      formatters << formatter
+  # Defines a predicate property that can be accessed from the configuration.
+  # This is effectively the same as using the `property?` macro within the `Core::Configuration` class.
+  macro config_property?(prop)
+    module ::Spectator::Core
+      class Configuration
+        property? {{prop}}
+      end
     end
+  end
 
-    def formatter=(formatter : Formatters::Formatter)
-      self.formatters = [formatter] of Formatters::Formatter
-      formatter
-    end
+  # Defines a property that behaves like a number and a boolean.
+  # The property can be accessed from the configuration.
+  # The property is stored as a number
+  # When using the predicate method, a boolean is returned, which is true if the property is greater than zero.
+  # Additionally, the property can be set to a boolean.
+  # When setting to true, it's set to the property's default integer value.
+  # When setting to false, it's set to 0.
+  #
+  # ```
+  # Spectator.config_numeric_property profile_examples = 5
+  # ```
+  # allows the following:
+  # ```
+  # Spectator.configure do |config|
+  #   config.profile_examples = true  # Same as `config.profile_examples = 5`
+  #   config.profile_examples = false # Same as `config.profile_examples = 0`
+  #   config.profile_examples = 10
+  #   config.profile_examples? # => true
+  #   config.profile_examples = 0
+  #   config.profile_examples? # => false
+  # end
+  macro config_numeric_property(prop, truthy = nil)
+    {% name = if prop.is_a?(TypeDeclaration)
+                prop.var
+              elsif prop.is_a?(Assign)
+                prop.target
+              else
+                raise "A type declaration or assignment is required"
+              end %}
 
-    property? dry_run = false
+    module ::Spectator::Core
+      class Configuration
+        property {{prop}}
 
-    property fail_fast = 1
+        def {{name}}?
+          @{{name}} > 0
+        end
 
-    def fail_fast? : Bool
-      @fail_fast > 0
-    end
-
-    def fail_fast=(flag : Bool)
-      @fail_fast = flag ? DEFAULT_FAIL_FAST_EXAMPLES : 0
-    end
-
-    property? fail_if_no_examples = true
-
-    property profile_examples = 0
-
-    def profile_examples? : Bool
-      @profile_examples > 0
-    end
-
-    def profile_examples=(flag : Bool)
-      @profile_examples = flag ? DEFAULT_SLOWEST_EXAMPLES : 0
-    end
-
-    property order = Order::Defined
-
-    property seed : UInt64?
-
-    property error_exit_code = 1
-
-    property inclusion_filter : Filter?
-
-    property exclusion_filter : Filter?
-
-    def filter : Filter?
-      @inclusion_filter
-    end
-
-    def filter=(@inclusion_filter : Filter?)
+        def {{name}}=(flag : Bool)
+          @{{name}} = flag ? {{ if truthy
+                                  truthy
+                                elsif prop.is_a?(TypeDeclaration)
+                                  prop.value ? prop.value : 1
+                                else # Assign
+                                  prop.value
+                                end }} : 0
+        end
+      end
     end
   end
 

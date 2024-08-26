@@ -86,6 +86,52 @@ module Spectator::Core
   # For sandboxes, this is the time at which the sandbox was created.
   Spectator.sandbox_getter start_time : Time = Time.local
 
+  # Filter used to include examples to run.
+  # Examples not matching the filter will not be run.
+  Spectator.config_property inclusion_filter : Filter?
+
+  # Filter used to exclude examples from running.
+  # Examples matching the filter will not be run.
+  # Excluded examples take precedence over included examples.
+  # That is, if an example matches both filters, it will not be run.
+  Spectator.config_property exclusion_filter : Filter?
+
+  # When true, examples will not be run, but act as if they did.
+  # All examples will be reported as passed.
+  Spectator.config_property? dry_run = false
+
+  # Specifies that the application should exit after the number of failures.
+  Spectator.config_numeric_property fail_fast = 0, truthy: 1
+
+  # When true, the test suite will fail if it contains no examples.
+  Spectator.config_property? fail_if_no_examples = true
+
+  # The number of examples that should be profiled.
+  # When enabled, the slowest examples to complete will be included in the output.
+  Spectator.config_numeric_property profile_examples = 0, truthy: 10
+
+  # The seed used to initialize the Crystal's default random number generator.
+  Spectator.config_property seed : UInt64?
+
+  # The exit code used when an error occurs.
+  Spectator.config_property error_exit_code = 1
+
+  # The order in which examples are run.
+  enum Order
+    # Examples run in the order they are defined in source code.
+    Defined
+
+    # Examples run in a random order.
+    # The order is determined by the seed value.
+    Random
+
+    # Recently modified examples are run first.
+    Modified
+  end
+
+  # The order in which examples are run.
+  Spectator.config_property order = Order::Defined
+
   # The elapsed time since the application started.
   # For sandboxes, this is the time elapsed since the sandbox was created.
   def Spectator.elapsed_time : Time::Span
