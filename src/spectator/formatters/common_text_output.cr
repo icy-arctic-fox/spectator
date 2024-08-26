@@ -79,12 +79,7 @@ module Spectator::Formatters
             printer.puts error.message
           end
           printer.puts
-          if location = error.location
-            relative_path = location.relative_to(Spectator.working_path)
-            printer.with_style(:info, &.print "# ", relative_path)
-            printer.puts
-            printer.puts
-          end
+          printer.puts if print_location(error)
         else
           print_trace(error)
         end
@@ -121,10 +116,21 @@ module Spectator::Formatters
         results.each do |result|
           printer.with_style(:warning, &.puts result.example.full_description)
           next unless skip_message = result.error_message
-          printer.indent { printer.puts skip_message }
+          printer.indent do
+            print_location(result.example)
+            printer.puts skip_message
+          end
         end
       end
       printer.puts
+    end
+
+    private def print_location(locatable)
+      if location = locatable.location
+        printer.with_style(:info, &.print "@ ", location.relative_to(Spectator.working_path))
+        printer.puts
+        true
+      end
     end
 
     def report_profile : Nil
