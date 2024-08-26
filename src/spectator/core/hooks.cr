@@ -175,4 +175,8 @@ module Spectator::Core
       @after_all_hooks.try &.each &.call
     end
   end
+
+  class Configuration
+    include Hooks
+  end
 end

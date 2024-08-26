@@ -1,11 +1,9 @@
-require "./hooks"
 require "./sandbox"
 
 module Spectator
   module Core
     # Options for controlling the behavior of Spectator.
     class Configuration
-      include Hooks
     end
   end
 
