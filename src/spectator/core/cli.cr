@@ -1,5 +1,5 @@
 require "option_parser"
-require "../formatters/*"
+require "../formatters"
 require "./configuration"
 require "./filters"
 
