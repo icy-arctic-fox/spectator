@@ -11,7 +11,7 @@ module Spectator::Core
     # This may be nil if the item does not have a description.
     getter description : String?
 
-    getter? tags : TagModifiers?
+    getter tags : TagModifiers?
 
     # The full description of the item.
     # This is a combination of all parent descriptions and this item's description.

@@ -3,27 +3,27 @@ module Spectator::Core
   alias TagModifiers = Hash(String, String?)
 
   module Taggable
-    abstract def tags? : TagModifiers?
+    abstract def tags : TagModifiers?
 
-    def tags : Tags
-      if parent_tags = parent.try &.tags
-        Taggable.merge_tags(parent_tags, tags?)
+    def all_tags : Tags
+      if parent_tags = parent.try &.all_tags
+        Taggable.merge_tags(parent_tags, tags)
       else
-        Taggable.merge_tags(Tags.new, tags?)
+        Taggable.merge_tags(Tags.new, tags)
       end
     end
 
     def skip?
-      tags = self.tags
+      tags = self.all_tags
       tags["skip"]? || tags["pending"]?
     end
 
     def print_tags(io : IO) : Nil
       io << '{'
-      tags.each_with_index do |(key, value), index|
+      all_tags.each_with_index do |(key, value), index|
         io << key << ": "
         value.inspect(io)
-        io << ", " if index < tags.size - 1
+        io << ", " if index < all_tags.size - 1
       end
       io << '}'
     end
