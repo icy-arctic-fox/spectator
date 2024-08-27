@@ -70,8 +70,8 @@ module Spectator::Core
           # TODO
         end
 
-        parser.on("--fail-fast [NUMBER]", "Abort the run on first NUMBER failures (default: 1)") do
-          # TODO
+        parser.on("--fail-fast [NUMBER]", "Abort the run on first NUMBER failures (default: 1)") do |number|
+          configuration.fail_fast = number.to_i? || true
         end
 
         parser.on("--location FILE:LINE", "Run example at LINE in FILE, multiple allowed") do |location|

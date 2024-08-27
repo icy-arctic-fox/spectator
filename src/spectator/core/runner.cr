@@ -3,6 +3,7 @@ require "./cli"
 require "./configuration"
 require "./example"
 require "./example_group"
+require "./execution_result"
 require "./sandbox"
 
 module Spectator::Core
@@ -17,19 +18,24 @@ module Spectator::Core
         return true
       end
 
+      failures = 0
       report &.started
       report &.suite_started
-      results =
-        examples.map do |example|
-          if (group = example.group) && group.no_runs?
-            report &.example_group_started(group)
-          end
-          result = run_example(example)
-          if (group = example.group) && group.run?
-            report &.example_group_finished(group)
-          end
-          result
+
+      results = [] of ExecutionResult
+      examples.each do |example|
+        if (group = example.group) && group.no_runs?
+          report &.example_group_started(group)
         end
+        result = run_example(example)
+        if (group = example.group) && group.run?
+          report &.example_group_finished(group)
+        end
+        results << result
+        failures += 1 if result.failed?
+        break if @configuration.fail_fast? && failures >= @configuration.fail_fast
+      end
+
       report &.suite_finished
       report &.report_results(results)
       report &.report_profile
@@ -37,7 +43,7 @@ module Spectator::Core
       report &.report_summary(summary)
       report &.finished
 
-      results.none? &.failed?
+      failures.zero?
     end
 
     private def examples_to_run(group : ExampleGroup) : Array(Example)
