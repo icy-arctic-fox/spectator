@@ -139,9 +139,9 @@ module Spectator::Formatters
     def report_summary(summary : Summary) : Nil
       status = case summary
                when .passed?  then "Passed"
-               when .errored? then "Failed (with errors)"
+               when .errored? then "Failed with errors"
                when .failed?  then "Failed"
-               when .skipped? then "Passed (with skipped examples)"
+               when .skipped? then "Passed with skipped examples"
                else                "Finished"
                end
       printer.with_style(summary.title_style, &.title status)
