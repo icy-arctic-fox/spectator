@@ -5,7 +5,7 @@ module Spectator::Core
   module Taggable
     abstract def tags : TagModifiers?
 
-    getter all_tags : Tags do
+    def all_tags : Tags
       if parent_tags = parent.try &.all_tags
         Taggable.merge_tags(parent_tags, tags)
       else
