@@ -58,7 +58,7 @@ module Spectator::Core
                    skip_message = skip_tag_value.to_s unless skip_tag_value.is_a?(Bool)
                    error = ExampleSkipped.new(skip_message, example.location)
                    Result.new(:skip, Time::Span.zero, error)
-                 elsif @configuration.dry_run?
+                 elsif @configuration.mode.dry_run?
                    Result.new(:pass, Time::Span.zero)
                  else
                    example.run
@@ -130,6 +130,9 @@ module Spectator::Core
     # Run all examples and report results.
     Normal
 
+    # Report all examples as passed without running them.
+    DryRun
+
     # Produce a list of tags used in the examples without running them.
     ListTags
   end
@@ -137,10 +140,6 @@ module Spectator::Core
   # Specifies the mode in which the application will run.
   # The default is to run all examples and report results.
   Spectator.config_property mode = Mode::Normal
-
-  # When true, examples will not be run, but act as if they did.
-  # All examples will be reported as passed.
-  Spectator.config_property? dry_run = false
 
   # Specifies that the application should exit after the number of failures.
   Spectator.config_numeric_property fail_fast = 0, truthy: 1
