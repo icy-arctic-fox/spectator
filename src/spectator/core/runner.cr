@@ -11,10 +11,16 @@ module Spectator::Core
     end
 
     def run(spec : ExampleGroup) : Bool
+      examples = examples_to_run(spec)
+      if @configuration.mode.list_tags?
+        print_tags(examples)
+        return true
+      end
+
       report &.started
       report &.suite_started
       results =
-        examples_to_run(spec).map do |example|
+        examples.map do |example|
           if (group = example.group) && group.no_runs?
             report &.example_group_started(group)
           end
@@ -64,6 +70,27 @@ module Spectator::Core
       end
     end
 
+    private def print_tags(examples : Enumerable(Example)) : Nil
+      tally = Hash(String, Int32).new(0)
+      examples.each do |example|
+        tags = example.all_tags
+        if tags.empty?
+          tally.update("untagged", &.+ 1)
+        else
+          tags.each do |tag, _|
+            tally.update(tag, &.+ 1)
+          end
+        end
+      end
+
+      longest_tag_length = tally.each_key.max_of &.size
+      tally.each do |tag, count|
+        tag.rjust(STDOUT, longest_tag_length)
+        print ": ", count
+        puts
+      end
+    end
+
     private def report(&) : Nil
       @configuration.formatters.each do |formatter|
         yield formatter
@@ -97,6 +124,19 @@ module Spectator::Core
   # Excluded examples take precedence over included examples.
   # That is, if an example matches both filters, it will not be run.
   Spectator.config_property exclusion_filter : Filter?
+
+  # The mode in which the application will run.
+  enum Mode
+    # Run all examples and report results.
+    Normal
+
+    # Produce a list of tags used in the examples without running them.
+    ListTags
+  end
+
+  # Specifies the mode in which the application will run.
+  # The default is to run all examples and report results.
+  Spectator.config_property mode = Mode::Normal
 
   # When true, examples will not be run, but act as if they did.
   # All examples will be reported as passed.

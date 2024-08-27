@@ -84,7 +84,7 @@ module Spectator::Core
         end
 
         parser.on("--list-tags", "Lists all the tags used") do
-          # TODO
+          configuration.mode = :list_tags
         end
 
         parser.on("--order MODE", "Run examples in random order by passing MODE as 'random' or to a specific seed by passing MODE as the seed value") do
