@@ -77,7 +77,7 @@ module Spectator::Core
         if tags.empty?
           tally.update("untagged", &.+ 1)
         else
-          tags.each do |tag, _|
+          tags.each_key do |tag|
             tally.update(tag, &.+ 1)
           end
         end
