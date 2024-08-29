@@ -63,6 +63,10 @@ module Spectator::Matchers::BuiltIn
       NegatedMatcher.new(be_infinite)
     end
 
+    def be_hexadecimal
+      raise NotImplementedError.new("be_hexadecimal")
+    end
+
     def be_in(range_or_set)
       BeInMatcher.new(range_or_set)
     end
@@ -73,10 +77,6 @@ module Spectator::Matchers::BuiltIn
 
     def be_instance_of(type : T.class) forall T
       BeInstanceOfMatcher(T).new
-    end
-
-    def be_hexadecimal
-      raise NotImplementedError.new("be_hexadecimal")
     end
 
     def be_nan
