@@ -8,6 +8,10 @@ authors:
 
 crystal: ">= 1.6.0, < 2.0.0"
 
+dependencies:
+  mocks:
+    github: icy-arctic-fox/mocks
+
 development_dependencies:
   ameba:
     github: crystal-ameba/ameba
