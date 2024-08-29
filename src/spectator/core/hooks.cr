@@ -38,7 +38,10 @@ module Spectator::Core
                source_line = __LINE__,
                source_end_line = __END_LINE__,
                &block : Example ->) : ExampleHook(Example)
-      before_each(source_file: source_file, source_line: source_line, source_end_line: source_end_line, &block)
+      before_each(source_file: source_file,
+        source_line: source_line,
+        source_end_line: source_end_line,
+        &block)
     end
 
     protected getter after_each_hooks do
@@ -61,7 +64,10 @@ module Spectator::Core
               source_line = __LINE__,
               source_end_line = __END_LINE__,
               &block : Example ->) : ExampleHook(Example)
-      after_each(source_file: source_file, source_line: source_line, source_end_line: source_end_line, &block)
+      after_each(source_file: source_file,
+        source_line: source_line,
+        source_end_line: source_end_line,
+        &block)
     end
 
     @after_each_priority_hooks = 0
@@ -114,7 +120,11 @@ module Spectator::Core
                      source_line = __LINE__,
                      source_end_line = __END_LINE__,
                      &block : ->) : ContextHook
-      Spectator.root_example_group.before_all(source_file: source_file, source_line: source_line, source_end_line: source_end_line, &block)
+      Spectator.root_example_group.before_all(
+        source_file: source_file,
+        source_line: source_line,
+        source_end_line: source_end_line,
+        &block)
     end
 
     def after_suite(*,
@@ -122,7 +132,11 @@ module Spectator::Core
                     source_line = __LINE__,
                     source_end_line = __END_LINE__,
                     &block : ->) : ContextHook
-      Spectator.root_example_group.after_all(source_file: source_file, source_line: source_line, source_end_line: source_end_line, &block)
+      Spectator.root_example_group.after_all(
+        source_file: source_file,
+        source_line: source_line,
+        source_end_line: source_end_line,
+        &block)
     end
 
     protected getter around_each_hooks do
@@ -145,7 +159,11 @@ module Spectator::Core
                source_line = __LINE__,
                source_end_line = __END_LINE__,
                &block : Example::Procsy ->) : ExampleHook(Example::Procsy)
-      around_each(source_file: source_file, source_line: source_line, source_end_line: source_end_line, &block)
+      around_each(
+        source_file: source_file,
+        source_line: source_line,
+        source_end_line: source_end_line,
+        &block)
     end
 
     # TODO: around_all
