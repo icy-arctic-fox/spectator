@@ -37,8 +37,8 @@ module Spectator::Core
         xdg_options_file = File.join(xdg_config_home, "spectator", "options")
         files << xdg_options_file if File.file?(xdg_options_file)
       end
-      if files.empty? && (home_dir = env["HOME"]?)
-        files << File.join(home_dir, ".spectator")
+      if files.empty?
+        files << (Path.home / ".spectator").to_s
       end
       files << ".spectator"
       files << ".spectator-local"
