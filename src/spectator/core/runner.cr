@@ -12,7 +12,9 @@ module Spectator::Core
     def initialize(@configuration : Configuration)
     end
 
+    # ameba:disable Metrics/CyclomaticComplexity
     def run(spec : ExampleGroup) : Bool
+      # TODO: Reduce complexity.
       examples = examples_to_run(spec)
       if @configuration.mode.list_tags?
         print_tags(examples)
