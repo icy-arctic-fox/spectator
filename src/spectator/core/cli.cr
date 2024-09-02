@@ -52,6 +52,34 @@ module Spectator::Core
         filter = CompoundFilter.new(filter ? [filter] of Filter : [] of Filter)
         configuration.inclusion_filter = filter
       end
+      configure_exclusion_filter = Proc(CompoundFilter).new do
+        filter = configuration.exclusion_filter
+        next filter if filter.is_a?(CompoundFilter)
+        filter = CompoundFilter.new(filter ? [filter] of Filter : [] of Filter)
+        configuration.exclusion_filter = filter
+      end
+      included_tags_filter = nil.as(TagFilter?)
+      configure_included_tags_filter = Proc(TagFilter).new do
+        if filter = included_tags_filter
+          next filter
+        end
+        filter = TagFilter.new
+        included_tags_filter = filter
+        compound_filter = configure_inclusion_filter.call
+        compound_filter.add_filter(filter)
+        filter
+      end
+      excluded_tags_filter = nil.as(TagFilter?)
+      configure_excluded_tags_filter = Proc(TagFilter).new do
+        if filter = excluded_tags_filter
+          next filter
+        end
+        filter = TagFilter.new
+        excluded_tags_filter = filter
+        compound_filter = configure_exclusion_filter.call
+        compound_filter.add_filter(filter)
+        filter
+      end
 
       OptionParser.new do |parser|
         parser.banner = "Usage: crystal spec [options] [files] [runtime_options]"
@@ -79,8 +107,15 @@ module Spectator::Core
           filter.add_filter(LocationFilter.new(Location.parse(location)))
         end
 
-        parser.on("--tag TAG", "Run examples with the specified TAG, or exclude examples by adding ~ before the TAG") do
-          # TODO
+        parser.on("--tag TAG", "Run examples with the specified TAG, or exclude examples by adding ~ before the TAG") do |string|
+          negated = string.lchop?('~')
+          parts = (negated || string).split(':', 2)
+          tag = parts[0]
+          value = parts[1]?
+
+          configure_proc = negated ? configure_excluded_tags_filter : configure_included_tags_filter
+          filter = configure_proc.call
+          filter.add_tag(tag, value)
         end
 
         parser.on("--list-tags", "Lists all the tags used") do

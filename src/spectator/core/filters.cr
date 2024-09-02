@@ -33,6 +33,21 @@ module Spectator::Core
     end
   end
 
+  struct TagFilter < Filter
+    @tags = [] of {String, String?}
+
+    def matches?(example : Example)
+      example_tags = example.all_tags
+      @tags.any? do |(tag, value)|
+        value ? example_tags[tag]? == value : example_tags.has_key?(tag)
+      end
+    end
+
+    def add_tag(tag : String, value : String? = nil)
+      @tags << {tag, value}
+    end
+  end
+
   struct CompoundFilter < Filter
     def initialize(@filters : Array(Filter))
     end
