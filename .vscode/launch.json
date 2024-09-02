@@ -12,6 +12,18 @@
       "initCommands": [
         "command script import ${userHome}/.local/etc/lldb/crystal_formatters.py"
       ]
+    },
+    {
+      "type": "lldb",
+      "request": "launch",
+      "name": "crystal: debug specs",
+      "preLaunchTask": "crystal: build specs (debug)",
+      "program": "${workspaceFolder}/bin/specs",
+      "args": "--tag foo:bar",
+      "cwd": "${workspaceFolder}",
+      "initCommands": [
+        "command script import ${userHome}/.local/etc/lldb/crystal_formatters.py"
+      ]
     }
   ]
 }

@@ -5,6 +5,11 @@
       "label": "crystal: build current file (debug)",
       "type": "shell",
       "command": "crystal build -d ${relativeFile} -o bin/${fileBasenameNoExtension}",
+    },
+    {
+      "label": "crystal: build specs (debug)",
+      "type": "shell",
+      "command": "crystal build -d specs.cr -o bin/specs",
     }
   ]
 }
