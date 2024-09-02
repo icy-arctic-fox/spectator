@@ -1,3 +1,4 @@
+require "../core/fail_reason"
 require "../core/result"
 
 module Spectator::Formatters
@@ -8,8 +9,13 @@ module Spectator::Formatters
     skipped : Int32,
     total_time : Time::Span,
     test_time : Time::Span,
+    fail_reason : Core::FailReason
   ) do
-    def self.from_results(results : Enumerable(Core::Result), total_time : Time::Span) : self
+    def self.from_results(
+      results : Enumerable(Core::Result),
+      total_time : Time::Span,
+      fail_reason : Core::FailReason? = nil
+    ) : self
       new(
         passed: results.count &.passed?,
         failed: results.count &.failed?,
@@ -17,6 +23,7 @@ module Spectator::Formatters
         skipped: results.count &.skipped?,
         total_time: total_time,
         test_time: results.sum &.elapsed,
+        fail_reason: fail_reason || Core::FailReason::None
       )
     end
 
@@ -26,11 +33,11 @@ module Spectator::Formatters
     end
 
     def passed? : Bool
-      passed == total
+      fail_reason.nil? && passed > 0
     end
 
     def failed? : Bool
-      failed > 0
+      !fail_reason.none?
     end
 
     def errored? : Bool
@@ -39,6 +46,24 @@ module Spectator::Formatters
 
     def skipped? : Bool
       skipped > 0
+    end
+
+    def text : String
+      case fail_reason
+      in .none?
+        case self
+        when .skipped? then "Passed with skipped example#{'s' if skipped != 1}"
+        when .passed?  then "Passed"
+        else                "Finished"
+        end
+      in .failed?
+        case self
+        when .errored? then "Failed with error#{'s' if errors != 1}"
+        else                "Failed"
+        end
+      in .fail_fast? then "Aborted after exceeding #{failed} failure#{'s' if failed != 1}"
+      in .no_tests?  then "Failed due to no tests"
+      end
     end
 
     def style : Style

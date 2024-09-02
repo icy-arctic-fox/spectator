@@ -4,6 +4,7 @@ require "./configuration"
 require "./example"
 require "./example_group"
 require "./execution_result"
+require "./fail_reason"
 require "./sandbox"
 
 module Spectator::Core
@@ -19,6 +20,7 @@ module Spectator::Core
       end
 
       failures = 0
+      fail_reason = FailReason::None
       report &.started
       report &.suite_started
 
@@ -33,17 +35,26 @@ module Spectator::Core
         end
         results << result
         failures += 1 if result.failed?
-        break if @configuration.fail_fast? && failures >= @configuration.fail_fast
+        if @configuration.fail_fast? && failures >= @configuration.fail_fast
+          fail_reason = FailReason::FailFast
+          break
+        end
       end
+
+      if fail_reason.none? && failures > 0
+        fail_reason = FailReason::Failed
+      elsif @configuration.fail_if_no_examples? && results.empty?
+        fail_reason = FailReason::NoTests
+      end
+      summary = Formatters::Summary.from_results(results.map &.result, Spectator.elapsed_time, fail_reason)
 
       report &.suite_finished
       report &.report_results(results)
       report &.report_profile
-      summary = Formatters::Summary.from_results(results.map &.result, Spectator.elapsed_time)
       report &.report_summary(summary)
       report &.finished
 
-      failures.zero?
+      fail_reason.none?
     end
 
     private def examples_to_run(group : ExampleGroup) : Array(Example)
