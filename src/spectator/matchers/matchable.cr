@@ -1,11 +1,15 @@
 require "../formatters/printer"
 require "../framework_error"
 require "./formatting"
-require "./printable"
+require "./match_failure"
 
 module Spectator::Matchers
   module Matchable
     include Formatting
+
+    getter matcher_name : String do
+      self.class.name.split("::").last.rchop("Matcher").underscore
+    end
 
     abstract def description
 
@@ -13,10 +17,6 @@ module Spectator::Matchers
 
     def matches?(&)
       matches?(yield)
-    end
-
-    getter matcher_name : String do
-      self.class.name.split("::").last.rchop("Matcher").underscore
     end
 
     def does_not_match?(actual_value)
@@ -27,24 +27,60 @@ module Spectator::Matchers
       does_not_match?(yield)
     end
 
+    def print_failure_message(printer : Formatters::Printer, actual_value) : Nil
+      printer << "Expected " << description_of(actual_value) << " to " << description
+    end
+
+    def print_failure_message(printer : Formatters::Printer, &) : Nil
+      print_failure_message(printer, yield)
+    end
+
     def failure_message(actual_value)
-      "Expected #{description_of actual_value} to #{description}"
+      String.build do |io|
+        printer = Formatters::PlainPrinter.new(io)
+        print_failure_message(printer, actual_value)
+      end
     end
 
     def failure_message(&)
       failure_message(yield)
     end
 
+    def print_negated_failure_message(printer : Formatters::Printer, actual_value) : Nil
+      printer << "Expected " << description_of(actual_value) << " not to " << description
+    end
+
+    def print_negated_failure_message(printer : Formatters::Printer, &) : Nil
+      print_negated_failure_message(printer, yield)
+    end
+
     def negated_failure_message(actual_value)
-      "Expected #{description_of actual_value} not to #{description}"
+      String.build do |io|
+        printer = Formatters::PlainPrinter.new(io)
+        print_negated_failure_message(printer, actual_value)
+      end
     end
 
     def negated_failure_message(&)
       negated_failure_message(yield)
     end
 
-    def =~(other)
+    def ===(other)
       matches?(other)
+    end
+
+    def match(actual_value) : MatchFailure?
+      return unless matches?(actual_value)
+      MatchFailure.new do |printer|
+        print_failure_message(printer, actual_value)
+      end
+    end
+
+    def match_negated(actual_value) : MatchFailure?
+      return unless does_not_match?(actual_value)
+      MatchFailure.new do |printer|
+        print_negated_failure_message(printer, actual_value)
+      end
     end
 
     macro disable_negation
@@ -57,6 +93,14 @@ module Spectator::Matchers
       end
 
       def does_not_match?(&)
+        no_negation!
+      end
+
+      def print_negated_failure_message(printer : Formatters::Printer, actual_value) : Nil
+        no_negation!
+      end
+
+      def print_negated_failure_message(printer : Formatters::Printer, &) : Nil
         no_negation!
       end
 
@@ -86,25 +130,21 @@ module Spectator::Matchers
         !matches?(&block)
       end
 
+      def print_failure_message(printer : Formatters::Printer, actual_value) : Nil
+        no_block!
+      end
+
       def failure_message(actual_value)
+        no_block!
+      end
+
+      def print_negated_failure_message(printer : Formatters::Printer, actual_value) : Nil
         no_block!
       end
 
       def negated_failure_message(actual_value)
         no_block!
       end
-
-      def failure_message(printer : ::Spectator::Matchers::FormattingPrinter, actual_value) : Nil
-        no_block!
-      end
-
-      def negated_failure_message(printer : ::Spectator::Matchers::FormattingPrinter, actual_value) : Nil
-        no_block!
-      end
-    end
-
-    macro print_messages
-      include ::Spectator::Matchers::Printable
     end
   end
 end

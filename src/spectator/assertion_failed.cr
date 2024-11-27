@@ -1,22 +1,20 @@
 require "./error"
 require "./core/location_range"
-require "./matchers/match_data"
+require "./matchers/match_failure"
 
 module Spectator
   # Error raised when an assertion fails.
   # This typically occurs when a matcher isn't satisfied and it's expectation isn't met.
   class AssertionFailed < Error
-    getter match_data : Matchers::MatchData?
+    getter match_failure : Matchers::MatchFailure?
 
     getter message : String? do
-      @match_data.try &.to_s
+      @match_failure.try &.to_s
     end
 
-    getter location : Core::LocationRange? do
-      @match_data.try &.location
-    end
+    getter location : Core::LocationRange?
 
-    def initialize(@match_data : Matchers::MatchData)
+    def initialize(@match_failure : Matchers::MatchFailure, @location : Core::LocationRange? = nil)
       super(nil)
     end
 
