@@ -7,7 +7,11 @@ module Spectator::Matchers
 
     abstract def match(actual_value) : MatchFailure?
 
+    abstract def match(&) : MatchFailure?
+
     abstract def match_negated(actual_value) : MatchFailure?
+
+    abstract def match_negated(&) : MatchFailure?
 
     abstract def matches?(actual_value)
 
