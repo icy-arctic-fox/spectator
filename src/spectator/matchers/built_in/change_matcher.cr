@@ -1,55 +1,57 @@
-require "../printable"
+require "../formatting"
+require "../match_failure"
 
 module Spectator::Matchers::BuiltIn
-  # Matches if the value changes from the previous value.
-  class ChangeMatcher(T)
+  private abstract struct CommonChangeMatcher(T)
     include Formatting
-    include Printable
 
-    private getter! description_of_before : String
-    private getter! description_of_after : String
+    abstract def match(&) : MatchFailure?
+    abstract def match_negated(&) : MatchFailure?
 
     def initialize(@subject : -> T)
     end
+  end
 
-    def matches?(actual_value)
-      matches? { actual_value.call } # TODO: Raise error.
-    end
+  # Matches if the value changes from the previous value.
+  struct ChangeMatcher(T) < CommonChangeMatcher(T)
+    def match(&) : MatchFailure?
+      value_before = yield
+      description_before = description_of(value_before)
 
-    def matches?(&)
-      before = @subject.call
-      @description_of_before = description_of before
-      yield
-      after = @subject.call
-      @description_of_after = description_of after
-      after != before
-    end
+      @subject.call
 
-    def failure_message(printer : FormattingPrinter, actual_value) : Nil
-      # TODO: Raise a compiler error.
-    end
+      value_after = yield
+      description_after = description_of(value_after)
 
-    def print_failure_message_when_negated(printer : FormattingPrinter, &)
-      printer << "Expected: " << description_of_before
-      printer.puts "to change, but it stayed the same."
-      if description_of_before != description_of_after
-        printer.puts
-        printer.puts "The string representation of the value changed, but the == operator returned true."
-        printer << "  Before: " << description_of_before << EOL
-        printer << "   After: " << description_of_after
+      return if value_after != value_before
+
+      MatchFailure.new do |printer|
+        printer << "Expected: " << description_before << "to change, but it stayed the same." << EOL
+        printer << "  Before: " << description_before << EOL
+        printer << "   After: " << description_after
+        if description_before != description_after
+          printer.puts
+          printer.puts "The string representation of the value changed, but the == operator returned true."
+        end
       end
     end
 
-    def negated_failure_message(printer : FormattingPrinter, actual_value) : Nil
-      # TODO: Raise a compiler error.
-    end
+    def match_negated(&) : MatchFailure?
+      value_before = yield
+      description_before = description_of(value_before)
 
-    def negated_failure_message(printer : FormattingPrinter, &)
-      printer << "Expected: " << description_of_before
-      printer.puts "to stay the same, but it changed."
-      printer.puts
-      printer << "  Before: " << description_of_before << EOL
-      printer << "   After: " << description_of_after
+      @subject.call
+
+      value_after = yield
+      description_after = description_of(value_after)
+
+      return if value_after == value_before
+
+      MatchFailure.new do |printer|
+        printer << "Expected: " << description_before << "to stay the same, but it changed." << EOL
+        printer << "  Before: " << description_before << EOL
+        printer << "   After: " << description_after
+      end
     end
 
     def from(value)
@@ -73,79 +75,65 @@ module Spectator::Matchers::BuiltIn
     end
   end
 
-  class ChangeFromMatcher(T, B)
-    include Formatting
-    include Printable
-
-    private getter! description_of_before : String
-    private getter! description_of_after : String
-    private getter? unexpected_before = false
-
-    def initialize(@subject : -> T, from @before : B)
+  struct ChangeFromMatcher(T, B) < CommonChangeMatcher(T)
+    def initialize(subject : -> T, from @before : B)
+      super(subject)
     end
 
-    def matches?(actual_value)
-      matches? { actual_value.call } # TODO: Raise error.
-    end
+    def match(&) : MatchFailure?
+      value_before = yield
+      description_before = description_of(value_before)
 
-    def matches?(&)
-      before = @subject.call
-      @description_of_before = description_of before
-      if before != @before
-        @unexpected_before = true
-        return false
+      if !(@before === value_before)
+        return MatchFailure.new do |printer|
+          printer << "       Expected: " << description_before << EOL
+          printer << "to initially be: " << description_of(@before) << EOL
+        end
       end
-      yield
-      after = @subject.call
-      @description_of_after = description_of after
-      after != before
-    end
 
-    def failure_message(printer : FormattingPrinter, actual_value) : Nil
-      # TODO: Raise a compiler error.
-    end
+      @subject.call
 
-    def failure_message(printer : FormattingPrinter, &)
-      if unexpected_before?
-        printer << "       Expected: "
-        printer.puts description_of_before
-        printer << "to initially be: "
-        printer.description_of @before
-      else
-        printer << "      Expected: "
-        printer.puts description_of_before
-        printer << "to change from: "
-        printer.description_of @before
-        printer.puts
+      value_after = yield
+      description_after = description_of(value_after)
+
+      return if value_after != value_before
+
+      MatchFailure.new do |printer|
+        printer << "      Expected: " << description_before << EOL
+        printer << "to change from: " << description_of(@before) << EOL
         printer << "but it stayed the same."
-        if description_of_before != description_of_after
+        if description_before != description_after
           printer.puts
           printer.puts "The string representation of the value changed, but the == operator returned true."
-          printer << "        Before: " << description_of_before
-          printer.puts
-          printer << "         After: " << description_of_after
+          printer << "        Before: " << description_before << EOL
+          printer << "         After: " << description_after
         end
       end
     end
 
-    def negated_failure_message(printer : FormattingPrinter, actual_value) : Nil
-      # TODO: Raise a compiler error.
-    end
+    def match_negated(&) : MatchFailure?
+      value_before = yield
+      description_before = description_of(value_before)
 
-    def negated_failure_message(printer : FormattingPrinter, &)
-      if unexpected_before?
-        printer << "       Expected: "
-        printer.puts description_of_before
-        printer << "to initially be: "
-        printer.description_of @before
-      else
-        printer << "Expected: "
-        printer.puts description_of_before
-        printer << "to stay the same, but it changed."
-        printer.puts
-        printer << "  Before: " << description_of_before
-        printer.puts
-        printer << "   After: " << description_of_after
+      if !(@before === value_before)
+        return MatchFailure.new do |printer|
+          printer << "       Expected: " << description_before << EOL
+          printer << "to initially be: " << description_of(@before) << EOL
+        end
+      end
+
+      @subject.call
+
+      value_after = yield
+      description_after = description_of(value_after)
+
+      return if value_after != value_before
+
+      MatchFailure.new do |printer|
+        printer << "Expected: " << description_before << EOL
+        printer << "to stay the same, but it changed." << EOL
+        printer << "  Before: " << description_before << EOL
+        printer << "   After: " << description_after
       end
     end
 
@@ -154,71 +142,40 @@ module Spectator::Matchers::BuiltIn
     end
   end
 
-  class ChangeToMatcher(T, A)
-    include Formatting
-    include Printable
-
-    private getter! description_of_before : String
-    private getter! description_of_after : String
-    private getter? changed = false
-
-    def initialize(@subject : -> T, to @after : A)
+  struct ChangeToMatcher(T, A) < CommonChangeMatcher(T)
+    def initialize(subject : -> T, to @after : A)
+      super(subject)
     end
 
-    def matches?(actual_value)
-      matches? { actual_value.call } # TODO: Raise error.
-    end
+    def match(&) : MatchFailure?
+      value_before = yield
+      description_before = description_of(value_before)
 
-    def matches?(&)
-      before = @subject.call
-      @description_of_before = description_of before
-      yield
-      after = @subject.call
-      @description_of_after = description_of after
-      (@changed = before != after) && after == @after
-    end
+      if @after === value_before
+        return MatchFailure.new do |printer|
+          printer << "      Expected: " << description_before << EOL
+          printer << "  to change to: " << description_of(@after) << EOL
+          printer << "but already is: " << description_of(@after)
+        end
+      end
 
-    def does_not_match?(actual_value)
-      # TODO: Use a compiler error.
-      does_not_match? { actual_value.call }
-    end
+      @subject.call
 
-    def does_not_match?(&)
-      # TODO: Use a compiler error.
-      raise Spectator::FrameworkError.new("The syntax `expect { }.not_to change { }.to()` is not supported.")
-    end
+      value_after = yield
+      description_after = description_of(value_after)
 
-    def failure_message(printer : FormattingPrinter, actual_value) : Nil
-      # TODO: Raise a compiler error.
-    end
+      return if @after === value_after
 
-    def failure_message(printer : FormattingPrinter, &)
-      if changed?
-        printer << "    Expected: "
-        printer.puts description_of_before
-        printer << "to change to: "
-        printer.description_of @after
-        printer.puts
-        printer << "  but is now: " << description_of_after
-      else
-        printer << "      Expected: "
-        printer.puts description_of_before
-        printer << "  to change to: "
-        printer.description_of @after
-        printer.puts
-        printer << "but already is: "
-        printer.description_of description_of_after
+      MatchFailure.new do |printer|
+        printer << "    Expected: " << description_before << EOL
+        printer << "to change to: " << description_of(@after) << EOL
+        printer << "  but is now: " << description_after
       end
     end
 
-    def negated_failure_message(printer : FormattingPrinter, actual_value) : Nil
+    def match_negated(&) : MatchFailure?
       # TODO: Use a compiler error.
-      raise Spectator::FrameworkError.new("The syntax `expect { }.not_to change { }.to()` is not supported.")
-    end
-
-    def negated_failure_message(printer : FormattingPrinter, &)
-      # TODO: Use a compiler error.
-      failure_message(printer)
+      raise Spectator::FrameworkError.new("The syntax `expect { }.not_to change { }.to()` is not supported as its meaning is ambiguous.")
     end
 
     def from(value)
@@ -226,83 +183,41 @@ module Spectator::Matchers::BuiltIn
     end
   end
 
-  class ChangeFromToMatcher(T, B, A)
-    include Formatting
-    include Printable
-
-    private getter! description_of_before : String
-    private getter! description_of_after : String
-    private getter? unexpected_before = false
-
-    def initialize(@subject : -> T, from @before : B, to @after : A)
+  struct ChangeFromToMatcher(T, B, A) < CommonChangeMatcher(T)
+    def initialize(subject : -> T, from @before : B, to @after : A)
+      super(subject)
       # TODO: Warn if before and after are the same.
     end
 
-    def matches?(actual_value)
-      matches? { actual_value.call } # TODO: Raise error.
-    end
+    def match(&) : MatchFailure?
+      value_before = yield
+      description_before = description_of(value_before)
 
-    def matches?(&)
-      before = @subject.call
-      @description_of_before = description_of before
-      if before != @before
-        @unexpected_before = true
-        return false
-      end
-      yield
-      after = @subject.call
-      @description_of_after = description_of after
-      after == @after
-    end
-
-    def does_not_match?(actual_value)
-      # TODO: Use a compiler error.
-      does_not_match? { actual_value.call }
-    end
-
-    def does_not_match?(&)
-      # TODO: Use a compiler error.
-      raise Spectator::FrameworkError.new("The syntax `expect { }.not_to change { }.to()` is not supported.")
-    end
-
-    def failure_message(printer : FormattingPrinter, actual_value) : Nil
-      # TODO: Raise a compiler error.
-    end
-
-    def failure_message(printer : FormattingPrinter, &)
-      if unexpected_before?
-        printer << "       Expected: "
-        printer.puts description_of_before
-        printer << "to initially be: "
-        printer.description_of @before
-      else
-        printer << "      Expected: "
-        printer.puts description_of_before
-        printer << "to change from: "
-        printer.description_of @before
-        printer.puts
-        printer << "            to: "
-        printer.description_of @after
-        printer.puts
-        printer << "but it stayed the same."
-        if description_of_before != description_of_after
-          printer.puts
-          printer.puts "The string representation of the value changed, but the == operator returned true."
-          printer << "        Before: " << description_of_before
-          printer.puts
-          printer << "         After: " << description_of_after
+      if !(@before === value_before)
+        return MatchFailure.new do |printer|
+          printer << "       Expected: " << description_before << EOL
+          printer << "to initially be: " << description_of(@before) << EOL
         end
       end
+
+      @subject.call
+
+      value_after = yield
+      description_after = description_of(value_after)
+
+      return if @after === value_after
+
+      MatchFailure.new do |printer|
+        printer << "      Expected: " << description_before << EOL
+        printer << "to change from: " << description_of(@before) << EOL
+        printer << "to change to: " << description_of(@after) << EOL
+        printer << "  but is now: " << description_after
+      end
     end
 
-    def negated_failure_message(printer : FormattingPrinter, actual_value) : Nil
+    def match_negated(&) : MatchFailure?
       # TODO: Use a compiler error.
-      raise Spectator::FrameworkError.new("The syntax `expect { }.not_to change { }.to()` is not supported.")
-    end
-
-    def negated_failure_message(printer : FormattingPrinter, &)
-      # TODO: Use a compiler error.
-      failure_message(printer)
+      raise Spectator::FrameworkError.new("The syntax `expect { }.not_to change { }.from().to()` is not supported as its meaning is ambiguous.")
     end
   end
 
