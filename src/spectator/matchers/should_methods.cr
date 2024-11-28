@@ -7,22 +7,18 @@ module Spectator::Matchers
                source_file = __FILE__,
                source_line = __LINE__,
                source_end_line = __END_LINE__) : Nil
+      return unless failure = Matcher.match(matcher, self, failure_message)
       location = Core::LocationRange.new(source_file, source_line, source_end_line)
-      match_data = Matcher.match(matcher, self,
-        failure_message: failure_message,
-        location: location)
-      match_data.try_raise
+      failure.raise(location)
     end
 
     def should_not(matcher, failure_message : String? = nil, *,
                    source_file = __FILE__,
                    source_line = __LINE__,
                    source_end_line = __END_LINE__) : Nil
+      return unless failure = Matcher.match_negated(matcher, self, failure_message)
       location = Core::LocationRange.new(source_file, source_line, source_end_line)
-      match_data = Matcher.match_negated(matcher, self,
-        failure_message: failure_message,
-        location: location)
-      match_data.try_raise
+      failure.raise(location)
     end
   end
 end
