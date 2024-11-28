@@ -70,28 +70,28 @@ module Spectator::Matchers
     end
 
     def match(actual_value) : MatchFailure?
-      return unless matches?(actual_value)
+      return if matches?(actual_value)
       MatchFailure.new do |printer|
         print_failure_message(printer, actual_value)
       end
     end
 
     def match(&block) : MatchFailure?
-      return unless matches?(&block)
+      return if matches?(&block)
       MatchFailure.new do |printer|
         print_failure_message(printer, &block)
       end
     end
 
     def match_negated(actual_value) : MatchFailure?
-      return unless does_not_match?(actual_value)
+      return if does_not_match?(actual_value)
       MatchFailure.new do |printer|
         print_negated_failure_message(printer, actual_value)
       end
     end
 
     def match_negated(&block) : MatchFailure?
-      return unless does_not_match?(&block)
+      return if does_not_match?(&block)
       MatchFailure.new do |printer|
         print_negated_failure_message(printer, &block)
       end
