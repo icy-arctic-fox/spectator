@@ -14,18 +14,12 @@ module Spectator::Matchers::BuiltIn
       {% end %}
     end
 
-    print_messages
-
-    def failure_message(printer : FormattingPrinter, actual_value) : Nil
-      printer << "Expected "
-      printer.description_of(actual_value)
-      printer << " to respond to " << method_name
+    def print_failure_message(printer : Formatters::Printer, actual_value) : Nil
+      printer << "Expected: " << description_of(actual_value) << " to respond to " << method_name
     end
 
-    def negated_failure_message(printer : FormattingPrinter, actual_value) : Nil
-      printer << "Expected "
-      printer.description_of(actual_value)
-      printer << " not to respond to " << method_name
+    def print_negated_failure_message(printer : Formatters::Printer, actual_value) : Nil
+      printer << "Expected: " << description_of(actual_value) << " not to respond to " << method_name
     end
 
     private def method_name : Symbol

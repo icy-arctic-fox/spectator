@@ -72,8 +72,8 @@ module Spectator::Formatters
           end
           printer.puts
           printer.puts
-          if match_data = error.match_data
-            match_data.format(printer)
+          if match_failure = error.match_failure
+            match_failure.format(printer)
             printer.puts
           else
             printer.puts error.message

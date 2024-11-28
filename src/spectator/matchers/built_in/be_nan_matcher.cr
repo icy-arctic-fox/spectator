@@ -12,18 +12,12 @@ module Spectator::Matchers::BuiltIn
       actual_value.responds_to?(:nan?) && actual_value.nan?
     end
 
-    print_messages
-
-    def failure_message(printer : FormattingPrinter, actual_value) : Nil
-      printer << "Expected "
-      printer.description_of(actual_value)
-      printer << " to be NaN"
+    def print_failure_message(printer : Formatters::Printer, actual_value) : Nil
+      printer << "Expected " << description_of(actual_value) << " to be NaN"
     end
 
-    def negated_failure_message(printer : FormattingPrinter, actual_value) : Nil
-      printer << "Expected "
-      printer.description_of(actual_value)
-      printer << " not to be NaN"
+    def print_negated_failure_message(printer : Formatters::Printer, actual_value) : Nil
+      printer << "Expected " << description_of(actual_value) << " not to be NaN"
     end
   end
 end

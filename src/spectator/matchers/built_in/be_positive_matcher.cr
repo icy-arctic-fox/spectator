@@ -12,18 +12,12 @@ module Spectator::Matchers::BuiltIn
       actual_value.responds_to?(:positive?) && actual_value.positive?
     end
 
-    print_messages
-
-    def failure_message(printer : FormattingPrinter, actual_value) : Nil
-      printer << "Expected "
-      printer.description_of(actual_value)
-      printer << " to be positive"
+    def print_failure_message(printer : Formatters::Printer, actual_value) : Nil
+      printer << "Expected " << description_of(actual_value) << " to be positive"
     end
 
-    def negated_failure_message(printer : FormattingPrinter, actual_value) : Nil
-      printer << "Expected "
-      printer.description_of(actual_value)
-      printer << " not to be positive"
+    def print_negated_failure_message(printer : Formatters::Printer, actual_value) : Nil
+      printer << "Expected " << description_of(actual_value) << " not to be positive"
     end
   end
 end

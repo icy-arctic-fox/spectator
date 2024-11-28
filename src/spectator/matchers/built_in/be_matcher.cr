@@ -25,17 +25,13 @@ module Spectator::Matchers::BuiltIn
       end
     end
 
-    print_messages
-
-    def failure_message(printer : FormattingPrinter, actual_value) : Nil
-      printer << "Expected: " << stringify(actual_value)
-      printer.puts
+    def print_failure_message(printer : Formatters::Printer, actual_value) : Nil
+      printer << "Expected: " << stringify(actual_value) << EOL
       printer << "   to be: " << stringify(@expected_value)
     end
 
-    def negated_failure_message(printer : FormattingPrinter, actual_value) : Nil
-      printer << " Expected: " << stringify(actual_value)
-      printer.puts
+    def print_negated_failure_message(printer : Formatters::Printer, actual_value) : Nil
+      printer << " Expected: " << stringify(actual_value) << EOL
       printer << "not to be: " << stringify(@expected_value)
     end
 

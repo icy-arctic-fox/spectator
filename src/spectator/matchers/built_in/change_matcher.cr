@@ -29,15 +29,13 @@ module Spectator::Matchers::BuiltIn
       # TODO: Raise a compiler error.
     end
 
-    def failure_message_when_negated(printer : FormattingPrinter, &)
-      printer << "Expected: "
-      printer.puts description_of_before
-      printer << "to change, but it stayed the same."
+    def print_failure_message_when_negated(printer : FormattingPrinter, &)
+      printer << "Expected: " << description_of_before
+      printer.puts "to change, but it stayed the same."
       if description_of_before != description_of_after
         printer.puts
         printer.puts "The string representation of the value changed, but the == operator returned true."
-        printer << "  Before: " << description_of_before
-        printer.puts
+        printer << "  Before: " << description_of_before << EOL
         printer << "   After: " << description_of_after
       end
     end
@@ -47,12 +45,10 @@ module Spectator::Matchers::BuiltIn
     end
 
     def negated_failure_message(printer : FormattingPrinter, &)
-      printer << "Expected: "
-      printer.puts description_of_before
-      printer << "to stay the same, but it changed."
+      printer << "Expected: " << description_of_before
+      printer.puts "to stay the same, but it changed."
       printer.puts
-      printer << "  Before: " << description_of_before
-      printer.puts
+      printer << "  Before: " << description_of_before << EOL
       printer << "   After: " << description_of_after
     end
 

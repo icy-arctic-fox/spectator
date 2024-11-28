@@ -25,7 +25,8 @@ module Spectator::Matchers
         location = Core::LocationRange.new(source_file, source_line, source_end_line)
         failure.raise(location)
       else
-        return actual_value if (actual_value = @actual_value).is_a?(U)
+        actual_value = @actual_value
+        return actual_value if actual_value.is_a?(U)
         raise FrameworkError.new("Bug: Expected #{@actual_value} to be a #{U}")
       end
     end

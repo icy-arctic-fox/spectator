@@ -64,20 +64,14 @@ module Spectator::Matchers::BuiltIn
       end
     end
 
-    print_messages
-
-    def failure_message(printer : FormattingPrinter, actual_value) : Nil
-      printer << "Expected: "
-      printer.description_of(actual_value)
-      printer << " to be " << @relation << ' '
-      printer.description_of(@expected_value)
+    def print_failure_message(printer : Formatters::Printer, actual_value) : Nil
+      printer << "Expected: " << description_of(actual_value)
+      printer << " to be " << @relation << ' ' << description_of(@expected_value)
     end
 
-    def negated_failure_message(printer : FormattingPrinter, actual_value) : Nil
-      printer << "Expected: "
-      printer.description_of(actual_value)
-      printer << " to be " << @relation.negate << ' '
-      printer.description_of(@expected_value)
+    def print_negated_failure_message(printer : Formatters::Printer, actual_value) : Nil
+      printer << "Expected: " << description_of(actual_value)
+      printer << " to be " << @relation.negate << ' ' << description_of(@expected_value)
     end
 
     def self.<(other : T) : self

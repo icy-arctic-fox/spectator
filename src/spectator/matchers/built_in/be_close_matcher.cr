@@ -16,28 +16,14 @@ module Spectator::Matchers::BuiltIn
         actual_value >= @expected_value - @delta
     end
 
-    print_messages
-
-    def failure_message(printer : FormattingPrinter, actual_value) : Nil
-      printer << "    Expected: "
-      printer.description_of(actual_value)
-      printer.puts
-
-      printer << "to be within: "
-      printer.description_of(@expected_value)
-      printer << " ± "
-      printer.description_of(@delta)
+    def print_failure_message(printer : Formatters::Printer, actual_value) : Nil
+      printer << "    Expected: " << description_of(actual_value) << EOL
+      printer << "to be within: " << description_of(@expected_value) << " ± " << description_of(@delta)
     end
 
-    def negated_failure_message(printer : FormattingPrinter, actual_value) : Nil
-      printer << "     Expected: "
-      printer.description_of(actual_value)
-      printer.puts
-
-      printer << "to be outside: "
-      printer.description_of(@expected_value)
-      printer << " ± "
-      printer.description_of(@delta)
+    def print_negated_failure_message(printer : Formatters::Printer, actual_value) : Nil
+      printer << "     Expected: " << description_of(actual_value) << EOL
+      printer << "to be outside: " << description_of(@expected_value) << " ± " << description_of(@delta)
     end
   end
 end

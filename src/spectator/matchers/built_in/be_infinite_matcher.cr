@@ -27,18 +27,12 @@ module Spectator::Matchers::BuiltIn
           actual_value != Float64::INFINITY && actual_value != -Float64::INFINITY)
     end
 
-    print_messages
-
-    def failure_message(printer : FormattingPrinter, actual_value) : Nil
-      printer << "Expected "
-      printer.description_of(actual_value)
-      printer << " to be infinite"
+    def print_failure_message(printer : Formatters::Printer, actual_value) : Nil
+      printer << "Expected " << description_of(actual_value) << " to be infinite"
     end
 
-    def negated_failure_message(printer : FormattingPrinter, actual_value) : Nil
-      printer << "Expected "
-      printer.description_of(actual_value)
-      printer << " to be finite"
+    def print_negated_failure_message(printer : Formatters::Printer, actual_value) : Nil
+      printer << "Expected " << description_of(actual_value) << " to be finite"
     end
   end
 end

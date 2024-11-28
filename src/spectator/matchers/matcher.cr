@@ -13,6 +13,7 @@ module Spectator::Matchers
         if matcher.responds_to?(:print_failure_message)
           return MatchFailure.new do |printer|
             matcher.print_failure_message(printer, actual_value)
+            nil
           end
         end
 
@@ -48,6 +49,7 @@ module Spectator::Matchers
       if matcher.responds_to?(:print_negated_failure_message)
         return MatchFailure.new do |printer|
           matcher.print_negated_failure_message(printer, actual_value)
+          nil
         end
       end
 
@@ -71,6 +73,7 @@ module Spectator::Matchers
         if matcher.responds_to?(:print_failure_message)
           return MatchFailure.new do |printer|
             matcher.print_failure_message(printer, &block)
+            nil
           end
         end
 
@@ -106,6 +109,7 @@ module Spectator::Matchers
       if matcher.responds_to?(:print_negated_failure_message)
         return MatchFailure.new do |printer|
           matcher.print_negated_failure_message(printer, &block)
+          nil
         end
       end
 

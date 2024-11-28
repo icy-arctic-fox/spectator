@@ -76,10 +76,24 @@ module Spectator::Matchers
       end
     end
 
+    def match(&block) : MatchFailure?
+      return unless matches?(&block)
+      MatchFailure.new do |printer|
+        print_failure_message(printer, &block)
+      end
+    end
+
     def match_negated(actual_value) : MatchFailure?
       return unless does_not_match?(actual_value)
       MatchFailure.new do |printer|
         print_negated_failure_message(printer, actual_value)
+      end
+    end
+
+    def match_negated(&block) : MatchFailure?
+      return unless does_not_match?(&block)
+      MatchFailure.new do |printer|
+        print_negated_failure_message(printer, &block)
       end
     end
 

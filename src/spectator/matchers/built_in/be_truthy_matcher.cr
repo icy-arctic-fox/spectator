@@ -12,22 +12,12 @@ module Spectator::Matchers::BuiltIn
       !!actual_value
     end
 
-    def does_not_match?(actual_value)
-      !actual_value
+    def print_failure_message(printer : Formatters::Printer, actual_value) : Nil
+      printer << "Expected " << description_of(actual_value) << " to be truthy"
     end
 
-    print_messages
-
-    def failure_message(printer : FormattingPrinter, actual_value) : Nil
-      printer << "Expected "
-      printer.description_of(actual_value)
-      printer << " to be truthy"
-    end
-
-    def negated_failure_message(printer : FormattingPrinter, actual_value) : Nil
-      printer << "Expected "
-      printer.description_of(actual_value)
-      printer << " to be falsy"
+    def print_negated_failure_message(printer : Formatters::Printer, actual_value) : Nil
+      printer << "Expected " << description_of(actual_value) << " to be falsy"
     end
   end
 end

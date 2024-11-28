@@ -16,11 +16,11 @@ module Spectator::Matchers
       @failure_message = block
     end
 
-    def raise(location)
+    def raise(location : Core::LocationRange? = nil)
       raise AssertionFailed.new(self, location)
     end
 
-    def print_failure_message(printer : Formatters::Printer) : Nil
+    def format(printer : Formatters::Printer) : Nil
       case failure_message = @failure_message
       in FailureMessagePrinter then failure_message.call(printer)
       in String                then printer << failure_message
@@ -29,7 +29,7 @@ module Spectator::Matchers
 
     def to_s(io : IO) : Nil
       printer = Formatters::PlainPrinter.new(io)
-      print_failure_message(printer)
+      format(printer)
     end
   end
 end

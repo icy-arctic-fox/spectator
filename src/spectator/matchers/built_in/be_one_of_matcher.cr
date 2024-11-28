@@ -16,24 +16,14 @@ module Spectator::Matchers::BuiltIn
       @expected.includes?(actual_value)
     end
 
-    print_messages
-
-    def failure_message(printer : FormattingPrinter, actual_value) : Nil
-      printer << "    Expected: "
-      printer.description_of(actual_value)
-      printer.puts
-
-      printer << "to be one of: "
-      printer.description_of(@expected)
+    def print_failure_message(printer : Formatters::Printer, actual_value) : Nil
+      printer << "    Expected: " << description_of(actual_value) << EOL
+      printer << "to be one of: " << description_of(@expected)
     end
 
-    def negated_failure_message(printer : FormattingPrinter, actual_value) : Nil
-      printer << "        Expected: "
-      printer.description_of(actual_value)
-      printer.puts
-
-      printer << "not to be one of: "
-      printer.description_of(@expected)
+    def print_negated_failure_message(printer : Formatters::Printer, actual_value) : Nil
+      printer << "        Expected: " << description_of(actual_value) << EOL
+      printer << "not to be one of: " << description_of(@expected)
     end
   end
 end

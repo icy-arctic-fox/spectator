@@ -19,29 +19,15 @@ module Spectator::Matchers::BuiltIn
       end
     end
 
-    print_messages
-
-    def failure_message(printer : FormattingPrinter, actual_value) : Nil
-      printer << "     Expected: "
-      printer.description_of(actual_value)
-      printer.puts
-
-      printer << "to be between: "
-      printer.description_of(@min)
-      printer << " and "
-      printer.description_of(@max)
+    def print_failure_message(printer : Formatters::Printer, actual_value) : Nil
+      printer << "     Expected: " << description_of(actual_value) << EOL
+      printer << "to be between: " << description_of(@min) << " and " << description_of(@max)
       printer << " (" << (@exclusive ? "exclusive" : "inclusive") << ')'
     end
 
-    def negated_failure_message(printer : FormattingPrinter, actual_value) : Nil
-      printer << "     Expected: "
-      printer.description_of(actual_value)
-      printer.puts
-
-      printer << "to be outside: "
-      printer.description_of(@min)
-      printer << " and "
-      printer.description_of(@max)
+    def print_negated_failure_message(printer : Formatters::Printer, actual_value) : Nil
+      printer << "     Expected: " << description_of(actual_value) << EOL
+      printer << "to be outside: " << description_of(@min) << " and " << description_of(@max)
       printer << " (" << (@exclusive ? "exclusive" : "inclusive") << ')'
     end
 

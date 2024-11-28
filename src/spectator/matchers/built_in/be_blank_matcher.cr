@@ -12,22 +12,16 @@ module Spectator::Matchers::BuiltIn
       actual_value.responds_to?(:blank?) && actual_value.blank?
     end
 
-    print_messages
-
-    def failure_message(printer : FormattingPrinter, actual_value) : Nil
-      printer << "Expected "
-      printer.description_of(actual_value)
-      printer << " to be blank"
+    def print_failure_message(printer : Formatters::Printer, actual_value) : Nil
+      printer << "Expected " << description_of(actual_value) << " to be blank"
     end
 
-    def negated_failure_message(printer : FormattingPrinter, actual_value : String) : Nil
+    def print_negated_failure_message(printer : Formatters::Printer, actual_value : String) : Nil
       printer << "Expected string not to be blank"
     end
 
-    def negated_failure_message(printer : FormattingPrinter, actual_value) : Nil
-      printer << "Expected "
-      printer.description_of(actual_value)
-      printer << " not to be blank"
+    def print_negated_failure_message(printer : Formatters::Printer, actual_value) : Nil
+      printer << "Expected " << description_of(actual_value) << " not to be blank"
     end
   end
 end

@@ -43,16 +43,12 @@ module Spectator::Matchers::BuiltIn
       end
     end
 
-    print_messages
-
-    def failure_message(printer : FormattingPrinter, &) : Nil
-      printer << "Expected block to raise error "
-      printer.description_of(@expected_error)
+    def print_failure_message(printer : Formatters::Printer, &) : Nil
+      printer << "Expected block to raise error " << description_of(@expected_error)
     end
 
-    def negated_failure_message(printer : FormattingPrinter, &) : Nil
-      printer << "Expected block not to raise error "
-      printer.description_of(@expected_error)
+    def print_negated_failure_message(printer : Formatters::Printer, &) : Nil
+      printer << "Expected block not to raise error " << description_of(@expected_error)
     end
   end
 end
