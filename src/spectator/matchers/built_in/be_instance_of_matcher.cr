@@ -18,7 +18,7 @@ module Spectator::Matchers::BuiltIn
         printer << "  to be a: " << description_of(T) << EOL
         printer << "but was a: " << description_of(actual_value.class) << EOL << EOL
 
-        printer << description_of(actual_value.class) << " is a sub-type of " << description_of(T) << EOL
+        printer << description_of(actual_value.class) << " is a sub-type of " << description_of(T) << '.' << EOL
 
         printer.puts "Using `be_instance_of` ensures the type matches EXACTLY."
         printer.print "If you want to match sub-types, use `be_a` instead."

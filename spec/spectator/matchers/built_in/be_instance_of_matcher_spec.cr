@@ -51,10 +51,10 @@ Spectator.describe BeInstanceOfMatcher do
       object = InstDerived.new
       expect(matcher.failure_message(object)).to eq <<-MESSAGE
          Expected: #{object.pretty_inspect}
-          to be a: Base
+          to be a: InstBase
         but was a: InstDerived
 
-        InstDerived is a sub-type of Base.
+        InstDerived is a sub-type of InstBase.
         Using `be_instance_of` ensures the type matches EXACTLY.
         If you want to match sub-types, use `be_a` instead.
         MESSAGE
@@ -86,10 +86,10 @@ Spectator.describe BeInstanceOfMatcher do
             expect(object).to be_instance_of(InstBase)
           end.to fail_check <<-MESSAGE
              Expected: #{object.pretty_inspect}
-              to be a: Base
+              to be a: InstBase
             but was a: InstDerived
 
-            InstDerived is a sub-type of Base.
+            InstDerived is a sub-type of InstBase.
             Using `be_instance_of` ensures the type matches EXACTLY.
             If you want to match sub-types, use `be_a` instead.
             MESSAGE
@@ -102,7 +102,7 @@ Spectator.describe BeInstanceOfMatcher do
           end.to fail_check <<-MESSAGE
              Expected: #{object.pretty_inspect}
               to be a: InstDerived
-            but was a: Base
+            but was a: InstBase
             MESSAGE
         end
 
