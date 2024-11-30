@@ -33,7 +33,7 @@ module Spectator::Formatters
     end
 
     def passed? : Bool
-      fail_reason.nil? && passed > 0
+      fail_reason.none? && passed > 0
     end
 
     def failed? : Bool
