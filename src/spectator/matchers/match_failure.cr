@@ -1,5 +1,5 @@
 require "../assertion_failed"
-require "../formatters/printer"
+require "../formatters"
 
 module Spectator::Matchers
   alias FailureMessagePrinter = Formatters::Printer ->
