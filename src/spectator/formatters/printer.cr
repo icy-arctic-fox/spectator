@@ -7,6 +7,12 @@ module Spectator::Formatters
     Error
   end
 
+  enum StringProperty
+    ObjectId
+    Size
+    Bytesize
+  end
+
   module Printable
     abstract def print(printer : Printer) : Nil
   end
@@ -53,6 +59,8 @@ module Spectator::Formatters
     abstract def value(value) : Nil
 
     abstract def inspect_value(value) : Nil
+
+    abstract def inspect_string(value : String, property : StringProperty = :object_id) : Nil
 
     abstract def type(type) : Nil
 

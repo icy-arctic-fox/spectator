@@ -55,6 +55,20 @@ module Spectator::Formatters
       end
     end
 
+    def inspect_string(value : String, property : StringProperty = :object_id) : Nil
+      print_indented(io, value.pretty_inspect)
+      Colorize.with.dim.surround(io) do
+        case property
+        in .object_id?
+          io << " (object_id: " << value(value.object_id) << ')'
+        in .size?
+          io << " (size: " << value(value.size) << ')'
+        in .bytesize?
+          io << " (bytesize: " << value(value.bytesize) << ')'
+        end
+      end
+    end
+
     def type(type) : Nil
       Colorize.with.bold.cyan.surround(io) do
         print_indented(io, type)

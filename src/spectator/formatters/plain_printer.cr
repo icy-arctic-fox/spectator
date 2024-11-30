@@ -41,6 +41,19 @@ module Spectator::Formatters
       print_indented(io, string)
     end
 
+    def inspect_string(value : String, property : StringProperty = :object_id) : Nil
+      string = value.pretty_inspect
+      string = case property
+               in .object_id?
+                 io << "#{string} (object_id: " << value(value.object_id) << ')'
+               in .size?
+                 io << "#{string} (size: " << value(value.size) << ')'
+               in .bytesize?
+                 io << "#{string} (bytesize: " << value(value.bytesize) << ')'
+               end
+      print_indented(io, string)
+    end
+
     def type(type) : Nil
       print_indented(io, type)
     end

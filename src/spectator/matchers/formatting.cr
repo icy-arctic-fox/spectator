@@ -44,5 +44,30 @@ module Spectator::Matchers
     def inspect_value(value)
       InspectValue.new(value)
     end
+
+    struct InspectString
+      include Formatters::Printable
+
+      def initialize(@value : String, @property : Formatters::StringProperty = :object_id)
+      end
+
+      def print(printer : Formatters::Printer) : Nil
+        printer.inspect_string(@value, @property)
+      end
+
+      def to_s(io : IO) : Nil
+        Formatters.to_io(io) do |printer|
+          print(printer)
+        end
+      end
+    end
+
+    def string_size(value)
+      InspectString.new(value.to_s, :size)
+    end
+
+    def string_bytesize(value)
+      InspectString.new(value.to_s, :bytesize)
+    end
   end
 end
