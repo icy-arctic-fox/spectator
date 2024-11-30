@@ -52,6 +52,8 @@ module Spectator::Formatters
 
     abstract def value(value) : Nil
 
+    abstract def inspect_value(value) : Nil
+
     abstract def type(type) : Nil
 
     abstract def code(code : String) : Nil

@@ -5,7 +5,7 @@ module Spectator::Matchers::BuiltIn
     include Matchable
 
     def description
-      "be #{stringify(@expected_value)}"
+      "be #{inspect_value(@expected_value)}"
     end
 
     def initialize(@expected_value : T)
@@ -26,23 +26,13 @@ module Spectator::Matchers::BuiltIn
     end
 
     def print_failure_message(printer : Formatters::Printer, actual_value) : Nil
-      printer << "Expected: " << stringify(actual_value) << EOL
-      printer << "   to be: " << stringify(@expected_value)
+      printer << "Expected: " << inspect_value(actual_value) << EOL
+      printer << "   to be: " << inspect_value(@expected_value)
     end
 
     def print_negated_failure_message(printer : Formatters::Printer, actual_value) : Nil
-      printer << " Expected: " << stringify(actual_value) << EOL
-      printer << "not to be: " << stringify(@expected_value)
-    end
-
-    # TODO: Move this to printer.
-    private def stringify(value) : String
-      string = value.pretty_inspect
-      if value.is_a?(Reference)
-        "#{string} (object_id: #{value.object_id})"
-      else
-        "#{string} : #{value.class}"
-      end
+      printer << " Expected: " << inspect_value(actual_value) << EOL
+      printer << "not to be: " << inspect_value(@expected_value)
     end
   end
 end

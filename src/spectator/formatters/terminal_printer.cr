@@ -44,6 +44,17 @@ module Spectator::Formatters
       end
     end
 
+    def inspect_value(value) : Nil
+      print_indented(io, value.pretty_inspect)
+      if value.is_a?(Reference)
+        Colorize.with.dim.surround(io) do
+          io << " (object_id: " << value(value.object_id) << ')'
+        end
+      else
+        io << " : " << type(value.class)
+      end
+    end
+
     def type(type) : Nil
       Colorize.with.bold.cyan.surround(io) do
         print_indented(io, type)
