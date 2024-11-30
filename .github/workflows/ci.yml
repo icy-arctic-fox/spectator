@@ -33,7 +33,6 @@ jobs:
         crystal: # Latest version plus 2 previous.
           - latest
           - nightly
-          - "1.11"
           - "1.12"
           - "1.13"
         os:
