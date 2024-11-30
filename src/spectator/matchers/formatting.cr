@@ -3,10 +3,16 @@ require "../formatters/printer"
 module Spectator::Matchers
   module Formatting
     struct DescriptionOf(T)
+      include Formatters::Printable
+
       def initialize(@value : T)
       end
 
-      def apply(printer : FormattingPrinter)
+      def print(printer : Formatters::Printer) : Nil
+        case value = @value
+        when Class then printer.type(value)
+        else            printer.value(value)
+        end
       end
     end
 

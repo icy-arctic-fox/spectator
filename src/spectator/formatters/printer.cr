@@ -7,6 +7,10 @@ module Spectator::Formatters
     Error
   end
 
+  module Printable
+    abstract def print(printer : Printer) : Nil
+  end
+
   abstract class Printer
     private getter io : IO
 
@@ -18,9 +22,23 @@ module Spectator::Formatters
       self
     end
 
+    def <<(object : Printable) : self
+      object.print(self)
+      self
+    end
+
     abstract def print(*objects) : Nil
 
+    def print(*objects : Printable) : Nil
+      objects.each &.print(self)
+    end
+
     abstract def puts(*objects) : Nil
+
+    def puts(*objects : Printable) : Nil
+      objects.each &.print(self)
+      puts if objects.empty?
+    end
 
     abstract def title(text : String) : Nil
 
