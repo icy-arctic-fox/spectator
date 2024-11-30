@@ -8,6 +8,7 @@ module Spectator::Matchers::BuiltIn
     abstract def match(&) : MatchFailure?
     abstract def match_negated(&) : MatchFailure?
 
+    # The subject is the value to inspect, not the block performing the change.
     def initialize(@subject : -> T)
     end
   end
@@ -15,12 +16,12 @@ module Spectator::Matchers::BuiltIn
   # Matches if the value changes from the previous value.
   struct ChangeMatcher(T) < CommonChangeMatcher(T)
     def match(&) : MatchFailure?
-      value_before = yield
+      value_before = @subject.call
       description_before = description_of(value_before)
 
-      @subject.call
+      yield
 
-      value_after = yield
+      value_after = @subject.call
       description_after = description_of(value_after)
 
       return if value_after != value_before
@@ -37,12 +38,12 @@ module Spectator::Matchers::BuiltIn
     end
 
     def match_negated(&) : MatchFailure?
-      value_before = yield
+      value_before = @subject.call
       description_before = description_of(value_before)
 
-      @subject.call
+      yield
 
-      value_after = yield
+      value_after = @subject.call
       description_after = description_of(value_after)
 
       return if value_after == value_before
@@ -81,7 +82,7 @@ module Spectator::Matchers::BuiltIn
     end
 
     def match(&) : MatchFailure?
-      value_before = yield
+      value_before = @subject.call
       description_before = description_of(value_before)
 
       if !(@before === value_before)
@@ -91,9 +92,9 @@ module Spectator::Matchers::BuiltIn
         end
       end
 
-      @subject.call
+      yield
 
-      value_after = yield
+      value_after = @subject.call
       description_after = description_of(value_after)
 
       return if value_after != value_before
@@ -112,7 +113,7 @@ module Spectator::Matchers::BuiltIn
     end
 
     def match_negated(&) : MatchFailure?
-      value_before = yield
+      value_before = @subject.call
       description_before = description_of(value_before)
 
       if !(@before === value_before)
@@ -122,9 +123,9 @@ module Spectator::Matchers::BuiltIn
         end
       end
 
-      @subject.call
+      yield
 
-      value_after = yield
+      value_after = @subject.call
       description_after = description_of(value_after)
 
       return if value_after != value_before
@@ -148,7 +149,7 @@ module Spectator::Matchers::BuiltIn
     end
 
     def match(&) : MatchFailure?
-      value_before = yield
+      value_before = @subject.call
       description_before = description_of(value_before)
 
       if @after === value_before
@@ -159,9 +160,9 @@ module Spectator::Matchers::BuiltIn
         end
       end
 
-      @subject.call
+      yield
 
-      value_after = yield
+      value_after = @subject.call
       description_after = description_of(value_after)
 
       return if @after === value_after
@@ -190,7 +191,7 @@ module Spectator::Matchers::BuiltIn
     end
 
     def match(&) : MatchFailure?
-      value_before = yield
+      value_before = @subject.call
       description_before = description_of(value_before)
 
       if !(@before === value_before)
@@ -200,9 +201,9 @@ module Spectator::Matchers::BuiltIn
         end
       end
 
-      @subject.call
+      yield
 
-      value_after = yield
+      value_after = @subject.call
       description_after = description_of(value_after)
 
       return if @after === value_after
