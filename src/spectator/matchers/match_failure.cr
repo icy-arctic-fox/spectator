@@ -1,5 +1,4 @@
 require "../assertion_failed"
-require "../formatters/plain_printer"
 require "../formatters/printer"
 
 module Spectator::Matchers
@@ -28,8 +27,9 @@ module Spectator::Matchers
     end
 
     def to_s(io : IO) : Nil
-      printer = Formatters::PlainPrinter.new(io)
-      format(printer)
+      Formatters.to_io(io) do |printer|
+        format(printer)
+      end
     end
   end
 end

@@ -3,6 +3,17 @@ require "./formatters/**"
 
 module Spectator
   module Formatters
+    def self.to_io(io : IO, & : Printer ->) : Nil
+      yield PlainPrinter.new(io)
+    end
+
+    def self.stringify(& : Printer ->) : String
+      String.build do |io|
+        to_io(io) do |printer|
+          yield printer
+        end
+      end
+    end
   end
 
   module Core

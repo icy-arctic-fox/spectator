@@ -1,5 +1,5 @@
+require "../formatters"
 require "../framework_error"
-require "../formatters/printer"
 
 module Spectator::Matchers
   struct NegatedMatcher(T)
@@ -48,8 +48,7 @@ module Spectator::Matchers
         if matcher.responds_to?(:negated_failure_message)
           matcher.negated_failure_message({{arg}})
         elsif matcher.responds_to?(:print_negated_failure_message)
-          String.build do |io|
-            printer = Formatters::PlainPrinter.new(io)
+          Formatters.stringify do |printer|
             matcher.print_negated_failure_message(printer, {{arg}})
           end
         else
@@ -73,8 +72,7 @@ module Spectator::Matchers
         if matcher.responds_to?(:failure_message)
           matcher.negated_failure_message({{arg}})
         elsif matcher.responds_to?(:print_failure_message)
-          String.build do |io|
-            printer = Formatters::PlainPrinter.new(io)
+          Formatters.stringify do |printer|
             matcher.print_failure_message(printer, {{arg}})
           end
         else

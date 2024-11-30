@@ -1,4 +1,4 @@
-require "../formatters/printer"
+require "../formatters"
 require "../framework_error"
 require "./formatting"
 require "./match_failure"
@@ -36,8 +36,7 @@ module Spectator::Matchers
     end
 
     def failure_message(actual_value)
-      String.build do |io|
-        printer = Formatters::PlainPrinter.new(io)
+      Formatters.stringify do |printer|
         print_failure_message(printer, actual_value)
       end
     end
@@ -55,8 +54,7 @@ module Spectator::Matchers
     end
 
     def negated_failure_message(actual_value)
-      String.build do |io|
-        printer = Formatters::PlainPrinter.new(io)
+      Formatters.stringify do |printer|
         print_negated_failure_message(printer, actual_value)
       end
     end
