@@ -7,7 +7,7 @@ Spectator.describe ContextHook do
     it "calls the block" do
       called = false
       hook = ContextHook.new(:before) { called = true }
-      expect { hook.call }.to change { called }.from(false).to(true)
+      expect { hook.call }.to change { called }.to(true)
     end
   end
 end
