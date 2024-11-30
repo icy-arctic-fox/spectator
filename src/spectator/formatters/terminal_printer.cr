@@ -40,9 +40,7 @@ module Spectator::Formatters
         print_indented(io, " " * padding, label)
       end
       io << ' '
-      indent(padding + label.size + 1) do
-        yield self
-      end
+      indent(padding + label.size + 1) { yield self }
     end
 
     def value(value) : Nil
