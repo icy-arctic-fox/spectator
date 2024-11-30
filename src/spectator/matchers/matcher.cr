@@ -45,7 +45,15 @@ module Spectator::Matchers
       return if matcher.responds_to?(:matches?) && !matcher.matches?(actual_value)
 
       return MatchFailure.new(failure_message) if failure_message
+      if failure = produce_negated_failure_message(matcher, actual_value)
+        return failure
+      end
 
+      # TODO: Add more information, such as missing methods and suggestions.
+      raise FrameworkError.new("Object #{matcher} does not support matching.")
+    end
+
+    private def self.produce_negated_failure_message(matcher, actual_value)
       if matcher.responds_to?(:print_negated_failure_message)
         return MatchFailure.new do |printer|
           matcher.print_negated_failure_message(printer, actual_value)
@@ -57,9 +65,6 @@ module Spectator::Matchers
         message = matcher.negated_failure_message(actual_value).to_s
         return MatchFailure.new(message)
       end
-
-      # TODO: Add more information, such as missing methods and suggestions.
-      raise FrameworkError.new("Object #{matcher} does not support matching.")
     end
 
     def self.match_block(matcher, block, failure_message : String? = nil) : MatchFailure?
@@ -105,7 +110,15 @@ module Spectator::Matchers
       return if matcher.responds_to?(:matches?) && !matcher.matches?(&block)
 
       return MatchFailure.new(failure_message) if failure_message
+      if failure = produce_negated_failure_message_block(matcher, &block)
+        return failure
+      end
 
+      # TODO: Add more information, such as missing methods and suggestions.
+      raise FrameworkError.new("Object #{matcher} does not support matching.")
+    end
+
+    private def self.produce_negated_failure_message_block(matcher, &block)
       if matcher.responds_to?(:print_negated_failure_message)
         return MatchFailure.new do |printer|
           matcher.print_negated_failure_message(printer, &block)
@@ -117,9 +130,6 @@ module Spectator::Matchers
         message = matcher.negated_failure_message(&block).to_s
         return MatchFailure.new(message)
       end
-
-      # TODO: Add more information, such as missing methods and suggestions.
-      raise FrameworkError.new("Object #{matcher} does not support matching.")
     end
   end
 end
