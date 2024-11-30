@@ -13,7 +13,10 @@ module Spectator::Formatters
     def initialize(@io = STDOUT)
     end
 
-    abstract def <<(object) : self
+    def <<(object) : self
+      print(object)
+      self
+    end
 
     abstract def print(*objects) : Nil
 

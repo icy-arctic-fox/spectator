@@ -9,11 +9,6 @@ module Spectator::Formatters
 
     private property style : Style = :none
 
-    def <<(object) : self
-      print_indented(io, colorize_style(object))
-      self
-    end
-
     def print(*objects) : Nil
       colorize_style.surround(io) do
         print_indented(io, *objects)

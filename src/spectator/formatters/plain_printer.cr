@@ -5,11 +5,6 @@ module Spectator::Formatters
   class PlainPrinter < Printer
     include Indent
 
-    def <<(object) : self
-      print_indented(io, object)
-      self
-    end
-
     def print(*objects) : Nil
       print_indented(io, *objects)
     end
