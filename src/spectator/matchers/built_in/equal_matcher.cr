@@ -1,8 +1,8 @@
-require "../matchable"
+require "../formatting"
 
 module Spectator::Matchers::BuiltIn
   struct EqualMatcher(T)
-    include Matchable
+    include Formatting
 
     def description
       "be equal to #{@expected_value}"
@@ -11,62 +11,40 @@ module Spectator::Matchers::BuiltIn
     def initialize(@expected_value : T)
     end
 
-    def matches?(actual_value)
+    def match(actual_value) : MatchFailure?
       expected_value = @expected_value
 
       if actual_value.is_a?(String) && expected_value.is_a?(String)
-        strings_equal?(actual_value, expected_value)
+        match_strings(actual_value, expected_value)
       else
-        actual_value == expected_value
-      end
-    end
+        return if actual_value == expected_value
 
-    private def strings_equal?(actual_value : String, expected_value : String) : Bool
-      actual_value == expected_value &&
-        actual_value.bytesize == expected_value.bytesize &&
-        actual_value.size == expected_value.size
-    end
-
-    # TODO: print_messages
-
-    def failure_message(actual_value)
-      expected_value = @expected_value
-
-      if actual_value.is_a?(String) && expected_value.is_a?(String) && actual_value == expected_value
-        strings_failure_message(actual_value, expected_value)
-      else
-        expected = expected_value.pretty_inspect
-        actual = actual_value.pretty_inspect
-        if expected == actual
-          expected += " : #{expected_value.class}"
-          actual += " : #{actual_value.class}"
+        MatchFailure.new do |printer|
+          printer << "Expected: " << description_of(expected_value) << EOL
+          printer << "     got: " << description_of(actual_value)
         end
-        <<-MSG
-        Expected: #{expected}
-             got: #{actual}"
-        MSG
       end
     end
 
-    private def strings_failure_message(actual_value : String, expected_value : String) : String
-      if actual_value.bytesize != expected_value.bytesize
-        <<-MSG
-        Expected bytesize: #{expected_value.bytesize}
-             got bytesize: #{actual_value.bytesize}
-        MSG
-      else
-        <<-MSG
-        Expected size: #{expected_value.size}
-             got size: #{actual_value.size}
-        MSG
+    private def match_strings(actual_value : String, expected_value : String) : MatchFailure?
+      formatter = if actual_value != expected_value
+                    ->description_of(String)
+                  elsif actual_value.size != expected_value.size
+                    ->string_size(String)
+                  elsif actual_value.bytesize != expected_value.bytesize
+                    ->string_bytesize(String)
+                  else
+                    return # Matched
+                  end
+      MatchFailure.new do |printer|
+        printer << "Expected: " << formatter.call(expected_value) << EOL
+        printer << "     got: " << formatter.call(actual_value)
       end
     end
 
-    def negated_failure_message(actual_value)
-      <<-MSG
-      Expected:     #{actual_value.pretty_inspect}
-      not to equal: #{@expected_value.pretty_inspect}"
-      MSG
+    def print_negated_failure_message(printer : Formatters::Printer, actual_value) : Nil
+      printer << "    Expected: " << description_of(actual_value) << EOL
+      printer << "not to equal: " << description_of(@expected_value)
     end
   end
 end
