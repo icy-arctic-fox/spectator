@@ -69,5 +69,26 @@ module Spectator::Matchers
     def string_bytesize(value)
       InspectString.new(value.to_s, :bytesize)
     end
+
+    struct MethodName
+      include Formatters::Printable
+
+      def initialize(@name : String)
+      end
+
+      def print(printer : Formatters::Printer) : Nil
+        printer.id(@name)
+      end
+
+      def to_s(io : IO) : Nil
+        Formatters.to_io(io) do |printer|
+          print(printer)
+        end
+      end
+    end
+
+    def method_name(name)
+      MethodName.new(name.to_s)
+    end
   end
 end

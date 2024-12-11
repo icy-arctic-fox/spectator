@@ -31,6 +31,10 @@ module Spectator::Formatters
       print_indented(io, value.inspect)
     end
 
+    def id(value) : Nil
+      print_indented(io, value)
+    end
+
     def inspect_value(value) : Nil
       string = value.pretty_inspect
       string = if value.is_a?(Reference)

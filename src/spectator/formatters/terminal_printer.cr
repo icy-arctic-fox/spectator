@@ -44,6 +44,12 @@ module Spectator::Formatters
       end
     end
 
+    def id(value) : Nil
+      Colorize.with.blue.surround(io) do
+        print_indented(io, value)
+      end
+    end
+
     def inspect_value(value) : Nil
       print_indented(io, value.pretty_inspect)
       if value.is_a?(Reference)

@@ -58,6 +58,8 @@ module Spectator::Formatters
 
     abstract def value(value) : Nil
 
+    abstract def id(value) : Nil
+
     abstract def inspect_value(value) : Nil
 
     abstract def inspect_string(value : String, property : StringProperty = :object_id) : Nil
