@@ -211,8 +211,8 @@ module Spectator::Matchers::BuiltIn
       MatchFailure.new do |printer|
         printer << "      Expected: " << description_before << EOL
         printer << "to change from: " << description_of(@before) << EOL
-        printer << "to change to: " << description_of(@after) << EOL
-        printer << "  but is now: " << description_after
+        printer << " and change to: " << description_of(@after) << EOL
+        printer << "    but is now: " << description_after
       end
     end
 
