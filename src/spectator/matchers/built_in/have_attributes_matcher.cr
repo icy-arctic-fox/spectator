@@ -1,51 +1,79 @@
+require "../formatting"
+
 module Spectator::Matchers::BuiltIn
-  class HaveAttributesMatcher(Attributes)
-    private struct Attribute(T)
-      getter expected_value : T
-      getter expected_string : String
-      getter actual_string : String?
+  struct HaveAttributesMatcher(Attributes)
+    include Formatting
+
+    private struct Attribute(E, A)
+      getter expected : Formatting::DescriptionOf(E)
+      getter actual : Formatting::DescriptionOf(A)?
       getter? matched : Bool
 
-      def initialize(@expected_value : T, @matched : Bool, @actual_string : String?)
-        @expected_string = @expected_value.inspect
+      def initialize(@matched : Bool, expected : E, actual : A?)
+        @expected = Formatting::DescriptionOf.new(expected)
+        @actual = Formatting::DescriptionOf.new(actual) if actual
       end
 
       def self.missing(expected_value) : self
-        new(expected_value, false, nil)
+        new(false, expected_value, nil)
       end
     end
 
-    def initialize(attributes : Attributes)
-      {% begin %}
-        # @attributes = NamedTuple.new({% for key in Attributes %}
-        #   {{key.stringify}}: 42, # Attribute.missing(attributes[{{key.symbolize}}]),
-        # {% end %})
-        {% debug %}
-      {% end %}
+    def initialize(@attributes : Attributes)
     end
 
-    def matches?(actual_value)
-      @attributes = capture_attributes(actual_value)
-      @attributes.all? &.matched?
+    def match(actual_value) : MatchFailure?
+      attributes = capture_attributes(actual_value)
+      return if attributes_match?(attributes)
+      MatchFailure.new do |printer|
+        {% for key in Attributes %}
+          attribute = attributes[{{key.stringify}}]
+          unless attribute.matched?
+            printer << "Expected " << method_name({{key.symbolize}}) << ": " << attribute.expected << EOL
+            printer << "     got " << method_name({{key.symbolize}}) << ": " << attribute.actual << EOL
+          end
+        {% end %}
+      end
+    end
+
+    def match_negated(actual_value) : MatchFailure?
+      attributes = capture_attributes(actual_value)
+      return unless attributes_match?(attributes)
+      MatchFailure.new do |printer|
+        {% for key in Attributes %}
+          attribute = attributes[{{key.stringify}}]
+          if attribute.matched?
+            printer << "Expected " << method_name({{key.symbolize}}) << ": not " << attribute.expected << EOL
+            printer << "     got " << method_name({{key.symbolize}}) << ": " << attribute.actual << EOL
+          end
+        {% end %}
+      end
+    end
+
+    private def attributes_match?(attributes)
+      attributes.each_value do |attribute|
+        return false unless attribute.matched?
+      end
+      true
     end
 
     private def capture_attributes(actual_value)
-      {% for key in Attributes %}
-        %expected{key} = @attributes[{{key.stringify}}].expected_value
-        %attribute{key} = if actual_value.responds_to?({{key.symbolize}})
-          value = actual_value.{{key.symbolize}}
-          Attribute.new(%expected{key}, value == %expected{key}, value.inspect)
-        else
-          Attribute.missing(%expected{key})
-        end
+      {% begin %}
+        NamedTuple.new({% for key in Attributes %}
+          {{key.stringify}}: capture_attribute(actual_value, {{key}}),
+        {% end %})
       {% end %}
-
-      NamedTuple.new({% for key in Attributes %}
-        {{key.stringify}}: %attribute{key},
-      {% end %})
     end
 
-    def failure_message(actual_value)
+    private macro capture_attribute(actual_value, key)
+      expected = @attributes[{{key.symbolize}}]
+      attribute = if {{actual_value}}.responds_to?({{key.symbolize}})
+        value = {{actual_value}}.{{key}}
+        matched = value == expected
+        Attribute.new(matched, expected, value)
+      else
+        Attribute.missing(expected)
+      end
     end
   end
 end

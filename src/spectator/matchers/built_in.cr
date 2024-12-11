@@ -176,7 +176,7 @@ module Spectator::Matchers::BuiltIn
     end
 
     def have_attributes(**attributes)
-      raise NotImplementedError.new("have_attributes")
+      HaveAttributesMatcher.new(attributes)
     end
 
     def have_index(value : Int)
