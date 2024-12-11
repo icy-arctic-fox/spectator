@@ -108,7 +108,7 @@ module Spectator::Matchers::BuiltIn
     end
 
     def be_true
-      BeMatcher.new(true)
+      be true
     end
 
     def be_truthy
