@@ -45,6 +45,18 @@ module Spectator::Core
       end
     end
 
+    def each_example(& : Example ->) : Nil
+      each(Example) { |example| yield example }
+    end
+
+    def examples : Array(Example)
+      self.select(Example)
+    end
+
+    def example_count : Int
+      count &.is_a?(Example)
+    end
+
     def run : Array(Result)
       results = [] of Result
       @children.each do |child|
