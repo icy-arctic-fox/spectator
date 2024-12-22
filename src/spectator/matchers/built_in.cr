@@ -3,6 +3,10 @@ require "./negated"
 
 module Spectator::Matchers::BuiltIn
   module Methods
+    def all_be_unique
+      AllBeUniqueMatcher.new
+    end
+
     def all(matcher)
       AllMatcher.new(matcher)
     end
