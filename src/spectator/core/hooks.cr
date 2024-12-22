@@ -25,10 +25,9 @@ module Spectator::Core
                              source_line = __LINE__,
                              source_end_line = __END_LINE__,
                              &block : Example ->) : ExampleHook(Example)
-      hooks = @before_each ||= [] of ExampleHook(Example)
       location = LocationRange.new(source_file, source_line, source_end_line)
       hook = ExampleHook(Example).new(:before, location, &block)
-      hooks.insert(@before_each_priority_hooks, hook)
+      before_each_hooks.insert(@before_each_priority_hooks, hook)
       @before_each_priority_hooks += 1
       hook
     end
@@ -77,10 +76,9 @@ module Spectator::Core
                             source_line = __LINE__,
                             source_end_line = __END_LINE__,
                             &block : Example ->) : ExampleHook(Example)
-      hooks = @after_each ||= [] of ExampleHook(Example)
       location = LocationRange.new(source_file, source_line, source_end_line)
       hook = ExampleHook(Example).new(:after, location, &block)
-      hooks.insert(@after_each_priority_hooks, hook)
+      after_each_hooks.insert(@after_each_priority_hooks, hook)
       @after_each_priority_hooks += 1
       hook
     end
