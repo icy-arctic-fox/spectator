@@ -46,7 +46,9 @@ module Spectator::Core
     end
 
     def each_example(& : Example ->) : Nil
-      each(Example) { |example| yield example }
+      each do |item|
+        yield item if item.is_a?(Example)
+      end
     end
 
     def examples : Array(Example)
