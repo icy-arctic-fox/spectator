@@ -13,6 +13,9 @@ module Spectator::Matchers::BuiltIn
       failures = actual_value.map do |value|
         Matcher.match(@matcher, value)
       end
+
+      # Use of `any?` is intentional since the array consists of `MatchFailure?`.
+      # ameba:disable Performance/AnyInsteadOfEmpty
       return unless failures.any?
 
       MatchFailure.new do |printer|
