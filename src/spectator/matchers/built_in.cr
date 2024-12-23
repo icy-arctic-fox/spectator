@@ -203,6 +203,10 @@ module Spectator::Matchers::BuiltIn
       raise NotImplementedError.new("have_size")
     end
 
+    def have_type(type : T.class) forall T
+      HaveTypeMatcher(T).new
+    end
+
     def have_value(value : T) forall T
       raise NotImplementedError.new("have_value")
     end

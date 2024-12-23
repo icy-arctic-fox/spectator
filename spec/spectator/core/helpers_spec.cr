@@ -37,10 +37,9 @@ Spectator.describe Spectator::Core::Helpers do
     end
 
     it "retains the type and isn't nullable" do
-      # TODO: Use `have_type` matcher.
-      expect(typeof(x)).to eq(Int32)
+      expect(x).to have_type(Int32)
       # The type becomes a union due to the different type from the nested context.
-      expect(typeof(instance)).to eq(HelperObject | String)
+      expect(instance).to have_type(HelperObject | String)
     end
 
     let y = x + 1
@@ -59,8 +58,7 @@ Spectator.describe Spectator::Core::Helpers do
       let instance = "foo"
 
       it "changes the type" do
-        # TODO: Use `have_type` matcher.
-        expect(typeof(instance)).to eq(String | HelperObject)
+        expect(instance).to have_type(String | HelperObject)
       end
     end
   end
