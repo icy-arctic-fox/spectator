@@ -1,51 +1,33 @@
+require "../formatting"
+require "../match_failure"
 require "../matcher"
 
 module Spectator::Matchers::BuiltIn
   class AllMatcher(T)
+    include Formatting
+
     def initialize(@matcher : T)
     end
 
-    def matches?(actual_value)
-      raise "`all` matcher requires value to be `Enumerable`" unless actual_value.is_a?(Enumerable)
-      actual_value.each_with_index do |value, index|
-        next unless failure = Matcher.match(@matcher, value)
-        @failed_index = index
-        @failure = failure
-        return false
+    def match(actual_value : Enumerable) : MatchFailure?
+      failures = actual_value.map do |value|
+        Matcher.match(@matcher, value)
       end
-      true
-    end
+      return unless failures.any?
 
-    def does_not_match?(actual_value)
-      raise "`all` matcher requires value to be `Enumerable`" unless actual_value.is_a?(Enumerable)
-      actual_value.each_with_index do |value, index|
-        next unless failure = Matcher.match_negated(@matcher, value)
-        @failed_index = index
-        @failure = failure
-        return false
-      end
-      true
-    end
-
-    def failure_message(actual_value)
-      if (index = @failed_index) && (failure = @failure)
-        <<-END_MESSAGE
-        Expected all elements to be satisfied, but element #{index} did not.
-        #{failure.message}
-        END_MESSAGE
-      else
-        raise ApplicationError.new("`failure_message` was called on a successful expectation")
+      MatchFailure.new do |printer|
+        printer << "Expected all of: " << description_of(actual_value) << EOL
+        printer << "to " << description_of(@matcher) << EOL
+        print_failures(failures, printer)
       end
     end
 
-    def negated_failure_message(actual_value)
-      if (index = @failed_index) && (failure = @failure)
-        <<-END_MESSAGE
-        Expected no elements to be satisfied, but element #{index} did.
-        #{failure.message}
-        END_MESSAGE
-      else
-        raise ApplicationError.new("`negated_failure_message` was called on a successful expectation")
+    private def print_failures(failures, printer)
+      failures.each_with_index do |failure, index|
+        next unless failure
+        printer.label("[#{index}]") do
+          failure.format(printer)
+        end
       end
     end
   end
