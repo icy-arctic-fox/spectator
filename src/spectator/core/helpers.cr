@@ -3,8 +3,8 @@ module Spectator::Core
     # The `uninitialized` keyword can't be used without assigning it to a variable.
     # The compiler produces: `Error: undefined method 'uninitialized' for top-level`.
     # This is a workaround.
-    uninitialized_value = uninitialized T
-    uninitialized_value
+    value = uninitialized T
+    value
   end
 
   module Helpers
