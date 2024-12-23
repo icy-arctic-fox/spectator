@@ -74,27 +74,27 @@ module Spectator::Matchers::BuiltIn
       printer << " to be " << @relation.negate << ' ' << description_of(@expected_value)
     end
 
-    def self.<(other : T) : self
+    def self.<(other : T)
       new(other, :less)
     end
 
-    def self.<=(other : T) : self
+    def self.<=(other : T)
       new(other, :less_or_equal)
     end
 
-    def self.==(other : T) : self
+    def self.==(other : T)
       new(other, :equal)
     end
 
-    def self.>=(other : T) : self
+    def self.>=(other : T)
       new(other, :greater_or_equal)
     end
 
-    def self.>(other : T) : self
+    def self.>(other : T)
       new(other, :greater)
     end
 
-    def self.!=(other : T) : self
+    def self.!=(other : T)
       new(other, :not_equal)
     end
   end
