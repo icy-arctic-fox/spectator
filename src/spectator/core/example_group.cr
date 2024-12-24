@@ -73,6 +73,13 @@ module Spectator::Core
       true
     end
 
+    def filter(filter : Filter) : self
+      @children.each do |child|
+        child.filter(filter)
+      end
+      self
+    end
+
     # Constructs a string representation of the group.
     # The description will be used if it is set, otherwise the group will be anonymous.
     def to_s(io : IO) : Nil

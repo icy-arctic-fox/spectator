@@ -5,6 +5,10 @@ private class TestItem < Spectator::Core::Item
   def run? : Bool
     false
   end
+
+  def filter(filter : Spectator::Core::Filter) : self
+    self
+  end
 end
 
 Spectator.describe Spectator::Core::Item do

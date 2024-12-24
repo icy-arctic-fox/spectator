@@ -37,13 +37,19 @@ module Spectator::Core
       end
     end
 
+    def filter(filter : Filter) : self
+      return self if filter.matches?(self)
+      group?.try &.remove_child(self)
+      self
+    end
+
     # Indicates if the example has been run.
     getter? run : Bool = false
 
     getter previous_result : Result?
 
     def group? : ExampleGroup?
-      parent?.try &.as?(ExampleGroup)
+      parent.try &.as?(ExampleGroup)
     end
 
     def group : ExampleGroup
