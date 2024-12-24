@@ -5,6 +5,7 @@ require "./example"
 require "./example_group"
 require "./execution_result"
 require "./fail_reason"
+require "./filters"
 require "./sandbox"
 
 module Spectator::Core
@@ -60,14 +61,14 @@ module Spectator::Core
     end
 
     private def examples_to_run(group : ExampleGroup) : Array(Example)
-      examples = group.select(Example)
       if filter = @configuration.inclusion_filter
-        examples.select! { |example| filter.matches?(example) }
+        group.filter(filter)
       end
       if filter = @configuration.exclusion_filter
-        examples.reject! { |example| filter.matches?(example) }
+        filter = NegatedFilter.new(filter)
+        group.filter(filter)
       end
-      examples
+      group.select(Example)
     end
 
     private def run_example(example : Example) : ExecutionResult

@@ -2,11 +2,11 @@ require "./example"
 require "./location"
 
 module Spectator::Core
-  abstract struct Filter
+  abstract class Filter
     abstract def matches?(example : Example)
   end
 
-  struct ExampleFilter < Filter
+  class ExampleFilter < Filter
     def initialize(@substring : String)
     end
 
@@ -15,7 +15,7 @@ module Spectator::Core
     end
   end
 
-  struct LineFilter < Filter
+  class LineFilter < Filter
     def initialize(@line : Int32)
     end
 
@@ -24,7 +24,7 @@ module Spectator::Core
     end
   end
 
-  struct LocationFilter < Filter
+  class LocationFilter < Filter
     def initialize(@location : Location)
     end
 
@@ -33,7 +33,7 @@ module Spectator::Core
     end
   end
 
-  struct TagFilter < Filter
+  class TagFilter < Filter
     @tags = [] of {String, String?}
 
     def matches?(example : Example)
@@ -48,7 +48,16 @@ module Spectator::Core
     end
   end
 
-  struct CompoundFilter < Filter
+  class NegatedFilter < Filter
+    def initialize(@filter : Filter)
+    end
+
+    def matches?(example : Example)
+      !@filter.matches?(example)
+    end
+  end
+
+  class CompoundFilter < Filter
     def initialize(@filters : Array(Filter))
     end
 
