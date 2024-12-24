@@ -188,7 +188,9 @@ module Spectator::Core
 
       @before_all_hooks.try &.each &.call
       proc.run
-      @after_all_hooks.try &.each &.call
+
+      # Only run after_all hooks if this is the last example to run in its group.
+      @after_all_hooks.try &.each &.call if run?
     end
   end
 
