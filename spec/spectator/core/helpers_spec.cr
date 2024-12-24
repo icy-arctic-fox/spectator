@@ -10,7 +10,8 @@ end
 
 private def count_executed_examples(group)
   count = 0
-  group.each_example do |example|
+  group.each do |item|
+    next unless example = item.as?(Spectator::Core::Example)
     count += 1 if example.run?
   end
   count

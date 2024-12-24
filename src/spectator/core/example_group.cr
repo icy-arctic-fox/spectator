@@ -1,5 +1,4 @@
 require "./context"
-require "./example"
 require "./item"
 require "./location_range"
 
@@ -43,20 +42,6 @@ module Spectator::Core
           stack.concat(item.children)
         end
       end
-    end
-
-    def each_example(& : Example ->) : Nil
-      each do |item|
-        yield item if item.is_a?(Example)
-      end
-    end
-
-    def examples : Array(Example)
-      self.select(Example)
-    end
-
-    def example_count : Int
-      count &.is_a?(Example)
     end
 
     def run : Array(Result)
