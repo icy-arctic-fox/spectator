@@ -19,5 +19,32 @@ Spectator.describe ContextHook do
       hook = ContextHook.new(:before) { called = true }
       expect { hook.call }.to change { called }.to(true)
     end
+
+    it "calls the hook once" do
+      count = 0
+      hook = ContextHook.new(:before) { count += 1 }
+      expect do
+        2.times { hook.call }
+      end.to change { count }.to(1)
+    end
+
+    it "captures exceptions" do
+      error = RuntimeError.new("error")
+      hook = ContextHook.new(:before) { raise error }
+      expect { hook.call }.to raise_error(error)
+      expect(hook.exception).to eq(error)
+    end
+
+    it "re-raises previous exceptions" do
+      error = RuntimeError.new("error")
+      called = false
+      hook = ContextHook.new(:before) do
+        next if called
+        called = true
+        raise error
+      end
+      expect { hook.call }.to raise_error(error)
+      expect { hook.call }.to raise_error(error) # Same error instance is raised.
+    end
   end
 end
