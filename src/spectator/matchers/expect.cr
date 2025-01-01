@@ -114,6 +114,10 @@ module Spectator::Matchers
     def expect(&block : -> T) : BlockExpectation(T) forall T
       BlockExpectation(T).new(block)
     end
+
+    macro is_expected
+      expect(subject)
+    end
   end
 end
 
