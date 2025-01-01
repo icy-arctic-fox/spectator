@@ -11,6 +11,9 @@ module Spectator::Core
     # This may be nil if the item does not have a description.
     getter description : String?
 
+    def description=(@description : String)
+    end
+
     getter tags : TagModifiers?
 
     # The full description of the item.
