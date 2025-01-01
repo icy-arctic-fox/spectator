@@ -200,10 +200,11 @@ module Spectator::Core
     # Updates the current example.
     # The `#current_example` property is set for the duration of the block.
     # The previous example (if there was one) is restored when the block exits.
-    def with_example(example : Example, &)
+    def with_example(example : Example, & : Example -> _)
       previous_example = @current_example
       begin
-        yield
+        @current_example = example
+        yield example
       ensure
         @current_example = previous_example
       end
