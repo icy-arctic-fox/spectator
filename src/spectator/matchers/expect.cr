@@ -12,6 +12,7 @@ module Spectator::Matchers
            source_file = __FILE__,
            source_line = __LINE__,
            source_end_line = __END_LINE__) : Nil
+      try_apply_description(matcher)
       return unless failure = Matcher.match(matcher, @actual_value, failure_message)
       location = Core::LocationRange.new(source_file, source_line, source_end_line)
       failure.raise(location)
@@ -21,6 +22,7 @@ module Spectator::Matchers
            source_file = __FILE__,
            source_line = __LINE__,
            source_end_line = __END_LINE__) : U forall U
+      try_apply_description(matcher)
       if failure = Matcher.match(matcher, @actual_value, failure_message)
         location = Core::LocationRange.new(source_file, source_line, source_end_line)
         failure.raise(location)
@@ -35,6 +37,7 @@ module Spectator::Matchers
                source_file = __FILE__,
                source_line = __LINE__,
                source_end_line = __END_LINE__) : Nil
+      try_apply_description(matcher, true)
       return unless failure = Matcher.match_negated(matcher, @actual_value, failure_message)
       location = Core::LocationRange.new(source_file, source_line, source_end_line)
       failure.raise(location)
@@ -44,6 +47,7 @@ module Spectator::Matchers
                source_file = __FILE__,
                source_line = __LINE__,
                source_end_line = __END_LINE__)
+      try_apply_description(matcher, true)
       if failure = Matcher.match_negated(matcher, @actual_value, failure_message)
         location = Core::LocationRange.new(source_file, source_line, source_end_line)
         failure.raise(location)
@@ -59,6 +63,18 @@ module Spectator::Matchers
         source_file: source_file,
         source_line: source_line,
         source_end_line: source_end_line)
+    end
+
+    private def try_apply_description(matcher, negated = false) : Nil
+      return unless example = Spectator.current_example
+      return if example.description # Already has a description.
+
+      example.description = String.build do |io|
+        io << "is expected "
+        io << "not " if negated
+        io << "to "
+        matcher.to_s(io)
+      end
     end
   end
 
