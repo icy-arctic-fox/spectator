@@ -112,6 +112,22 @@ Spectator.describe MatchMatcher do
     end
   end
 
+  describe "#to_s" do
+    context "with a string" do
+      it "returns the description" do
+        matcher = MatchMatcher.new(/foo/)
+        expect(matcher.to_s).to eq("match /foo/")
+      end
+    end
+
+    context "with a regex" do
+      it "returns the description" do
+        matcher = MatchMatcher.new("foobar")
+        expect(matcher.to_s).to eq("match \"foobar\"")
+      end
+    end
+  end
+
   describe "DSL" do
     describe "`match`" do
       context "with `.to`" do

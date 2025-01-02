@@ -85,6 +85,13 @@ Spectator.describe BeZeroMatcher do
     end
   end
 
+  describe "#to_s" do
+    it "returns the description" do
+      matcher = BeZeroMatcher.new
+      expect(matcher.to_s).to eq("be zero")
+    end
+  end
+
   describe "DSL" do
     describe "`be_zero`" do
       context "with `.to`" do

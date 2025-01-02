@@ -71,6 +71,13 @@ Spectator.describe BeInstanceOfMatcher do
     end
   end
 
+  describe "#to_s" do
+    it "returns the inspect string" do
+      matcher = BeInstanceOfMatcher(Int32).new
+      expect(matcher.to_s).to eq("be an instance of Int32")
+    end
+  end
+
   describe "DSL" do
     describe "`be_instance_of`" do
       context "with `.to`" do

@@ -50,6 +50,13 @@ Spectator.describe BeCloseMatcher do
     end
   end
 
+  describe "#to_s" do
+    it "returns the description" do
+      matcher = BeCloseMatcher.new(1.0, 0.1)
+      expect(matcher.to_s).to eq("be within 0.1 of 1.0")
+    end
+  end
+
   describe "DSL" do
     describe "`be_close`" do
       context "with `.to`" do

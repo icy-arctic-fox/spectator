@@ -124,6 +124,22 @@ Spectator.describe BeBetweenMatcher do
     end
   end
 
+  describe "#to_s" do
+    context "inclusive" do
+      it "returns the description" do
+        matcher = BeBetweenMatcher.new(40, 50)
+        expect(matcher.to_s).to eq "be between 40 and 50 (inclusive)"
+      end
+    end
+
+    context "exclusive" do
+      it "returns the description" do
+        matcher = BeBetweenMatcher.new(40, 50).exclusive
+        expect(matcher.to_s).to eq "be between 40 and 50 (exclusive)"
+      end
+    end
+  end
+
   context "DSL" do
     describe "`be_between`" do
       it "is inclusive by default" do

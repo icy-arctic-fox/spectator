@@ -22,7 +22,7 @@ module Spectator::Matchers::BuiltIn
     end
 
     def to_s(io : IO) : Nil
-      io << "match " << @expected_value
+      io << "match " << description_of(@expected_value)
     end
   end
 end

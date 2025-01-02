@@ -66,6 +66,13 @@ Spectator.describe BeEmptyMatcher do
     end
   end
 
+  describe "#to_s" do
+    it "returns the description" do
+      matcher = BeEmptyMatcher.new
+      expect(matcher.to_s).to eq("be empty")
+    end
+  end
+
   context "DSL" do
     describe "`be_empty`" do
       context "with `.to`" do

@@ -126,6 +126,13 @@ Spectator.describe BeInfiniteMatcher do
     end
   end
 
+  describe "#to_s" do
+    it "returns the description" do
+      matcher = BeInfiniteMatcher.new
+      expect(matcher.to_s).to eq("be infinite")
+    end
+  end
+
   context "DSL" do
     describe "`be_infinite`" do
       context "with `.to`" do

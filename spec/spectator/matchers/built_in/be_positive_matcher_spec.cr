@@ -85,6 +85,13 @@ Spectator.describe BePositiveMatcher do
     end
   end
 
+  describe "#to_s" do
+    it "returns the description" do
+      matcher = BePositiveMatcher.new
+      expect(matcher.to_s).to eq("be positive")
+    end
+  end
+
   describe "DSL" do
     describe "`be_positive`" do
       context "with `.to`" do

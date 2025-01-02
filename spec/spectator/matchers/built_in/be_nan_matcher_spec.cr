@@ -70,6 +70,13 @@ Spectator.describe BeNaNMatcher do
     end
   end
 
+  describe "#to_s" do
+    it "returns the description" do
+      matcher = BeNaNMatcher.new
+      expect(matcher.to_s).to eq("be NaN")
+    end
+  end
+
   describe "DSL" do
     describe "`be_nan`" do
       context "with `.to`" do

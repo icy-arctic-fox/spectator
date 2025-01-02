@@ -75,6 +75,13 @@ Spectator.describe BeMatcher do
     end
   end
 
+  describe "#to_s" do
+    it "returns the description" do
+      matcher = BeMatcher.new(1)
+      expect(matcher.to_s).to eq("be 1 : Int32")
+    end
+  end
+
   describe "DSL" do
     describe "`be`" do
       context "with `.to`" do

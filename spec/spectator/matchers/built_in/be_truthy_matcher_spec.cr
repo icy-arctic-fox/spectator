@@ -81,6 +81,13 @@ Spectator.describe BeTruthyMatcher do
     end
   end
 
+  describe "#to_s" do
+    it "returns the description" do
+      matcher = BeTruthyMatcher.new
+      expect(matcher.to_s).to eq("be truthy")
+    end
+  end
+
   context "DSL" do
     describe "`be_truthy`" do
       context "with `.to`" do

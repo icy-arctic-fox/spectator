@@ -35,6 +35,13 @@ Spectator.describe BeInMatcher do
     end
   end
 
+  describe "#to_s" do
+    it "returns the description" do
+      matcher = BeInMatcher.new([1, 2, 3])
+      expect(matcher.to_s).to eq("be in [1, 2, 3]")
+    end
+  end
+
   describe "DSL" do
     describe "`be_in`" do
       context "with `.to`" do
