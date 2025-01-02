@@ -14,7 +14,7 @@ Spectator.describe Spectator::Matchers::ExpectMethods do
     end
 
     it "sets the example description" do
-      example = Spectator::Core::Example.new do |e|
+      example = Spectator::Core::Example.new do
         is_expected.to eq(42)
       end
       Spectator.with_sandbox do |sandbox|
@@ -24,7 +24,7 @@ Spectator.describe Spectator::Matchers::ExpectMethods do
     end
 
     it "sets the example description when negated" do
-      example = Spectator::Core::Example.new do |e|
+      example = Spectator::Core::Example.new do
         is_expected.not_to eq(42)
       end
       Spectator.with_sandbox do |sandbox|

@@ -17,3 +17,4 @@ Lint/UselessAssign:
     - src/spectator/core/configuration.cr
     - src/spectator/core/runner.cr
     - src/spectator/core/source_cache.cr
+    - spec/spectator/matchers/expect_spec.cr
