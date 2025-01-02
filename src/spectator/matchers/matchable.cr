@@ -11,8 +11,6 @@ module Spectator::Matchers
       self.class.name.split("::").last.rchop("Matcher").underscore
     end
 
-    abstract def description
-
     abstract def matches?(actual_value)
 
     def matches?(&)
@@ -28,7 +26,7 @@ module Spectator::Matchers
     end
 
     def print_failure_message(printer : Formatters::Printer, actual_value) : Nil
-      printer << "Expected " << description_of(actual_value) << " to " << description
+      printer << "Expected " << description_of(actual_value) << " to " << self
     end
 
     def print_failure_message(printer : Formatters::Printer, &) : Nil
@@ -46,7 +44,7 @@ module Spectator::Matchers
     end
 
     def print_negated_failure_message(printer : Formatters::Printer, actual_value) : Nil
-      printer << "Expected " << description_of(actual_value) << " not to " << description
+      printer << "Expected " << description_of(actual_value) << " not to " << self
     end
 
     def print_negated_failure_message(printer : Formatters::Printer, &) : Nil

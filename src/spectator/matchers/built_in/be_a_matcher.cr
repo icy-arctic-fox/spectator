@@ -4,10 +4,6 @@ module Spectator::Matchers::BuiltIn
   struct BeAMatcher(T)
     include Matchable
 
-    def description
-      "be a #{T}"
-    end
-
     def matches?(actual_value)
       actual_value.is_a?(T)
     end
@@ -24,6 +20,10 @@ module Spectator::Matchers::BuiltIn
       if actual_value.class < T
         printer << EOL << description_of(actual_value.class) << " is a sub-type of " << description_of(T)
       end
+    end
+
+    def to_s(io : IO) : Nil
+      io << "be a " << T
     end
   end
 end

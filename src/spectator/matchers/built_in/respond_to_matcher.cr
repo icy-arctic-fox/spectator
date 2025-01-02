@@ -4,10 +4,6 @@ module Spectator::Matchers::BuiltIn
   struct RespondToMatcher(NT)
     include Matchable
 
-    def description
-      "respond to #{method_name}"
-    end
-
     def matches?(actual_value)
       {% begin %}
         actual_value.responds_to?({{NT.keys.first.symbolize}})
@@ -24,6 +20,10 @@ module Spectator::Matchers::BuiltIn
 
     private def method_name : Symbol
       {{NT.keys.first.symbolize}}
+    end
+
+    def to_s(io : IO) : Nil
+      io << "respond to " << method_name
     end
   end
 end

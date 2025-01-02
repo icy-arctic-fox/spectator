@@ -4,10 +4,6 @@ module Spectator::Matchers::BuiltIn
   struct BeCloseMatcher(T, D)
     include Matchable
 
-    def description
-      "be within #{@delta} of #{@expected_value}"
-    end
-
     def initialize(@expected_value : T, @delta : D)
     end
 
@@ -24,6 +20,10 @@ module Spectator::Matchers::BuiltIn
     def print_negated_failure_message(printer : Formatters::Printer, actual_value) : Nil
       printer << "     Expected: " << description_of(actual_value) << EOL
       printer << "to be outside: " << description_of(@expected_value) << " ± " << description_of(@delta)
+    end
+
+    def to_s(io : IO) : Nil
+      io << "be within " << @delta << " of " << @expected_value
     end
   end
 end

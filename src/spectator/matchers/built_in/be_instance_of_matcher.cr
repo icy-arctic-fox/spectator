@@ -4,10 +4,6 @@ module Spectator::Matchers::BuiltIn
   struct BeInstanceOfMatcher(T)
     include Matchable
 
-    def description
-      "be a #{T}"
-    end
-
     def matches?(actual_value)
       actual_value.class == T
     end
@@ -32,6 +28,10 @@ module Spectator::Matchers::BuiltIn
     def print_negated_failure_message(printer : Formatters::Printer, actual_value) : Nil
       printer << "   Expected: " << description_of(actual_value) << EOL
       printer << "not to be a: " << description_of(T)
+    end
+
+    def to_s(io : IO) : Nil
+      io << "be an instance of " << T
     end
   end
 end

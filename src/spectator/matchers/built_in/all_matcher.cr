@@ -33,5 +33,9 @@ module Spectator::Matchers::BuiltIn
         end
       end
     end
+
+    def to_s(io : IO) : Nil
+      io << "all " << @matcher
+    end
   end
 end

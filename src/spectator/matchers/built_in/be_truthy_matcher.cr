@@ -4,10 +4,6 @@ module Spectator::Matchers::BuiltIn
   struct BeTruthyMatcher
     include Matchable
 
-    def description
-      "be truthy"
-    end
-
     def matches?(actual_value)
       !!actual_value
     end
@@ -18,6 +14,10 @@ module Spectator::Matchers::BuiltIn
 
     def print_negated_failure_message(printer : Formatters::Printer, actual_value) : Nil
       printer << "Expected " << description_of(actual_value) << " to be falsy"
+    end
+
+    def to_s(io : IO) : Nil
+      io << "be truthy"
     end
   end
 end

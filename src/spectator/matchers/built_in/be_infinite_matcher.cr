@@ -4,10 +4,6 @@ module Spectator::Matchers::BuiltIn
   struct BeInfiniteMatcher
     include Matchable
 
-    def description
-      "be infinite"
-    end
-
     def matches?(actual_value)
       if actual_value.responds_to?(:infinite?)
         # The `infinite?` method returns 0 for finite values, -1 for negative infinity, and 1 for positive infinity.
@@ -33,6 +29,10 @@ module Spectator::Matchers::BuiltIn
 
     def print_negated_failure_message(printer : Formatters::Printer, actual_value) : Nil
       printer << "Expected " << description_of(actual_value) << " to be finite"
+    end
+
+    def to_s(io : IO) : Nil
+      io << "be infinite"
     end
   end
 end

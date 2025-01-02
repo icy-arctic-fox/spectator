@@ -4,10 +4,6 @@ module Spectator::Matchers::BuiltIn
   struct BePositiveMatcher
     include Matchable
 
-    def description
-      "be positive"
-    end
-
     def matches?(actual_value)
       actual_value.responds_to?(:positive?) && actual_value.positive?
     end
@@ -18,6 +14,10 @@ module Spectator::Matchers::BuiltIn
 
     def print_negated_failure_message(printer : Formatters::Printer, actual_value) : Nil
       printer << "Expected " << description_of(actual_value) << " not to be positive"
+    end
+
+    def to_s(io : IO) : Nil
+      io << "be positive"
     end
   end
 end

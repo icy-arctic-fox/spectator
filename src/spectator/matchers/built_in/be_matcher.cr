@@ -4,10 +4,6 @@ module Spectator::Matchers::BuiltIn
   struct BeMatcher(T)
     include Matchable
 
-    def description
-      "be #{inspect_value(@expected_value)}"
-    end
-
     def initialize(@expected_value : T)
     end
 
@@ -33,6 +29,10 @@ module Spectator::Matchers::BuiltIn
     def print_negated_failure_message(printer : Formatters::Printer, actual_value) : Nil
       printer << " Expected: " << inspect_value(actual_value) << EOL
       printer << "not to be: " << inspect_value(@expected_value)
+    end
+
+    def to_s(io : IO) : Nil
+      io << "be " << inspect_value(@expected_value)
     end
   end
 end

@@ -4,10 +4,6 @@ module Spectator::Matchers::BuiltIn
   struct BeNilMatcher
     include Matchable
 
-    def description
-      "be nil"
-    end
-
     def matches?(actual_value)
       actual_value.nil?
     end
@@ -18,6 +14,10 @@ module Spectator::Matchers::BuiltIn
 
     def print_negated_failure_message(printer : Formatters::Printer, actual_value) : Nil
       printer << "Expected " << description_of(actual_value) << " not to be nil"
+    end
+
+    def to_s(io : IO) : Nil
+      io << "be nil"
     end
   end
 end

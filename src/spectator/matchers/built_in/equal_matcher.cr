@@ -4,10 +4,6 @@ module Spectator::Matchers::BuiltIn
   struct EqualMatcher(T)
     include Formatting
 
-    def description
-      "be equal to #{@expected_value}"
-    end
-
     def initialize(@expected_value : T)
     end
 
@@ -45,6 +41,10 @@ module Spectator::Matchers::BuiltIn
     def print_negated_failure_message(printer : Formatters::Printer, actual_value) : Nil
       printer << "    Expected: " << description_of(actual_value) << EOL
       printer << "not to equal: " << description_of(@expected_value)
+    end
+
+    def to_s(io : IO) : Nil
+      io << "equal " << @expected_value
     end
   end
 end

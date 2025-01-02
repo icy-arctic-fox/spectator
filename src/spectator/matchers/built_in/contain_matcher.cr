@@ -4,10 +4,6 @@ module Spectator::Matchers::BuiltIn
   struct ContainMatcher(T)
     include Matchable
 
-    def description
-      "contain #{@expected}"
-    end
-
     def initialize(@expected : T)
       {% raise "Expected type must be a Tuple" unless T < Tuple %}
     end
@@ -24,6 +20,10 @@ module Spectator::Matchers::BuiltIn
     def print_negated_failure_message(printer : Formatters::Printer, actual_value) : Nil
       printer << "      Expected: " << description_of(actual_value) << EOL
       printer << "not to contain: " << description_of(@expected)
+    end
+
+    def to_s(io : IO) : Nil
+      io << "contain " << @expected
     end
   end
 end

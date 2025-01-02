@@ -34,5 +34,9 @@ module Spectator::Matchers::BuiltIn
         printer << EOL << description_of(value) << " appears at indices: " << description_of(indexes)
       end
     end
+
+    def to_s(io : IO) : Nil
+      io << "all be unique"
+    end
   end
 end

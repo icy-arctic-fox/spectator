@@ -46,10 +46,6 @@ module Spectator::Matchers::BuiltIn
       end
     end
 
-    def description
-      "be #{@relation} #{@expected_value}"
-    end
-
     def initialize(@expected_value : T, @relation : Relation)
     end
 
@@ -72,6 +68,10 @@ module Spectator::Matchers::BuiltIn
     def print_negated_failure_message(printer : Formatters::Printer, actual_value) : Nil
       printer << "Expected: " << description_of(actual_value)
       printer << " to be " << @relation.negate << ' ' << description_of(@expected_value)
+    end
+
+    def to_s(io : IO) : Nil
+      io << "be " << @relation << ' ' << @expected_value
     end
 
     def self.<(other : T)

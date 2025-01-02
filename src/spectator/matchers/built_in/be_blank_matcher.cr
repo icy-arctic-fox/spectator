@@ -4,10 +4,6 @@ module Spectator::Matchers::BuiltIn
   struct BeBlankMatcher
     include Matchable
 
-    def description
-      "be blank"
-    end
-
     def matches?(actual_value)
       actual_value.responds_to?(:blank?) && actual_value.blank?
     end
@@ -22,6 +18,10 @@ module Spectator::Matchers::BuiltIn
 
     def print_negated_failure_message(printer : Formatters::Printer, actual_value) : Nil
       printer << "Expected " << description_of(actual_value) << " not to be blank"
+    end
+
+    def to_s(io : IO) : Nil
+      io << "be blank"
     end
   end
 end

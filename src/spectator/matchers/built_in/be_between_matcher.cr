@@ -4,10 +4,6 @@ module Spectator::Matchers::BuiltIn
   struct BeBetweenMatcher(B, E)
     include Matchable
 
-    def description
-      "be between #{@min} and #{@max} (#{@exclusive ? "exclusive" : "inclusive"})"
-    end
-
     def initialize(@min : B, @max : E, @exclusive : Bool = false)
     end
 
@@ -29,6 +25,11 @@ module Spectator::Matchers::BuiltIn
       printer << "     Expected: " << description_of(actual_value) << EOL
       printer << "to be outside: " << description_of(@min) << " and " << description_of(@max)
       printer << " (" << (@exclusive ? "exclusive" : "inclusive") << ')'
+    end
+
+    def to_s(io : IO) : Nil
+      io << "be between " << @min << " and " << @max
+      io << " (" << (@exclusive ? "exclusive" : "inclusive") << ')'
     end
 
     def exclusive

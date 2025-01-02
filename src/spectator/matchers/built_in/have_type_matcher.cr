@@ -4,10 +4,6 @@ module Spectator::Matchers::BuiltIn
   struct HaveTypeMatcher(T)
     include Matchable
 
-    def description
-      "have type #{T} at compile-time"
-    end
-
     def matches?(actual_value)
       typeof(actual_value) == T
     end
@@ -28,6 +24,10 @@ module Spectator::Matchers::BuiltIn
     def print_negated_failure_message(printer : Formatters::Printer, actual_value) : Nil
       printer << "   Expected: " << description_of(actual_value) << EOL
       printer << "not to be a: " << description_of(T)
+    end
+
+    def to_s(io : IO) : Nil
+      io << "have type compile-time type " << T
     end
   end
 end

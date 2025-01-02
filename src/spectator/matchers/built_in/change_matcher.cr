@@ -55,6 +55,10 @@ module Spectator::Matchers::BuiltIn
       end
     end
 
+    def to_s(io : IO) : Nil
+      io << "change"
+    end
+
     def from(value)
       ChangeFromMatcher.new(@subject, value)
     end
@@ -138,6 +142,10 @@ module Spectator::Matchers::BuiltIn
       end
     end
 
+    def to_s(io : IO) : Nil
+      io << "change from " << @before
+    end
+
     def to(value)
       ChangeFromToMatcher.new(@subject, @before, value)
     end
@@ -177,6 +185,10 @@ module Spectator::Matchers::BuiltIn
     def match_negated(&) : MatchFailure?
       # TODO: Use a compiler error.
       raise Spectator::FrameworkError.new("The syntax `expect { }.not_to change { }.to()` is not supported as its meaning is ambiguous.")
+    end
+
+    def to_s(io : IO) : Nil
+      io << "change to " << @after
     end
 
     def from(value)
@@ -219,6 +231,10 @@ module Spectator::Matchers::BuiltIn
     def match_negated(&) : MatchFailure?
       # TODO: Use a compiler error.
       raise Spectator::FrameworkError.new("The syntax `expect { }.not_to change { }.from().to()` is not supported as its meaning is ambiguous.")
+    end
+
+    def to_s(io : IO) : Nil
+      io << "change from " << @before << " to " << @after
     end
   end
 

@@ -75,5 +75,9 @@ module Spectator::Matchers::BuiltIn
         Attribute.missing(expected)
       end
     end
+
+    def to_s(io : IO) : Nil
+      io << "have_attributes " << @attributes
+    end
   end
 end

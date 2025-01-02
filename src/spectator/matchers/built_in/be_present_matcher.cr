@@ -4,10 +4,6 @@ module Spectator::Matchers::BuiltIn
   struct BePresentMatcher
     include Matchable
 
-    def description
-      "be present"
-    end
-
     def matches?(actual_value)
       (actual_value.responds_to?(:present?) && actual_value.present?) ||
         (actual_value.responds_to?(:empty?) && !actual_value.blank?) ||
@@ -20,6 +16,10 @@ module Spectator::Matchers::BuiltIn
 
     def print_negated_failure_message(printer : Formatters::Printer, actual_value) : Nil
       printer << "Expected " << description_of(actual_value) << " not to be present"
+    end
+
+    def to_s(io : IO) : Nil
+      io << "be present"
     end
   end
 end

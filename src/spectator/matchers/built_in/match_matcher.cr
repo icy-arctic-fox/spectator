@@ -4,10 +4,6 @@ module Spectator::Matchers::BuiltIn
   struct MatchMatcher(T)
     include Matchable
 
-    def description
-      "match #{@expected_value}"
-    end
-
     def initialize(@expected_value : T)
     end
 
@@ -23,6 +19,10 @@ module Spectator::Matchers::BuiltIn
     def print_negated_failure_message(printer : Formatters::Printer, actual_value) : Nil
       printer << "    Expected: " << description_of(actual_value) << EOL
       printer << "not to match: " << description_of(@expected_value)
+    end
+
+    def to_s(io : IO) : Nil
+      io << "match " << @expected_value
     end
   end
 end
