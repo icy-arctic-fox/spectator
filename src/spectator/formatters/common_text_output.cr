@@ -91,15 +91,54 @@ module Spectator::Formatters
       printer.puts error.message
 
       printer.indent do
-        error.backtrace?.try &.each do |frame|
-          frame = frame.colorize.dim if external_frame?(frame)
-          printer.puts frame
+        if backtrace = error.backtrace?
+          # TODO: Allow customizing the collapse threshold.
+          collapse_backtrace(backtrace) do |is_external, frame|
+            frame ||= "--- omitted ---" # Collapsed frame
+            frame = frame.colorize.dim if is_external
+            printer.puts frame
+          end
         end
       end
       printer.puts
 
       if cause = error.cause
         print_trace(cause)
+      end
+    end
+
+    private def collapse_backtrace(backtrace : Iterable(String), & : Bool, String? -> _) : Nil
+      # Enumerate through the backtrace and collapse multiple consecutive external frames.
+      # For example, if the backtrace is:
+      #
+      # ```text
+      # spec/example_spec.cr:42:in `example'
+      # lib/spectator.cr:1:in `example'
+      # lib/spectator.cr:2:in `example' # This frame ...
+      # lib/spectator.cr:3:in `example' # and this frame should be omitted.
+      # lib/spectator.cr:4:in `example'
+      # spec/example_spec.cr:42:in `example'
+      # ```
+      #
+      # Then the collapsed backtrace is:
+      #
+      # ```text
+      # spec/example_spec.cr:42:in `example'
+      # lib/spectator.cr:1:in `example'
+      # --- omitted ---
+      # lib/spectator.cr:4:in `example'
+      # spec/example_spec.cr:42:in `example'
+      # ```
+
+      chunks = backtrace.chunk(true) { |frame| external_frame?(frame) }
+      chunks.each do |is_external, frames|
+        if is_external && frames.size > 2
+          yield is_external, frames[0]
+          yield is_external, nil
+          yield is_external, frames[-1]
+        else
+          frames.each { |frame| yield is_external, frame }
+        end
       end
     end
 
