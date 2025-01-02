@@ -33,12 +33,6 @@ module Spectator::Matchers
       def print(printer : Formatters::Printer) : Nil
         printer.inspect_value(@value)
       end
-
-      def to_s(io : IO) : Nil
-        Formatters.to_io(io) do |printer|
-          print(printer)
-        end
-      end
     end
 
     def inspect_value(value)
@@ -53,12 +47,6 @@ module Spectator::Matchers
 
       def print(printer : Formatters::Printer) : Nil
         printer.inspect_string(@value, @property)
-      end
-
-      def to_s(io : IO) : Nil
-        Formatters.to_io(io) do |printer|
-          print(printer)
-        end
       end
     end
 
@@ -78,12 +66,6 @@ module Spectator::Matchers
 
       def print(printer : Formatters::Printer) : Nil
         printer.id(@name)
-      end
-
-      def to_s(io : IO) : Nil
-        Formatters.to_io(io) do |printer|
-          print(printer)
-        end
       end
     end
 

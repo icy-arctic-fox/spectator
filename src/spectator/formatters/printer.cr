@@ -15,6 +15,12 @@ module Spectator::Formatters
 
   module Printable
     abstract def print(printer : Printer) : Nil
+
+    def to_s(io : IO) : Nil
+      Formatters.to_io(io) do |printer|
+        print(printer)
+      end
+    end
   end
 
   abstract class Printer
