@@ -104,9 +104,8 @@ module Spectator::Formatters
     end
 
     private def external_frame?(frame : String)
-      frame.starts_with?("lib/") ||    # Crystal shards
-        frame.starts_with?('/') ||     # POSIX absolute path
-        frame.starts_with?(/^\w+:/) || # Windows absolute path
+      Path[frame].absolute? ||
+        frame.starts_with?("lib/") || # Crystal shards
         frame == "???"
     end
 
