@@ -132,7 +132,7 @@ module Spectator::Matchers::BuiltIn
       value_after = @subject.call
       description_after = description_of(value_after)
 
-      return if value_after != value_before
+      return if value_after == value_before
 
       MatchFailure.new do |printer|
         printer << "Expected: " << description_before << EOL
