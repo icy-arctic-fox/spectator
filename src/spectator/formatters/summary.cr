@@ -14,7 +14,7 @@ module Spectator::Formatters
     def self.from_results(
       results : Enumerable(Core::Result),
       total_time : Time::Span,
-      fail_reason : Core::FailReason? = nil
+      fail_reason : Core::FailReason? = nil,
     ) : self
       new(
         passed: results.count &.passed?,

@@ -35,7 +35,7 @@ module Spectator::Core
 
     def self.create_and_merge_tags(
       tags_a : Tuple, tagged_values_a : NamedTuple,
-      *tags_b, **tagged_values_b
+      *tags_b, **tagged_values_b,
     ) : TagModifiers?
       tags = create_tags(tags_b, tagged_values_b)
       return if tags.nil? && tags_a.empty? && tagged_values_a.empty?
