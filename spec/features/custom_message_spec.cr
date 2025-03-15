@@ -10,7 +10,7 @@ Spectator.describe Spectator, :smoke do
   it "supports custom expectation messages with a proc" do
     count = 0
     expect do
-      expect(false).to be_true, ->{ count += 1; "Failed #{count} times" }
+      expect(false).to be_true, -> { count += 1; "Failed #{count} times" }
     end.to raise_error(Spectator::ExampleFailed, "Failed 1 times")
   end
 
@@ -24,7 +24,7 @@ Spectator.describe Spectator, :smoke do
     it "supports custom expectation messages with a proc" do
       count = 0
       expect do
-        expect(true).not_to be_true, ->{ count += 1; "Failed #{count} times" }
+        expect(true).not_to be_true, -> { count += 1; "Failed #{count} times" }
       end.to raise_error(Spectator::ExampleFailed, "Failed 1 times")
     end
   end
