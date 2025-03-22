@@ -31,7 +31,7 @@ module Spectator::DSL
  ::Spectator::DSL::Mocks::TYPES << {name.id.symbolize, @type.name(generic_args: false).symbolize, double_type_name.symbolize} %}
 
       # Define the plain double type.
-      ::Spectator::Double.define({{double_type_name}}, {{name}}, {{**value_methods}}) do
+      ::Spectator::Double.define({{double_type_name}}, {{name}}, {{value_methods.double_splat}}) do
         # Returns a new double that responds to undefined methods with itself.
         # See: `NullDouble`
         def as_null_object
@@ -43,7 +43,7 @@ module Spectator::DSL
 
       {% begin %}
         # Define a matching null double type.
-        ::Spectator::NullDouble.define({{null_double_type_name}}, {{name}}, {{**value_methods}}) {{block}}
+        ::Spectator::NullDouble.define({{null_double_type_name}}, {{name}}, {{value_methods.double_splat}}) {{block}}
       {% end %}
     end
 
@@ -94,9 +94,9 @@ module Spectator::DSL
 
       begin
         %double = {% if found_tuple %}
-                    {{found_tuple[2].id}}.new({{**value_methods}})
+                    {{found_tuple[2].id}}.new({{value_methods.double_splat}})
                   {% else %}
-                    ::Spectator::LazyDouble.new({{name}}, {{**value_methods}})
+                    ::Spectator::LazyDouble.new({{name}}, {{value_methods.double_splat}})
                   {% end %}
         ::Spectator::Harness.current?.try(&.cleanup { %double._spectator_reset })
         %double
@@ -176,7 +176,7 @@ module Spectator::DSL
     # See `#def_double`.
     macro double(name, **value_methods, &block)
       {% begin %}
-        {% if @def %}new_double{% else %}def_double{% end %}({{name}}, {{**value_methods}}) {{block}}
+        {% if @def %}new_double{% else %}def_double{% end %}({{name}}, {{value_methods.double_splat}}) {{block}}
       {% end %}
     end
 
@@ -189,7 +189,7 @@ module Spectator::DSL
     # expect(dbl.foo).to eq(42)
     # ```
     macro double(**value_methods)
-      ::Spectator::LazyDouble.new({{**value_methods}})
+      ::Spectator::LazyDouble.new({{value_methods.double_splat}})
     end
 
     # Defines a new mock type.
@@ -226,7 +226,7 @@ module Spectator::DSL
 
          # Store information about how the mock is defined and its context.
          # This is important for constructing an instance of the mock later.
-         ::Spectator::DSL::Mocks::TYPES << {type.id.symbolize, @type.name(generic_args: false).symbolize, "::#{resolved.name}::#{mock_type_name}".id.symbolize}
+         ::Spectator::DSL::Mocks::TYPES << {type.id.symbolize, @type.name(generic_args: false).symbolize, "#{"::".id unless resolved.name.starts_with?("::")}#{resolved.name}::#{mock_type_name}".id.symbolize}
 
          base = if resolved.class?
                   :class
@@ -237,8 +237,8 @@ module Spectator::DSL
                 end %}
 
       {% begin %}
-        {{base.id}} ::{{resolved.name}}
-          ::Spectator::Mock.define_subtype({{base}}, {{type.id}}, {{mock_type_name}}, {{name}}, {{**value_methods}}) {{block}}
+        {{base.id}} {{"::".id unless resolved.name.starts_with?("::")}}{{resolved.name}}
+          ::Spectator::Mock.define_subtype({{base}}, {{type.id}}, {{mock_type_name}}, {{name}}, {{value_methods.double_splat}}) {{block}}
         end
       {% end %}
     end
@@ -321,7 +321,7 @@ module Spectator::DSL
     macro mock(type, **value_methods, &block)
       {% raise "First argument of `mock` must be a type name, not #{type}" unless type.is_a?(Path) || type.is_a?(Generic) || type.is_a?(Union) || type.is_a?(Metaclass) || type.is_a?(TypeNode) %}
       {% begin %}
-        {% if @def %}new_mock{% else %}def_mock{% end %}({{type}}, {{**value_methods}}) {{block}}
+        {% if @def %}new_mock{% else %}def_mock{% end %}({{type}}, {{value_methods.double_splat}}) {{block}}
       {% end %}
     end
 
@@ -431,7 +431,7 @@ module Spectator::DSL
          # This isn't required, but new_mock() should still find this type.
          ::Spectator::DSL::Mocks::TYPES << {type.id.symbolize, @type.name(generic_args: false).symbolize, resolved.name.symbolize} %}
 
-      ::Spectator::Mock.inject({{base}}, ::{{resolved.name}}, {{**value_methods}}) {{block}}
+      ::Spectator::Mock.inject({{base}}, {{resolved.name}}, {{value_methods.double_splat}}) {{block}}
     end
 
     # Targets a stubbable object (such as a mock or double) for operations.

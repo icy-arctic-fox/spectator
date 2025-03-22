@@ -1,3 +1,4 @@
+require "../value"
 require "./match_data"
 
 module Spectator::Matchers
@@ -21,6 +22,19 @@ module Spectator::Matchers
     # Performs the test against the expression (value or block), but inverted.
     # A successful match with `#match` should normally fail for this method, and vice-versa.
     abstract def negated_match(actual : Expression(T)) : MatchData forall T
+
+    # Compares a matcher against a value.
+    # Enables composable matchers.
+    def ===(actual : Expression(T)) : Bool
+      match(actual).matched?
+    end
+
+    # Compares a matcher against a value.
+    # Enables composable matchers.
+    def ===(other) : Bool
+      expression = Value.new(other)
+      match(expression).matched?
+    end
 
     private def match_data_description(actual : Expression(T)) : String forall T
       match_data_description(actual.label)

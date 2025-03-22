@@ -110,13 +110,13 @@ Spectator.describe "GitHub Issue #48" do
   end
 
   it "handles captured blocks" do
-    proc = ->{}
+    proc = -> { }
     allow(fake).to receive(:capture).and_return(proc)
     expect(fake.capture { nil }).to be(proc)
   end
 
   it "raises on type cast error with captured blocks" do
-    proc = ->{ 42 }
+    proc = -> { 42 }
     allow(fake).to receive(:capture).and_return(proc)
     expect { fake.capture { "other" } }.to raise_error(TypeCastError, /Proc\(String\)/)
   end

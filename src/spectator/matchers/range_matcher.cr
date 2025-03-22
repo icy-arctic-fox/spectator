@@ -29,7 +29,26 @@ module Spectator::Matchers
 
     # Checks whether the matcher is satisfied with the expression given to it.
     private def match?(actual : Expression(T)) : Bool forall T
-      expected.value.includes?(actual.value)
+      actual_value = actual.value
+      expected_value = expected.value
+      if expected_value.is_a?(Range) && actual_value.is_a?(Comparable)
+        return match_impl?(expected_value, actual_value)
+      end
+      return false unless actual_value.is_a?(Comparable(typeof(expected_value.begin)))
+      expected_value.includes?(actual_value)
+    end
+
+    private def match_impl?(expected_value : Range(B, E), actual_value : Comparable(B)) : Bool forall B, E
+      expected_value.includes?(actual_value)
+    end
+
+    private def match_impl?(expected_value : Range(B, E), actual_value : T) : Bool forall B, E, T
+      return false unless actual_value.is_a?(B) || actual_value.is_a?(Comparable(B))
+      expected_value.includes?(actual_value)
+    end
+
+    private def match_impl?(expected_value : Range(Number, Number), actual_value : Number) : Bool
+      expected_value.includes?(actual_value)
     end
 
     # Message displayed when the matcher isn't satisfied.
