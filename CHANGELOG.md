@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.12.2] - 2025-09-27
+### Fixed
+- Fixed `in_order` modifier for array matchers. [#58](https://github.com/icy-arctic-fox/spectator/issues/58)
+
 ## [0.12.1] - 2024-08-13
 ### Fixed
 - Fixed some global namespace issues with Crystal 1.13. [#57](https://github.com/icy-arctic-fox/spectator/pull/57) Thanks @GrantBirki !
@@ -463,7 +467,8 @@ This has been changed so that it compiles and raises an error at runtime with a 
 First version ready for public use.
 
 
-[Unreleased]: https://gitlab.com/arctic-fox/spectator/-/compare/v0.12.1...master
+[Unreleased]: https://gitlab.com/arctic-fox/spectator/-/compare/v0.12.2...master
+[0.12.2]: https://gitlab.com/arctic-fox/spectator/-/compare/v0.12.1...v0.12.2
 [0.12.1]: https://gitlab.com/arctic-fox/spectator/-/compare/v0.12.0...v0.12.1
 [0.12.0]: https://gitlab.com/arctic-fox/spectator/-/compare/v0.11.7...v0.12.0
 [0.11.7]: https://gitlab.com/arctic-fox/spectator/-/compare/v0.11.6...v0.11.7
