@@ -28,18 +28,20 @@ module Spectator::Matchers
 
       actual_elements = actual_value.to_a
       expected_elements = expected.value
-      missing, extra = compare_arrays(expected_elements, actual_elements)
+      differences = compare_arrays(expected_elements, actual_elements)
 
-      if missing.empty? && extra.empty?
+      if differences.empty?
         # Contents are identical.
         SuccessfulMatchData.new(match_data_description(actual))
       else
+        difference_string = differences.map do |difference|
+          "[#{difference[:index]}] expected: #{difference[:expected].inspect}, got: #{difference[:actual].inspect}"
+        end.join("\n")
         # Content differs.
         FailedMatchData.new(match_data_description(actual), "#{actual.label} does not contain exactly #{expected.label}",
           expected: expected_elements.inspect,
           actual: actual_elements.inspect,
-          missing: missing.empty? ? "None" : missing.inspect,
-          extra: extra.empty? ? "None" : extra.inspect
+          differences: difference_string,
         )
       end
     end
@@ -52,9 +54,8 @@ module Spectator::Matchers
 
       actual_elements = actual_value.to_a
       expected_elements = expected.value
-      missing, extra = compare_arrays(expected_elements, actual_elements)
 
-      if missing.empty? && extra.empty?
+      if arrays_equal?(expected_elements, actual_elements)
         # Contents are identical.
         FailedMatchData.new(match_data_description(actual), "#{actual.label} contains exactly #{expected.label}",
           expected: "Not #{expected_elements.inspect}",
@@ -78,41 +79,41 @@ module Spectator::Matchers
       UnorderedArrayMatcher.new(expected)
     end
 
-    # Compares two arrays to determine whether they contain the same elements, but in any order.
-    # A tuple of two arrays is returned.
-    # The first array is the missing elements (present in expected, missing in actual).
-    # The second array array is the extra elements (not present in expected, present in actual).
-    private def compare_arrays(expected_elements, actual_elements)
-      # Produce hashes where the array elements are the keys, and the values are the number of occurrences.
-      expected_hash = expected_elements.group_by(&.itself).map { |k, v| {k, v.size} }.to_h
-      actual_hash = actual_elements.group_by(&.itself).map { |k, v| {k, v.size} }.to_h
+    # Compares two arrays to determine whether they contain the same elements, in the same order.
+    # Returns an array of mismatched elements.
+    private def compare_arrays(expected_array, actual_array : Array(ActualType)) forall ActualType
+      differences = [] of {index: Int32, expected: ExpectedType | Nil, actual: ActualType | Nil}
 
-      {
-        hash_count_difference(expected_hash, actual_hash),
-        hash_count_difference(actual_hash, expected_hash),
-      }
+      min_length = expected_array.size < actual_array.size ? expected_array.size : actual_array.size
+      min_length.times do |index|
+        expected = expected_array[index]
+        actual = actual_array[index]
+        next if expected == actual
+        differences << {index: index, expected: expected, actual: actual}
+      end
+
+      if expected_array.size > actual_array.size
+        (expected_array.size - actual_array.size).times do |index|
+          differences << {index: index + actual_array.size, expected: expected_array[index + actual_array.size], actual: nil}
+        end
+      elsif expected_array.size < actual_array.size
+        (actual_array.size - expected_array.size).times do |index|
+          differences << {index: index + expected_array.size, expected: nil, actual: actual_array[index + expected_array.size]}
+        end
+      end
+
+      differences
     end
 
-    # Expects two hashes, with values as counts for keys.
-    # Produces an array of differences with elements repeated if needed.
-    private def hash_count_difference(first, second)
-      # Subtract the number of occurrences from the other array.
-      # A duplicate hash is used here because the original can't be modified,
-      # since it there's a two-way comparison.
-      #
-      # Then reject elements that have zero (or less) occurrences.
-      # Lastly, expand to the correct number of elements.
-      first.map do |element, count|
-        if second_count = second[element]?
-          {element, count - second_count}
-        else
-          {element, count}
-        end
-      end.reject do |(_, count)|
-        count <= 0
-      end.flat_map do |(element, count)|
-        Array.new(count, element)
+    # Compares two arrays to determine whether they contain the same elements.
+    private def arrays_equal?(expected_array, actual_array)
+      return false if expected_array.size != actual_array.size
+
+      expected_array.zip(actual_array) do |expected, actual|
+        return false unless expected == actual
       end
+
+      true
     end
 
     private def unexpected(value, label)
