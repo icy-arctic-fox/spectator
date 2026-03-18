@@ -4,6 +4,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.12.3] - 2026-03-17
+### Fixed
+- Fixed usage of symbol literal in `expect`. [#85](https://gitlab.com/arctic-fox/spectator/-/work_items/85)
+- Fixed `have_value` matcher with `NamedTuple`. [#86](https://gitlab.com/arctic-fox/spectator/-/work_items/86)
+
+### Changed
+- Addressed deprecation of `Atomic::Flag`.
+
 ## [0.12.2] - 2025-09-27
 ### Fixed
 - Fixed `in_order` modifier for array matchers. [#58](https://github.com/icy-arctic-fox/spectator/issues/58)
@@ -467,7 +475,8 @@ This has been changed so that it compiles and raises an error at runtime with a 
 First version ready for public use.
 
 
-[Unreleased]: https://gitlab.com/arctic-fox/spectator/-/compare/v0.12.2...master
+[Unreleased]: https://gitlab.com/arctic-fox/spectator/-/compare/v0.12.3...master
+[0.12.3]: https://gitlab.com/arctic-fox/spectator/-/compare/v0.12.2...v0.12.3
 [0.12.2]: https://gitlab.com/arctic-fox/spectator/-/compare/v0.12.1...v0.12.2
 [0.12.1]: https://gitlab.com/arctic-fox/spectator/-/compare/v0.12.0...v0.12.1
 [0.12.0]: https://gitlab.com/arctic-fox/spectator/-/compare/v0.11.7...v0.12.0
