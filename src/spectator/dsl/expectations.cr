@@ -46,7 +46,11 @@ module Spectator::DSL
       end
 
       %expression = ::Spectator::Value.new(%actual, {{actual.stringify}})
-      %location = ::Spectator::Location.new({{actual.filename}}, {{actual.line_number}})
+      %location = {% if actual.filename || @def.filename %}
+        ::Spectator::Location.new({{actual.filename || @def.filename}}, {{actual.line_number || 0}})
+      {% else %}
+        nil
+      {% end %}
       ::Spectator::Expectation::Target.new(%expression, %location)
     end
 
