@@ -14,9 +14,20 @@ module Spectator::Matchers
     # Checks whether the matcher is satisfied with the expression given to it.
     private def match?(actual : Expression(T)) : Bool forall T
       actual_value = actual.value
-      return unexpected(actual_value, actual.label) unless actual_value.responds_to?(:has_value?)
+      if actual_value.responds_to?(:has_value?)
+        actual_value.has_value?(expected.value)
+      elsif actual_value.is_a?(NamedTuple)
+        named_tuple_has_value?(actual_value)
+      else
+        unexpected(actual_value, actual.label)
+      end
+    end
 
-      actual_value.has_value?(expected.value)
+    private def named_tuple_has_value?(named_tuple : NamedTuple) : Bool
+      named_tuple.each_value do |value|
+        return true if value == expected.value
+      end
+      false
     end
 
     # Message displayed when the matcher isn't satisfied.
