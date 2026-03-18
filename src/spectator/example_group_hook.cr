@@ -11,7 +11,12 @@ module Spectator
     getter! label : Label
 
     @proc : ->
-    @called = Atomic::Flag.new
+
+    {% if compare_versions(Crystal::VERSION, "1.13.0") < 0 %}
+      @called = Atomic::Flag.new
+    {% else %}
+      @called = Atomic(Bool).new(false)
+    {% end %}
 
     # Creates the hook with a proc.
     # The *proc* will be called when the hook is invoked.
@@ -28,14 +33,14 @@ module Spectator
 
     # Invokes the hook.
     def call : Nil
-      @called.test_and_set
+      mark_called
       @proc.call
     end
 
     # Invokes the hook if it hasn't already been invoked.
     # Returns true if the hook was invoked (first time being called).
     def call_once : Bool
-      first = @called.test_and_set
+      first = mark_called
       @proc.call if first
       first
     end
@@ -52,6 +57,16 @@ module Spectator
       if (location = @location)
         io << " @ " << location
       end
+    end
+
+    # Marks the hook as having been called.
+    # Returns true on the first call and false on subsequent calls.
+    private def mark_called : Bool
+      {% if compare_versions(Crystal::VERSION, "1.13.0") < 0 %}
+        @called.test_and_set
+      {% else %}
+        !@called.swap(true, :relaxed)
+      {% end %}
     end
   end
 end
