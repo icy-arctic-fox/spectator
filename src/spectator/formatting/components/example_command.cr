@@ -15,7 +15,7 @@ module Spectator::Formatting::Components
       # Use location for argument if it's available, since it's simpler.
       # Otherwise, use the example name filter argument.
       if location = @example.location?
-        io << location
+        io << location.path << ':' << location.line
       else
         io << "-e " << @example
       end

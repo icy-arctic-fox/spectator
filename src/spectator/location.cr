@@ -26,12 +26,17 @@ module Spectator
     def self.parse(string)
       # Make sure to handle multiple colons.
       # If this ran on Windows, there's a possibility of a colon in the path.
-      # The last element should always be the line number.
+      # The last element(s) should always be line numbers.
       parts = string.split(':')
-      path = parts[0...-1].join(':')
-      line = parts.last
-      file = File.expand_path(path)
-      self.new(file, line.to_i)
+      if parts.size >= 3 && parts[-1].to_i? && parts[-2].to_i?
+        end_line = parts.pop.to_i
+        line = parts.pop.to_i
+      else
+        line = parts.pop.to_i
+        end_line = nil
+      end
+      file = File.expand_path(parts.join(':'))
+      self.new(file, line, end_line)
     end
 
     # The relative path to the file from the current directory.
@@ -61,6 +66,7 @@ module Spectator
     # ```
     def to_s(io : IO) : Nil
       io << path << ':' << line
+      io << ':' << end_line if end_line != line
     end
   end
 end
