@@ -11,4 +11,8 @@
 # Ignore JUnit output
 output.xml
 
+# Ignore test failure file
+.spectator-failures
+
+# Ignore ad-hoc test file
 /test.cr
