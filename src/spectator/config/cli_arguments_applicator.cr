@@ -107,6 +107,7 @@ module Spectator
         line_option(parser, builder)
         location_option(parser, builder)
         tag_option(parser, builder)
+        only_failures_option(parser, builder)
       end
 
       # Adds the example filter option to the parser.
@@ -154,6 +155,18 @@ module Spectator
             builder.add_node_reject(filter)
           else
             builder.add_node_filter(filter)
+          end
+        end
+      end
+
+      private def only_failures_option(parser, builder)
+        parser.on("--only-failures", "Run only examples that failed in the previous run") do
+          Log.debug { "Filtering for previously failed examples (--only-failures)" }
+          file_path = Formatting::ExampleStatusPersistence::FILE_PATH
+          next unless File.exists?(file_path)
+          File.each_line(file_path) do |line|
+            location = Location.parse(line) rescue next
+            builder.add_node_filter(LocationNodeFilter.new(location))
           end
         end
       end

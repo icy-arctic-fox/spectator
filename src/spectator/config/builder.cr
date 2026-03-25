@@ -147,8 +147,13 @@ module Spectator
       # Retrieves the formatters to use.
       # If one wasn't specified by the user,
       # then `#default_formatter` is returned.
+      # Always includes `ExampleStatusPersistence` so that `.spectator-failures`
+      # is written on every run, enabling `--only-failures` on subsequent runs.
       private def formatters
-        @additional_formatters + [(@primary_formatter || default_formatter)]
+        @additional_formatters + [
+          (@primary_formatter || default_formatter),
+          Formatting::ExampleStatusPersistence.new,
+        ]
       end
 
       # The formatter that should be used if one wasn't provided.
