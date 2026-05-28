@@ -32,9 +32,9 @@ jobs:
       matrix:
         crystal: # Latest version plus 2 previous.
           - nightly
-          - latest # 1.17
-          - "1.16"
-          - "1.15"
+          - latest # 1.20
+          - "1.19"
+          - "1.18"
         os:
           - ubuntu-latest
           - macos-latest
