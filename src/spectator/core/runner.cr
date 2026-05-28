@@ -210,11 +210,19 @@ module Spectator::Core
       end
     end
 
-    @start_monotonic : Time::Span = Time.monotonic
+    {% if compare_versions(Crystal::VERSION, "1.19.0") < 0 %}
+      @start_monotonic : Time::Span = Time.monotonic
+    {% else %}
+      @start_instant : Time::Instant = Time.instant
+    {% end %}
 
     # Elapsed time since the sandbox was created.
     def elapsed_time : Time::Span
-      Time.monotonic - @start_monotonic
+      {% if compare_versions(Crystal::VERSION, "1.19.0") < 0 %}
+        Time.monotonic - @start_monotonic
+      {% else %}
+        Time.instant - @start_instant
+      {% end %}
     end
   end
 end
