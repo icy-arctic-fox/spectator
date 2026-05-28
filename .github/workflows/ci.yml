@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Download source code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
       - name: Install Crystal
         uses: crystal-lang/install-crystal@v1
         with:
@@ -41,13 +41,13 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - name: Download source code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
       - name: Install Crystal
         uses: crystal-lang/install-crystal@v1
         with:
           crystal: ${{ matrix.crystal }}
       - name: Cache shards
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: ~/.cache/shards
           key: ${{ runner.os }}-shards-${{ hashFiles('shard.yml') }}
