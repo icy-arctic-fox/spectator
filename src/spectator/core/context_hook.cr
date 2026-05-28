@@ -13,14 +13,18 @@ module Spectator::Core
 
     getter position : Position
 
-    @called = Atomic::Flag.new
+    {% if compare_versions(Crystal::VERSION, "1.13.0") < 0 %}
+      @called = Atomic::Flag.new
+    {% else %}
+      @called = Atomic(Bool).new(false)
+    {% end %}
 
     def initialize(@position, @location = nil, &@block : ->)
     end
 
     def call
       # Ensure the hook is called once.
-      called = @called.test_and_set
+      called = mark_called
       # Re-raise previous error if there was one.
       @exception.try { |ex| raise ex }
       # Only call hook if it hasn't been called yet.
@@ -48,6 +52,16 @@ module Spectator::Core
       io << " 0x"
       object_id.to_s(io, 16)
       io << '>'
+    end
+
+    # Marks the hook as having been called.
+    # Returns true on the first call and false on subsequent calls.
+    private def mark_called : Bool
+      {% if compare_versions(Crystal::VERSION, "1.13.0") < 0 %}
+        @called.test_and_set
+      {% else %}
+        !@called.swap(true, :relaxed)
+      {% end %}
     end
   end
 end
