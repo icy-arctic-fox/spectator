@@ -4,7 +4,7 @@ require "./matchers/match_failure"
 
 module Spectator
   # Error raised when an assertion fails.
-  # This typically occurs when a matcher isn't satisfied and it's expectation isn't met.
+  # This typically occurs when a matcher isn't satisfied and its expectation isn't met.
   class AssertionFailed < Error
     getter match_failure : Matchers::MatchFailure?
 
