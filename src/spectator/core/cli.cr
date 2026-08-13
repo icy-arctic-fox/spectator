@@ -122,8 +122,17 @@ module Spectator::Core
           configuration.mode = :list_tags
         end
 
-        parser.on("--order MODE", "Run examples in random order by passing MODE as 'random' or to a specific seed by passing MODE as the seed value") do
-          # TODO
+        parser.on("--order MODE", "Run examples in random order by passing MODE as 'random' or to a specific seed by passing MODE as the seed value") do |mode|
+          if order = Order.parse?(mode)
+            configuration.order = order
+          elsif seed = mode.to_u64?
+            configuration.order = :random
+            configuration.seed = seed
+          else
+            options = humanize_join(Order.names.map { |name| "'#{name.downcase}'" })
+            STDERR.puts "The MODE argument for the --order option must be one of #{options} or an integer to be used for the random seed."
+            exit 1
+          end
         end
 
         parser.on("--junit_output OUTPUT_PATH", "Generate JUnit XML output within the given OUTPUT_PATH") do |output_path|
@@ -153,6 +162,18 @@ module Spectator::Core
 
         parser.on("--dry-run", "Pass all tests without execution") do
           configuration.mode = :dry_run
+        end
+      end
+    end
+
+    private def humanize_join(items)
+      String.build do |buffer|
+        items.each_with_index do |item, index|
+          if index > 0
+            buffer << ", "
+            buffer << "or " if index == items.size - 1
+          end
+          buffer << item
         end
       end
     end
