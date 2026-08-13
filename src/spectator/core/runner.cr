@@ -68,7 +68,12 @@ module Spectator::Core
         filter = NegatedFilter.new(filter)
         group.filter(filter)
       end
-      group.select(Example)
+      examples = group.select(Example)
+      if @configuration.order.random?
+        seed = @configuration.seed ||= Random.rand(100_000_u64)
+        examples.shuffle!(Random.new(seed))
+      end
+      examples
     end
 
     private def run_example(example : Example) : ExecutionResult
