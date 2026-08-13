@@ -49,7 +49,12 @@ module Spectator::Core
       elsif @configuration.fail_if_no_examples? && results.empty?
         fail_reason = FailReason::NoTests
       end
-      summary = Formatters::Summary.from_results(results.map &.result, Spectator.elapsed_time, fail_reason)
+      summary = Formatters::Summary.from_results(
+        results.map &.result,
+        Spectator.elapsed_time,
+        fail_reason,
+        @configuration.seed
+      )
 
       report &.suite_finished
       report &.report_results(results)

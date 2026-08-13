@@ -189,6 +189,12 @@ module Spectator::Formatters
         if summary.skipped > 0
           printer << ", " << summary.skipped << " skipped"
         end
+        if seed = summary.seed
+          printer.puts
+          printer.with_style(:info) do
+            printer << "Randomized with seed: " << seed
+          end
+        end
       end
       printer.puts
     end

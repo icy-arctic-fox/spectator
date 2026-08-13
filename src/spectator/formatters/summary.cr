@@ -9,12 +9,14 @@ module Spectator::Formatters
     skipped : Int32,
     total_time : Time::Span,
     test_time : Time::Span,
-    fail_reason : Core::FailReason
+    fail_reason : Core::FailReason,
+    seed : UInt64? = nil,
   ) do
     def self.from_results(
       results : Enumerable(Core::Result),
       total_time : Time::Span,
       fail_reason : Core::FailReason? = nil,
+      seed : UInt64? = nil,
     ) : self
       new(
         passed: results.count &.passed?,
@@ -23,7 +25,8 @@ module Spectator::Formatters
         skipped: results.count &.skipped?,
         total_time: total_time,
         test_time: results.sum &.elapsed,
-        fail_reason: fail_reason || Core::FailReason::None
+        fail_reason: fail_reason || Core::FailReason::None,
+        seed: seed,
       )
     end
 
