@@ -77,6 +77,16 @@ module Spectator::Core
       if @configuration.order.random?
         seed = @configuration.seed ||= Random.rand(100_000_u64)
         examples.shuffle!(Random.new(seed))
+      elsif @configuration.order.modified?
+        now = Time.utc
+        last_modified_cache = Hash(String, Time).new do |hash, file|
+          time = File.info?(file).try &.modification_time
+          hash[file] = time || now
+        end
+        examples.sort_by! do |example|
+          file = example.location.try &.file
+          Time.utc - (file ? last_modified_cache[file] : now)
+        end
       end
       examples
     end
