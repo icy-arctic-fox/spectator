@@ -94,8 +94,8 @@ module Spectator::Core
           filter.add_filter(LineFilter.new(line: line.to_i))
         end
 
-        parser.on("-p [NUMBER]", "--profile [NUMBER]", "Print the NUMBER slowest specs (default: 10)") do
-          # TODO
+        parser.on("-p [NUMBER]", "--profile [NUMBER]", "Print the NUMBER slowest specs (default: 10)") do |number|
+          configuration.profile_examples = number.to_i? || 10
         end
 
         parser.on("--fail-fast [NUMBER]", "Abort the run on first NUMBER failures (default: 1)") do |number|

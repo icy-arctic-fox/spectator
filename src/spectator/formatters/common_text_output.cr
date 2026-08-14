@@ -79,7 +79,7 @@ module Spectator::Formatters
             printer.puts error.message
           end
           printer.puts
-          printer.puts if print_location(error)
+          print_location(error) || printer.puts
         else
           print_trace(error)
         end
@@ -171,7 +171,25 @@ module Spectator::Formatters
       end
     end
 
-    def report_profile : Nil
+    def report_profile(profile : Profile) : Nil
+      # Title line
+      printer << "Top " << profile.size << " examples ("
+      printer << humanize(profile.profile_time) << ", "
+      printer << profile.percentage.round(2) << "% of total time):"
+      printer.puts
+
+      printer.indent do
+        profile.each_item do |result, pct|
+          printer.puts result.example.full_description
+          printer << "  " << humanize(result.elapsed)
+          if location = result.example.location
+            printer << ' '
+            printer.with_style(:info, &.print location.relative_to(Spectator.working_path))
+          end
+          printer.puts
+        end
+      end
+      printer.puts
     end
 
     def report_summary(summary : Summary) : Nil

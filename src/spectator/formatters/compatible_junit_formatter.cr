@@ -103,7 +103,7 @@ module Spectator::Formatters
     def report_results(results : Enumerable(Core::ExecutionResult)) : Nil
     end
 
-    def report_profile : Nil
+    def report_profile(profile : Profile) : Nil
     end
 
     def report_summary(summary : Summary) : Nil

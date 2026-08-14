@@ -1,6 +1,7 @@
 require "../core/example"
 require "../core/example_group"
 require "../core/execution_result"
+require "./profile"
 require "./summary"
 
 module Spectator::Formatters
@@ -28,7 +29,7 @@ module Spectator::Formatters
 
     abstract def report_results(results : Enumerable(Core::ExecutionResult)) : Nil
 
-    abstract def report_profile : Nil
+    abstract def report_profile(profile : Profile) : Nil
 
     abstract def report_summary(summary : Summary) : Nil
 
