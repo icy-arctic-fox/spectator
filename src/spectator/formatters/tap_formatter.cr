@@ -4,8 +4,9 @@ module Spectator::Formatters
   class TAPFormatter < Formatter
     @id = 0
 
-    private getter printer do
-      TerminalPrinter.new(io)
+    def initialize(io = STDOUT)
+      super(io)
+      @printer = TerminalPrinter.new(io)
     end
 
     def started : Nil
@@ -33,24 +34,24 @@ module Spectator::Formatters
 
     def example_finished(result : Core::ExecutionResult) : Nil
       status = case result.status
-               when .pass?, .skip?  then "ok "
-               when .fail?, .error? then "not ok "
+               in .pass?, .skip?  then "ok "
+               in .fail?, .error? then "not ok "
                end
-      printer << status << @id
+      @printer << status << @id
       if result.skipped?
-        printer << " # skip"
+        @printer << " # skip"
         if message = result.exception.message
-          printer << ' ' << message
+          @printer << ' ' << message
         end
       end
       description = result.example.full_description.try &.gsub('#', "\\#")
-      printer << " - " << description if description
-      printer.puts
+      @printer << " - " << description if description
+      @printer.puts
     end
 
     def report_results(results : Enumerable(Core::ExecutionResult)) : Nil
-      printer << 1 << ".." << @id
-      printer.puts
+      @printer << 1 << ".." << @id
+      @printer.puts
     end
 
     def report_profile(profile : Profile) : Nil
