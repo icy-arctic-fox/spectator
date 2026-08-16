@@ -149,7 +149,7 @@ module Spectator::Core
         end
 
         parser.on("--tap", "Generate TAP output (Test Anything Protocol)") do
-          # TODO
+          configuration.formatter = Formatters::TAPFormatter.new
         end
 
         parser.on("--color", "Enable ANSI colored output") do
