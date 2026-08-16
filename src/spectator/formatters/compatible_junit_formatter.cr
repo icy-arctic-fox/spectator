@@ -3,7 +3,7 @@ require "./junit/*"
 
 module Spectator::Formatters
   # JUnit formatter that matches the JUnit output produced by the Spec framework.
-  # Some utilities, such as Crystal plugin for VS code, expect the the output produced by Spec.
+  # Some utilities, such as Crystal plugin for VS code, expect the output produced by Spec.
   class CompatibleJUnitFormatter < Formatter
     @test_cases = [] of JUnit::TestCase
     @failure_count = 0
