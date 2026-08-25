@@ -179,7 +179,7 @@ module Spectator::Formatters
       printer.puts
 
       printer.indent do
-        profile.each_item do |result, pct|
+        profile.each_item do |result|
           printer.puts result.example.full_description
           printer << "  " << humanize(result.elapsed)
           if location = result.example.location
