@@ -59,7 +59,8 @@ module Spectator::Core
       report &.suite_finished
       report &.report_results(results)
 
-      if profile_count = @configuration.profile_examples
+      profile_count = @configuration.profile_examples
+      if profile_count > 0
         profile = Formatters::Profile.from_results(results, profile_count)
         report &.report_profile(profile)
       end
