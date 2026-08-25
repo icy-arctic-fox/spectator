@@ -200,7 +200,7 @@ module Spectator::Matchers::BuiltIn
     end
 
     def have_size(value)
-      raise NotImplementedError.new("have_size")
+      HaveSizeMatcher.new(value)
     end
 
     def have_type(type : T.class) forall T
