@@ -45,7 +45,9 @@ module Spectator::Core
       files
     end
 
+    # ameba:disable Metrics/CyclomaticComplexity
     private def build_option_parser(configuration : Configuration) : OptionParser
+      # TODO: Reduce complexity
       configure_inclusion_filter = Proc(CompoundFilter).new do
         filter = configuration.inclusion_filter
         next filter if filter.is_a?(CompoundFilter)
