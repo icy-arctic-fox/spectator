@@ -8,13 +8,9 @@ module Spectator::Core
       [] of ExampleHook(Example)
     end
 
-    property before_each_priority_hooks = 0
-
     getter after_each_hooks do
       [] of ExampleHook(Example)
     end
-
-    property after_each_priority_hooks = 0
 
     getter before_all_hooks do
       [] of ContextHook
@@ -68,18 +64,6 @@ module Spectator::Core
       hook
     end
 
-    private def before_each!(*,
-                             source_file = __FILE__,
-                             source_line = __LINE__,
-                             source_end_line = __END_LINE__,
-                             &block : Example ->) : ExampleHook(Example)
-      location = LocationRange.new(source_file, source_line, source_end_line)
-      hook = ExampleHook(Example).new(:before, location, &block)
-      context.before_each_hooks.insert(context.before_each_priority_hooks, hook)
-      context.before_each_priority_hooks += 1
-      hook
-    end
-
     def before(*,
                source_file = __FILE__,
                source_line = __LINE__,
@@ -111,18 +95,6 @@ module Spectator::Core
         source_line: source_line,
         source_end_line: source_end_line,
         &block)
-    end
-
-    private def after_each!(*,
-                            source_file = __FILE__,
-                            source_line = __LINE__,
-                            source_end_line = __END_LINE__,
-                            &block : Example ->) : ExampleHook(Example)
-      location = LocationRange.new(source_file, source_line, source_end_line)
-      hook = ExampleHook(Example).new(:after, location, &block)
-      context.after_each_hooks.insert(context.after_each_priority_hooks, hook)
-      context.after_each_priority_hooks += 1
-      hook
     end
 
     def before_all(*,

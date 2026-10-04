@@ -1,4 +1,5 @@
 require "./context"
+require "./hooks"
 
 module Spectator::Core
   module Helpers
@@ -19,7 +20,7 @@ module Spectator::Core
 
       {{expr.target}} = %block.call
 
-      before_each! do
+      before_each do
         {{expr.target}} = %block.call
       end
     end
@@ -31,7 +32,7 @@ module Spectator::Core
 
       {{expr.target}} = nil.as(typeof(%block.call)?)
 
-      before_each! do
+      before_each do
         {{expr.target}} = %block.call
       end
     end
@@ -43,7 +44,7 @@ module Spectator::Core
 
       {{expr.target}} = ::Spectator::Core::Helpers.uninitialized_value_from_proc(%block)
 
-      before_each! do
+      before_each do
         {{expr.target}} = %block.call
       end
     end
