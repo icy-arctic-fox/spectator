@@ -78,7 +78,7 @@ Spectator.describe Spectator::Core::Helpers do
         z = 4
       end
 
-      # NOTE: Behavior in `_all` hooks is not supported/undefined even though the value may be in scope.
+      # NOTE: Behavior in `_all` hooks is not supported/defined even though the value may be in scope.
 
       it "can use the value in hooks" do
         expect(z).to eq(2)
@@ -145,7 +145,7 @@ Spectator.describe Spectator::Core::Helpers do
         z = 4
       end
 
-      # NOTE: Behavior in `_all` hooks is not supported/undefined even though the value may be in scope.
+      # NOTE: Behavior in `_all` hooks is not supported/defined even though the value may be in scope.
 
       it "can use the value in hooks" do
         expect(z).to eq(2)
@@ -212,7 +212,7 @@ Spectator.describe Spectator::Core::Helpers do
         z = 4
       end
 
-      # NOTE: Behavior in `_all` hooks is not supported/undefined even though the value may be in scope.
+      # NOTE: Behavior in `_all` hooks is not supported/defined even though the value may be in scope.
 
       it "can use the value in hooks" do
         expect(z).to eq(2)
