@@ -64,6 +64,27 @@ Spectator.describe Spectator::Core::Helpers do
         expect(instance).to have_type(String | HelperObjectA)
       end
     end
+
+    context "with hooks" do
+      let z = 1
+
+      before_each do
+        expect(z).to eq(1)
+        z = 2
+      end
+
+      after_each do
+        expect(z).to eq(3)
+        z = 4
+      end
+
+      # NOTE: Behavior in `_all` hooks is not supported/undefined even though the value may be in scope.
+
+      it "can use the value in hooks" do
+        expect(z).to eq(2)
+        z = 3
+      end
+    end
   end
 
   describe "#let?" do
@@ -110,6 +131,27 @@ Spectator.describe Spectator::Core::Helpers do
         expect(instance).to have_type(String | HelperObjectB?)
       end
     end
+
+    context "with hooks" do
+      let? z = 1
+
+      before_each do
+        expect(z).to eq(1)
+        z = 2
+      end
+
+      after_each do
+        expect(z).to eq(3)
+        z = 4
+      end
+
+      # NOTE: Behavior in `_all` hooks is not supported/undefined even though the value may be in scope.
+
+      it "can use the value in hooks" do
+        expect(z).to eq(2)
+        z = 3
+      end
+    end
   end
 
   describe "#let!" do
@@ -154,6 +196,27 @@ Spectator.describe Spectator::Core::Helpers do
 
       it "changes the type" do
         expect(instance).to have_type(String | HelperObjectC)
+      end
+    end
+
+    context "with hooks" do
+      let! z = 1
+
+      before_each do
+        expect(z).to eq(1)
+        z = 2
+      end
+
+      after_each do
+        expect(z).to eq(3)
+        z = 4
+      end
+
+      # NOTE: Behavior in `_all` hooks is not supported/undefined even though the value may be in scope.
+
+      it "can use the value in hooks" do
+        expect(z).to eq(2)
+        z = 3
       end
     end
   end
