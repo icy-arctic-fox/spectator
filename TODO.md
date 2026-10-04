@@ -191,7 +191,7 @@ RSpec/Jest users would expect.
 
 ### Test execution / runner
 
-- [ ] **Random test order / seeded runs** — `Order::Random` exists as an enum
+- [x] **Random test order / seeded runs** — `Order::Random` exists as an enum
       value and `--seed`/`--order` CLI flags are parsed, but the runner never
       shuffles examples or reports the seed used (see section 1). This is a
       core RSpec/Jest feature (`--order random`, printing `Randomized with
@@ -269,13 +269,13 @@ observed from the Spectator integration layer (`src/spectator/mocks.cr`):
 
 ## Suggested prioritization
 
-1. Wire up already-declared-but-unused config (`order`, `seed`,
+1. ~~Wire up already-declared-but-unused config (`order`, `seed`,
    `profile_examples`) in the runner — the plumbing exists, only the
-   behavior is missing.
-2. Fix/finish `TAPFormatter` and add a `--format` CLI flag so users can pick
+   behavior is missing.~~
+2. ~~Fix/finish `TAPFormatter`~~ and add a `--format` CLI flag so users can pick
    between dots/documentation/TAP/JSON/JUnit.
 3. Implement the remaining stubbed matchers in `built_in.cr`, prioritizing
-   the commonly used ones: `have_size`, `contain_exactly`, `start_with`,
+   the commonly used ones: ~~`have_size`,~~ `contain_exactly`, `start_with`,
    `end_with`, `have_key`/`have_value`.
 4. Add `subject`/`described_class` and `shared_examples`/`it_behaves_like`,
    since these are heavily used RSpec idioms and currently have zero
