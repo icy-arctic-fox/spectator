@@ -1,81 +1,20 @@
-require "./helpers"
-require "./hooks"
-require "./sandbox"
-require "./tags"
+require "./item"
 
 module Spectator
-  module Core::Context
-    include Helpers
-    include Hooks
+  module Core
+    module Context
+      abstract def add_child(child : Item) : Nil
+    end
 
-    abstract def add_child(child : Item)
-  end
+    struct ContextDSL(T)
+      private getter context : T
 
-  macro alias_example_group_to(name, *tags, **tagged_values)
-    module ::Spectator
-      module Core::Context
-        def {{name.id}}(description = nil, *tags,
-                        source_file = __FILE__,
-                        source_line = __LINE__,
-                        source_end_line = __END_LINE__,
-                        **tagged_values, &)
-          location = LocationRange.new(source_file, source_line, source_end_line)
-          group = ExampleGroup.new(
-            description: description.try &.to_s,
-            tags: Taggable.create_and_merge_tags(
-              tags, tagged_values, {{tags.splat(", ")}} {{tagged_values.double_splat}}),
-            location: location,
-          )
-          add_child(group)
-          with group yield group
-          group
-        end
-      end
-
-      def self.{{name.id}}(description = nil, *tags,
-                           source_file = __FILE__,
-                           source_line = __LINE__,
-                           source_end_line = __END_LINE__,
-                           **tagged_values, &)
-        sandbox.root_example_group.{{name.id}}(description,
-          *tags, **tagged_values,
-          source_file: source_file,
-          source_line: source_line,
-          source_end_line: source_end_line) do |group|
-          with group yield group
-        end
+      def initialize(@context : T)
       end
     end
   end
 
-  alias_example_group_to :context
-  alias_example_group_to :describe
-  alias_example_group_to :xcontext, skip: "Skipped with xcontext"
-  alias_example_group_to :xdescribe, skip: "Skipped with xdescribe"
-
-  macro alias_example_to(name, *tags, **tagged_values)
-    module ::Spectator::Core::Context
-      def {{name.id}}(description = nil, *tags,
-                      source_file = __FILE__,
-                      source_line = __LINE__,
-                      source_end_line = __END_LINE__,
-                      **tagged_values,
-                      &block : Example ->) : Example
-        location = LocationRange.new(source_file, source_line, source_end_line)
-        example = Example.new(
-          description: description.try &.to_s,
-          tags: Taggable.create_and_merge_tags(
-            tags, tagged_values, {{tags.splat(", ")}} {{tagged_values.double_splat}}),
-          location: location,
-          &block)
-        add_child(example)
-        example
-      end
-    end
+  def self.context
+    root_example_group
   end
-
-  alias_example_to :specify
-  alias_example_to :it
-  alias_example_to :xspecify, skip: "Skipped with xspecify"
-  alias_example_to :xit, skip: "Skipped with xit"
 end

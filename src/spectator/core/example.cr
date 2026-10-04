@@ -1,3 +1,4 @@
+require "./context"
 require "./item"
 require "./result"
 
@@ -121,4 +122,39 @@ module Spectator::Core
       end
     end
   end
+
+  module ExampleDSL
+  end
+
+  struct ContextDSL
+    include ExampleDSL
+  end
+end
+
+module Spectator
+  macro alias_example_to(name, *tags, **tagged_values)
+    module ::Spectator::Core::ExampleDSL
+      def {{name.id}}(description = nil, *tags,
+                      source_file = __FILE__,
+                      source_line = __LINE__,
+                      source_end_line = __END_LINE__,
+                      **tagged_values,
+                      &block : Example ->) : Example
+        location = LocationRange.new(source_file, source_line, source_end_line)
+        example = Example.new(
+          description: description.try &.to_s,
+          tags: Taggable.create_and_merge_tags(
+            tags, tagged_values, {{tags.splat(", ")}} {{tagged_values.double_splat}}),
+          location: location,
+          &block)
+        context.add_child(example)
+        example
+      end
+    end
+  end
+
+  alias_example_to :specify
+  alias_example_to :it
+  alias_example_to :xspecify, skip: "Skipped with xspecify"
+  alias_example_to :xit, skip: "Skipped with xit"
 end

@@ -1,13 +1,17 @@
+require "./context"
+
 module Spectator::Core
-  def self.uninitialized_value_from_proc(proc : -> T) : T forall T
-    # The `uninitialized` keyword can't be used without assigning it to a variable.
-    # The compiler produces: `Error: undefined method 'uninitialized' for top-level`.
-    # This is a workaround.
-    value = uninitialized T
-    value
+  module Helpers
+    def self.uninitialized_value_from_proc(proc : -> T) : T forall T
+      # The `uninitialized` keyword can't be used without assigning it to a variable.
+      # The compiler produces: `Error: undefined method 'uninitialized' for top-level`.
+      # This is a workaround.
+      value = uninitialized T
+      value
+    end
   end
 
-  module Helpers
+  module HelpersDSL
     macro let(expr)
       %block = -> do
         {{expr.value}}
@@ -37,11 +41,15 @@ module Spectator::Core
         {{expr.value}}
       end
 
-      {{expr.target}} = ::Spectator::Core.uninitialized_value_from_proc(%block)
+      {{expr.target}} = ::Spectator::Core::Helpers.uninitialized_value_from_proc(%block)
 
       before_each! do
         {{expr.target}} = %block.call
       end
     end
+  end
+
+  struct ContextDSL
+    include HelpersDSL
   end
 end
