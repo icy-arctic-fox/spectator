@@ -134,8 +134,10 @@ module Spectator
 
   alias_example_group_to :context
   alias_example_group_to :describe
+  alias_example_group_to :example_group
   alias_example_group_to :xcontext, skip: "Skipped with xcontext"
   alias_example_group_to :xdescribe, skip: "Skipped with xdescribe"
+  alias_example_group_to :xexample_group, skip: "Skipped with xexample_group"
 
   extend Core::ExampleGroupDSL
 end
