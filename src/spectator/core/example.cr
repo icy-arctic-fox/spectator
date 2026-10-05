@@ -153,8 +153,10 @@ module Spectator
     end
   end
 
+  alias_example_to :example
   alias_example_to :specify
   alias_example_to :it
+  alias_example_to :xexample, skip: "Skipped with xexample"
   alias_example_to :xspecify, skip: "Skipped with xspecify"
   alias_example_to :xit, skip: "Skipped with xit"
 end
