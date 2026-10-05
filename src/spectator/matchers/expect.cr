@@ -1,6 +1,7 @@
 require "../core/location_range"
 require "./matcher"
 require "./built_in/be_a_matcher"
+require "./built_in/have_type_matcher"
 require "./built_in/raise_error_matcher"
 
 module Spectator::Matchers
@@ -18,7 +19,8 @@ module Spectator::Matchers
       failure.raise(location)
     end
 
-    def to(matcher : BuiltIn::BeAMatcher(U), failure_message : String? = nil, *,
+    def to(matcher : BuiltIn::BeAMatcher(U) | BuiltIn::HaveTypeMatcher(U),
+           failure_message : String? = nil, *,
            source_file = __FILE__,
            source_line = __LINE__,
            source_end_line = __END_LINE__) : U forall U
