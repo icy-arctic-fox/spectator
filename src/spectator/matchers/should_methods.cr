@@ -9,6 +9,7 @@ module Spectator::Matchers
                source_file = __FILE__,
                source_line = __LINE__,
                source_end_line = __END_LINE__) : Nil
+      ShouldMethods.try_apply_description(matcher)
       return unless failure = Matcher.match(matcher, self, failure_message)
       location = Core::LocationRange.new(source_file, source_line, source_end_line)
       failure.raise(location)
@@ -19,6 +20,7 @@ module Spectator::Matchers
                source_file = __FILE__,
                source_line = __LINE__,
                source_end_line = __END_LINE__) : U forall U
+      ShouldMethods.try_apply_description(matcher)
       if failure = Matcher.match(matcher, @actual_value, failure_message)
         location = Core::LocationRange.new(source_file, source_line, source_end_line)
         failure.raise(location)
@@ -33,9 +35,21 @@ module Spectator::Matchers
                    source_file = __FILE__,
                    source_line = __LINE__,
                    source_end_line = __END_LINE__) : Nil
+      ShouldMethods.try_apply_description(matcher, true)
       return unless failure = Matcher.match_negated(matcher, self, failure_message)
       location = Core::LocationRange.new(source_file, source_line, source_end_line)
       failure.raise(location)
+    end
+  end
+
+  def self.try_apply_description(matcher, negated = false) : Nil
+    return unless example = Spectator.current_example
+    return if example.description # Already has a description.
+
+    example.description = String.build do |io|
+      io << "should "
+      io << "not " if negated
+      matcher.to_s(io)
     end
   end
 end
