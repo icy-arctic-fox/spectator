@@ -124,6 +124,21 @@ module Spectator::Core
   end
 
   module ExampleDSL
+    def example(description = nil, *tags,
+                source_file = __FILE__,
+                source_line = __LINE__,
+                source_end_line = __END_LINE__,
+                **tagged_values,
+                &block : Example ->) : Example
+      location = LocationRange.new(source_file, source_line, source_end_line)
+      example = Example.new(
+        description: description.try &.to_s,
+        tags: Taggable.create_and_merge_tags(tags, tagged_values),
+        location: location,
+        &block)
+      context.add_child(example)
+      example
+    end
   end
 
   struct ContextDSL
@@ -140,20 +155,17 @@ module Spectator
                       source_end_line = __END_LINE__,
                       **tagged_values,
                       &block : Example ->) : Example
-        location = LocationRange.new(source_file, source_line, source_end_line)
-        example = Example.new(
-          description: description.try &.to_s,
-          tags: Taggable.create_and_merge_tags(
-            tags, tagged_values, {{tags.splat(", ")}} {{tagged_values.double_splat}}),
-          location: location,
+        example(description,
+          Tuple.new(*tags, {{tags.splat}}),
+          source_file,
+          source_line,
+          source_end_line,
+          NamedTuple.new(**tagged_values {{tagged_values.double_splat(", ")}}),
           &block)
-        context.add_child(example)
-        example
       end
     end
   end
 
-  alias_example_to :example
   alias_example_to :specify
   alias_example_to :it
   alias_example_to :xexample, skip: "Skipped with xexample"

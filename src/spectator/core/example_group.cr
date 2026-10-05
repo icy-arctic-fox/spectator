@@ -103,6 +103,21 @@ module Spectator::Core
   end
 
   module ExampleGroupDSL
+    def example_group(description = nil, *tags,
+                      source_file = __FILE__,
+                      source_line = __LINE__,
+                      source_end_line = __END_LINE__,
+                      **tagged_values, &)
+      location = LocationRange.new(source_file, source_line, source_end_line)
+      group = ExampleGroup.new(
+        description: description.try &.to_s,
+        tags: Taggable.create_and_merge_tags(tags, tagged_values),
+        location: location,
+      )
+      context.add_child(group)
+      with ContextDSL.new(group) yield group
+      group
+    end
   end
 
   struct ContextDSL
@@ -118,23 +133,22 @@ module Spectator
                       source_line = __LINE__,
                       source_end_line = __END_LINE__,
                       **tagged_values, &)
-        location = LocationRange.new(source_file, source_line, source_end_line)
-        group = ExampleGroup.new(
-          description: description.try &.to_s,
-          tags: Taggable.create_and_merge_tags(
-            tags, tagged_values, {{tags.splat(", ")}} {{tagged_values.double_splat}}),
-          location: location,
-        )
-        context.add_child(group)
-        with ContextDSL.new(group) yield group
-        group
+        example_group(
+          description,
+          Tuple.new(*tags, {{tags.splat}}),
+          source_file,
+          source_line,
+          source_end_line,
+          NamedTuple.new(**tagged_values {{tagged_values.double_splat(", ")}})
+        ) do |group|
+          with ContextDSL.new(group) yield group
+        end
       end
     end
   end
 
   alias_example_group_to :context
   alias_example_group_to :describe
-  alias_example_group_to :example_group
   alias_example_group_to :xcontext, skip: "Skipped with xcontext"
   alias_example_group_to :xdescribe, skip: "Skipped with xdescribe"
   alias_example_group_to :xexample_group, skip: "Skipped with xexample_group"
