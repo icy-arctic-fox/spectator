@@ -135,6 +135,15 @@ module Spectator::Matchers::BuiltIn
       BeZeroMatcher.new
     end
 
+    macro change(subject, method)
+      {% if method.is_a?(SymbolLiteral) || method.is_a?(StringLiteral) %}
+        %subject = ->{ {% begin %}{{subject}}.{{method.id}}{% end %} }
+        ChangeMatcher.new(%subject)
+      {% else %}
+        {% raise "The `change` matcher must be given a block or a symbol or string literal for the `method` argument" %}
+      {% end %}
+    end
+
     def change(&subject : -> _)
       ChangeMatcher.new(subject)
     end
