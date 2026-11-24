@@ -143,6 +143,10 @@ module Spectator::Matchers::BuiltIn
       BeZeroMatcher.new
     end
 
+    def change(&subject : -> _)
+      ChangeMatcher.new(subject)
+    end
+
     macro change(subject, method)
       {% if method.is_a?(SymbolLiteral) || method.is_a?(StringLiteral) %}
         %subject = ->{ {% begin %}{{subject}}.{{method.id}}{% end %} }
@@ -150,10 +154,6 @@ module Spectator::Matchers::BuiltIn
       {% else %}
         {% raise "The `change` matcher must be given a block or a symbol or string literal for the `method` argument" %}
       {% end %}
-    end
-
-    def change(&subject : -> _)
-      ChangeMatcher.new(subject)
     end
 
     def contain(*expected)
@@ -170,6 +170,15 @@ module Spectator::Matchers::BuiltIn
 
     def decrease(& : -> _)
       raise NotImplementedError.new("decrease")
+    end
+
+    macro decrease(subject, method)
+      {% if method.is_a?(SymbolLiteral) || method.is_a?(StringLiteral) %}
+        %subject = ->{ {% begin %}{{subject}}.{{method.id}}{% end %} }
+        raise NotImplementedError.new("decrease")
+      {% else %}
+        {% raise "The `decrease` matcher must be given a block or a symbol or string literal for the `method` argument" %}
+      {% end %}
     end
 
     def end_with(expected)
@@ -246,6 +255,15 @@ module Spectator::Matchers::BuiltIn
 
     def increase(& : -> _)
       raise NotImplementedError.new("increase")
+    end
+
+    macro increase(subject, method)
+      {% if method.is_a?(SymbolLiteral) || method.is_a?(StringLiteral) %}
+        %subject = ->{ {% begin %}{{subject}}.{{method.id}}{% end %} }
+        raise NotImplementedError.new("increase")
+      {% else %}
+        {% raise "The `increase` matcher must be given a block or a symbol or string literal for the `method` argument" %}
+      {% end %}
     end
 
     def match(value)
