@@ -19,6 +19,14 @@ module Spectator::Matchers::BuiltIn
       BeMatcher.new(expected)
     end
 
+    macro be_(predicate, *args)
+      {% if predicate.is_a?(SymbolLiteral) || predicate.is_a?(StringLiteral) %}
+        PredicateMatcher.create({{"#{predicate}?".symbolize}}, Tuple.new({{args.splat}}))
+      {% else %}
+        {% raise "The `be_` matcher must be given a symbol or string literal" %}
+      {% end %}
+    end
+
     def be_a(type : T.class) forall T
       BeAMatcher(T).new
     end
@@ -190,6 +198,14 @@ module Spectator::Matchers::BuiltIn
 
     def expect_raises(message : String | Regex, &block)
       expect(&block).to raise_error(message)
+    end
+
+    macro have_(predicate, *args)
+      {% if predicate.is_a?(SymbolLiteral) || predicate.is_a?(StringLiteral) %}
+        PredicateMatcher.create({{"has_#{predicate}?".symbolize}}, Tuple.new({{args.splat}}))
+      {% else %}
+        {% raise "The `have_` matcher must be given a symbol or string literal" %}
+      {% end %}
     end
 
     def have_attributes(**attributes)
