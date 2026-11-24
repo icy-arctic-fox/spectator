@@ -128,30 +128,30 @@ Spectator.describe HaveSizeMatcher do
       matcher = HaveSizeMatcher.new(5)
       object = SizeableObject.new(3)
       expect(matcher.failure_message(object)).to eq <<-EOS
-      Expected: #{object.pretty_inspect}
-       to have: 5 elements
-       but has: 3 elements
-      EOS
+        Expected: #{object.pretty_inspect}
+         to have: 5 elements
+         but has: 3 elements
+        EOS
     end
 
     it "checks for size method" do
       matcher = HaveSizeMatcher.new(5)
       object = true
       expect(matcher.failure_message(object)).to eq <<-EOS
-      Expected: true
-       to have: 5 elements
-      but has no size
-      EOS
+        Expected: true
+         to have: 5 elements
+        but has no size
+        EOS
     end
 
     context "with an Array" do
       it "returns the failure message" do
         matcher = HaveSizeMatcher.new(5)
         expect(matcher.failure_message([1, 2, 3])).to eq <<-EOS
-        Expected: [1, 2, 3]
-         to have: 5 elements
-         but has: 3 elements
-        EOS
+          Expected: [1, 2, 3]
+           to have: 5 elements
+           but has: 3 elements
+          EOS
       end
     end
   end
@@ -161,18 +161,18 @@ Spectator.describe HaveSizeMatcher do
       matcher = HaveSizeMatcher.new(3)
       object = SizeableObject.new(3)
       expect(matcher.negated_failure_message(object)).to eq <<-EOS
-         Expected: #{object.pretty_inspect}
-      not to have: 3 elements
-      EOS
+           Expected: #{object.pretty_inspect}
+        not to have: 3 elements
+        EOS
     end
 
     context "with an Array" do
       it "returns the failure message" do
         matcher = HaveSizeMatcher.new(3)
         expect(matcher.negated_failure_message([1, 2, 3])).to eq <<-EOS
-           Expected: [1, 2, 3]
-        not to have: 3 elements
-        EOS
+             Expected: [1, 2, 3]
+          not to have: 3 elements
+          EOS
       end
     end
   end
@@ -199,10 +199,10 @@ Spectator.describe HaveSizeMatcher do
           expect do
             expect(object).to have_size(24)
           end.to fail_check <<-EOS
-          Expected: #{object.pretty_inspect}
-           to have: 24 elements
-           but has: 42 elements
-          EOS
+            Expected: #{object.pretty_inspect}
+             to have: 24 elements
+             but has: 42 elements
+            EOS
         end
 
         it "matches an equal size of 0" do
@@ -217,10 +217,10 @@ Spectator.describe HaveSizeMatcher do
           expect do
             expect(object).to have_size(0)
           end.to fail_check <<-EOS
-          Expected: #{object.pretty_inspect}
-           to have: 0 elements
-           but has: 42 elements
-          EOS
+            Expected: #{object.pretty_inspect}
+             to have: 0 elements
+             but has: 42 elements
+            EOS
         end
 
         it "does not match an inequal size of 0" do
@@ -228,20 +228,20 @@ Spectator.describe HaveSizeMatcher do
           expect do
             expect(object).to have_size(42)
           end.to fail_check <<-EOS
-          Expected: #{object.pretty_inspect}
-           to have: 42 elements
-           but has: 0 elements
-          EOS
+            Expected: #{object.pretty_inspect}
+             to have: 42 elements
+             but has: 0 elements
+            EOS
         end
 
         it "does not match an object without a size" do
           expect do
             expect(nil).to have_size(42)
           end.to fail_check <<-EOS
-          Expected: nil
-           to have: 42 elements
-          but has no size
-          EOS
+            Expected: nil
+             to have: 42 elements
+            but has no size
+            EOS
         end
 
         context "with an Array" do
@@ -255,10 +255,10 @@ Spectator.describe HaveSizeMatcher do
             expect do
               expect([1, 2, 3]).to have_size(5)
             end.to fail_check <<-EOS
-            Expected: [1, 2, 3]
-             to have: 5 elements
-             but has: 3 elements
-            EOS
+              Expected: [1, 2, 3]
+               to have: 5 elements
+               but has: 3 elements
+              EOS
           end
 
           it "matches an equal size of 0" do
@@ -271,20 +271,20 @@ Spectator.describe HaveSizeMatcher do
             expect do
               expect([1, 2, 3]).to have_size(0)
             end.to fail_check <<-EOS
-            Expected: [1, 2, 3]
-             to have: 0 elements
-             but has: 3 elements
-            EOS
+              Expected: [1, 2, 3]
+               to have: 0 elements
+               but has: 3 elements
+              EOS
           end
 
           it "does not match an inequal size of 0" do
             expect do
               expect([] of Int32).to have_size(42)
             end.to fail_check <<-EOS
-            Expected: []
-             to have: 42 elements
-             but has: 0 elements
-            EOS
+              Expected: []
+               to have: 42 elements
+               but has: 0 elements
+              EOS
           end
         end
       end
@@ -295,9 +295,9 @@ Spectator.describe HaveSizeMatcher do
           expect do
             expect(object).not_to have_size(42)
           end.to fail_check <<-EOS
-             Expected: #{object.pretty_inspect}
-          not to have: 42 elements
-          EOS
+               Expected: #{object.pretty_inspect}
+            not to have: 42 elements
+            EOS
         end
 
         it "matches an inequal size" do
@@ -312,9 +312,9 @@ Spectator.describe HaveSizeMatcher do
           expect do
             expect(object).not_to have_size(0)
           end.to fail_check <<-EOS
-             Expected: #{object.pretty_inspect}
-          not to have: 0 elements
-          EOS
+               Expected: #{object.pretty_inspect}
+            not to have: 0 elements
+            EOS
         end
 
         it "matches an inequal size of non-zero" do
@@ -342,9 +342,9 @@ Spectator.describe HaveSizeMatcher do
             expect do
               expect([1, 2, 3]).not_to have_size(3)
             end.to fail_check <<-EOS
-               Expected: [1, 2, 3]
-            not to have: 3 elements
-            EOS
+                 Expected: [1, 2, 3]
+              not to have: 3 elements
+              EOS
           end
 
           it "matches an inequal size" do
@@ -357,9 +357,9 @@ Spectator.describe HaveSizeMatcher do
             expect do
               expect([] of Int32).not_to have_size(0)
             end.to fail_check <<-EOS
-               Expected: []
-            not to have: 0 elements
-            EOS
+                 Expected: []
+              not to have: 0 elements
+              EOS
           end
 
           it "matches an inequal size from non-zero" do

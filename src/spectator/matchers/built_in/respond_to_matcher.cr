@@ -6,7 +6,7 @@ module Spectator::Matchers::BuiltIn
 
     def matches?(actual_value)
       {% begin %}
-        actual_value.responds_to?({{NT.keys.first.symbolize}})
+        actual_value.responds_to?({{ NT.keys.first.symbolize }})
       {% end %}
     end
 
@@ -19,7 +19,7 @@ module Spectator::Matchers::BuiltIn
     end
 
     private def method_name : Symbol
-      {{NT.keys.first.symbolize}}
+      {{ NT.keys.first.symbolize }}
     end
 
     def to_s(io : IO) : Nil

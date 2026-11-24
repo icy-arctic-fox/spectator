@@ -42,7 +42,6 @@ module Spectator::Core
       end
       files << ".spectator"
       files << ".spectator-local"
-      files
     end
 
     # ameba:disable Metrics/CyclomaticComplexity

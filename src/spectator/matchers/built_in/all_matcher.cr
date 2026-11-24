@@ -15,7 +15,7 @@ module Spectator::Matchers::BuiltIn
       end
 
       # Use of `any?` is intentional since the array consists of `MatchFailure?`.
-      # ameba:disable Performance/AnyInsteadOfEmpty
+      # ameba:disable Performance/AnyInsteadOfPresent
       return unless failures.any?
 
       MatchFailure.new do |printer|

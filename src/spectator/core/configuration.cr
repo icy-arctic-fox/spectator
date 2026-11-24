@@ -12,7 +12,7 @@ module Spectator
   macro config_property(prop)
     module ::Spectator::Core
       class Configuration
-        property {{prop}}
+        property {{ prop }}
       end
     end
   end
@@ -22,7 +22,7 @@ module Spectator
   macro config_property?(prop)
     module ::Spectator::Core
       class Configuration
-        property? {{prop}}
+        property? {{ prop }}
       end
     end
   end
@@ -59,20 +59,20 @@ module Spectator
 
     module ::Spectator::Core
       class Configuration
-        property {{prop}}
+        property {{ prop }}
 
-        def {{name}}?
-          @{{name}} > 0
+        def {{ name }}?
+          @{{ name }} > 0
         end
 
-        def {{name}}=(flag : Bool)
-          @{{name}} = flag ? {{ if truthy
-                                  truthy
-                                elsif prop.is_a?(TypeDeclaration)
-                                  prop.value ? prop.value : 1
-                                else # Assign
-                                  prop.value
-                                end }} : 0
+        def {{ name }}=(flag : Bool)
+          @{{ name }} = flag ? {{ if truthy
+                                    truthy
+                                  elsif prop.is_a?(TypeDeclaration)
+                                    prop.value ? prop.value : 1
+                                  else # Assign
+                                    prop.value
+                                  end }} : 0
         end
       end
     end

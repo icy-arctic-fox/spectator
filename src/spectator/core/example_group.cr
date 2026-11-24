@@ -128,18 +128,18 @@ end
 module Spectator
   macro alias_example_group_to(name, *tags, **tagged_values)
     module ::Spectator::Core::ExampleGroupDSL
-      def {{name.id}}(description = nil, *tags,
+      def {{ name.id }}(description = nil, *tags,
                       source_file = __FILE__,
                       source_line = __LINE__,
                       source_end_line = __END_LINE__,
                       **tagged_values, &)
         example_group(
           description,
-          Tuple.new(*tags, {{tags.splat}}),
+          Tuple.new(*tags, {{ tags.splat }}),
           source_file,
           source_line,
           source_end_line,
-          NamedTuple.new(**tagged_values {{tagged_values.double_splat(", ")}})
+          NamedTuple.new(**tagged_values {{ tagged_values.double_splat(", ") }})
         ) do |group|
           with ContextDSL.new(group) yield group
         end

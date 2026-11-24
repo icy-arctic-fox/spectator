@@ -59,12 +59,12 @@ module Spectator
        end %}
 
     module ::Spectator
-      def self.{{name.id}}
-        sandbox.{{name.id}}
+      def self.{{ name.id }}
+        sandbox.{{ name.id }}
       end
 
       class Core::Sandbox
-        getter {{prop}}
+        getter {{ prop }}
       end
     end
   end
@@ -106,16 +106,16 @@ module Spectator
        end %}
 
     module ::Spectator
-      def self.{{name.id}}
-        sandbox.{{name.id}}
+      def self.{{ name.id }}
+        sandbox.{{ name.id }}
       end
 
-      def self.{{name.id}}=(value)
-        sandbox.{{name.id}} = value
+      def self.{{ name.id }}=(value)
+        sandbox.{{ name.id }} = value
       end
 
       class Core::Sandbox
-        property {{prop}}
+        property {{ prop }}
       end
     end
   end

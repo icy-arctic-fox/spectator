@@ -15,37 +15,37 @@ module Spectator::Core
   module HelpersDSL
     macro let(expr)
       %block = -> do
-        {{expr.value}}
+        {{ expr.value }}
       end
 
-      {{expr.target}} = %block.call
+      {{ expr.target }} = %block.call
 
       before_each do
-        {{expr.target}} = %block.call
+        {{ expr.target }} = %block.call
       end
     end
 
     macro let?(expr)
       %block = -> do
-        {{expr.value}}
+        {{ expr.value }}
       end
 
-      {{expr.target}} = nil.as(typeof(%block.call)?)
+      {{ expr.target }} = nil.as(typeof(%block.call)?)
 
       before_each do
-        {{expr.target}} = %block.call
+        {{ expr.target }} = %block.call
       end
     end
 
     macro let!(expr)
       %block = -> do
-        {{expr.value}}
+        {{ expr.value }}
       end
 
-      {{expr.target}} = ::Spectator::Core::Helpers.uninitialized_value_from_proc(%block)
+      {{ expr.target }} = ::Spectator::Core::Helpers.uninitialized_value_from_proc(%block)
 
       before_each do
-        {{expr.target}} = %block.call
+        {{ expr.target }} = %block.call
       end
     end
   end

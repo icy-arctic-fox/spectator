@@ -65,9 +65,9 @@ Spectator.describe BeInstanceOfMatcher do
     it "returns the negated failure message" do
       matcher = BeInstanceOfMatcher(String).new
       expect(matcher.negated_failure_message("foo")).to eq <<-MESSAGE
-         Expected: "foo"
-      not to be a: String
-      MESSAGE
+           Expected: "foo"
+        not to be a: String
+        MESSAGE
     end
   end
 

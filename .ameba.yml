@@ -10,11 +10,12 @@ Documentation/DocumentationAdmonition:
 
 # Ignore false positives.
 # See: https://github.com/crystal-ameba/ameba/issues/447
-Lint/UselessAssign:
+Lint/AssignmentInCallArgument:
   Enabled: true
   Excluded:
     - src/spectator.cr
     - src/spectator/core/configuration.cr
     - src/spectator/core/runner.cr
     - src/spectator/core/source_cache.cr
+    - spec/spectator/core/helpers_spec.cr
     - spec/spectator/matchers/expect_spec.cr

@@ -1,7 +1,7 @@
 require "../../spec_helper"
 
 {% for suffix in %w[A B C] %}
-private class {{("HelperObject" + suffix).id}}
+private class {{ ("HelperObject" + suffix).id }}
   class_getter instances = [] of self
 
   def initialize

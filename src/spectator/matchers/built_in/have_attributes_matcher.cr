@@ -27,10 +27,10 @@ module Spectator::Matchers::BuiltIn
       return if attributes_match?(attributes)
       MatchFailure.new do |printer|
         {% for key in Attributes %}
-          attribute = attributes[{{key.stringify}}]
+          attribute = attributes[{{ key.stringify }}]
           unless attribute.matched?
-            printer << "Expected " << method_name({{key.symbolize}}) << ": " << attribute.expected << EOL
-            printer << "     got " << method_name({{key.symbolize}}) << ": " << attribute.actual << EOL
+            printer << "Expected " << method_name({{ key.symbolize }}) << ": " << attribute.expected << EOL
+            printer << "     got " << method_name({{ key.symbolize }}) << ": " << attribute.actual << EOL
           end
         {% end %}
       end
@@ -41,10 +41,10 @@ module Spectator::Matchers::BuiltIn
       return unless attributes_match?(attributes)
       MatchFailure.new do |printer|
         {% for key in Attributes %}
-          attribute = attributes[{{key.stringify}}]
+          attribute = attributes[{{ key.stringify }}]
           if attribute.matched?
-            printer << "Expected " << method_name({{key.symbolize}}) << ": not " << attribute.expected << EOL
-            printer << "     got " << method_name({{key.symbolize}}) << ": " << attribute.actual << EOL
+            printer << "Expected " << method_name({{ key.symbolize }}) << ": not " << attribute.expected << EOL
+            printer << "     got " << method_name({{ key.symbolize }}) << ": " << attribute.actual << EOL
           end
         {% end %}
       end
@@ -60,15 +60,15 @@ module Spectator::Matchers::BuiltIn
     private def capture_attributes(actual_value)
       {% begin %}
         NamedTuple.new({% for key in Attributes %}
-          {{key.stringify}}: capture_attribute(actual_value, {{key}}),
+          {{ key.stringify }}: capture_attribute(actual_value, {{ key }}),
         {% end %})
       {% end %}
     end
 
     private macro capture_attribute(actual_value, key)
-      expected = @attributes[{{key.symbolize}}]
-      attribute = if {{actual_value}}.responds_to?({{key.symbolize}})
-        value = {{actual_value}}.{{key}}
+      expected = @attributes[{{ key.symbolize }}]
+      attribute = if {{ actual_value }}.responds_to?({{ key.symbolize }})
+        value = {{ actual_value }}.{{ key }}
         matched = value == expected
         Attribute.new(matched, expected, value)
       else

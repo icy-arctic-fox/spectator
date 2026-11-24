@@ -33,19 +33,17 @@ module Spectator::Core
       status = Status::Error # Safe default.
 
       elapsed = Time.measure do
-        begin
-          yield
-          status = Status::Pass
-        rescue ex : AssertionFailed
-          status = Status::Fail
-          exception = ex
-        rescue ex : ExampleSkipped
-          status = Status::Skip
-          exception = ex
-        rescue ex
-          status = Status::Error
-          exception = ex
-        end
+        yield
+        status = Status::Pass
+      rescue ex : AssertionFailed
+        status = Status::Fail
+        exception = ex
+      rescue ex : ExampleSkipped
+        status = Status::Skip
+        exception = ex
+      rescue ex
+        status = Status::Error
+        exception = ex
       end
 
       new(status, elapsed, exception)

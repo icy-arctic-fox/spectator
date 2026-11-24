@@ -21,7 +21,7 @@ module Spectator::Matchers::BuiltIn
 
     macro be_(predicate, *args)
       {% if predicate.is_a?(SymbolLiteral) || predicate.is_a?(StringLiteral) %}
-        PredicateMatcher.create({{"#{predicate}?".symbolize}}, Tuple.new({{args.splat}}))
+        PredicateMatcher.create({{ "#{predicate}?".symbolize }}, Tuple.new({{ args.splat }}))
       {% else %}
         {% raise "The `be_` matcher must be given a symbol or string literal" %}
       {% end %}
@@ -149,7 +149,7 @@ module Spectator::Matchers::BuiltIn
 
     macro change(subject, method)
       {% if method.is_a?(SymbolLiteral) || method.is_a?(StringLiteral) %}
-        %subject = ->{ {% begin %}{{subject}}.{{method.id}}{% end %} }
+        %subject = ->{ {% begin %}{{ subject }}.{{ method.id }}{% end %} }
         ChangeMatcher.new(%subject)
       {% else %}
         {% raise "The `change` matcher must be given a block or a symbol or string literal for the `method` argument" %}
@@ -174,7 +174,7 @@ module Spectator::Matchers::BuiltIn
 
     macro decrease(subject, method)
       {% if method.is_a?(SymbolLiteral) || method.is_a?(StringLiteral) %}
-        %subject = ->{ {% begin %}{{subject}}.{{method.id}}{% end %} }
+        %subject = ->{ {% begin %}{{ subject }}.{{ method.id }}{% end %} }
         raise NotImplementedError.new("decrease")
       {% else %}
         {% raise "The `decrease` matcher must be given a block or a symbol or string literal for the `method` argument" %}
@@ -211,7 +211,7 @@ module Spectator::Matchers::BuiltIn
 
     macro have_(predicate, *args)
       {% if predicate.is_a?(SymbolLiteral) || predicate.is_a?(StringLiteral) %}
-        PredicateMatcher.create({{"has_#{predicate}?".symbolize}}, Tuple.new({{args.splat}}))
+        PredicateMatcher.create({{ "has_#{predicate}?".symbolize }}, Tuple.new({{ args.splat }}))
       {% else %}
         {% raise "The `have_` matcher must be given a symbol or string literal" %}
       {% end %}
@@ -259,7 +259,7 @@ module Spectator::Matchers::BuiltIn
 
     macro increase(subject, method)
       {% if method.is_a?(SymbolLiteral) || method.is_a?(StringLiteral) %}
-        %subject = ->{ {% begin %}{{subject}}.{{method.id}}{% end %} }
+        %subject = ->{ {% begin %}{{ subject }}.{{ method.id }}{% end %} }
         raise NotImplementedError.new("increase")
       {% else %}
         {% raise "The `increase` matcher must be given a block or a symbol or string literal for the `method` argument" %}
@@ -296,7 +296,7 @@ module Spectator::Matchers::BuiltIn
 
     macro respond_to(method)
       {% if method.is_a?(SymbolLiteral) || method.is_a?(StringLiteral) %}
-        RespondToMatcher({ {{method.id.stringify}}: Nil }).new
+        RespondToMatcher({ {{ method.id.stringify }}: Nil }).new
       {% else %}
         {% raise "The `respond_to` matcher must be given a symbol or string literal" %}
       {% end %}

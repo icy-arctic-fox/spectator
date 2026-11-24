@@ -14,7 +14,7 @@ module Spectator::Core
     end
 
     def skip?
-      tags = self.all_tags
+      tags = all_tags
       tags["skip"]? || tags["pending"]?
     end
 

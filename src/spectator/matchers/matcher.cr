@@ -63,7 +63,7 @@ module Spectator::Matchers
 
       if matcher.responds_to?(:negated_failure_message)
         message = matcher.negated_failure_message(actual_value).to_s
-        return MatchFailure.new(message)
+        MatchFailure.new(message)
       end
     end
 
@@ -128,7 +128,7 @@ module Spectator::Matchers
 
       if matcher.responds_to?(:negated_failure_message)
         message = matcher.negated_failure_message(&block).to_s
-        return MatchFailure.new(message)
+        MatchFailure.new(message)
       end
     end
   end

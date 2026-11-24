@@ -29,8 +29,8 @@ module Spectator::Matchers
           END_OF_ERROR
         %}
 
-        private def _matches_impl({{impl.args.splat(",")}} &)
-          {{yield}}
+        private def _matches_impl({{ impl.args.splat(",") }} &)
+          {{ yield }}
         end
 
         def matches?(&block) : Bool
@@ -53,8 +53,8 @@ module Spectator::Matchers
           END_OF_ERROR
         %}
 
-        private def _matches_impl({{impl.args.splat}})
-          {{yield}}
+        private def _matches_impl({{ impl.args.splat }})
+          {{ yield }}
         end
 
         def matches?(actual_value) : Bool
@@ -92,8 +92,8 @@ module Spectator::Matchers
           END_OF_ERROR
         %}
 
-        private def _negated_match_impl({{impl.args.splat(",")}} &)
-          {{yield}}
+        private def _negated_match_impl({{ impl.args.splat(",") }} &)
+          {{ yield }}
         end
 
         def does_not_match?(&block) : Bool
@@ -116,8 +116,8 @@ module Spectator::Matchers
           END_OF_ERROR
         %}
 
-        private def _negated_match_impl({{impl.args.splat}})
-          {{yield}}
+        private def _negated_match_impl({{ impl.args.splat }})
+          {{ yield }}
         end
 
         def does_not_match?(actual_value) : Bool
@@ -155,8 +155,8 @@ module Spectator::Matchers
           END_OF_ERROR
         %}
 
-        private def _failure_message_impl({{impl.args.splat(",")}} &)
-          {{yield}}
+        private def _failure_message_impl({{ impl.args.splat(",") }} &)
+          {{ yield }}
         end
 
         def failure_message(&block) : String
@@ -179,8 +179,8 @@ module Spectator::Matchers
           END_OF_ERROR
         %}
 
-        private def _failure_message_impl({{impl.args.splat}})
-          {{yield}}
+        private def _failure_message_impl({{ impl.args.splat }})
+          {{ yield }}
         end
 
         def failure_message(actual_value) : String
@@ -218,8 +218,8 @@ module Spectator::Matchers
           END_OF_ERROR
         %}
 
-        private def _negated_failure_message_impl({{impl.args.splat(",")}} &)
-          {{yield}}
+        private def _negated_failure_message_impl({{ impl.args.splat(",") }} &)
+          {{ yield }}
         end
 
         def negated_failure_message(&block) : String
@@ -242,8 +242,8 @@ module Spectator::Matchers
           END_OF_ERROR
         %}
 
-        private def _negated_failure_message_impl({{impl.args.splat}})
-          {{yield}}
+        private def _negated_failure_message_impl({{ impl.args.splat }})
+          {{ yield }}
         end
 
         def negated_failure_message(actual_value) : String
@@ -269,13 +269,13 @@ module Spectator::Matchers
       END_OF_ERROR
     %}
     {% matcher_name = name.id.camelcase %}
-    ::record({{matcher_name}} < ::Spectator::Matchers::CustomMatcher, {{properties.splat}}) do
-      {{yield}}
+    ::record({{ matcher_name }} < ::Spectator::Matchers::CustomMatcher, {{ properties.splat }}) do
+      {{ yield }}
     end
 
     module ::Spectator::Matchers::Custom
-      def {{name.id}}({{properties.splat}})
-        {{matcher_name}}.new({{properties.map(&.var).splat}})
+      def {{ name.id }}({{ properties.splat }})
+        {{ matcher_name }}.new({{ properties.map(&.var).splat }})
       end
     end
   end
