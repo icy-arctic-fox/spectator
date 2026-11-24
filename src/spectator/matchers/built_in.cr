@@ -167,6 +167,10 @@ module Spectator::Matchers::BuiltIn
       eq value
     end
 
+    def exist(*args)
+      raise NotImplementedError.new("exist")
+    end
+
     def expect_raises(error : T.class = Exception, message : String | Regex? = nil, &block) forall T
       expect(&block).to raise_error(error, message)
     end
@@ -253,6 +257,10 @@ module Spectator::Matchers::BuiltIn
       {% else %}
         {% raise "The `respond_to` matcher must be given a symbol or string literal" %}
       {% end %}
+    end
+
+    def satisfy(& : T -> _) forall T
+      raise NotImplementedError.new("satisfy")
     end
 
     def start_with(expected)
