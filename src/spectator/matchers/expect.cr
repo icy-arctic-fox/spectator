@@ -80,7 +80,7 @@ module Spectator::Matchers
     end
   end
 
-  struct BlockExpectation(T)
+  struct ExpectBlock(T)
     def initialize(@block : -> T)
     end
 
@@ -129,8 +129,8 @@ module Spectator::Matchers
       Expect(T).new(actual_value)
     end
 
-    def expect(&block : -> T) : BlockExpectation(T) forall T
-      BlockExpectation(T).new(block)
+    def expect(&block : -> T) : ExpectBlock(T) forall T
+      ExpectBlock(T).new(block)
     end
 
     macro is_expected
