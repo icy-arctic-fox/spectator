@@ -14,16 +14,8 @@ jobs:
     steps:
       - name: Download source code
         uses: actions/checkout@v6
-      - name: Install Crystal
-        uses: crystal-lang/install-crystal@v1
-        with:
-          crystal: latest
-      - name: Install shards
-        run: shards install
-      - name: Format
-        run: crystal tool format --check
-      - name: Lint
-        run: bin/ameba --fail-level warning
+      - name: Run Ameba Linter
+        uses: crystal-ameba/github-action@master
 
   test:
     name: Test
