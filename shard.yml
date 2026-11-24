@@ -12,9 +12,4 @@ dependencies:
   mocks:
     github: icy-arctic-fox/mocks
 
-development_dependencies:
-  ameba:
-    github: crystal-ameba/ameba
-    version: ~> 1.7.0
-
 license: MIT
