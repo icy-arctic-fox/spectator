@@ -5,7 +5,7 @@ module Spectator::Matchers::BuiltIn
     include Matchable
 
     def initialize(@expected : T)
-      {% raise "Expected type must be a Tuple" unless T < Tuple %}
+      {% raise "Expected type must be Enumerable" unless T < Enumerable %}
     end
 
     def matches?(actual_value)
