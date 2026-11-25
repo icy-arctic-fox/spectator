@@ -18,28 +18,34 @@ every design decision, but should serve as a roadmap.
 `src/spectator/matchers/built_in.cr` defines the RSpec-compatible matcher DSL,
 but many methods are stubs that raise `NotImplementedError`:
 
-- [ ] `be_base64` — `src/spectator/matchers/built_in.cr:30`
-- [ ] `be_close_to(expected, digits)` — `src/spectator/matchers/built_in.cr:46`
-- [ ] `be_hexadecimal` — `src/spectator/matchers/built_in.cr:70`
-- [ ] `be_timestamp(format)` — `src/spectator/matchers/built_in.cr:110`
-- [ ] `be_uuid(version)` — `src/spectator/matchers/built_in.cr:122`
-- [ ] `be_within(delta)` (the `#of(expected)` chained form) — `src/spectator/matchers/built_in.cr:126`
-- [ ] `contain_exactly(*values)` — `src/spectator/matchers/built_in.cr:146`
-- [ ] `cover(*value)` — `src/spectator/matchers/built_in.cr:150`
-- [ ] `decrease(&block)` — `src/spectator/matchers/built_in.cr:154`
-- [ ] `end_with(expected)` — `src/spectator/matchers/built_in.cr:158`
-- [ ] `have_index(value)` — `src/spectator/matchers/built_in.cr:186`
-- [ ] `have_indexes(*values)` — `src/spectator/matchers/built_in.cr:190`
-- [ ] `have_key(value)` — `src/spectator/matchers/built_in.cr:194`
-- [ ] `have_keys(*values)` — `src/spectator/matchers/built_in.cr:198`
-- [x] `have_size(value)` — `src/spectator/matchers/built_in.cr:202`
-- [ ] `have_value(value)` — `src/spectator/matchers/built_in.cr:210`
-- [ ] `have_values(*values)` — `src/spectator/matchers/built_in.cr:214`
-- [ ] `increase(&block)` — `src/spectator/matchers/built_in.cr:218`
-- [ ] `match_array(array)` — `src/spectator/matchers/built_in.cr:226`
-- [ ] `match_size_of(value)` — `src/spectator/matchers/built_in.cr:230`
-- [ ] `output(value)` (`to_stdout` / `to_stderr` support) — `src/spectator/matchers/built_in.cr:234`
-- [ ] `start_with(expected)` — `src/spectator/matchers/built_in.cr:258`
+- [ ] `be_` - `src/spectator/matches/built_in.cr:22`
+- [ ] `be_base64` — `src/spectator/matchers/built_in.cr:38`
+- [ ] `be_close_to(expected, digits)` — `src/spectator/matchers/built_in.cr:54`
+- [ ] `be_hexadecimal` — `src/spectator/matchers/built_in.cr:78`
+- [ ] `be_timestamp(format)` — `src/spectator/matchers/built_in.cr:118`
+- [ ] `be_uuid(version)` — `src/spectator/matchers/built_in.cr:130`
+- [ ] `be_within(delta)` (the `#of(expected)` chained form) — `src/spectator/matchers/built_in.cr:134`
+- [ ] `contain_exactly(*values)` — `src/spectator/matchers/built_in.cr:163`
+- [ ] `cover(*value)` — `src/spectator/matchers/built_in.cr:167`
+- [ ] `decrease(&block)` — `src/spectator/matchers/built_in.cr:171`
+- [ ] `decrease(subject, method)` — `src/spectator/matchers/built_in.cr:175`
+- [ ] `end_with(expected)` — `src/spectator/matchers/built_in.cr:184`
+- [ ] `exist(*args)` - `src/spectator/matchers/built_in.cr:196`
+- [ ] `have_(predicate, *args)` - `src/spectator/matchers/built_in.cr:212`
+- [ ] `have_index(value)` — `src/spectator/matchers/built_in.cr:224`
+- [ ] `have_indexes(*values)` — `src/spectator/matchers/built_in.cr:228`
+- [ ] `have_key(value)` — `src/spectator/matchers/built_in.cr:232`
+- [ ] `have_keys(*values)` — `src/spectator/matchers/built_in.cr:236`
+- [x] `have_size(value)` — `src/spectator/matchers/built_in.cr:240`
+- [ ] `have_value(value)` — `src/spectator/matchers/built_in.cr:248`
+- [ ] `have_values(*values)` — `src/spectator/matchers/built_in.cr:252`
+- [ ] `increase(&block)` — `src/spectator/matchers/built_in.cr:256`
+- [ ] `increase(subject, method)` — `src/spectator/matchers/built_in.cr:260`
+- [ ] `match_array(array)` — `src/spectator/matchers/built_in.cr:273`
+- [ ] `match_size_of(value)` — `src/spectator/matchers/built_in.cr:277`
+- [ ] `output(value)` (`to_stdout` / `to_stderr` support) — `src/spectator/matchers/built_in.cr:281`
+- [ ] `satisfy(&block)` - `src/spectator/matchers/built_in.cr:305`
+- [ ] `start_with(expected)` — `src/spectator/matchers/built_in.cr:309`
 
 ### Hooks
 
