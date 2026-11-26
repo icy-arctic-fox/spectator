@@ -21,7 +21,11 @@ module Spectator::Matchers::BuiltIn
 
     macro be_(predicate, *args)
       {% if predicate.is_a?(SymbolLiteral) || predicate.is_a?(StringLiteral) %}
-        PredicateMatcher.create({{ "#{predicate}?".symbolize }}, Tuple.new({{ args.splat }}))
+        PredicateMatcher.create(
+          {{ "#{predicate.id}?" }},
+          {{ "be #{predicate.id}" }},
+          {{ args.splat(",") }}
+        )
       {% else %}
         {% raise "The `be_` matcher must be given a symbol or string literal" %}
       {% end %}
@@ -211,7 +215,11 @@ module Spectator::Matchers::BuiltIn
 
     macro have_(predicate, *args)
       {% if predicate.is_a?(SymbolLiteral) || predicate.is_a?(StringLiteral) %}
-        PredicateMatcher.create({{ "has_#{predicate}?".symbolize }}, Tuple.new({{ args.splat }}))
+        PredicateMatcher.create(
+          {{ "has_#{predicate.id}?" }},
+          {{ "have #{predicate.id}" }},
+          {{ args.splat(",") }}
+        )
       {% else %}
         {% raise "The `have_` matcher must be given a symbol or string literal" %}
       {% end %}

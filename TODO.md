@@ -18,7 +18,7 @@ every design decision, but should serve as a roadmap.
 `src/spectator/matchers/built_in.cr` defines the RSpec-compatible matcher DSL,
 but many methods are stubs that raise `NotImplementedError`:
 
-- [ ] `be_` - `src/spectator/matches/built_in.cr:22`
+- [x] `be_` - `src/spectator/matches/built_in.cr:22`
 - [ ] `be_base64` — `src/spectator/matchers/built_in.cr:38`
 - [ ] `be_close_to(expected, digits)` — `src/spectator/matchers/built_in.cr:54`
 - [ ] `be_hexadecimal` — `src/spectator/matchers/built_in.cr:78`
@@ -31,7 +31,7 @@ but many methods are stubs that raise `NotImplementedError`:
 - [ ] `decrease(subject, method)` — `src/spectator/matchers/built_in.cr:175`
 - [ ] `end_with(expected)` — `src/spectator/matchers/built_in.cr:184`
 - [ ] `exist(*args)` - `src/spectator/matchers/built_in.cr:196`
-- [ ] `have_(predicate, *args)` - `src/spectator/matchers/built_in.cr:212`
+- [x] `have_(predicate, *args)` - `src/spectator/matchers/built_in.cr:212`
 - [ ] `have_index(value)` — `src/spectator/matchers/built_in.cr:224`
 - [ ] `have_indexes(*values)` — `src/spectator/matchers/built_in.cr:228`
 - [ ] `have_key(value)` — `src/spectator/matchers/built_in.cr:232`
