@@ -135,11 +135,11 @@ module Spectator
                       **tagged_values, &)
         example_group(
           description,
-          Tuple.new(*tags, {{ tags.splat }}),
-          source_file,
-          source_line,
-          source_end_line,
-          NamedTuple.new(**tagged_values {{ tagged_values.double_splat(", ") }})
+          *Tuple.new(*tags, {{ tags.splat }}),
+          **NamedTuple.new(**tagged_values {{ tagged_values.double_splat(", ") }}),
+          source_file: source_file,
+          source_line: source_line,
+          source_end_line: source_end_line,
         ) do |group|
           with ContextDSL.new(group) yield group
         end
