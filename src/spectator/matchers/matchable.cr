@@ -93,7 +93,7 @@ module Spectator::Matchers
       end
     end
 
-    macro disable_negation
+    module DisabledNegation
       private def negation_disabled!
         raise ::Spectator::FrameworkError.new("Matcher `#{matcher_name}` does not support negated matching.")
       end
@@ -123,7 +123,7 @@ module Spectator::Matchers
       end
     end
 
-    macro require_block
+    module RequiredBlock
       private def block_required!
         raise ::Spectator::FrameworkError.new("Matcher `#{matcher_name}` must be used with a block.")
       end

@@ -3,6 +3,7 @@ require "../matchable"
 module Spectator::Matchers::BuiltIn
   class RaiseErrorMatcher(T)
     include Matchable
+    include Matchable::RequiredBlock
 
     @expected_error : T?
     @expected_message : String | Regex?
@@ -14,8 +15,6 @@ module Spectator::Matchers::BuiltIn
 
     def initialize(@expected_message : String | Regex? = nil)
     end
-
-    require_block
 
     def matches?(&)
       yield
