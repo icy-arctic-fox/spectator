@@ -185,8 +185,8 @@ module Spectator::Matchers::BuiltIn
       {% end %}
     end
 
-    def end_with(expected)
-      raise NotImplementedError.new("end_with")
+    def end_with(*expected)
+      EndWithMatcher.new(expected)
     end
 
     def eq(value)
@@ -314,8 +314,8 @@ module Spectator::Matchers::BuiltIn
       raise NotImplementedError.new("satisfy")
     end
 
-    def start_with(expected)
-      raise NotImplementedError.new("start_with")
+    def start_with(*expected)
+      StartWithMatcher.new(expected)
     end
   end
 end
