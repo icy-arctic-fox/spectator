@@ -237,6 +237,10 @@ module Spectator::Matchers::BuiltIn
       raise NotImplementedError.new("have_indexes")
     end
 
+    def have_indices(*values : Int)
+      have_indexes *values
+    end
+
     def have_key(value : T) forall T
       raise NotImplementedError.new("have_key")
     end
