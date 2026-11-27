@@ -94,46 +94,46 @@ module Spectator::Matchers
     end
 
     macro disable_negation
-      private def no_negation!
+      private def negation_disabled!
         raise ::Spectator::FrameworkError.new("Matcher `#{matcher_name}` does not support negated matching.")
       end
 
       def does_not_match?(actual_value)
-        no_negation!
+        negation_disabled!
       end
 
       def does_not_match?(&)
-        no_negation!
+        negation_disabled!
       end
 
       def print_negated_failure_message(printer : Formatters::Printer, actual_value) : Nil
-        no_negation!
+        negation_disabled!
       end
 
       def print_negated_failure_message(printer : Formatters::Printer, &) : Nil
-        no_negation!
+        negation_disabled!
       end
 
       def negated_failure_message(actual_value)
-        no_negation!
+        negation_disabled!
       end
 
       def negated_failure_message(&)
-        no_negation!
+        negation_disabled!
       end
     end
 
     macro require_block
-      private def no_block!
+      private def block_required!
         raise ::Spectator::FrameworkError.new("Matcher `#{matcher_name}` must be used with a block.")
       end
 
       def matches?(actual_value)
-        no_block!
+        block_required!
       end
 
       def does_not_match?(actual_value)
-        no_block!
+        block_required!
       end
 
       def does_not_match?(&block)
@@ -141,19 +141,19 @@ module Spectator::Matchers
       end
 
       def print_failure_message(printer : Formatters::Printer, actual_value) : Nil
-        no_block!
+        block_required!
       end
 
       def failure_message(actual_value)
-        no_block!
+        block_required!
       end
 
       def print_negated_failure_message(printer : Formatters::Printer, actual_value) : Nil
-        no_block!
+        block_required!
       end
 
       def negated_failure_message(actual_value)
-        no_block!
+        block_required!
       end
     end
   end
